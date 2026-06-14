@@ -1,0 +1,5 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1000" viewBox="0 0 800 1000" role="img" aria-label="relaxed-fit-tee">
+  <rect width="100%" height="100%" fill="#f5f5f4"/>
+  <rect x="1" y="1" width="798" height="998" fill="none" stroke="#e7e5e4" stroke-width="1"/>
+  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#a8a29e" font-family="system-ui, sans-serif" font-size="14" letter-spacing="0.2em">relaxed-fit-tee</text>
+</svg>
