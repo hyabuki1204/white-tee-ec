@@ -136,7 +136,10 @@ export function Header() {
             </nav>
 
             <div className="flex items-center gap-1 md:hidden">
-              <CartNavLink className="flex min-h-11 min-w-11 items-center justify-center" />
+              <CartNavLink
+                showLabel={false}
+                className="flex min-h-11 min-w-11 items-center justify-center"
+              />
               <button
                 type="button"
                 aria-expanded={menuOpen}
