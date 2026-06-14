@@ -1,3 +1,5 @@
+import { getFabricPresentation } from "@/lib/fabric/presentation";
+import { cn } from "@/lib/utils";
 import type { Fabric } from "@/lib/fabric/content";
 
 type FabricDetailIntroProps = {
@@ -5,23 +7,18 @@ type FabricDetailIntroProps = {
 };
 
 export function FabricDetailIntro({ fabric }: FabricDetailIntroProps) {
+  const presentation = getFabricPresentation(fabric.slug);
+  const leadLine = fabric.descriptionLines[0];
+
   return (
     <header className="flex w-full flex-col items-center text-center">
-      <h1 className="text-xs font-light tracking-[0.14em] text-neutral-800">
-        {fabric.name}
-      </h1>
-
-      <p className="mt-8 max-w-sm text-xs font-light leading-[2.1] tracking-[0.03em] text-neutral-500 md:mt-10">
-        {fabric.tagline}
-      </p>
-
-      <p className="mt-10 max-w-md text-xs font-light leading-[2.15] tracking-[0.03em] text-neutral-500 md:mt-12">
-        {fabric.descriptionLines.map((line, index) => (
-          <span key={line}>
-            {line}
-            {index < fabric.descriptionLines.length - 1 ? <br /> : null}
-          </span>
-        ))}
+      <p
+        className={cn(
+          "max-w-sm text-[13px] font-light leading-[1.95] text-neutral-600 md:text-xs md:leading-[2.15] md:text-neutral-500",
+          presentation.taglineTracking,
+        )}
+      >
+        {leadLine}
       </p>
     </header>
   );

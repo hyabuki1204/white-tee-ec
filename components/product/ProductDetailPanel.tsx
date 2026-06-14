@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { SITE_UI_COPY } from "@/lib/copy/site-ui";
 import { AddToCartButton } from "@/components/product/AddToCartButton";
 import { ProductDetailTabs } from "@/components/product/ProductDetailTabs";
 import { QuantitySelector } from "@/components/product/QuantitySelector";
@@ -15,9 +16,58 @@ type ProductDetailPanelProps = {
   detail: ProductDetailContent;
 };
 
+function PurchaseStatus({
+  selectedSize,
+  isOutOfStock,
+  maxQuantity,
+  inCartQuantity,
+}: {
+  selectedSize: ProductSize | null;
+  isOutOfStock: boolean;
+  maxQuantity: number;
+  inCartQuantity: number;
+}) {
+  const { product: copy } = SITE_UI_COPY;
+
+  if (!selectedSize) {
+    return (
+      <p className="min-h-[1rem] text-[10px] font-light leading-[1.8] tracking-[0.05em] text-neutral-400">
+        {copy.chooseSize}
+      </p>
+    );
+  }
+
+  if (isOutOfStock) {
+    return (
+      <p className="min-h-[1rem] text-[10px] font-light leading-[1.8] tracking-[0.05em] text-neutral-400">
+        {copy.unavailable}
+      </p>
+    );
+  }
+
+  if (maxQuantity < 1) {
+    return (
+      <p className="min-h-[1rem] text-[10px] font-light leading-[1.8] tracking-[0.05em] text-neutral-400">
+        {copy.allInBag}
+      </p>
+    );
+  }
+
+  if (inCartQuantity > 0) {
+    return (
+      <p className="min-h-[1rem] text-[10px] font-light leading-[1.8] tracking-[0.05em] text-neutral-400">
+        {copy.inBagMore(inCartQuantity, maxQuantity)}
+      </p>
+    );
+  }
+
+  return <div className="min-h-[1rem]" aria-hidden />;
+}
+
 export function ProductDetailPanel({ product, detail }: ProductDetailPanelProps) {
   const addItem = useCartStore((state) => state.addItem);
   const cartItems = useCartStore((state) => state.items);
+  const { product: copy } = SITE_UI_COPY;
   const [selectedSize, setSelectedSize] = useState<ProductSize | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
@@ -69,39 +119,28 @@ export function ProductDetailPanel({ product, detail }: ProductDetailPanelProps)
   };
 
   const buttonLabel = !selectedSize
-    ? "Select Size"
+    ? copy.selectSizeButton
     : isOutOfStock
-      ? "Out of Stock"
+      ? copy.outOfStock
       : maxQuantity < 1
-        ? "Max in Bag"
-        : "Add to Bag";
+        ? copy.maxInBag
+        : copy.addToBag;
 
   return (
-    <div className="space-y-10 md:space-y-12 lg:space-y-14">
-      <section aria-label="Purchase options" className="space-y-10 md:space-y-12">
-        <div className="space-y-3">
+    <div className="space-y-12 sm:space-y-16 md:space-y-20">
+      <section aria-label="Purchase options" className="space-y-10 sm:space-y-12 md:space-y-14">
+        <div className="space-y-4">
           <VariantSelector
             variants={product.variants}
             selectedSize={selectedSize}
             onSelect={handleSizeSelect}
           />
-          {!selectedSize ? (
-            <p className="text-[10px] font-light tracking-[0.06em] text-neutral-400">
-              Select a size to continue
-            </p>
-          ) : isOutOfStock ? (
-            <p className="text-[10px] font-light tracking-[0.06em] text-neutral-400">
-              Size {selectedSize} is out of stock
-            </p>
-          ) : maxQuantity < 1 ? (
-            <p className="text-[10px] font-light tracking-[0.06em] text-neutral-400">
-              All available units of size {selectedSize} are in your bag
-            </p>
-          ) : inCartQuantity > 0 ? (
-            <p className="text-[10px] font-light tracking-[0.06em] text-neutral-400">
-              {inCartQuantity} in bag · {maxQuantity} more available
-            </p>
-          ) : null}
+          <PurchaseStatus
+            selectedSize={selectedSize}
+            isOutOfStock={isOutOfStock}
+            maxQuantity={maxQuantity}
+            inCartQuantity={inCartQuantity}
+          />
         </div>
 
         {selectedSize ? (
@@ -113,24 +152,25 @@ export function ProductDetailPanel({ product, detail }: ProductDetailPanelProps)
           />
         ) : null}
 
-        <div className="space-y-3">
+        <div className="space-y-4">
           <AddToCartButton
             disabled={!canAdd}
             onAdd={handleAddToCart}
             label={buttonLabel}
           />
-          {isAdded && selectedSize ? (
-            <p className="text-[10px] font-light tracking-[0.06em] text-neutral-400">
-              Size {selectedSize}
-              {quantity > 1 ? ` · Qty ${quantity}` : ""} added to bag.{" "}
-              <Link
-                href="/cart"
-                className="text-neutral-600 underline decoration-neutral-300 underline-offset-2 transition-colors hover:text-neutral-900"
-              >
-                View Bag
-              </Link>
-            </p>
-          ) : null}
+          <div aria-live="polite" className="min-h-[1.25rem]">
+            {isAdded && selectedSize ? (
+              <p className="text-[10px] font-light leading-[1.8] tracking-[0.05em] text-neutral-400">
+                {copy.added(selectedSize, quantity > 1 ? quantity : undefined)}.{" "}
+                <Link
+                  href="/cart"
+                  className="text-neutral-600 transition-opacity duration-300 hover:opacity-50"
+                >
+                  {copy.viewBag}
+                </Link>
+              </p>
+            ) : null}
+          </div>
         </div>
       </section>
 

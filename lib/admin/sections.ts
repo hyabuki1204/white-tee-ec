@@ -1,19 +1,35 @@
 import type { AdminSection } from "@/components/common/AdminSectionList";
+import { ADMIN_COPY } from "@/lib/admin/copy";
 
 export const ADMIN_SECTIONS: AdminSection[] = [
   {
-    label: "Orders",
+    label: ADMIN_COPY.sections.orders.label,
     href: "/admin/orders",
-    description: "Search, filter, and export orders",
+    description: ADMIN_COPY.sections.orders.description,
   },
   {
-    label: "Products",
+    label: ADMIN_COPY.sections.products.label,
     href: "/admin/products",
-    description: "Add and edit products",
+    description: ADMIN_COPY.sections.products.description,
   },
   {
-    label: "Content",
+    label: ADMIN_COPY.sections.fabrics.label,
+    href: "/admin/fabrics",
+    description: ADMIN_COPY.sections.fabrics.description,
+  },
+  {
+    label: ADMIN_COPY.sections.content.label,
     href: "/admin/content",
-    description: "Edit Home, About, and Stories copy",
+    description: ADMIN_COPY.sections.content.description,
+  },
+  {
+    label: ADMIN_COPY.sections.pages.label,
+    href: "/admin/pages",
+    description: ADMIN_COPY.sections.pages.description,
+  },
+  {
+    label: ADMIN_COPY.sections.seo.label,
+    href: "/admin/seo",
+    description: ADMIN_COPY.sections.seo.description,
   },
 ];

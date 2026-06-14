@@ -1,11 +1,14 @@
 import "server-only";
 
 import { mapOrderToAdminDetail } from "@/lib/admin/map-order-detail";
-import { getOrderById } from "@/lib/db/orders/repository";
+import {
+  getOrderById,
+  listOrders,
+  listOrdersPaginated,
+} from "@/lib/db/orders/repository";
 import type { AdminOrderDetail } from "@/types/admin-order";
 
-/** Server-side order queries for admin and internal use. */
-export { listOrders } from "@/lib/db/orders/repository";
+export { listOrders, listOrdersPaginated };
 
 /** Fetch a single order with line items for admin detail view. */
 export async function getAdminOrderDetail(

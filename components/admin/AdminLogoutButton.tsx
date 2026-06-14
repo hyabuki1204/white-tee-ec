@@ -2,6 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { ADMIN_COPY } from "@/lib/admin/copy";
+import { adminBtnSecondary } from "@/lib/admin/ui";
 
 export function AdminLogoutButton() {
   const router = useRouter();
@@ -24,9 +26,9 @@ export function AdminLogoutButton() {
       type="button"
       onClick={handleLogout}
       disabled={isLoading}
-      className="text-xs font-light tracking-wide text-neutral-500 transition-opacity hover:opacity-60 disabled:opacity-40"
+      className={adminBtnSecondary}
     >
-      {isLoading ? "Signing out..." : "Sign Out"}
+      {isLoading ? ADMIN_COPY.nav.loggingOut : ADMIN_COPY.nav.logout}
     </button>
   );
 }

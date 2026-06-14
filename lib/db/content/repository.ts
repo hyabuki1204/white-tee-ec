@@ -2,15 +2,25 @@ import "server-only";
 
 import {
   DEFAULT_ABOUT_CONTENT,
+  DEFAULT_CONTACT_CONTENT,
   DEFAULT_HOME_CONTENT,
+  DEFAULT_LEGAL_CONTENT,
+  DEFAULT_PRIVACY_CONTENT,
+  DEFAULT_SHIPPING_CONTENT,
   DEFAULT_STORIES_CONTENT,
+  DEFAULT_TERMS_CONTENT,
 } from "@/lib/content/defaults";
+import { DEFAULT_SEO_CONTENT } from "@/lib/seo/defaults";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseStaticClient } from "@/lib/supabase/static";
 import { getDataSource, isSupabaseConfigured } from "@/lib/supabase/env";
 import type {
   AboutPageContent,
+  ContactPageContent,
   HomePageContent,
+  LegalBusinessContent,
+  PolicyPageContent,
+  SeoSettingsContent,
   SiteContentKey,
   SiteContentMap,
   StoriesPageContent,
@@ -27,6 +37,21 @@ function mergeHomeContent(raw: unknown): HomePageContent {
     input.conceptLines && input.conceptLines.length === 2
       ? ([input.conceptLines[0], input.conceptLines[1]] as [string, string])
       : DEFAULT_HOME_CONTENT.conceptLines;
+  const fabricIntroLines =
+    input.fabricIntroLines && input.fabricIntroLines.length === 2
+      ? ([input.fabricIntroLines[0], input.fabricIntroLines[1]] as [
+          string,
+          string,
+        ])
+      : DEFAULT_HOME_CONTENT.fabricIntroLines;
+
+  const fabricPreviewCount = Number(input.fabricPreviewCount);
+  const safeFabricPreviewCount =
+    Number.isInteger(fabricPreviewCount) &&
+    fabricPreviewCount >= 1 &&
+    fabricPreviewCount <= 12
+      ? fabricPreviewCount
+      : DEFAULT_HOME_CONTENT.fabricPreviewCount;
 
   return {
     heroImage: input.heroImage ?? DEFAULT_HOME_CONTENT.heroImage,
@@ -34,6 +59,13 @@ function mergeHomeContent(raw: unknown): HomePageContent {
     conceptLines,
     featuredProductCount:
       input.featuredProductCount ?? DEFAULT_HOME_CONTENT.featuredProductCount,
+    fabricPreviewCount: safeFabricPreviewCount,
+    fabricIntroLines,
+    featuredProductSlugs: Array.isArray(input.featuredProductSlugs)
+      ? input.featuredProductSlugs.filter(
+          (slug): slug is string => typeof slug === "string",
+        )
+      : DEFAULT_HOME_CONTENT.featuredProductSlugs,
   };
 }
 
@@ -68,6 +100,75 @@ function mergeStoriesContent(raw: unknown): StoriesPageContent {
   };
 }
 
+function mergeLegalContent(raw: unknown): LegalBusinessContent {
+  if (!raw || typeof raw !== "object") {
+    return DEFAULT_LEGAL_CONTENT;
+  }
+
+  const input = raw as Partial<LegalBusinessContent>;
+
+  return {
+    operator: input.operator ?? DEFAULT_LEGAL_CONTENT.operator,
+    address: input.address ?? DEFAULT_LEGAL_CONTENT.address,
+    email: input.email ?? DEFAULT_LEGAL_CONTENT.email,
+    phone: input.phone ?? DEFAULT_LEGAL_CONTENT.phone,
+  };
+}
+
+function mergeContactContent(raw: unknown): ContactPageContent {
+  if (!raw || typeof raw !== "object") {
+    return DEFAULT_CONTACT_CONTENT;
+  }
+
+  const input = raw as Partial<ContactPageContent>;
+  const introLines =
+    input.introLines && input.introLines.length === 2
+      ? ([input.introLines[0], input.introLines[1]] as [string, string])
+      : DEFAULT_CONTACT_CONTENT.introLines;
+
+  return {
+    introLines,
+    email: input.email ?? DEFAULT_CONTACT_CONTENT.email,
+    hours: input.hours ?? DEFAULT_CONTACT_CONTENT.hours,
+  };
+}
+
+function mergePolicyContent(
+  raw: unknown,
+  defaults: PolicyPageContent,
+): PolicyPageContent {
+  if (!raw || typeof raw !== "object") {
+    return defaults;
+  }
+
+  const input = raw as Partial<PolicyPageContent>;
+
+  return {
+    pageTitle: input.pageTitle ?? defaults.pageTitle,
+    sections: input.sections ?? defaults.sections,
+  };
+}
+
+function mergeSeoContent(raw: unknown): SeoSettingsContent {
+  if (!raw || typeof raw !== "object") {
+    return DEFAULT_SEO_CONTENT;
+  }
+
+  const input = raw as Partial<SeoSettingsContent>;
+
+  return {
+    siteName: input.siteName ?? DEFAULT_SEO_CONTENT.siteName,
+    siteDescription:
+      input.siteDescription ?? DEFAULT_SEO_CONTENT.siteDescription,
+    defaultOgpImage:
+      input.defaultOgpImage ?? DEFAULT_SEO_CONTENT.defaultOgpImage,
+    twitterHandle:
+      input.twitterHandle === undefined
+        ? DEFAULT_SEO_CONTENT.twitterHandle
+        : input.twitterHandle,
+  };
+}
+
 function mergeContent<K extends SiteContentKey>(
   key: K,
   raw: unknown,
@@ -79,6 +180,18 @@ function mergeContent<K extends SiteContentKey>(
       return mergeAboutContent(raw) as SiteContentMap[K];
     case "stories":
       return mergeStoriesContent(raw) as SiteContentMap[K];
+    case "legal":
+      return mergeLegalContent(raw) as SiteContentMap[K];
+    case "contact":
+      return mergeContactContent(raw) as SiteContentMap[K];
+    case "shipping":
+      return mergePolicyContent(raw, DEFAULT_SHIPPING_CONTENT) as SiteContentMap[K];
+    case "privacy":
+      return mergePolicyContent(raw, DEFAULT_PRIVACY_CONTENT) as SiteContentMap[K];
+    case "terms":
+      return mergePolicyContent(raw, DEFAULT_TERMS_CONTENT) as SiteContentMap[K];
+    case "seo":
+      return mergeSeoContent(raw) as SiteContentMap[K];
     default:
       throw new Error(`Unknown content key: ${key satisfies never}`);
   }
@@ -130,13 +243,20 @@ export async function getSiteContent<K extends SiteContentKey>(
 }
 
 export async function getAllSiteContent(): Promise<SiteContentMap> {
-  const [home, about, stories] = await Promise.all([
-    getSiteContent("home"),
-    getSiteContent("about"),
-    getSiteContent("stories"),
-  ]);
+  const [home, about, stories, legal, contact, shipping, privacy, terms, seo] =
+    await Promise.all([
+      getSiteContent("home"),
+      getSiteContent("about"),
+      getSiteContent("stories"),
+      getSiteContent("legal"),
+      getSiteContent("contact"),
+      getSiteContent("shipping"),
+      getSiteContent("privacy"),
+      getSiteContent("terms"),
+      getSiteContent("seo"),
+    ]);
 
-  return { home, about, stories };
+  return { home, about, stories, legal, contact, shipping, privacy, terms, seo };
 }
 
 export async function upsertSiteContent<K extends SiteContentKey>(

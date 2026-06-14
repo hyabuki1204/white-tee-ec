@@ -51,6 +51,8 @@ export async function mapOrderToAdminDetail(
     }),
     totalAmount: order.totalAmount,
     email: order.email,
+    stripePaymentIntentId: order.stripePaymentIntentId,
+    shippingAddress: order.shippingAddress,
     items: order.items.map((item) =>
       mapOrderItemToAdminDetailItem(item, productNames),
     ),

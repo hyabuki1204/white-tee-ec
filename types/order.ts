@@ -1,6 +1,17 @@
 import type { OrderStatus } from "@/types/database";
 import type { ProductSize } from "@/types";
 
+/** Shipping address collected at Stripe Checkout. */
+export type ShippingAddress = {
+  name?: string | null;
+  line1?: string | null;
+  line2?: string | null;
+  city?: string | null;
+  state?: string | null;
+  postalCode?: string | null;
+  country?: string | null;
+};
+
 /** Domain model for an order shown in the app or returned from mutations. */
 export type Order = {
   id: string;
@@ -8,6 +19,7 @@ export type Order = {
   status: OrderStatus;
   totalAmount: number;
   stripePaymentIntentId: string | null;
+  shippingAddress: ShippingAddress | null;
   items: OrderItem[];
   createdAt: string;
 };
@@ -27,6 +39,7 @@ export type CreateOrderInput = {
   userId?: string | null;
   status?: OrderStatus;
   stripePaymentIntentId?: string | null;
+  shippingAddress?: ShippingAddress | null;
   items: CreateOrderItemInput[];
 };
 
@@ -44,6 +57,7 @@ export type OrderInsertPayload = {
   status: OrderStatus;
   total_amount: number;
   stripe_payment_intent_id: string | null;
+  shipping_address: ShippingAddress | null;
 };
 
 /** Insert payload mapped to Supabase `order_items` table. */

@@ -1,0 +1,44 @@
+import type { Metadata } from "next";
+import { LegalPageLayout } from "@/components/layout/LegalPageLayout";
+import { getContactContent } from "@/lib/legal/queries";
+import { buildPageMetadata } from "@/lib/seo/metadata";
+
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata({
+    title: "Contact",
+    description: "WHITE TEE へのお問い合わせ",
+    path: "/contact",
+  });
+}
+
+export default async function ContactPage() {
+  const contact = await getContactContent();
+
+  return (
+    <LegalPageLayout title="Contact">
+      <div className="space-y-6 text-center">
+        {contact.introLines.map((line) => (
+          <p key={line}>{line}</p>
+        ))}
+      </div>
+
+      <div className="space-y-4 border-t border-neutral-200/70 pt-10 text-center">
+        <p>
+          <span className="text-neutral-400">Email</span>
+          <br />
+          <a
+            href={`mailto:${contact.email}`}
+            className="text-neutral-800 transition-opacity hover:opacity-60"
+          >
+            {contact.email}
+          </a>
+        </p>
+        <p>
+          <span className="text-neutral-400">Hours</span>
+          <br />
+          {contact.hours}
+        </p>
+      </div>
+    </LegalPageLayout>
+  );
+}

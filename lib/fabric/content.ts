@@ -31,11 +31,10 @@ export const FABRICS: Fabric[] = [
   {
     slug: "heavyweight-jersey",
     name: "Heavyweight Jersey",
-    tagline: "Dense cotton with structure.",
+    tagline: "Dense cotton. Held shape.",
     descriptionLines: [
-      "Knit at a higher gauge for weight and body.",
-      "The surface holds its shape —",
-      "white reads clearly, without softness blur.",
+      "Higher gauge, more body.",
+      "White reads clear, without blur.",
     ],
     imageUrl: "/fabric/heavyweight-jersey.jpg",
     imageAlt: "Heavyweight white cotton jersey texture",
@@ -44,11 +43,10 @@ export const FABRICS: Fabric[] = [
   {
     slug: "lightweight-jersey",
     name: "Lightweight Jersey",
-    tagline: "Soft hand, open breath.",
+    tagline: "Soft hand. Open air.",
     descriptionLines: [
-      "A lighter jersey for warmer days and closer contact.",
-      "Fine yarn, relaxed tension —",
-      "fabric that follows the skin without clinging.",
+      "Fine yarn, open knit.",
+      "Light on skin. Quiet in heat.",
     ],
     imageUrl: "/fabric/lightweight-jersey.jpg",
     imageAlt: "Lightweight white cotton jersey texture",
@@ -57,11 +55,10 @@ export const FABRICS: Fabric[] = [
   {
     slug: "relaxed-jersey",
     name: "Relaxed Jersey",
-    tagline: "Room to move, quiet drape.",
+    tagline: "Room to move. Quiet drape.",
     descriptionLines: [
-      "Medium weight with a softer fall.",
-      "Built for ease —",
-      "shoulders drop, lines soften, white stays calm.",
+      "Medium weight, softer fall.",
+      "Lines ease. White stays calm.",
     ],
     imageUrl: "/fabric/relaxed-jersey.jpg",
     imageAlt: "Relaxed white cotton jersey texture",
@@ -70,11 +67,10 @@ export const FABRICS: Fabric[] = [
   {
     slug: "compact-jersey",
     name: "Compact Jersey",
-    tagline: "Tight weave for layering.",
+    tagline: "Close knit. Thin profile.",
     descriptionLines: [
-      "Compact yarn and a closer knit.",
-      "Slim under a jacket, minimal under a shirt —",
-      "structure without volume.",
+      "Compact yarn, tighter knit.",
+      "Structure without volume.",
     ],
     imageUrl: "/fabric/compact-jersey.jpg",
     imageAlt: "Compact white cotton jersey texture",
@@ -85,9 +81,8 @@ export const FABRICS: Fabric[] = [
     name: "Essential Jersey",
     tagline: "The everyday weight.",
     descriptionLines: [
-      "Our baseline jersey — balanced, familiar, year-round.",
-      "Neither heavy nor sheer —",
-      "the cloth most days ask for.",
+      "Balanced, familiar, year-round.",
+      "Neither heavy nor sheer.",
     ],
     imageUrl: "/fabric/essential-jersey.jpg",
     imageAlt: "Essential white cotton jersey texture",
@@ -96,11 +91,10 @@ export const FABRICS: Fabric[] = [
   {
     slug: "box-jersey",
     name: "Box Jersey",
-    tagline: "Substance without bulk.",
+    tagline: "Substance. Flat surface.",
     descriptionLines: [
-      "A slightly denser hand with a flat, even surface.",
-      "Straight lines need a cloth that keeps them —",
-      "presence in white, without noise.",
+      "Dense hand, even surface.",
+      "Presence in white, without noise.",
     ],
     imageUrl: "/fabric/box-jersey.jpg",
     imageAlt: "Box white cotton jersey texture",

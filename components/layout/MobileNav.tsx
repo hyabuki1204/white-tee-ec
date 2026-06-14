@@ -38,9 +38,9 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
 
       <nav
         aria-label="Mobile navigation"
-        className="absolute inset-x-0 top-0 border-b border-neutral-200/70 bg-background px-6 pb-8 pt-24 shadow-sm"
+        className="absolute inset-x-0 top-0 bg-background px-6 pb-10 pt-[calc(var(--header-height)+0.5rem)] shadow-sm"
       >
-        <ul className="flex flex-col gap-6">
+        <ul className="flex flex-col">
           {links.map((item) => {
             const isActive = isNavActive(pathname, item.href);
 
@@ -50,10 +50,10 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
                   href={item.href}
                   onClick={onClose}
                   className={cn(
-                    "block text-sm font-light tracking-wide transition-colors",
+                    "flex min-h-11 items-center text-[15px] font-light tracking-wide transition-colors md:text-sm",
                     isActive
                       ? "text-neutral-900"
-                      : "text-neutral-600 hover:text-neutral-900",
+                      : "text-neutral-600 active:text-neutral-900",
                   )}
                   aria-current={isActive ? "page" : undefined}
                 >
@@ -63,7 +63,10 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
             );
           })}
           <li>
-            <CartNavLink onNavigate={onClose} className="text-sm" />
+            <CartNavLink
+              onNavigate={onClose}
+              className="flex min-h-11 items-center text-[15px] md:text-sm"
+            />
           </li>
         </ul>
       </nav>

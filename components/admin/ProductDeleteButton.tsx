@@ -2,6 +2,15 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { AdminConfirmDialog } from "@/components/admin/AdminConfirmDialog";
+import { ADMIN_COPY } from "@/lib/admin/copy";
+import {
+  adminBtnDanger,
+  adminError,
+  adminSection,
+  adminSectionTitle,
+  adminSuccess,
+} from "@/lib/admin/ui";
 
 type ProductDeleteButtonProps = {
   productId: string;
@@ -15,19 +24,17 @@ export function ProductDeleteButton({
   hasOrders,
 }: ProductDeleteButtonProps) {
   const router = useRouter();
+  const copy = ADMIN_COPY.products;
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+
+  const confirmMessage = hasOrders
+    ? copy.unpublishConfirm(productName)
+    : copy.deleteConfirm(productName);
 
   const handleDelete = async () => {
-    const prompt = hasOrders
-      ? `"${productName}" has order history and will be unpublished instead of deleted. Continue?`
-      : `Delete "${productName}"? This cannot be undone.`;
-
-    if (!window.confirm(prompt)) {
-      return;
-    }
-
     setIsLoading(true);
     setMessage(null);
     setError(null);
@@ -44,11 +51,13 @@ export function ProductDeleteButton({
       };
 
       if (!response.ok) {
-        throw new Error(data.error ?? "Failed to delete product.");
+        throw new Error(data.error ?? copy.deleteFailed);
       }
 
+      setConfirmOpen(false);
+
       if (data.action === "archived") {
-        setMessage(data.reason ?? "Product unpublished.");
+        setMessage(data.reason ?? "商品を非公開にしました。");
         router.refresh();
         return;
       }
@@ -57,9 +66,7 @@ export function ProductDeleteButton({
       router.refresh();
     } catch (deleteError) {
       const text =
-        deleteError instanceof Error
-          ? deleteError.message
-          : "Failed to delete product.";
+        deleteError instanceof Error ? deleteError.message : copy.deleteFailed;
       setError(text);
     } finally {
       setIsLoading(false);
@@ -67,28 +74,36 @@ export function ProductDeleteButton({
   };
 
   return (
-    <div className="border-t border-neutral-200/70 pt-10">
-      <p className="mb-4 text-xs font-light tracking-wide text-neutral-500">
-        {hasOrders ? "Unpublish Product" : "Delete Product"}
-      </p>
-      <button
-        type="button"
-        onClick={handleDelete}
-        disabled={isLoading}
-        className="text-xs tracking-[0.12em] text-red-700 transition-opacity hover:opacity-60 disabled:text-neutral-300"
-      >
-        {isLoading
-          ? "Processing..."
-          : hasOrders
-            ? "Unpublish"
-            : "Delete"}
-      </button>
-      {error ? (
-        <p className="mt-4 text-xs font-light text-red-600">{error}</p>
-      ) : null}
-      {message ? (
-        <p className="mt-4 text-xs font-light text-neutral-500">{message}</p>
-      ) : null}
-    </div>
+    <>
+      <section className={`${adminSection} mt-6 border-red-100`}>
+        <h2 className={adminSectionTitle}>
+          {hasOrders ? copy.unpublish : copy.deleteTitle}
+        </h2>
+        <button
+          type="button"
+          onClick={() => setConfirmOpen(true)}
+          disabled={isLoading}
+          className={adminBtnDanger}
+        >
+          {isLoading
+            ? copy.processing
+            : hasOrders
+              ? copy.unpublish
+              : ADMIN_COPY.common.delete}
+        </button>
+        {error ? <p className={`${adminError} mt-4`}>{error}</p> : null}
+        {message ? <p className={`${adminSuccess} mt-4`}>{message}</p> : null}
+      </section>
+
+      <AdminConfirmDialog
+        open={confirmOpen}
+        title={hasOrders ? copy.unpublish : copy.deleteTitle}
+        message={confirmMessage}
+        confirmLabel={hasOrders ? copy.unpublish : ADMIN_COPY.common.delete}
+        onConfirm={() => void handleDelete()}
+        onCancel={() => setConfirmOpen(false)}
+        isLoading={isLoading}
+      />
+    </>
   );
 }

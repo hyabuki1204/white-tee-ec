@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ProductsTable } from "@/components/admin/ProductsTable";
+import { AdminBackLink } from "@/components/admin/AdminBackLink";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { ProductsPageContent } from "@/components/admin/ProductsPageContent";
 import { Container } from "@/components/layout/Container";
+import { ADMIN_COPY } from "@/lib/admin/copy";
+import { adminBtnPrimary } from "@/lib/admin/ui";
 import { listProductsForAdmin } from "@/lib/products/admin-queries";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 
 export const metadata: Metadata = {
-  title: "Products | Admin | WHITE TEE",
+  title: "商品 | 管理画面 | WHITE TEE",
 };
 
 export default async function AdminProductsPage() {
@@ -15,39 +19,25 @@ export default async function AdminProductsPage() {
     : [];
 
   return (
-    <Container as="section" className="py-16 md:py-24 lg:py-28">
-      <header className="mb-12 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-        <div>
-          <p className="text-xs tracking-[0.3em] text-neutral-500">
-            Admin · Products
-          </p>
-          <p className="mt-4 text-sm font-light text-neutral-500">
-            {products.length} product{products.length === 1 ? "" : "s"}
-          </p>
-        </div>
-        <Link
-          href="/admin/products/new"
-          className="text-xs tracking-[0.15em] text-neutral-900 transition-opacity hover:opacity-60"
-        >
-          Add Product
-        </Link>
-      </header>
+    <Container as="section" className="py-10 md:py-12">
+      <AdminPageHeader
+        title={ADMIN_COPY.products.title}
+        subtitle={ADMIN_COPY.common.count(products.length, "商品")}
+        actions={
+          <Link href="/admin/products/new" className={adminBtnPrimary}>
+            {ADMIN_COPY.products.add}
+          </Link>
+        }
+      />
 
       {!isSupabaseConfigured() ? (
-        <p className="mb-8 text-sm font-light text-neutral-500">
-          Supabase is not configured. Set env vars and DATA_SOURCE=supabase to
-          manage products.
+        <p className="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          {ADMIN_COPY.products.supabaseRequired}
         </p>
       ) : null}
 
-      <ProductsTable products={products} />
-
-      <Link
-        href="/admin"
-        className="mt-16 inline-block text-xs font-light tracking-wide text-neutral-900 transition-opacity hover:opacity-60"
-      >
-        ← Back to Admin
-      </Link>
+      <ProductsPageContent products={products} />
+      <AdminBackLink href="/admin" label={ADMIN_COPY.common.backToDashboard} />
     </Container>
   );
 }

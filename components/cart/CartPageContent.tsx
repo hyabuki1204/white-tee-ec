@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { CartItem } from "@/components/cart/CartItem";
 import { CartSummary } from "@/components/cart/CartSummary";
+import { SITE_UI_COPY } from "@/lib/copy/site-ui";
 import { useCartStore } from "@/lib/cart/store";
 import type { ProductSize } from "@/types";
 
@@ -29,18 +30,19 @@ type CartPageContentProps = {
 
 export function CartPageContent({ productLookup }: CartPageContentProps) {
   const items = useCartStore((state) => state.items);
+  const { cart: copy } = SITE_UI_COPY;
 
   if (items.length === 0) {
     return (
-      <div className="py-20 text-center">
-        <p className="text-xs tracking-[0.3em] text-neutral-500">
-          Your cart is empty
+      <div className="py-16 text-center sm:py-20">
+        <p className="text-[13px] tracking-[0.24em] text-neutral-600 md:text-xs md:tracking-[0.3em] md:text-neutral-500">
+          {copy.empty}
         </p>
         <Link
           href="/products"
-          className="mt-8 inline-block text-xs font-light tracking-wide text-neutral-900 transition-opacity hover:opacity-60"
+          className="mt-8 inline-flex min-h-11 items-center justify-center px-2 text-[13px] font-light tracking-wide text-neutral-800 transition-opacity active:opacity-60 md:text-xs md:text-neutral-900 md:hover:opacity-60"
         >
-          Continue Shopping
+          {copy.continue}
         </Link>
       </div>
     );

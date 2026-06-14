@@ -1,6 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { AdminConfirmDialog } from "@/components/admin/AdminConfirmDialog";
+import { ADMIN_COPY } from "@/lib/admin/copy";
+import {
+  adminBtnPrimary,
+  adminError,
+  adminField,
+  adminInput,
+  adminLabel,
+  adminMuted,
+  adminSection,
+  adminSuccess,
+  adminTabActive,
+  adminTabInactive,
+  adminTextarea,
+} from "@/lib/admin/ui";
+import { ContentImageField } from "@/components/admin/ContentImageField";
 import { cn } from "@/lib/utils";
 import type {
   AboutPageContent,
@@ -10,42 +26,80 @@ import type {
 } from "@/types/site-content";
 
 type ContentEditorProps = {
-  initialContent: SiteContentMap;
+  initialContent: Pick<SiteContentMap, "home" | "about" | "stories">;
+  products: Array<{ slug: string; name: string; isPublished: boolean }>;
 };
 
-type TabId = keyof SiteContentMap;
+type TabId = keyof ContentEditorProps["initialContent"];
 
 const TABS: { id: TabId; label: string }[] = [
-  { id: "home", label: "Home" },
-  { id: "about", label: "About" },
-  { id: "stories", label: "Stories" },
+  { id: "home", label: ADMIN_COPY.content.tabs.home },
+  { id: "about", label: ADMIN_COPY.content.tabs.about },
+  { id: "stories", label: ADMIN_COPY.content.tabs.stories },
 ];
 
-const inputClassName =
-  "w-full border-b border-neutral-300 bg-transparent py-2 text-xs font-light text-neutral-800 outline-none";
+function snapshotTab(content: unknown) {
+  return JSON.stringify(content);
+}
 
-export function ContentEditor({ initialContent }: ContentEditorProps) {
+export function ContentEditor({ initialContent, products }: ContentEditorProps) {
+  const copy = ADMIN_COPY.content;
   const [activeTab, setActiveTab] = useState<TabId>("home");
   const [home, setHome] = useState<HomePageContent>(initialContent.home);
   const [about, setAbout] = useState<AboutPageContent>(initialContent.about);
   const [stories, setStories] = useState<StoriesPageContent>(
     initialContent.stories,
   );
+  const [savedByTab, setSavedByTab] = useState<Record<TabId, string>>({
+    home: snapshotTab(initialContent.home),
+    about: snapshotTab(initialContent.about),
+    stories: snapshotTab(initialContent.stories),
+  });
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [pendingTab, setPendingTab] = useState<TabId | null>(null);
+
+  const getTabContent = useCallback(
+    (tab: TabId) => {
+      switch (tab) {
+        case "home":
+          return home;
+        case "about":
+          return about;
+        case "stories":
+          return stories;
+      }
+    },
+    [home, about, stories],
+  );
+
+  const isDirty = snapshotTab(getTabContent(activeTab)) !== savedByTab[activeTab];
+
+  const switchTab = (tab: TabId) => {
+    setActiveTab(tab);
+    setError(null);
+    setMessage(null);
+    setPendingTab(null);
+  };
+
+  const requestTabSwitch = (tab: TabId) => {
+    if (tab === activeTab) return;
+
+    if (isDirty) {
+      setPendingTab(tab);
+      return;
+    }
+
+    switchTab(tab);
+  };
 
   const handleSave = async () => {
     setIsSaving(true);
     setError(null);
     setMessage(null);
 
-    const payload =
-      activeTab === "home"
-        ? home
-        : activeTab === "about"
-          ? about
-          : stories;
+    const payload = getTabContent(activeTab);
 
     try {
       const response = await fetch(`/api/admin/content/${activeTab}`, {
@@ -57,290 +111,373 @@ export function ContentEditor({ initialContent }: ContentEditorProps) {
       const data = (await response.json()) as { error?: string };
 
       if (!response.ok) {
-        throw new Error(data.error ?? "Failed to save content.");
+        throw new Error(data.error ?? ADMIN_COPY.common.saveFailed);
       }
 
-      setMessage("Saved.");
+      setSavedByTab((current) => ({
+        ...current,
+        [activeTab]: snapshotTab(getTabContent(activeTab)),
+      }));
+      setMessage(ADMIN_COPY.common.saved);
     } catch (saveError) {
       const text =
         saveError instanceof Error
           ? saveError.message
-          : "Failed to save content.";
+          : ADMIN_COPY.common.saveFailed;
       setError(text);
     } finally {
       setIsSaving(false);
     }
   };
 
+  const publishedProducts = products.filter((product) => product.isPublished);
+
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      if (!isDirty) return;
+      event.preventDefault();
+      event.returnValue = "";
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [isDirty]);
+
   return (
-    <div className="space-y-10">
-      <div className="flex flex-wrap gap-x-6 gap-y-2 border-b border-neutral-200/70">
+    <div className="space-y-6">
+      <div className={`${adminSection} flex flex-wrap gap-x-6 gap-y-2`}>
         {TABS.map((tab) => (
           <button
             key={tab.id}
             type="button"
-            onClick={() => {
-              setActiveTab(tab.id);
-              setError(null);
-              setMessage(null);
-            }}
+            onClick={() => requestTabSwitch(tab.id)}
             className={cn(
-              "-mb-px pb-3 text-xs font-light tracking-wide transition-colors",
-              activeTab === tab.id
-                ? "border-b border-neutral-900 text-neutral-900"
-                : "border-b border-transparent text-neutral-400 hover:text-neutral-600",
+              activeTab === tab.id ? adminTabActive : adminTabInactive,
             )}
           >
             {tab.label}
+            {activeTab === tab.id && isDirty ? " *" : ""}
           </button>
         ))}
       </div>
 
-      {activeTab === "home" ? (
-        <div className="space-y-6">
-          <label className="block space-y-2">
-            <span className="text-xs font-light text-neutral-500">
-              Hero image path
-            </span>
-            <input
+      <div className={`${adminSection} space-y-6`}>
+        {activeTab === "home" ? (
+          <>
+            <ContentImageField
+              label={copy.home.heroImage}
+              hint={copy.home.heroImageHint}
+              previewAspectClass="aspect-video"
               value={home.heroImage}
-              onChange={(event) =>
-                setHome({ ...home, heroImage: event.target.value })
-              }
-              className={inputClassName}
+              onChange={(heroImage) => setHome({ ...home, heroImage })}
             />
-          </label>
-          <label className="block space-y-2">
-            <span className="text-xs font-light text-neutral-500">Hero copy</span>
-            <input
-              value={home.heroCopy}
-              onChange={(event) =>
-                setHome({ ...home, heroCopy: event.target.value })
-              }
-              className={inputClassName}
-            />
-          </label>
-          <label className="block space-y-2">
-            <span className="text-xs font-light text-neutral-500">
-              Concept line 1
-            </span>
-            <input
-              value={home.conceptLines[0]}
-              onChange={(event) =>
-                setHome({
-                  ...home,
-                  conceptLines: [event.target.value, home.conceptLines[1]],
-                })
-              }
-              className={inputClassName}
-            />
-          </label>
-          <label className="block space-y-2">
-            <span className="text-xs font-light text-neutral-500">
-              Concept line 2
-            </span>
-            <input
-              value={home.conceptLines[1]}
-              onChange={(event) =>
-                setHome({
-                  ...home,
-                  conceptLines: [home.conceptLines[0], event.target.value],
-                })
-              }
-              className={inputClassName}
-            />
-          </label>
-          <label className="block space-y-2">
-            <span className="text-xs font-light text-neutral-500">
-              Featured products count
-            </span>
-            <input
-              type="number"
-              min={1}
-              max={12}
-              value={home.featuredProductCount}
-              onChange={(event) =>
-                setHome({
-                  ...home,
-                  featuredProductCount: Number(event.target.value),
-                })
-              }
-              className={inputClassName}
-            />
-          </label>
-        </div>
-      ) : null}
-
-      {activeTab === "about" ? (
-        <div className="space-y-6">
-          <label className="block space-y-2">
-            <span className="text-xs font-light text-neutral-500">Headline</span>
-            <input
-              value={about.headline}
-              onChange={(event) =>
-                setAbout({ ...about, headline: event.target.value })
-              }
-              className={inputClassName}
-            />
-          </label>
-          {about.bodyParagraphs.map((paragraph, index) => (
-            <label key={`about-paragraph-${index}`} className="block space-y-2">
-              <span className="text-xs font-light text-neutral-500">
-                Paragraph {index + 1} (one line per row)
-              </span>
-              <textarea
-                rows={3}
-                value={paragraph.join("\n")}
-                onChange={(event) => {
-                  const next = [...about.bodyParagraphs];
-                  next[index] = event.target.value
-                    .split("\n")
-                    .map((line) => line.trim())
-                    .filter(Boolean);
-                  setAbout({ ...about, bodyParagraphs: next });
-                }}
-                className={`${inputClassName} resize-y`}
+            <label className={adminField}>
+              <span className={adminLabel}>{copy.home.heroCopy}</span>
+              <input
+                value={home.heroCopy}
+                onChange={(event) =>
+                  setHome({ ...home, heroCopy: event.target.value })
+                }
+                className={adminInput}
               />
             </label>
-          ))}
-        </div>
-      ) : null}
+            <label className={adminField}>
+              <span className={adminLabel}>{copy.home.concept1}</span>
+              <input
+                value={home.conceptLines[0]}
+                onChange={(event) =>
+                  setHome({
+                    ...home,
+                    conceptLines: [event.target.value, home.conceptLines[1]],
+                  })
+                }
+                className={adminInput}
+              />
+            </label>
+            <label className={adminField}>
+              <span className={adminLabel}>{copy.home.concept2}</span>
+              <input
+                value={home.conceptLines[1]}
+                onChange={(event) =>
+                  setHome({
+                    ...home,
+                    conceptLines: [home.conceptLines[0], event.target.value],
+                  })
+                }
+                className={adminInput}
+              />
+            </label>
+            <label className={adminField}>
+              <span className={adminLabel}>{copy.home.featuredCount}</span>
+              <input
+                type="number"
+                min={1}
+                max={12}
+                value={home.featuredProductCount}
+                onChange={(event) =>
+                  setHome({
+                    ...home,
+                    featuredProductCount: Number(event.target.value),
+                  })
+                }
+                className={`${adminInput} max-w-[8rem]`}
+              />
+            </label>
+            <label className={adminField}>
+              <span className={adminLabel}>{copy.home.fabricPreviewCount}</span>
+              <input
+                type="number"
+                min={1}
+                max={12}
+                value={home.fabricPreviewCount}
+                onChange={(event) =>
+                  setHome({
+                    ...home,
+                    fabricPreviewCount: Number(event.target.value),
+                  })
+                }
+                className={`${adminInput} max-w-[8rem]`}
+              />
+            </label>
+            <label className={adminField}>
+              <span className={adminLabel}>{copy.home.fabricIntro1}</span>
+              <input
+                value={home.fabricIntroLines[0]}
+                onChange={(event) =>
+                  setHome({
+                    ...home,
+                    fabricIntroLines: [
+                      event.target.value,
+                      home.fabricIntroLines[1],
+                    ],
+                  })
+                }
+                className={adminInput}
+              />
+            </label>
+            <label className={adminField}>
+              <span className={adminLabel}>{copy.home.fabricIntro2}</span>
+              <input
+                value={home.fabricIntroLines[1]}
+                onChange={(event) =>
+                  setHome({
+                    ...home,
+                    fabricIntroLines: [
+                      home.fabricIntroLines[0],
+                      event.target.value,
+                    ],
+                  })
+                }
+                className={adminInput}
+              />
+            </label>
+            <fieldset className={adminField}>
+              <legend className={adminLabel}>{copy.home.featuredSlugs}</legend>
+              <p className={adminMuted}>{copy.home.featuredSlugsHint}</p>
+              {publishedProducts.length === 0 ? (
+                <p className={adminMuted}>{copy.home.featuredSlugsEmpty}</p>
+              ) : (
+                <div className="mt-3 space-y-2">
+                  {publishedProducts.map((product) => (
+                    <label
+                      key={product.slug}
+                      className="flex items-center gap-3 text-sm text-neutral-800"
+                    >
+                      <input
+                        type="checkbox"
+                        className="h-4 w-4"
+                        checked={home.featuredProductSlugs.includes(
+                          product.slug,
+                        )}
+                        onChange={(event) => {
+                          const next = event.target.checked
+                            ? [...home.featuredProductSlugs, product.slug]
+                            : home.featuredProductSlugs.filter(
+                                (slug) => slug !== product.slug,
+                              );
+                          setHome({ ...home, featuredProductSlugs: next });
+                        }}
+                      />
+                      {product.name}
+                      <span className="text-xs text-neutral-500">
+                        ({product.slug})
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              )}
+            </fieldset>
+          </>
+        ) : null}
 
-      {activeTab === "stories" ? (
-        <div className="space-y-10">
-          <label className="block space-y-2">
-            <span className="text-xs font-light text-neutral-500">
-              Page title
-            </span>
-            <input
-              value={stories.pageTitle}
-              onChange={(event) =>
-                setStories({ ...stories, pageTitle: event.target.value })
-              }
-              className={inputClassName}
-            />
-          </label>
-          <label className="block space-y-2">
-            <span className="text-xs font-light text-neutral-500">
-              Intro line 1
-            </span>
-            <input
-              value={stories.introLines[0]}
-              onChange={(event) =>
-                setStories({
-                  ...stories,
-                  introLines: [event.target.value, stories.introLines[1]],
-                })
-              }
-              className={inputClassName}
-            />
-          </label>
-          <label className="block space-y-2">
-            <span className="text-xs font-light text-neutral-500">
-              Intro line 2
-            </span>
-            <input
-              value={stories.introLines[1]}
-              onChange={(event) =>
-                setStories({
-                  ...stories,
-                  introLines: [stories.introLines[0], event.target.value],
-                })
-              }
-              className={inputClassName}
-            />
-          </label>
-
-          {stories.entries.map((entry, index) => (
-            <div
-              key={entry.id}
-              className="space-y-4 border-t border-neutral-200/70 pt-8"
-            >
-              <p className="text-xs tracking-[0.2em] text-neutral-400">
-                Story {index + 1}
-              </p>
-              <label className="block space-y-2">
-                <span className="text-xs font-light text-neutral-500">Title</span>
-                <input
-                  value={entry.title}
-                  onChange={(event) => {
-                    const next = [...stories.entries];
-                    next[index] = { ...entry, title: event.target.value };
-                    setStories({ ...stories, entries: next });
-                  }}
-                  className={inputClassName}
-                />
-              </label>
-              <label className="block space-y-2">
-                <span className="text-xs font-light text-neutral-500">
-                  Lines (one per row)
+        {activeTab === "about" ? (
+          <>
+            <label className={adminField}>
+              <span className={adminLabel}>{copy.about.headline}</span>
+              <input
+                value={about.headline}
+                onChange={(event) =>
+                  setAbout({ ...about, headline: event.target.value })
+                }
+                className={adminInput}
+              />
+            </label>
+            {about.bodyParagraphs.map((paragraph, index) => (
+              <label key={`about-paragraph-${index}`} className={adminField}>
+                <span className={adminLabel}>
+                  {copy.about.paragraph(index + 1)}
                 </span>
                 <textarea
-                  rows={4}
-                  value={entry.lines.join("\n")}
+                  rows={3}
+                  value={paragraph.join("\n")}
                   onChange={(event) => {
-                    const next = [...stories.entries];
-                    next[index] = {
-                      ...entry,
-                      lines: event.target.value
-                        .split("\n")
-                        .map((line) => line.trim())
-                        .filter(Boolean),
-                    };
-                    setStories({ ...stories, entries: next });
+                    const next = [...about.bodyParagraphs];
+                    next[index] = event.target.value
+                      .split("\n")
+                      .map((line) => line.trim())
+                      .filter(Boolean);
+                    setAbout({ ...about, bodyParagraphs: next });
                   }}
-                  className={`${inputClassName} resize-y`}
+                  className={adminTextarea}
                 />
               </label>
-              <label className="block space-y-2">
-                <span className="text-xs font-light text-neutral-500">
-                  Image path
-                </span>
-                <input
-                  value={entry.imageUrl}
-                  onChange={(event) => {
-                    const next = [...stories.entries];
-                    next[index] = { ...entry, imageUrl: event.target.value };
-                    setStories({ ...stories, entries: next });
-                  }}
-                  className={inputClassName}
-                />
-              </label>
-              <label className="block space-y-2">
-                <span className="text-xs font-light text-neutral-500">
-                  Image alt text
-                </span>
-                <input
-                  value={entry.imageAlt}
-                  onChange={(event) => {
-                    const next = [...stories.entries];
-                    next[index] = { ...entry, imageAlt: event.target.value };
-                    setStories({ ...stories, entries: next });
-                  }}
-                  className={inputClassName}
-                />
-              </label>
-            </div>
-          ))}
-        </div>
-      ) : null}
+            ))}
+          </>
+        ) : null}
 
-      <div className="flex flex-col gap-3 border-t border-neutral-200/70 pt-8">
+        {activeTab === "stories" ? (
+          <>
+            <label className={adminField}>
+              <span className={adminLabel}>{copy.stories.pageTitle}</span>
+              <input
+                value={stories.pageTitle}
+                onChange={(event) =>
+                  setStories({ ...stories, pageTitle: event.target.value })
+                }
+                className={adminInput}
+              />
+            </label>
+            <label className={adminField}>
+              <span className={adminLabel}>{copy.stories.intro1}</span>
+              <input
+                value={stories.introLines[0]}
+                onChange={(event) =>
+                  setStories({
+                    ...stories,
+                    introLines: [event.target.value, stories.introLines[1]],
+                  })
+                }
+                className={adminInput}
+              />
+            </label>
+            <label className={adminField}>
+              <span className={adminLabel}>{copy.stories.intro2}</span>
+              <input
+                value={stories.introLines[1]}
+                onChange={(event) =>
+                  setStories({
+                    ...stories,
+                    introLines: [stories.introLines[0], event.target.value],
+                  })
+                }
+                className={adminInput}
+              />
+            </label>
+
+            {stories.entries.map((entry, index) => (
+              <div
+                key={entry.id}
+                className="space-y-4 border-t border-neutral-200 pt-6"
+              >
+                <p className="text-sm font-semibold text-neutral-800">
+                  {copy.stories.entry(index + 1)}
+                </p>
+                <label className={adminField}>
+                  <span className={adminLabel}>{copy.stories.title}</span>
+                  <input
+                    value={entry.title}
+                    onChange={(event) => {
+                      const next = [...stories.entries];
+                      next[index] = { ...entry, title: event.target.value };
+                      setStories({ ...stories, entries: next });
+                    }}
+                    className={adminInput}
+                  />
+                </label>
+                <label className={adminField}>
+                  <span className={adminLabel}>{copy.stories.lines}</span>
+                  <textarea
+                    rows={4}
+                    value={entry.lines.join("\n")}
+                    onChange={(event) => {
+                      const next = [...stories.entries];
+                      next[index] = {
+                        ...entry,
+                        lines: event.target.value
+                          .split("\n")
+                          .map((line) => line.trim())
+                          .filter(Boolean),
+                      };
+                      setStories({ ...stories, entries: next });
+                    }}
+                    className={adminTextarea}
+                  />
+                </label>
+                <ContentImageField
+                  label={copy.stories.imagePath}
+                  hint={copy.stories.imagePathHint}
+                  value={entry.imageUrl}
+                  onChange={(imageUrl) => {
+                    const next = [...stories.entries];
+                    next[index] = { ...entry, imageUrl };
+                    setStories({ ...stories, entries: next });
+                  }}
+                />
+                <label className={adminField}>
+                  <span className={adminLabel}>{copy.stories.imageAlt}</span>
+                  <input
+                    value={entry.imageAlt}
+                    onChange={(event) => {
+                      const next = [...stories.entries];
+                      next[index] = { ...entry, imageAlt: event.target.value };
+                      setStories({ ...stories, entries: next });
+                    }}
+                    className={adminInput}
+                  />
+                </label>
+              </div>
+            ))}
+          </>
+        ) : null}
+      </div>
+
+      <div className={`${adminSection} flex flex-col gap-4`}>
         <button
           type="button"
           onClick={handleSave}
           disabled={isSaving}
-          className="self-start py-2 text-xs tracking-[0.15em] text-neutral-900 transition-opacity hover:opacity-60 disabled:cursor-not-allowed disabled:text-neutral-300"
+          className={`${adminBtnPrimary} self-start`}
         >
-          {isSaving ? "Saving..." : `Save ${activeTab}`}
+          {isSaving
+            ? ADMIN_COPY.common.saving
+            : copy.saveTab(TABS.find((tab) => tab.id === activeTab)!.label)}
         </button>
-        {error ? (
-          <p className="text-xs font-light text-red-600">{error}</p>
-        ) : null}
-        {message ? (
-          <p className="text-xs font-light text-neutral-500">{message}</p>
-        ) : null}
+        {error ? <p className={adminError}>{error}</p> : null}
+        {message ? <p className={adminSuccess}>{message}</p> : null}
       </div>
+
+      <AdminConfirmDialog
+        open={pendingTab !== null}
+        title={ADMIN_COPY.confirm.title}
+        message={ADMIN_COPY.common.unsavedChanges}
+        confirmLabel={ADMIN_COPY.confirm.proceed}
+        onConfirm={() => {
+          if (pendingTab) {
+            switchTab(pendingTab);
+          }
+        }}
+        onCancel={() => setPendingTab(null)}
+      />
     </div>
   );
 }

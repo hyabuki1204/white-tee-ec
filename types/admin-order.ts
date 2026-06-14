@@ -1,5 +1,6 @@
 import type { OrderStatus } from "@/types/database";
 import type { ProductSize } from "@/types";
+import type { ShippingAddress } from "@/types/order";
 
 /** Admin list view of an order (no line items). */
 export type AdminOrderListItem = {
@@ -36,5 +37,14 @@ export type AdminOrderDetail = {
   paymentStatus: PaymentStatus;
   totalAmount: number;
   email: string | null;
+  stripePaymentIntentId: string | null;
+  shippingAddress: ShippingAddress | null;
   items: AdminOrderDetailItem[];
+};
+
+export type PaginatedOrdersResult = {
+  orders: AdminOrderListItem[];
+  total: number;
+  page: number;
+  pageSize: number;
 };

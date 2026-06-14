@@ -10,6 +10,7 @@ import type {
   CreateOrderInput,
   Order,
   OrderItem,
+  ShippingAddress,
 } from "@/types/order";
 
 import type { OrderStatus } from "@/types/database";
@@ -18,6 +19,24 @@ type PaymentStatusInput = {
   status: OrderStatus;
   stripe_payment_intent_id: string | null;
 };
+
+function parseShippingAddress(raw: unknown): ShippingAddress | null {
+  if (!raw || typeof raw !== "object") {
+    return null;
+  }
+
+  const input = raw as Record<string, unknown>;
+
+  return {
+    name: typeof input.name === "string" ? input.name : null,
+    line1: typeof input.line1 === "string" ? input.line1 : null,
+    line2: typeof input.line2 === "string" ? input.line2 : null,
+    city: typeof input.city === "string" ? input.city : null,
+    state: typeof input.state === "string" ? input.state : null,
+    postalCode: typeof input.postalCode === "string" ? input.postalCode : null,
+    country: typeof input.country === "string" ? input.country : null,
+  };
+}
 
 export function derivePaymentStatus(order: PaymentStatusInput): PaymentStatus {
   if (
@@ -73,6 +92,7 @@ export function mapOrderRowsToOrder(
     status: order.status,
     totalAmount: order.total_amount,
     stripePaymentIntentId: order.stripe_payment_intent_id,
+    shippingAddress: parseShippingAddress(order.shipping_address),
     items: items.map(mapOrderItemRowToOrderItem),
     createdAt: order.created_at,
   };
@@ -90,6 +110,7 @@ export function buildOrderInsertPayload(input: CreateOrderInput) {
     status: input.status ?? "pending",
     total_amount: totalAmount,
     stripe_payment_intent_id: input.stripePaymentIntentId ?? null,
+    shipping_address: input.shippingAddress ?? null,
   };
 }
 

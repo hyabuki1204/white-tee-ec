@@ -1,20 +1,26 @@
 "use client";
 
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AdminLogoutButton } from "@/components/admin/AdminLogoutButton";
+import { ADMIN_COPY } from "@/lib/admin/copy";
+import { adminNavLinkActive, adminNavLinkInactive } from "@/lib/admin/ui";
 import { cn } from "@/lib/utils";
 
 type AdminShellProps = {
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
 const ADMIN_LINKS = [
-  { href: "/admin", label: "Admin", exact: true },
-  { href: "/admin/orders", label: "Orders", exact: false },
-  { href: "/admin/products", label: "Products", exact: false },
-  { href: "/admin/content", label: "Content", exact: false },
-  { href: "/", label: "Store", exact: true },
+  { href: "/admin", label: ADMIN_COPY.nav.dashboard, exact: true },
+  { href: "/admin/orders", label: ADMIN_COPY.nav.orders, exact: false },
+  { href: "/admin/products", label: ADMIN_COPY.nav.products, exact: false },
+  { href: "/admin/fabrics", label: ADMIN_COPY.nav.fabrics, exact: false },
+  { href: "/admin/content", label: ADMIN_COPY.nav.content, exact: false },
+  { href: "/admin/pages", label: ADMIN_COPY.nav.pages, exact: false },
+  { href: "/admin/seo", label: ADMIN_COPY.nav.seo, exact: false },
+  { href: "/", label: ADMIN_COPY.nav.store, exact: true },
 ] as const;
 
 function isAdminLinkActive(
@@ -34,14 +40,14 @@ export function AdminShell({ children }: AdminShellProps) {
   const isLogin = pathname === "/admin/login";
 
   if (isLogin) {
-    return <>{children}</>;
+    return <div className="min-h-screen bg-neutral-50">{children}</div>;
   }
 
   return (
-    <>
-      <div className="sticky top-0 z-40 border-b border-neutral-200/70 bg-background">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5 md:px-10 md:py-6">
-          <nav className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs font-light tracking-wide">
+    <div className="min-h-screen bg-neutral-50">
+      <div className="sticky top-0 z-40 border-b border-neutral-200 bg-white shadow-sm">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-4 md:px-8 lg:px-12">
+          <nav className="flex flex-wrap items-center gap-1">
             {ADMIN_LINKS.map((link) => {
               const isActive = isAdminLinkActive(
                 pathname,
@@ -54,8 +60,7 @@ export function AdminShell({ children }: AdminShellProps) {
                   key={link.href}
                   href={link.href}
                   className={cn(
-                    "transition-opacity hover:opacity-60",
-                    isActive ? "text-neutral-900" : "text-neutral-500",
+                    isActive ? adminNavLinkActive : adminNavLinkInactive,
                   )}
                   aria-current={isActive ? "page" : undefined}
                 >
@@ -68,6 +73,6 @@ export function AdminShell({ children }: AdminShellProps) {
         </div>
       </div>
       {children}
-    </>
+    </div>
   );
 }

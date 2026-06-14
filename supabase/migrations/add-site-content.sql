@@ -38,10 +38,10 @@ values
   (
     'about',
     '{
-      "headline": "The space between fabric and skin.",
+      "headline": "The space between cloth and skin.",
       "bodyParagraphs": [
-        ["A white T-shirt is the simplest thing to make,", "and the hardest to get right."],
-        ["We knit our own fabric.", "We think in structure, in cotton, in air."],
+        ["A white tee is the simplest garment,", "and the hardest to make well."],
+        ["We knit our own cloth.", "Structure, cotton, air — in that order."],
         ["What you wear should disappear.", "What remains should feel true."]
       ]
     }'::jsonb
@@ -51,17 +51,16 @@ values
     '{
       "pageTitle": "Stories",
       "introLines": [
-        "How a white T-shirt is made —",
-        "and why each decision matters."
+        "The making of a white tee.",
+        "Cloth, structure, air, process."
       ],
       "entries": [
         {
           "id": "fabric",
           "title": "Fabric",
           "lines": [
-            "We knit our own jersey.",
-            "Cotton is chosen for weight, hand,",
-            "and how quietly it holds light."
+            "Jersey knit in-house.",
+            "Weight, hand, and how quietly it holds light."
           ],
           "imageUrl": "/stories/fabric.jpg",
           "imageAlt": "Close-up of white knit cotton fabric"
@@ -70,9 +69,8 @@ values
           "id": "structure",
           "title": "Structure",
           "lines": [
-            "Every stitch shapes the silhouette.",
-            "What you see is simple —",
-            "what you feel is carefully built."
+            "Every stitch holds the line.",
+            "Simple to see. Quiet to wear."
           ],
           "imageUrl": "/stories/structure.jpg",
           "imageAlt": "White yarn and knit structure"
@@ -82,8 +80,7 @@ values
           "title": "Air",
           "lines": [
             "Space between thread and skin.",
-            "Breathability is not added later —",
-            "it is part of the form from the start."
+            "Air held in the knit from the start."
           ],
           "imageUrl": "/stories/air.jpg",
           "imageAlt": "Soft white fabric in gentle light"

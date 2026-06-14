@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 import { ProductCard } from "@/components/product/ProductCard";
+import { SITE_UI_COPY } from "@/lib/copy/site-ui";
 import type { Product } from "@/types";
 
 type FeaturedProductsSectionProps = {
@@ -14,11 +15,13 @@ export function FeaturedProductsSection({
     return null;
   }
 
+  const { home: copy } = SITE_UI_COPY;
+
   return (
-    <section aria-label="Featured products">
-      <Container as="div" className="py-20 md:py-28 lg:py-32">
+    <section aria-label="Selection">
+      <Container as="div" className="pt-12 pb-20 sm:pt-14 sm:pb-24 md:pt-16 md:pb-28 lg:pt-20 lg:pb-32">
         <p className="mb-14 text-[10px] font-light tracking-[0.14em] text-neutral-400 md:mb-16">
-          Featured
+          {copy.selection}
         </p>
 
         <ul className="grid grid-cols-1 gap-x-8 gap-y-20 sm:grid-cols-2 sm:gap-x-10 lg:grid-cols-3 lg:gap-x-12">
@@ -34,7 +37,7 @@ export function FeaturedProductsSection({
             href="/products"
             className="text-[11px] font-light tracking-[0.08em] text-neutral-500 transition-opacity duration-500 hover:opacity-50"
           >
-            View all products
+            {copy.allPieces}
           </Link>
         </div>
       </Container>

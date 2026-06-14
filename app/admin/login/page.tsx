@@ -1,20 +1,18 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { AdminLoginForm } from "@/components/admin/AdminLoginForm";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { Container } from "@/components/layout/Container";
+import { ADMIN_COPY } from "@/lib/admin/copy";
 
 export const metadata: Metadata = {
-  title: "Sign In | Admin | WHITE TEE",
+  title: "ログイン | 管理画面 | WHITE TEE",
 };
 
 export default function AdminLoginPage() {
   return (
-    <Container as="section" className="py-16 md:py-24 lg:py-28">
-      <header className="mb-12 space-y-4">
-        <p className="text-xs tracking-[0.3em] text-neutral-500">Admin</p>
-        <h1 className="text-sm font-light text-neutral-900">Sign in</h1>
-      </header>
-
+    <Container as="section" className="py-10 md:py-12">
+      <AdminPageHeader title={ADMIN_COPY.login.title} />
       <Suspense fallback={null}>
         <AdminLoginForm />
       </Suspense>

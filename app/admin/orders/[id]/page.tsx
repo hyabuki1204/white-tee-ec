@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { AdminBackLink } from "@/components/admin/AdminBackLink";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { OrderDetailSummary } from "@/components/admin/OrderDetailSummary";
 import { OrderItemsTable } from "@/components/admin/OrderItemsTable";
 import { OrderStatusUpdater } from "@/components/admin/OrderStatusUpdater";
 import { Container } from "@/components/layout/Container";
+import { ADMIN_COPY } from "@/lib/admin/copy";
+import { adminSection, adminSectionTitle } from "@/lib/admin/ui";
 import { getAdminOrderDetail } from "@/lib/orders/queries";
 
 type AdminOrderDetailPageProps = {
@@ -17,7 +20,7 @@ export async function generateMetadata({
   const { id } = await params;
 
   return {
-    title: `Order ${id.slice(0, 8)} | Admin | WHITE TEE`,
+    title: `注文 ${id.slice(0, 8)} | 管理画面 | WHITE TEE`,
   };
 }
 
@@ -32,30 +35,27 @@ export default async function AdminOrderDetailPage({
   }
 
   return (
-    <Container as="section" className="py-16 md:py-24 lg:py-28">
-      <header className="mb-12 md:mb-16">
-        <p className="text-xs tracking-[0.3em] text-neutral-500">
-          Admin · Order
-        </p>
-      </header>
+    <Container as="section" className="py-10 md:py-12">
+      <AdminPageHeader
+        title={ADMIN_COPY.orders.detailTitle}
+        subtitle={`ID: ${order.id.slice(0, 8)}…`}
+      />
 
-      <OrderDetailSummary order={order} />
+      <div className="space-y-6">
+        <OrderDetailSummary order={order} />
+        <OrderStatusUpdater
+          orderId={order.id}
+          currentStatus={order.status}
+          resendConfigured={Boolean(process.env.RESEND_API_KEY)}
+        />
 
-      <OrderStatusUpdater orderId={order.id} currentStatus={order.status} />
+        <section className={adminSection}>
+          <h2 className={adminSectionTitle}>{ADMIN_COPY.orders.items}</h2>
+          <OrderItemsTable items={order.items} />
+        </section>
+      </div>
 
-      <section className="pt-12">
-        <h2 className="mb-8 text-xs font-light tracking-wide text-neutral-500">
-          Items
-        </h2>
-        <OrderItemsTable items={order.items} />
-      </section>
-
-      <Link
-        href="/admin/orders"
-        className="mt-16 inline-block text-xs font-light tracking-wide text-neutral-900 transition-opacity hover:opacity-60"
-      >
-        ← Back to Orders
-      </Link>
+      <AdminBackLink href="/admin/orders" label={ADMIN_COPY.common.backToOrders} />
     </Container>
   );
 }

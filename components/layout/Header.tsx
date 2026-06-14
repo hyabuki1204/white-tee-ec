@@ -135,15 +135,15 @@ export function Header() {
               </ul>
             </nav>
 
-            <div className="flex items-center gap-4 md:hidden">
-              <CartNavLink />
+            <div className="flex items-center gap-1 md:hidden">
+              <CartNavLink className="flex min-h-11 min-w-11 items-center justify-center" />
               <button
                 type="button"
                 aria-expanded={menuOpen}
                 aria-controls="mobile-navigation"
                 aria-label={menuOpen ? "Close menu" : "Open menu"}
                 onClick={() => setMenuOpen((open) => !open)}
-                className="flex h-10 w-10 items-center justify-center text-neutral-700"
+                className="flex h-11 w-11 items-center justify-center text-neutral-700"
               >
                 <span className="relative block h-3 w-4">
                   <span

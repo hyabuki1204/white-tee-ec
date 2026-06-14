@@ -2,7 +2,11 @@
 
 import { useRouter } from "next/navigation";
 import { StatusBadge } from "@/components/admin/StatusBadge";
-import { formatAdminLabel, formatAdminListDate } from "@/lib/admin/format";
+import {
+  formatAdminListDate,
+  formatPaymentStatusLabel,
+} from "@/lib/admin/format";
+import { adminTd, adminTdMuted } from "@/lib/admin/ui";
 import { formatPrice } from "@/lib/utils/format-price";
 import type { AdminOrderListItem } from "@/types/admin-order";
 
@@ -30,28 +34,26 @@ export function OrdersTableRow({ order }: OrdersTableRowProps) {
       }}
       tabIndex={0}
       role="link"
-      aria-label={`Order ${shortId}`}
-      className="group cursor-pointer border-b border-neutral-200/40 transition-colors last:border-b-0 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-neutral-300"
+      aria-label={`注文 ${shortId}`}
+      className="group cursor-pointer transition-colors hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-neutral-300"
     >
-      <td className="py-6 pr-6">
-        <span className="font-mono text-xs font-light text-neutral-900 underline decoration-transparent underline-offset-4 transition-[text-decoration-color] group-hover:decoration-neutral-400">
+      <td className={adminTd}>
+        <span className="font-mono font-medium text-neutral-900 underline decoration-transparent underline-offset-4 group-hover:decoration-neutral-400">
           {shortId}
         </span>
       </td>
-      <td className="max-w-[12rem] truncate py-6 pr-6 text-xs font-light text-neutral-600">
+      <td className={`${adminTdMuted} max-w-[14rem] truncate`}>
         {order.email ?? "—"}
       </td>
-      <td className="py-6 pr-6 text-xs font-light tabular-nums text-neutral-600">
+      <td className={`${adminTdMuted} tabular-nums`}>
         {formatAdminListDate(order.createdAt)}
       </td>
-      <td className="py-6 pr-6 text-xs font-light text-neutral-800">
-        {formatPrice(order.totalAmount)}
-      </td>
-      <td className="py-6 pr-6">
+      <td className={`${adminTd} font-medium`}>{formatPrice(order.totalAmount)}</td>
+      <td className={adminTd}>
         <StatusBadge status={order.status} />
       </td>
-      <td className="py-6 text-xs font-light text-neutral-600">
-        {formatAdminLabel(order.paymentStatus)}
+      <td className={adminTdMuted}>
+        {formatPaymentStatusLabel(order.paymentStatus)}
       </td>
     </tr>
   );

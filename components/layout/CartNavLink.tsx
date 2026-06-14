@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { SITE_UI_COPY } from "@/lib/copy/site-ui";
 import { useCartStore } from "@/lib/cart/store";
 import { cn } from "@/lib/utils";
 
@@ -13,6 +14,7 @@ type CartNavLinkProps = {
 export function CartNavLink({ onNavigate, className }: CartNavLinkProps) {
   const [mounted, setMounted] = useState(false);
   const count = useCartStore((state) => state.getItemCount());
+  const { cart: copy } = SITE_UI_COPY;
 
   useEffect(() => {
     setMounted(true);
@@ -28,9 +30,11 @@ export function CartNavLink({ onNavigate, className }: CartNavLinkProps) {
         "relative inline-block text-[13px] font-light tracking-wide text-neutral-600 transition-colors hover:text-neutral-900 md:text-sm",
         className,
       )}
-      aria-label={showBadge ? `Cart, ${count} items` : "Cart"}
+      aria-label={
+        showBadge ? `${copy.title}, ${count} items` : copy.title
+      }
     >
-      Cart
+      {copy.title}
       {showBadge ? (
         <span
           aria-hidden

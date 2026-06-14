@@ -12,22 +12,22 @@ type AdminSectionListProps = {
 
 export function AdminSectionList({ sections }: AdminSectionListProps) {
   return (
-    <ul className="divide-y divide-neutral-200/70">
+    <ul className="divide-y divide-neutral-200 rounded-lg border border-neutral-200 bg-white">
       {sections.map((section) => (
         <li key={section.href}>
           <Link
             href={section.href}
-            className="group flex items-baseline justify-between py-8 transition-opacity hover:opacity-60"
+            className="group flex items-center justify-between gap-6 px-6 py-6 transition-colors hover:bg-neutral-50"
           >
-            <div className="space-y-2">
-              <p className="text-sm font-light tracking-wide text-neutral-900">
+            <div className="space-y-1.5">
+              <p className="text-base font-semibold text-neutral-900">
                 {section.label}
               </p>
-              <p className="text-xs font-light text-neutral-500">
-                {section.description}
-              </p>
+              <p className="text-sm text-neutral-600">{section.description}</p>
             </div>
-            <span className="text-xs font-light text-neutral-400">→</span>
+            <span className="text-sm font-medium text-neutral-400 group-hover:text-neutral-700">
+              →
+            </span>
           </Link>
         </li>
       ))}

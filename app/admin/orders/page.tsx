@@ -1,33 +1,41 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { AdminBackLink } from "@/components/admin/AdminBackLink";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { OrdersPageContent } from "@/components/admin/OrdersPageContent";
 import { Container } from "@/components/layout/Container";
-import { listOrders } from "@/lib/orders/queries";
+import { ADMIN_COPY } from "@/lib/admin/copy";
+import { listOrdersPaginated } from "@/lib/orders/queries";
 
 export const metadata: Metadata = {
-  title: "Orders | Admin | WHITE TEE",
+  title: "注文 | 管理画面 | WHITE TEE",
 };
 
-export default async function AdminOrdersPage() {
-  const orders = await listOrders();
+const PAGE_SIZE = 20;
+
+type AdminOrdersPageProps = {
+  searchParams: Promise<{ page?: string }>;
+};
+
+export default async function AdminOrdersPage({
+  searchParams,
+}: AdminOrdersPageProps) {
+  const { page: pageParam } = await searchParams;
+  const page = Math.max(1, Number(pageParam) || 1);
+  const { orders, total } = await listOrdersPaginated(page, PAGE_SIZE);
 
   return (
-    <Container as="section" className="py-16 md:py-24 lg:py-28">
-      <header className="mb-12 md:mb-16">
-        <p className="text-xs tracking-[0.3em] text-neutral-500">Admin · Orders</p>
-        <p className="mt-4 text-sm font-light text-neutral-500">
-          {orders.length} order{orders.length === 1 ? "" : "s"}
-        </p>
-      </header>
-
-      <OrdersPageContent orders={orders} />
-
-      <Link
-        href="/admin"
-        className="mt-16 inline-block text-xs font-light tracking-wide text-neutral-900 transition-opacity hover:opacity-60"
-      >
-        ← Back to Admin
-      </Link>
+    <Container as="section" className="py-10 md:py-12">
+      <AdminPageHeader
+        title={ADMIN_COPY.orders.title}
+        subtitle={ADMIN_COPY.common.count(total, "注文")}
+      />
+      <OrdersPageContent
+        orders={orders}
+        total={total}
+        page={page}
+        pageSize={PAGE_SIZE}
+      />
+      <AdminBackLink href="/admin" label={ADMIN_COPY.common.backToDashboard} />
     </Container>
   );
 }

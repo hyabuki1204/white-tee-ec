@@ -1,4 +1,4 @@
-import { formatAdminLabel } from "@/lib/admin/format";
+import { formatOrderStatusLabel } from "@/lib/admin/format";
 import { getOrderStatusStyle } from "@/lib/admin/order-status-styles";
 import type { OrderStatus } from "@/types/database";
 
@@ -12,9 +12,9 @@ export function StatusBadge({ status, className = "" }: StatusBadgeProps) {
 
   return (
     <span
-      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-light tracking-wide ${badge} ${className}`.trim()}
+      className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${badge} ${className}`.trim()}
     >
-      {formatAdminLabel(status)}
+      {formatOrderStatusLabel(status)}
     </span>
   );
 }

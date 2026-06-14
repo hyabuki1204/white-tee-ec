@@ -9,7 +9,17 @@ type RouteContext = {
   params: Promise<{ key: string }>;
 };
 
-const VALID_KEYS: SiteContentKey[] = ["home", "about", "stories"];
+const VALID_KEYS: SiteContentKey[] = [
+  "home",
+  "about",
+  "stories",
+  "legal",
+  "contact",
+  "shipping",
+  "privacy",
+  "terms",
+  "seo",
+];
 
 function isSiteContentKey(value: string): value is SiteContentKey {
   return VALID_KEYS.includes(value as SiteContentKey);
@@ -19,18 +29,43 @@ function revalidateContentPaths(key: SiteContentKey) {
   switch (key) {
     case "home":
       revalidatePath("/");
+      revalidatePath("/admin/content");
       break;
     case "about":
       revalidatePath("/about");
+      revalidatePath("/admin/content");
       break;
     case "stories":
       revalidatePath("/stories");
+      revalidatePath("/admin/content");
+      break;
+    case "legal":
+      revalidatePath("/legal");
+      revalidatePath("/admin/pages");
+      break;
+    case "contact":
+      revalidatePath("/contact");
+      revalidatePath("/admin/pages");
+      break;
+    case "shipping":
+      revalidatePath("/shipping");
+      revalidatePath("/admin/pages");
+      break;
+    case "privacy":
+      revalidatePath("/privacy");
+      revalidatePath("/admin/pages");
+      break;
+    case "terms":
+      revalidatePath("/terms");
+      revalidatePath("/admin/pages");
+      break;
+    case "seo":
+      revalidatePath("/");
+      revalidatePath("/admin/seo");
       break;
     default:
       break;
   }
-
-  revalidatePath("/admin/content");
 }
 
 export async function PUT(request: Request, context: RouteContext) {

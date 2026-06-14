@@ -1,15 +1,28 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { OrdersTable } from "@/components/admin/OrdersTable";
+import { ADMIN_COPY } from "@/lib/admin/copy";
+import { formatOrderStatusLabel } from "@/lib/admin/format";
+import {
+  adminBtnSecondary,
+  adminField,
+  adminInput,
+  adminLabel,
+  adminMuted,
+  adminSection,
+} from "@/lib/admin/ui";
 import { ADMIN_ORDER_STATUSES } from "@/lib/admin/order-status-options";
-import { formatAdminLabel } from "@/lib/admin/format";
 import { formatPrice } from "@/lib/utils/format-price";
 import type { AdminOrderListItem } from "@/types/admin-order";
 import type { OrderStatus } from "@/types/database";
 
 type OrdersPageContentProps = {
   orders: AdminOrderListItem[];
+  total: number;
+  page: number;
+  pageSize: number;
 };
 
 type StatusFilter = "all" | OrderStatus;
@@ -54,9 +67,17 @@ function exportOrdersCsv(orders: AdminOrderListItem[]) {
   URL.revokeObjectURL(url);
 }
 
-export function OrdersPageContent({ orders }: OrdersPageContentProps) {
+export function OrdersPageContent({
+  orders,
+  total,
+  page,
+  pageSize,
+}: OrdersPageContentProps) {
+  const router = useRouter();
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const copy = ADMIN_COPY.orders;
+  const pagination = ADMIN_COPY.pagination;
 
   const filteredOrders = useMemo(() => {
     return orders.filter((order) => {
@@ -67,60 +88,109 @@ export function OrdersPageContent({ orders }: OrdersPageContentProps) {
     });
   }, [orders, query, statusFilter]);
 
-  return (
-    <div className="space-y-8">
-      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
-          <label className="block space-y-2">
-            <span className="text-xs font-light text-neutral-500">Search</span>
-            <input
-              type="search"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="Order ID or email"
-              className="w-full min-w-[14rem] border-b border-neutral-300 bg-transparent py-2 text-xs font-light text-neutral-800 outline-none sm:w-64"
-            />
-          </label>
+  const filteredTotal = filteredOrders.reduce(
+    (sum, order) => sum + order.totalAmount,
+    0,
+  );
 
-          <label className="block space-y-2">
-            <span className="text-xs font-light text-neutral-500">Status</span>
-            <select
-              value={statusFilter}
-              onChange={(event) =>
-                setStatusFilter(event.target.value as StatusFilter)
-              }
-              className="w-full border-b border-neutral-300 bg-transparent py-2 text-xs font-light text-neutral-800 outline-none sm:w-40"
-            >
-              <option value="all">All</option>
-              {ADMIN_ORDER_STATUSES.map((status) => (
-                <option key={status} value={status}>
-                  {formatAdminLabel(status)}
-                </option>
-              ))}
-            </select>
-          </label>
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+
+  const goToPage = (nextPage: number) => {
+    const params = new URLSearchParams();
+    if (nextPage > 1) {
+      params.set("page", String(nextPage));
+    }
+    const qs = params.toString();
+    router.push(qs ? `/admin/orders?${qs}` : "/admin/orders");
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className={`${adminSection} space-y-6`}>
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
+            <label className={adminField}>
+              <span className={adminLabel}>{copy.search}</span>
+              <input
+                type="search"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder={copy.searchPlaceholder}
+                className={`${adminInput} sm:w-72`}
+              />
+            </label>
+
+            <label className={adminField}>
+              <span className={adminLabel}>{copy.status}</span>
+              <select
+                value={statusFilter}
+                onChange={(event) =>
+                  setStatusFilter(event.target.value as StatusFilter)
+                }
+                className={`${adminInput} sm:w-44`}
+              >
+                <option value="all">{ADMIN_COPY.common.all}</option>
+                {ADMIN_ORDER_STATUSES.map((status) => (
+                  <option key={status} value={status}>
+                    {formatOrderStatusLabel(status)}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => exportOrdersCsv(filteredOrders)}
+            disabled={filteredOrders.length === 0}
+            className={adminBtnSecondary}
+          >
+            {copy.exportCsv}
+          </button>
         </div>
 
-        <button
-          type="button"
-          onClick={() => exportOrdersCsv(filteredOrders)}
-          disabled={filteredOrders.length === 0}
-          className="self-start py-2 text-xs tracking-[0.12em] text-neutral-900 transition-opacity hover:opacity-60 disabled:cursor-not-allowed disabled:text-neutral-300"
-        >
-          Export CSV
-        </button>
+        <p className={adminMuted}>
+          {copy.showing(filteredOrders.length, total)}
+          {filteredOrders.length > 0
+            ? ` · ${copy.totalAmount(formatPrice(filteredTotal))}`
+            : null}
+        </p>
       </div>
 
-      <p className="text-xs font-light text-neutral-500">
-        Showing {filteredOrders.length} of {orders.length} orders
-        {filteredOrders.length > 0
-          ? ` · ${formatPrice(
-              filteredOrders.reduce((sum, order) => sum + order.totalAmount, 0),
-            )} total`
-          : null}
-      </p>
+      <OrdersTable
+        orders={filteredOrders}
+        query={query}
+        statusFilter={statusFilter}
+      />
 
-      <OrdersTable orders={filteredOrders} query={query} statusFilter={statusFilter} />
+      {totalPages > 1 ? (
+        <nav
+          className={`${adminSection} flex flex-wrap items-center justify-between gap-4`}
+          aria-label={pagination.label}
+        >
+          <p className={adminMuted}>
+            {pagination.pageOf(page, totalPages, total)}
+          </p>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => goToPage(page - 1)}
+              disabled={page <= 1}
+              className={adminBtnSecondary}
+            >
+              {pagination.prev}
+            </button>
+            <button
+              type="button"
+              onClick={() => goToPage(page + 1)}
+              disabled={page >= totalPages}
+              className={adminBtnSecondary}
+            >
+              {pagination.next}
+            </button>
+          </div>
+        </nav>
+      ) : null}
     </div>
   );
 }

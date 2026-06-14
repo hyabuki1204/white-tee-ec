@@ -7,19 +7,17 @@ export function CopySection({ heroCopy, conceptLines }: CopySectionProps) {
   return (
     <section
       aria-label="Brand statement"
-      className="flex flex-col items-center px-6 pt-28 pb-32 md:pt-32 md:pb-36 lg:pt-36 lg:pb-40"
+      className="flex flex-col items-center px-6 pt-8 pb-16 sm:pt-10 sm:pb-20 md:pt-20 md:pb-24 lg:pt-24 lg:pb-28"
     >
-      <div className="flex w-full flex-col items-center gap-20 md:gap-24 lg:gap-28">
-        <h2 className="text-center text-[15px] font-light leading-[1.7] tracking-[0.14em] text-neutral-800 md:text-[14px]">
-          {heroCopy}
-        </h2>
+      <h1 className="hidden text-center text-[14px] font-light tracking-[0.14em] text-neutral-800 md:block">
+        {heroCopy}
+      </h1>
 
-        <p className="w-full max-w-[16rem] text-center text-[12px] font-light leading-[1.85] tracking-[0.04em] text-neutral-500 md:max-w-[15rem] md:text-[11px]">
-          {conceptLines[0]}
-          <br />
-          {conceptLines[1]}
-        </p>
-      </div>
+      <p className="w-full max-w-[18rem] text-center text-[13px] font-light leading-[1.95] tracking-[0.03em] text-neutral-600 sm:max-w-[16rem] md:mt-10 md:max-w-[22rem] md:text-[12px] md:leading-[2.05] md:tracking-[0.04em] md:text-neutral-500 lg:mt-12">
+        {conceptLines[0]}
+        <br />
+        {conceptLines[1]}
+      </p>
     </section>
   );
 }

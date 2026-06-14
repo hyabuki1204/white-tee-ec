@@ -12,7 +12,7 @@ const TABS = [
   { id: "description", label: "Description" },
   { id: "material", label: "Material" },
   { id: "care", label: "Care" },
-  { id: "sizeGuide", label: "Size Guide" },
+  { id: "sizeGuide", label: "Size" },
 ] as const;
 
 type TabId = (typeof TABS)[number]["id"];
@@ -22,11 +22,11 @@ export function ProductDetailTabs({ detail }: ProductDetailTabsProps) {
   const baseId = useId();
 
   return (
-    <div className="mt-10 md:mt-12 lg:mt-0">
+    <div>
       <div
         role="tablist"
         aria-label="Product details"
-        className="flex flex-wrap gap-x-6 gap-y-2 border-b border-neutral-200/70 md:gap-x-8"
+        className="flex flex-wrap gap-x-5 gap-y-2 md:gap-x-6"
       >
         {TABS.map((tab) => {
           const isActive = activeTab === tab.id;
@@ -42,10 +42,10 @@ export function ProductDetailTabs({ detail }: ProductDetailTabsProps) {
               aria-controls={`${tabId}-panel`}
               onClick={() => setActiveTab(tab.id)}
               className={cn(
-                "-mb-px pb-3 text-[11px] font-light tracking-[0.06em] transition-colors duration-300",
+                "min-h-10 py-1 text-[11px] font-light tracking-[0.08em] transition-opacity duration-300 md:min-h-0 md:py-0 md:text-[10px] md:tracking-[0.1em]",
                 isActive
-                  ? "border-b border-neutral-900 text-neutral-900"
-                  : "border-b border-transparent text-neutral-400 hover:text-neutral-600",
+                  ? "text-neutral-600 opacity-100"
+                  : "text-neutral-400 opacity-60 hover:opacity-80",
               )}
             >
               {tab.label}
@@ -54,7 +54,7 @@ export function ProductDetailTabs({ detail }: ProductDetailTabsProps) {
         })}
       </div>
 
-      <div className="pt-8">
+      <div className="pt-10 md:pt-12">
         {TABS.map((tab) => {
           const tabId = `${baseId}-${tab.id}`;
           const isActive = activeTab === tab.id;
@@ -71,12 +71,12 @@ export function ProductDetailTabs({ detail }: ProductDetailTabsProps) {
               aria-labelledby={tabId}
             >
               {tab.id === "description" && (
-                <div className="max-w-sm space-y-4">
-                  <p className="text-sm font-light leading-[2] tracking-[0.02em] text-neutral-500">
+                <div className="space-y-5">
+                  <p className="text-xs font-light leading-[2.05] tracking-[0.03em] text-neutral-500">
                     {detail.description}
                   </p>
                   {detail.fitNote ? (
-                    <p className="text-[11px] font-light tracking-[0.04em] text-neutral-400">
+                    <p className="text-[10px] font-light leading-[1.9] tracking-[0.04em] text-neutral-400">
                       {detail.fitNote}
                     </p>
                   ) : null}
@@ -84,55 +84,55 @@ export function ProductDetailTabs({ detail }: ProductDetailTabsProps) {
               )}
 
               {tab.id === "material" && (
-                <p className="text-sm font-light uppercase tracking-[0.08em] text-neutral-500">
+                <p className="text-xs font-light leading-[2] tracking-[0.04em] text-neutral-500">
                   {detail.material}
                 </p>
               )}
 
               {tab.id === "care" && (
-                <p className="max-w-sm text-[11px] font-light uppercase leading-[1.9] tracking-[0.06em] text-neutral-500">
+                <p className="text-xs font-light leading-[2.05] tracking-[0.03em] text-neutral-500">
                   {detail.care}
                 </p>
               )}
 
               {tab.id === "sizeGuide" && (
-                <div className="max-w-md">
-                  <p className="text-[10px] font-light tracking-[0.12em] text-neutral-400">
-                    Product measurements (cm)
+                <div>
+                  <p className="text-[10px] font-light tracking-[0.1em] text-neutral-400">
+                    Measurements (cm)
                   </p>
-                  <table className="mt-5 w-full border-collapse text-left">
+                  <table className="mt-6 w-full text-left">
                     <caption className="sr-only">
                       Size guide measurements in centimeters
                     </caption>
                     <thead>
-                      <tr className="border-b border-neutral-200/70">
+                      <tr>
                         <th
                           scope="col"
-                          className="pb-2 pr-4 text-[10px] font-light tracking-[0.1em] text-neutral-400"
+                          className="pb-3 pr-3 text-[10px] font-light tracking-[0.08em] text-neutral-400"
                         >
                           Size
                         </th>
                         <th
                           scope="col"
-                          className="pb-2 pr-4 text-[10px] font-light tracking-[0.1em] text-neutral-400"
+                          className="pb-3 pr-3 text-[10px] font-light tracking-[0.08em] text-neutral-400"
                         >
                           Length
                         </th>
                         <th
                           scope="col"
-                          className="pb-2 pr-4 text-[10px] font-light tracking-[0.1em] text-neutral-400"
+                          className="pb-3 pr-3 text-[10px] font-light tracking-[0.08em] text-neutral-400"
                         >
                           Shoulder
                         </th>
                         <th
                           scope="col"
-                          className="pb-2 pr-4 text-[10px] font-light tracking-[0.1em] text-neutral-400"
+                          className="pb-3 pr-3 text-[10px] font-light tracking-[0.08em] text-neutral-400"
                         >
                           Chest
                         </th>
                         <th
                           scope="col"
-                          className="pb-2 text-[10px] font-light tracking-[0.1em] text-neutral-400"
+                          className="pb-3 text-[10px] font-light tracking-[0.08em] text-neutral-400"
                         >
                           Sleeve
                         </th>
@@ -140,35 +140,32 @@ export function ProductDetailTabs({ detail }: ProductDetailTabsProps) {
                     </thead>
                     <tbody>
                       {detail.sizeGuide.map((row) => (
-                        <tr
-                          key={row.size}
-                          className="border-b border-neutral-100 last:border-0"
-                        >
+                        <tr key={row.size}>
                           <th
                             scope="row"
-                            className="py-2.5 pr-4 text-left text-xs font-light text-neutral-700"
+                            className="py-2 pr-3 text-left text-[11px] font-light text-neutral-600"
                           >
                             {row.size}
                           </th>
-                          <td className="py-2.5 pr-4 text-xs font-light text-neutral-500">
+                          <td className="py-2 pr-3 text-[11px] font-light text-neutral-500">
                             {row.length}
                           </td>
-                          <td className="py-2.5 pr-4 text-xs font-light text-neutral-500">
+                          <td className="py-2 pr-3 text-[11px] font-light text-neutral-500">
                             {row.shoulder}
                           </td>
-                          <td className="py-2.5 pr-4 text-xs font-light text-neutral-500">
+                          <td className="py-2 pr-3 text-[11px] font-light text-neutral-500">
                             {row.chest}
                           </td>
-                          <td className="py-2.5 text-xs font-light text-neutral-500">
+                          <td className="py-2 text-[11px] font-light text-neutral-500">
                             {row.sleeve}
                           </td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
-                  <p className="mt-6 max-w-sm text-[10px] font-light leading-[1.8] tracking-[0.04em] text-neutral-400">
-                    Length measured from back collar to hem. Shoulder width from
-                    tip to tip. Chest measured flat across the body.
+                  <p className="mt-8 text-[10px] font-light leading-[1.9] tracking-[0.04em] text-neutral-400">
+                    Length from back collar to hem. Shoulder tip to tip. Chest
+                    measured flat.
                   </p>
                 </div>
               )}

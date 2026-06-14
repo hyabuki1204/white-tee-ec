@@ -1,5 +1,5 @@
 import type Stripe from "stripe";
-import type { CreateOrderInput, CreateOrderItemInput } from "@/types/order";
+import type { CreateOrderInput, CreateOrderItemInput, ShippingAddress } from "@/types/order";
 import type { ProductSize } from "@/types";
 
 const VALID_SIZES: ProductSize[] = ["S", "M", "L", "XL"];
@@ -61,6 +61,47 @@ export function getPaymentIntentId(
   throw new Error("Checkout session has no payment_intent.");
 }
 
+function extractShippingAddress(
+  session: Stripe.Checkout.Session,
+): ShippingAddress | null {
+  type ShippingDetails = {
+    name?: string | null;
+    address?: {
+      line1?: string | null;
+      line2?: string | null;
+      city?: string | null;
+      state?: string | null;
+      postal_code?: string | null;
+      country?: string | null;
+    } | null;
+  };
+
+  const extended = session as Stripe.Checkout.Session & {
+    shipping_details?: ShippingDetails | null;
+    collected_information?: {
+      shipping_details?: ShippingDetails | null;
+    } | null;
+  };
+
+  const details =
+    extended.shipping_details ??
+    extended.collected_information?.shipping_details;
+
+  if (!details?.address) {
+    return null;
+  }
+
+  return {
+    name: details.name ?? null,
+    line1: details.address.line1 ?? null,
+    line2: details.address.line2 ?? null,
+    city: details.address.city ?? null,
+    state: details.address.state ?? null,
+    postalCode: details.address.postal_code ?? null,
+    country: details.address.country ?? null,
+  };
+}
+
 /** Build CreateOrderInput from a completed Checkout Session and its line items. */
 export function buildCreateOrderInputFromCheckoutSession(
   session: Stripe.Checkout.Session,
@@ -74,6 +115,7 @@ export function buildCreateOrderInputFromCheckoutSession(
     email: session.customer_details?.email ?? session.customer_email ?? null,
     status: "paid",
     stripePaymentIntentId: getPaymentIntentId(session),
+    shippingAddress: extractShippingAddress(session),
     items: lineItems.map(mapLineItemToOrderItem),
   };
 }

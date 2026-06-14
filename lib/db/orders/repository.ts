@@ -10,7 +10,7 @@ import {
   mapOrderRowsToOrder,
 } from "@/lib/db/orders/mapper";
 import type { CreateOrderInput, Order } from "@/types/order";
-import type { AdminOrderListItem } from "@/types/admin-order";
+import type { AdminOrderListItem, PaginatedOrdersResult } from "@/types/admin-order";
 import type { OrderStatus } from "@/types/database";
 
 /**
@@ -135,22 +135,42 @@ export async function getOrderByStripePaymentIntentId(
 
 /** List all orders for admin (newest first). */
 export async function listOrders(): Promise<AdminOrderListItem[]> {
+  const result = await listOrdersPaginated(1, Number.MAX_SAFE_INTEGER);
+  return result.orders;
+}
+
+/** Paginated order list for admin. */
+export async function listOrdersPaginated(
+  page: number,
+  pageSize: number,
+): Promise<PaginatedOrdersResult> {
   if (!isSupabaseConfigured()) {
-    return [];
+    return { orders: [], total: 0, page, pageSize };
   }
+
+  const safePage = Math.max(1, page);
+  const safePageSize = Math.max(1, Math.min(pageSize, 100));
+  const from = (safePage - 1) * safePageSize;
+  const to = from + safePageSize - 1;
 
   const supabase = createSupabaseAdminClient();
 
-  const { data, error } = await supabase
+  const { data, error, count } = await supabase
     .from("orders")
-    .select("*")
-    .order("created_at", { ascending: false });
+    .select("*", { count: "exact" })
+    .order("created_at", { ascending: false })
+    .range(from, to);
 
   if (error) {
     throw new Error(`Failed to list orders: ${error.message}`);
   }
 
-  return (data ?? []).map(mapOrderRowToAdminListItem);
+  return {
+    orders: (data ?? []).map(mapOrderRowToAdminListItem),
+    total: count ?? 0,
+    page: safePage,
+    pageSize: safePageSize,
+  };
 }
 
 /** Update order status (admin use, service role). */

@@ -8,6 +8,7 @@ export type AdminProductListItem = {
   price: number;
   isPublished: boolean;
   primaryImageUrl: string | null;
+  totalStock: number;
   updatedAt: string;
 };
 

@@ -1,35 +1,42 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { AdminBackLink } from "@/components/admin/AdminBackLink";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { ContentEditor } from "@/components/admin/ContentEditor";
 import { Container } from "@/components/layout/Container";
-import { getAllSiteContent } from "@/lib/content/queries";
+import { ADMIN_COPY } from "@/lib/admin/copy";
+import { getSiteContent } from "@/lib/content/queries";
+import { listProductsForAdmin } from "@/lib/products/admin-queries";
+import { isSupabaseConfigured } from "@/lib/supabase/env";
 
 export const metadata: Metadata = {
-  title: "Content | Admin | WHITE TEE",
+  title: "ホームページ設定 | 管理画面 | WHITE TEE",
 };
 
 export default async function AdminContentPage() {
-  const content = await getAllSiteContent();
+  const [home, about, stories, products] = await Promise.all([
+    getSiteContent("home"),
+    getSiteContent("about"),
+    getSiteContent("stories"),
+    isSupabaseConfigured() ? listProductsForAdmin() : Promise.resolve([]),
+  ]);
+
+  const productOptions = products.map((product) => ({
+    slug: product.slug,
+    name: product.name,
+    isPublished: product.isPublished,
+  }));
 
   return (
-    <Container as="section" className="py-16 md:py-24 lg:py-28">
-      <header className="mb-12 space-y-4">
-        <p className="text-xs tracking-[0.3em] text-neutral-500">
-          Admin · Content
-        </p>
-        <p className="text-sm font-light text-neutral-500">
-          Edit Home, About, and Stories copy shown on the storefront.
-        </p>
-      </header>
-
-      <ContentEditor initialContent={content} />
-
-      <Link
-        href="/admin"
-        className="mt-16 inline-block text-xs font-light tracking-wide text-neutral-900 transition-opacity hover:opacity-60"
-      >
-        ← Back to Admin
-      </Link>
+    <Container as="section" className="py-10 md:py-12">
+      <AdminPageHeader
+        title={ADMIN_COPY.content.title}
+        subtitle={ADMIN_COPY.content.subtitle}
+      />
+      <ContentEditor
+        initialContent={{ home, about, stories }}
+        products={productOptions}
+      />
+      <AdminBackLink href="/admin" label={ADMIN_COPY.common.backToDashboard} />
     </Container>
   );
 }

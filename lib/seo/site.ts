@@ -1,4 +1,4 @@
-/** Site-wide SEO constants. */
+/** Site-wide SEO constants (static fallbacks — prefer getSeoSettings() for CMS values). */
 
 export const SITE_NAME = "WHITE TEE";
 

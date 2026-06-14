@@ -9,3 +9,6 @@ export const HOME_CONCEPT_LINES = [
 ] as const;
 
 export const FEATURED_PRODUCT_COUNT = 3;
+
+/** Fabric cards shown on the home page before linking to the full list. */
+export const HOME_FABRIC_PREVIEW_COUNT = 3;

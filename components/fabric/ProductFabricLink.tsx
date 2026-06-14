@@ -1,6 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
+import { SITE_UI_COPY } from "@/lib/copy/site-ui";
+import { FABRIC_IMAGE_ASPECT, getFabricPresentation } from "@/lib/fabric/presentation";
+import { cn } from "@/lib/utils";
 import type { Fabric } from "@/lib/fabric/content";
 
 type ProductFabricLinkProps = {
@@ -8,48 +11,48 @@ type ProductFabricLinkProps = {
 };
 
 export function ProductFabricLink({ fabric }: ProductFabricLinkProps) {
+  const presentation = getFabricPresentation(fabric.slug);
+  const { fabric: copy } = SITE_UI_COPY;
+
   return (
-    <section aria-label="Fabric">
-      <Container as="div" className="py-16 md:py-20 lg:py-28">
+    <section aria-label={copy.title}>
+      <Container as="div" className="py-16 sm:py-24 md:py-32 lg:py-40">
         <Link
           href={`/fabric/${fabric.slug}`}
-          className="group grid grid-cols-1 items-center gap-12 md:gap-14 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:gap-16 xl:gap-24"
+          className="group mx-auto block max-w-4xl"
         >
-          <div className="relative aspect-[4/3] overflow-hidden bg-background sm:aspect-[5/4] lg:aspect-[4/3]">
+          <div
+            className={cn(
+              "relative overflow-hidden bg-background",
+              FABRIC_IMAGE_ASPECT,
+            )}
+          >
             <Image
               src={fabric.imageUrl}
               alt={fabric.imageAlt}
               fill
-              sizes="(max-width: 1024px) 100vw, 55vw"
-              className="object-cover object-center brightness-[0.97] contrast-[0.98] transition-transform duration-[850ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] group-hover:scale-[1.015]"
+              sizes="(max-width: 1024px) 100vw, 896px"
+              className={cn(
+                "object-cover brightness-[0.96] contrast-[0.98] transition-transform duration-[1000ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] group-hover:scale-[1.012]",
+                presentation.heroImagePosition,
+              )}
             />
           </div>
 
-          <div className="flex flex-col gap-6 md:gap-8 lg:py-6 xl:py-10">
-            <p className="text-[10px] font-light tracking-[0.14em] text-neutral-400">
-              This product belongs to
+          <div className="mx-auto mt-10 flex max-w-md flex-col items-center text-center sm:mt-14 md:mt-16 lg:mt-20">
+            <p className="text-[11px] font-light tracking-[0.14em] text-neutral-500 md:text-[10px] md:text-neutral-400">
+              {copy.thisFabric}
             </p>
-
-            <div className="space-y-4 md:space-y-5">
-              <h2 className="text-sm font-light tracking-[0.12em] text-neutral-800 transition-opacity duration-500 group-hover:opacity-50 md:text-base">
-                {fabric.name}
-              </h2>
-              <p className="max-w-md text-xs font-light leading-[2.1] tracking-[0.03em] text-neutral-500">
-                {fabric.tagline}
-              </p>
-            </div>
-
-            <p className="max-w-lg text-xs font-light leading-[2.15] tracking-[0.03em] text-neutral-400">
-              {fabric.descriptionLines.map((line, index) => (
-                <span key={line}>
-                  {line}
-                  {index < fabric.descriptionLines.length - 1 ? <br /> : null}
-                </span>
-              ))}
-            </p>
-
-            <p className="text-[11px] font-light tracking-[0.08em] text-neutral-500 transition-opacity duration-500 group-hover:opacity-50">
-              View fabric
+            <h2 className="mt-5 text-[15px] font-light tracking-[0.1em] text-neutral-800 transition-opacity duration-500 group-hover:opacity-50 sm:mt-7 md:mt-8 md:text-sm md:tracking-[0.12em]">
+              {fabric.name}
+            </h2>
+            <p
+              className={cn(
+                "mt-5 text-xs font-light leading-[2.1] text-neutral-500",
+                presentation.taglineTracking,
+              )}
+            >
+              {fabric.tagline}
             </p>
           </div>
         </Link>

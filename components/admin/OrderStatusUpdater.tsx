@@ -2,20 +2,35 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { ADMIN_COPY } from "@/lib/admin/copy";
+import { formatOrderStatusLabel } from "@/lib/admin/format";
 import { ADMIN_ORDER_STATUSES } from "@/lib/admin/order-status-options";
-import { formatAdminLabel } from "@/lib/admin/format";
+import {
+  adminBtnPrimary,
+  adminError,
+  adminField,
+  adminInput,
+  adminLabel,
+  adminMuted,
+  adminSection,
+  adminSectionTitle,
+  adminSuccess,
+} from "@/lib/admin/ui";
 import type { OrderStatus } from "@/types/database";
 
 type OrderStatusUpdaterProps = {
   orderId: string;
   currentStatus: OrderStatus;
+  resendConfigured: boolean;
 };
 
 export function OrderStatusUpdater({
   orderId,
   currentStatus,
+  resendConfigured,
 }: OrderStatusUpdaterProps) {
   const router = useRouter();
+  const copy = ADMIN_COPY.orders;
   const selectableStatuses = ADMIN_ORDER_STATUSES.includes(currentStatus)
     ? ADMIN_ORDER_STATUSES
     : [currentStatus, ...ADMIN_ORDER_STATUSES];
@@ -43,21 +58,25 @@ export function OrderStatusUpdater({
       };
 
       if (!response.ok) {
-        throw new Error(data.error ?? "Failed to update status.");
+        throw new Error(data.error ?? copy.statusUpdateFailed);
       }
 
       if (status === "shipped") {
         if (data.email?.sent) {
-          setMessage("Status updated. Shipping email sent.");
+          setMessage("ステータスを更新しました。発送通知メールを送信しました。");
         } else if (data.email?.reason === "not_configured") {
-          setMessage("Status updated. Email not configured (set RESEND_API_KEY).");
+          setMessage(
+            "ステータスを更新しました。メール未設定（RESEND_API_KEY を設定してください）。",
+          );
         } else if (data.email?.reason === "missing_email") {
-          setMessage("Status updated. No customer email on this order.");
+          setMessage(
+            "ステータスを更新しました。注文にメールアドレスがありません。",
+          );
         } else {
-          setMessage("Status updated.");
+          setMessage(copy.statusUpdated);
         }
       } else {
-        setMessage("Status updated.");
+        setMessage(copy.statusUpdated);
       }
 
       router.refresh();
@@ -65,7 +84,7 @@ export function OrderStatusUpdater({
       const text =
         updateError instanceof Error
           ? updateError.message
-          : "Failed to update status.";
+          : copy.statusUpdateFailed;
       setError(text);
     } finally {
       setIsLoading(false);
@@ -73,41 +92,44 @@ export function OrderStatusUpdater({
   };
 
   return (
-    <div className="border-b border-neutral-200/70 py-10">
-      <p className="mb-6 text-xs font-light tracking-wide text-neutral-500">
-        Update Status
-      </p>
+    <section className={adminSection}>
+      <h2 className={adminSectionTitle}>{copy.updateStatus}</h2>
 
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-        <select
-          value={status}
-          onChange={(event) => setStatus(event.target.value as OrderStatus)}
-          disabled={isLoading}
-          className="border-b border-neutral-300 bg-transparent py-2 text-xs font-light text-neutral-800 outline-none disabled:opacity-50"
-        >
-          {selectableStatuses.map((option) => (
-            <option key={option} value={option}>
-              {formatAdminLabel(option)}
-            </option>
-          ))}
-        </select>
+      {!resendConfigured ? (
+        <p className={`${adminMuted} mb-4 rounded-md border border-amber-200 bg-amber-50 px-4 py-3`}>
+          {copy.resendNotConfigured}
+        </p>
+      ) : null}
+
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
+        <label className={`${adminField} sm:w-52`}>
+          <span className={adminLabel}>{copy.status}</span>
+          <select
+            value={status}
+            onChange={(event) => setStatus(event.target.value as OrderStatus)}
+            disabled={isLoading}
+            className={adminInput}
+          >
+            {selectableStatuses.map((option) => (
+              <option key={option} value={option}>
+                {formatOrderStatusLabel(option)}
+              </option>
+            ))}
+          </select>
+        </label>
 
         <button
           type="button"
           onClick={handleUpdate}
           disabled={isLoading || status === currentStatus}
-          className="py-2 text-xs tracking-[0.15em] text-neutral-900 transition-opacity hover:opacity-60 disabled:cursor-not-allowed disabled:text-neutral-300"
+          className={adminBtnPrimary}
         >
-          {isLoading ? "Updating..." : "Update"}
+          {isLoading ? copy.updating : copy.updateStatus}
         </button>
       </div>
 
-      {error ? (
-        <p className="mt-4 text-xs font-light text-red-600">{error}</p>
-      ) : null}
-      {message ? (
-        <p className="mt-4 text-xs font-light text-neutral-500">{message}</p>
-      ) : null}
-    </div>
+      {error ? <p className={`${adminError} mt-4`}>{error}</p> : null}
+      {message ? <p className={`${adminSuccess} mt-4`}>{message}</p> : null}
+    </section>
   );
 }

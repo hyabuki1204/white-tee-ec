@@ -17,6 +17,7 @@ import type {
 
 type ProductQueryRow = ProductRow & {
   product_images: ProductImageRow[] | null;
+  product_variants: Pick<ProductVariantRow, "stock_quantity">[] | null;
 };
 
 function mapListItem(row: ProductQueryRow): AdminProductListItem {
@@ -25,6 +26,11 @@ function mapListItem(row: ProductQueryRow): AdminProductListItem {
     images.find((image) => image.is_primary) ??
     [...images].sort((a, b) => a.sort_order - b.sort_order)[0];
 
+  const totalStock = (row.product_variants ?? []).reduce(
+    (sum, variant) => sum + variant.stock_quantity,
+    0,
+  );
+
   return {
     id: row.id,
     slug: row.slug,
@@ -32,6 +38,7 @@ function mapListItem(row: ProductQueryRow): AdminProductListItem {
     price: row.price,
     isPublished: row.is_published,
     primaryImageUrl: primary?.url ?? null,
+    totalStock,
     updatedAt: row.updated_at,
   };
 }
@@ -243,7 +250,8 @@ export async function listAdminProducts(): Promise<AdminProductListItem[]> {
     .select(
       `
       *,
-      product_images(id, url, sort_order, is_primary)
+      product_images(id, url, sort_order, is_primary),
+      product_variants(stock_quantity)
     `,
     )
     .order("updated_at", { ascending: false });

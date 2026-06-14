@@ -2,6 +2,14 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
+import { ADMIN_COPY } from "@/lib/admin/copy";
+import {
+  adminBtnPrimary,
+  adminError,
+  adminField,
+  adminInput,
+  adminLabel,
+} from "@/lib/admin/ui";
 
 export function AdminLoginForm() {
   const router = useRouter();
@@ -9,6 +17,7 @@ export function AdminLoginForm() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const copy = ADMIN_COPY.login;
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -25,7 +34,7 @@ export function AdminLoginForm() {
       const data = (await response.json()) as { error?: string };
 
       if (!response.ok) {
-        throw new Error(data.error ?? "Failed to sign in.");
+        throw new Error(data.error ?? ADMIN_COPY.common.signInFailed);
       }
 
       const nextPath = searchParams.get("next") ?? "/admin";
@@ -35,7 +44,7 @@ export function AdminLoginForm() {
       const message =
         loginError instanceof Error
           ? loginError.message
-          : "Failed to sign in.";
+          : ADMIN_COPY.common.signInFailed;
       setError(message);
     } finally {
       setIsLoading(false);
@@ -43,13 +52,13 @@ export function AdminLoginForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-sm space-y-8">
-      <div>
-        <label
-          htmlFor="admin-password"
-          className="mb-3 block text-xs font-light tracking-wide text-neutral-500"
-        >
-          Password
+    <form
+      onSubmit={handleSubmit}
+      className="max-w-md space-y-6 rounded-lg border border-neutral-200 bg-white p-6 md:p-8"
+    >
+      <div className={adminField}>
+        <label htmlFor="admin-password" className={adminLabel}>
+          {copy.password}
         </label>
         <input
           id="admin-password"
@@ -58,21 +67,15 @@ export function AdminLoginForm() {
           onChange={(event) => setPassword(event.target.value)}
           autoComplete="current-password"
           required
-          className="w-full border-b border-neutral-300 bg-transparent py-2 text-sm font-light text-neutral-900 outline-none"
+          className={adminInput}
         />
       </div>
 
-      <button
-        type="submit"
-        disabled={isLoading}
-        className="text-xs tracking-[0.15em] text-neutral-900 transition-opacity hover:opacity-60 disabled:text-neutral-300"
-      >
-        {isLoading ? "Signing in..." : "Sign In"}
+      <button type="submit" disabled={isLoading} className={adminBtnPrimary}>
+        {isLoading ? copy.submitting : copy.submit}
       </button>
 
-      {error ? (
-        <p className="text-xs font-light text-red-600">{error}</p>
-      ) : null}
+      {error ? <p className={adminError}>{error}</p> : null}
     </form>
   );
 }

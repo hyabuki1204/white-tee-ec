@@ -4,6 +4,21 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { ProductDeleteButton } from "@/components/admin/ProductDeleteButton";
+import { ADMIN_COPY } from "@/lib/admin/copy";
+import {
+  adminBtnPrimary,
+  adminBtnSecondary,
+  adminError,
+  adminInput,
+  adminInputCompact,
+  adminLabel,
+  adminSection,
+  adminSectionTitle,
+  adminSuccess,
+  adminTextarea,
+  adminTh,
+  adminTd,
+} from "@/lib/admin/ui";
 import {
   DEFAULT_CARE,
   DEFAULT_MATERIAL,
@@ -21,11 +36,7 @@ type ProductFormProps = {
 type FormImage = AdminProductDetail["images"][number];
 type FormVariant = AdminProductDetail["variants"][number];
 
-const inputClassName =
-  "w-full border-b border-neutral-300 bg-transparent py-2 text-sm font-light text-neutral-900 outline-none";
-const labelClassName =
-  "mb-3 block text-xs font-light tracking-wide text-neutral-500";
-const sectionClassName = "border-b border-neutral-200/70 py-10";
+const sectionClass = `${adminSection} mb-6`;
 
 export function ProductForm({
   mode,
@@ -37,8 +48,13 @@ export function ProductForm({
   const [slugTouched, setSlugTouched] = useState(mode === "edit");
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [imageUrlInput, setImageUrlInput] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+
+  const copy = ADMIN_COPY.products;
+  const sections = copy.sections;
+  const fields = copy.fields;
 
   const enabledVariants = useMemo(
     () => form.variants.filter((variant) => variant.enabled),
@@ -177,6 +193,7 @@ export function ProductForm({
       care: form.care,
       sizeGuide: form.sizeGuide,
       isPublished: form.isPublished,
+      fabricSlug: form.fabricSlug,
       variants: form.variants,
       images: form.images.map((image, index) => ({
         id: image.id,
@@ -204,10 +221,13 @@ export function ProductForm({
       };
 
       if (!response.ok) {
-        throw new Error(data.error ?? "Failed to save product.");
+        throw new Error(
+          data.error ??
+            (mode === "create" ? copy.createFailed : copy.saveFailed),
+        );
       }
 
-      setMessage("Saved.");
+      setMessage(ADMIN_COPY.common.saved);
 
       if (mode === "create" && data.product) {
         router.push(`/admin/products/${data.product.id}/edit`);
@@ -224,7 +244,9 @@ export function ProductForm({
       const text =
         saveError instanceof Error
           ? saveError.message
-          : "Failed to save product.";
+          : mode === "create"
+            ? copy.createFailed
+            : copy.saveFailed;
       setError(text);
     } finally {
       setIsSaving(false);
@@ -232,27 +254,25 @@ export function ProductForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-3xl">
-      <section className={sectionClassName}>
-        <h2 className="mb-8 text-xs font-light tracking-wide text-neutral-500">
-          Basic Info
-        </h2>
-        <div className="grid gap-8 md:grid-cols-2">
+    <form onSubmit={handleSubmit} className="max-w-4xl space-y-6">
+      <section className={sectionClass}>
+        <h2 className={adminSectionTitle}>{sections.basic}</h2>
+        <div className="grid gap-6 md:grid-cols-2">
           <div>
-            <label htmlFor="product-name" className={labelClassName}>
-              Name
+            <label htmlFor="product-name" className={adminLabel}>
+              {fields.name}
             </label>
             <input
               id="product-name"
               value={form.name}
               onChange={(event) => handleNameChange(event.target.value)}
               required
-              className={inputClassName}
+              className={adminInput}
             />
           </div>
           <div>
-            <label htmlFor="product-slug" className={labelClassName}>
-              Slug
+            <label htmlFor="product-slug" className={adminLabel}>
+              {fields.slug}
             </label>
             <input
               id="product-slug"
@@ -262,12 +282,12 @@ export function ProductForm({
                 updateField("slug", event.target.value);
               }}
               required
-              className={inputClassName}
+              className={adminInput}
             />
           </div>
           <div>
-            <label htmlFor="product-price" className={labelClassName}>
-              Price (JPY)
+            <label htmlFor="product-price" className={adminLabel}>
+              {fields.price}
             </label>
             <input
               id="product-price"
@@ -279,12 +299,12 @@ export function ProductForm({
                 updateField("price", Number(event.target.value))
               }
               required
-              className={inputClassName}
+              className={adminInput}
             />
           </div>
           <div>
-            <label htmlFor="product-fabric" className={labelClassName}>
-              Fabric
+            <label htmlFor="product-fabric" className={adminLabel}>
+              {fields.fabric}
             </label>
             <select
               id="product-fabric"
@@ -293,10 +313,10 @@ export function ProductForm({
                 updateField("fabricSlug", event.target.value)
               }
               required
-              className={inputClassName}
+              className={adminInput}
             >
               <option value="" disabled>
-                Select fabric
+                {fields.fabricPlaceholder}
               </option>
               {fabrics.map((fabric) => (
                 <option key={fabric.slug} value={fabric.slug}>
@@ -305,35 +325,36 @@ export function ProductForm({
               ))}
             </select>
           </div>
-          <div className="flex items-end">
-            <label className="flex items-center gap-3 text-xs font-light text-neutral-600">
+          <div className="flex items-end md:col-span-2">
+            <label className="flex items-center gap-3 text-sm text-neutral-800">
               <input
                 type="checkbox"
+                className="h-4 w-4"
                 checked={form.isPublished}
                 onChange={(event) =>
                   updateField("isPublished", event.target.checked)
                 }
               />
-              Published on storefront
+              {fields.published}
             </label>
           </div>
         </div>
-        <div className="mt-8 space-y-8">
+        <div className="mt-6 space-y-6">
           <div>
-            <label htmlFor="product-description" className={labelClassName}>
-              Short Description (list / SEO)
+            <label htmlFor="product-description" className={adminLabel}>
+              {fields.description}
             </label>
             <textarea
               id="product-description"
               value={form.description}
               onChange={(event) => updateField("description", event.target.value)}
               rows={2}
-              className={`${inputClassName} resize-y`}
+              className={adminTextarea}
             />
           </div>
           <div>
-            <label htmlFor="product-detail-description" className={labelClassName}>
-              Detail Description (PDP tab)
+            <label htmlFor="product-detail-description" className={adminLabel}>
+              {fields.detailDescription}
             </label>
             <textarea
               id="product-detail-description"
@@ -342,12 +363,12 @@ export function ProductForm({
                 updateField("detailDescription", event.target.value)
               }
               rows={5}
-              className={`${inputClassName} resize-y`}
+              className={adminTextarea}
             />
           </div>
           <div>
-            <label htmlFor="product-fit-note" className={labelClassName}>
-              Fit Note
+            <label htmlFor="product-fit-note" className={adminLabel}>
+              {fields.fitNote}
             </label>
             <input
               id="product-fit-note"
@@ -355,33 +376,30 @@ export function ProductForm({
               onChange={(event) =>
                 updateField("fitNote", event.target.value || null)
               }
-              placeholder="Regular fit"
-              className={inputClassName}
+              className={adminInput}
             />
           </div>
         </div>
       </section>
 
-      <section className={sectionClassName}>
-        <h2 className="mb-8 text-xs font-light tracking-wide text-neutral-500">
-          Material & Care
-        </h2>
-        <div className="space-y-8">
+      <section className={sectionClass}>
+        <h2 className={adminSectionTitle}>{sections.material}</h2>
+        <div className="space-y-6">
           <div>
-            <label htmlFor="product-material" className={labelClassName}>
-              Material
+            <label htmlFor="product-material" className={adminLabel}>
+              {fields.material}
             </label>
             <input
               id="product-material"
               value={form.material}
               onChange={(event) => updateField("material", event.target.value)}
               placeholder={DEFAULT_MATERIAL}
-              className={inputClassName}
+              className={adminInput}
             />
           </div>
           <div>
-            <label htmlFor="product-care" className={labelClassName}>
-              Care
+            <label htmlFor="product-care" className={adminLabel}>
+              {fields.care}
             </label>
             <textarea
               id="product-care"
@@ -389,79 +407,89 @@ export function ProductForm({
               onChange={(event) => updateField("care", event.target.value)}
               rows={3}
               placeholder={DEFAULT_CARE}
-              className={`${inputClassName} resize-y`}
+              className={adminTextarea}
             />
           </div>
         </div>
       </section>
 
-      <section className={sectionClassName}>
-        <h2 className="mb-8 text-xs font-light tracking-wide text-neutral-500">
-          Images
-        </h2>
+      <section className={sectionClass}>
+        <h2 className={adminSectionTitle}>{sections.images}</h2>
         <div className="space-y-6">
           {form.images.map((image, index) => (
             <div
               key={image.id ?? `${image.url}-${index}`}
-              className="flex items-start gap-4 border-b border-neutral-100 pb-6 last:border-0"
+              className="flex items-start gap-4 rounded-md border border-neutral-200 p-4"
             >
-              <div className="relative h-20 w-16 shrink-0 overflow-hidden bg-neutral-50">
+              <div className="relative h-24 w-20 shrink-0 overflow-hidden rounded bg-neutral-100">
                 <Image
                   src={image.url}
                   alt=""
                   fill
-                  sizes="64px"
+                  sizes="80px"
                   className="object-cover"
                 />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-xs font-light text-neutral-600">
-                  {image.url}
-                </p>
+                <p className="truncate text-sm text-neutral-700">{image.url}</p>
                 <div className="mt-3 flex flex-wrap gap-4">
-                  <label className="flex items-center gap-2 text-[11px] text-neutral-500">
+                  <label className="flex items-center gap-2 text-sm text-neutral-800">
                     <input
                       type="radio"
                       name="primary-image"
                       checked={image.isPrimary}
                       onChange={() => setPrimaryImage(index)}
                     />
-                    Primary
+                    {fields.primary}
                   </label>
                   <button
                     type="button"
                     onClick={() => removeImage(index)}
-                    className="text-[11px] text-red-700 hover:opacity-60"
+                    className="text-sm font-medium text-red-700 hover:underline"
                   >
-                    Remove
+                    {fields.removeImage}
                   </button>
                 </div>
               </div>
             </div>
           ))}
 
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
-            <div className="flex-1">
-              <label htmlFor="image-url" className={labelClassName}>
-                Add Image URL
+          <div className="grid gap-6 sm:grid-cols-2">
+            <div>
+              <label htmlFor="image-url" className={adminLabel}>
+                {fields.addImageUrl}
               </label>
-              <input
-                id="image-url"
-                type="url"
-                placeholder="https://..."
-                className={inputClassName}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter") {
-                    event.preventDefault();
-                    addImageUrl((event.target as HTMLInputElement).value);
-                    (event.target as HTMLInputElement).value = "";
-                  }
-                }}
-              />
+              <div className="flex gap-2">
+                <input
+                  id="image-url"
+                  type="url"
+                  value={imageUrlInput}
+                  placeholder="https://..."
+                  className={adminInput}
+                  onChange={(event) => setImageUrlInput(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault();
+                      addImageUrl(imageUrlInput);
+                      setImageUrlInput("");
+                    }
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    addImageUrl(imageUrlInput);
+                    setImageUrlInput("");
+                  }}
+                  className={`${adminBtnSecondary} shrink-0`}
+                >
+                  {fields.addImage}
+                </button>
+              </div>
             </div>
             <div>
-              <label htmlFor="image-upload" className={labelClassName}>
-                Upload Image
+              <label htmlFor="image-upload" className={adminLabel}>
+                {fields.uploadImage}
               </label>
               <input
                 id="image-upload"
@@ -475,46 +503,35 @@ export function ProductForm({
                   }
                   event.target.value = "";
                 }}
-                className="block text-xs text-neutral-500"
+                className="block w-full text-sm text-neutral-700"
               />
             </div>
           </div>
           {form.images.length === 0 ? (
-            <p className="text-xs font-light text-neutral-400">
-              At least one image is required before saving.
-            </p>
+            <p className="text-sm text-neutral-600">{fields.imageRequired}</p>
           ) : null}
         </div>
       </section>
 
-      <section className={sectionClassName}>
-        <h2 className="mb-8 text-xs font-light tracking-wide text-neutral-500">
-          Sizes & Stock
-        </h2>
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[480px] border-collapse text-left">
+      <section className={sectionClass}>
+        <h2 className={adminSectionTitle}>{sections.variants}</h2>
+        <div className="overflow-x-auto rounded-md border border-neutral-200">
+          <table className="w-full min-w-[480px] border-collapse text-left text-sm">
             <thead>
-              <tr className="border-b border-neutral-200/70">
-                <th className="pb-3 pr-4 text-xs font-light text-neutral-500">
-                  Enabled
-                </th>
-                <th className="pb-3 pr-4 text-xs font-light text-neutral-500">
-                  Size
-                </th>
-                <th className="pb-3 pr-4 text-xs font-light text-neutral-500">
-                  SKU
-                </th>
-                <th className="pb-3 text-xs font-light text-neutral-500">
-                  Stock
-                </th>
+              <tr className="bg-neutral-50">
+                <th className={adminTh}>{fields.enableSize}</th>
+                <th className={adminTh}>{fields.size}</th>
+                <th className={adminTh}>{fields.sku}</th>
+                <th className={adminTh}>{fields.stock}</th>
               </tr>
             </thead>
             <tbody>
               {form.variants.map((variant) => (
-                <tr key={variant.size} className="border-b border-neutral-100">
-                  <td className="py-3 pr-4">
+                <tr key={variant.size}>
+                  <td className={adminTd}>
                     <input
                       type="checkbox"
+                      className="h-4 w-4"
                       checked={variant.enabled}
                       onChange={(event) =>
                         handleVariantChange(variant.size, {
@@ -523,10 +540,8 @@ export function ProductForm({
                       }
                     />
                   </td>
-                  <td className="py-3 pr-4 text-xs font-light text-neutral-700">
-                    {variant.size}
-                  </td>
-                  <td className="py-3 pr-4">
+                  <td className={`${adminTd} font-medium`}>{variant.size}</td>
+                  <td className={adminTd}>
                     <input
                       value={variant.sku ?? ""}
                       onChange={(event) =>
@@ -534,10 +549,10 @@ export function ProductForm({
                           sku: event.target.value || null,
                         })
                       }
-                      className="w-full border-b border-neutral-200 bg-transparent py-1 text-xs font-light outline-none"
+                      className={adminInputCompact}
                     />
                   </td>
-                  <td className="py-3">
+                  <td className={adminTd}>
                     <input
                       type="number"
                       min={0}
@@ -548,7 +563,7 @@ export function ProductForm({
                           stockQuantity: Number(event.target.value),
                         })
                       }
-                      className="w-24 border-b border-neutral-200 bg-transparent py-1 text-xs font-light outline-none"
+                      className={`${adminInputCompact} w-24`}
                     />
                   </td>
                 </tr>
@@ -557,46 +572,30 @@ export function ProductForm({
           </table>
         </div>
         {enabledVariants.length === 0 ? (
-          <p className="mt-4 text-xs font-light text-red-600">
-            Enable at least one size.
-          </p>
+          <p className={`${adminError} mt-4`}>{fields.enableOneSize}</p>
         ) : null}
       </section>
 
-      <section className={sectionClassName}>
-        <h2 className="mb-8 text-xs font-light tracking-wide text-neutral-500">
-          Size Guide (cm)
-        </h2>
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[640px] border-collapse text-left">
+      <section className={sectionClass}>
+        <h2 className={adminSectionTitle}>{sections.sizeGuide}</h2>
+        <div className="overflow-x-auto rounded-md border border-neutral-200">
+          <table className="w-full min-w-[640px] border-collapse text-left text-sm">
             <thead>
-              <tr className="border-b border-neutral-200/70">
-                <th className="pb-3 pr-4 text-xs font-light text-neutral-500">
-                  Size
-                </th>
-                <th className="pb-3 pr-4 text-xs font-light text-neutral-500">
-                  Length
-                </th>
-                <th className="pb-3 pr-4 text-xs font-light text-neutral-500">
-                  Shoulder
-                </th>
-                <th className="pb-3 pr-4 text-xs font-light text-neutral-500">
-                  Chest
-                </th>
-                <th className="pb-3 text-xs font-light text-neutral-500">
-                  Sleeve
-                </th>
+              <tr className="bg-neutral-50">
+                <th className={adminTh}>{fields.size}</th>
+                <th className={adminTh}>{fields.length}</th>
+                <th className={adminTh}>{fields.shoulder}</th>
+                <th className={adminTh}>{fields.chest}</th>
+                <th className={adminTh}>{fields.sleeve}</th>
               </tr>
             </thead>
             <tbody>
               {form.sizeGuide.map((row) => (
-                <tr key={row.size} className="border-b border-neutral-100">
-                  <td className="py-3 pr-4 text-xs font-light text-neutral-700">
-                    {row.size}
-                  </td>
+                <tr key={row.size}>
+                  <td className={`${adminTd} font-medium`}>{row.size}</td>
                   {(["length", "shoulder", "chest", "sleeve"] as const).map(
                     (field) => (
-                      <td key={field} className="py-3 pr-4">
+                      <td key={field} className={adminTd}>
                         <input
                           type="number"
                           min={0}
@@ -609,7 +608,7 @@ export function ProductForm({
                               Number(event.target.value),
                             )
                           }
-                          className="w-20 border-b border-neutral-200 bg-transparent py-1 text-xs font-light outline-none"
+                          className={`${adminInputCompact} w-24`}
                         />
                       </td>
                     ),
@@ -621,7 +620,7 @@ export function ProductForm({
         </div>
       </section>
 
-      <div className="flex flex-col gap-4 py-10 sm:flex-row sm:items-center">
+      <div className={`${sectionClass} flex flex-col gap-4 sm:flex-row sm:items-center`}>
         <button
           type="submit"
           disabled={
@@ -629,16 +628,16 @@ export function ProductForm({
             form.images.length === 0 ||
             enabledVariants.length === 0
           }
-          className="text-xs tracking-[0.15em] text-neutral-900 transition-opacity hover:opacity-60 disabled:text-neutral-300"
+          className={adminBtnPrimary}
         >
-          {isSaving ? "Saving..." : mode === "create" ? "Create Product" : "Save Changes"}
+          {isSaving
+            ? ADMIN_COPY.common.saving
+            : mode === "create"
+              ? copy.create
+              : copy.saveChanges}
         </button>
-        {message ? (
-          <p className="text-xs font-light text-neutral-500">{message}</p>
-        ) : null}
-        {error ? (
-          <p className="text-xs font-light text-red-600">{error}</p>
-        ) : null}
+        {message ? <p className={adminSuccess}>{message}</p> : null}
+        {error ? <p className={adminError}>{error}</p> : null}
       </div>
 
       {mode === "edit" && form.id ? (
