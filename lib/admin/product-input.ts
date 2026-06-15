@@ -235,6 +235,7 @@ function parseImages(
         sortOrder:
           typeof row.sortOrder === "number" ? row.sortOrder : index,
         isPrimary: row.isPrimary === true,
+        isCardHover: row.isCardHover === true,
       };
     })
     .filter((image): image is NonNullable<typeof image> => image !== null);
@@ -250,6 +251,18 @@ function parseImages(
 
     for (let index = 1; index < parsed.length; index += 1) {
       parsed[index]!.isPrimary = false;
+    }
+  }
+
+  let hoverAssigned = false;
+
+  for (const image of parsed) {
+    if (image.isCardHover) {
+      if (hoverAssigned) {
+        image.isCardHover = false;
+      } else {
+        hoverAssigned = true;
+      }
     }
   }
 

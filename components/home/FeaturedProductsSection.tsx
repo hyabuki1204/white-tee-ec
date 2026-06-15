@@ -44,6 +44,7 @@ export function FeaturedProductsSection({
                     ? fabricCharacterBySlug[product.fabricSlug]
                     : null
                 }
+                wearHover
               />
             </li>
           ))}

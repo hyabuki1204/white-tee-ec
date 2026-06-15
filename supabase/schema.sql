@@ -85,6 +85,7 @@ create table public.product_images (
   url text not null,
   sort_order integer not null default 0,
   is_primary boolean not null default false,
+  is_card_hover boolean not null default false,
   created_at timestamptz not null default now()
 );
 
@@ -92,6 +93,11 @@ create table public.product_images (
 create unique index product_images_one_primary_per_product
   on public.product_images (product_id)
   where is_primary = true;
+
+-- At most one card hover image per product
+create unique index product_images_one_card_hover_per_product
+  on public.product_images (product_id)
+  where is_card_hover = true;
 
 -- ---------------------------------------------------------------------------
 -- orders

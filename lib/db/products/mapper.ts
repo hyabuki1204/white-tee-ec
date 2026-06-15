@@ -34,10 +34,45 @@ export function mapImageRow(row: ProductImageRow): ProductImage {
     url: row.url,
     sortOrder: row.sort_order,
     isPrimary: row.is_primary,
+    isCardHover: row.is_card_hover ?? false,
   };
 }
 
-export function mapProductRowToProduct(row: ProductWithPrimaryImage): Product {
+function mapListImages(
+  images: Array<{
+    id: string;
+    url: string;
+    sort_order: number;
+    is_primary: boolean;
+    is_card_hover?: boolean;
+  }> | null | undefined,
+): ProductImage[] {
+  if (!images || images.length === 0) {
+    return [];
+  }
+
+  return [...images]
+    .sort((a, b) => a.sort_order - b.sort_order)
+    .map((image) => ({
+      id: image.id,
+      url: image.url,
+      sortOrder: image.sort_order,
+      isPrimary: image.is_primary,
+      isCardHover: image.is_card_hover ?? false,
+    }));
+}
+
+export function mapProductRowToProduct(
+  row: ProductWithPrimaryImage & {
+    product_images?: Array<{
+      id: string;
+      url: string;
+      sort_order: number;
+      is_primary: boolean;
+      is_card_hover?: boolean;
+    }> | null;
+  },
+): Product {
   return {
     id: row.id,
     slug: row.slug,
@@ -51,7 +86,7 @@ export function mapProductRowToProduct(row: ProductWithPrimaryImage): Product {
     care: row.care,
     sizeGuide: mapSizeGuideFromRow(row.size_guide),
     variants: [],
-    images: [],
+    images: mapListImages(row.product_images),
     isPublished: row.is_published,
     fabricSlug: row.fabric_slug,
     fitProfile: parseFitProfileFromRow(row.slug, row.fit_profile),

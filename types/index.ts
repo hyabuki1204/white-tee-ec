@@ -21,6 +21,8 @@ export type ProductImage = {
   url: string;
   sortOrder: number;
   isPrimary: boolean;
+  /** Shown on product cards while pointer hover (desktop). */
+  isCardHover?: boolean;
 };
 
 export type Product = {

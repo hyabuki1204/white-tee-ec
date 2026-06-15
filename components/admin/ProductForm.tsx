@@ -112,6 +112,16 @@ export function ProductForm({
     }));
   };
 
+  const setCardHoverImage = (index: number | null) => {
+    setForm((current) => ({
+      ...current,
+      images: current.images.map((image, imageIndex) => ({
+        ...image,
+        isCardHover: index !== null && imageIndex === index,
+      })),
+    }));
+  };
+
   const removeImage = (index: number) => {
     setForm((current) => {
       const nextImages = current.images.filter((_, imageIndex) => imageIndex !== index);
@@ -141,6 +151,7 @@ export function ProductForm({
           url: trimmed,
           sortOrder: current.images.length,
           isPrimary: current.images.length === 0,
+          isCardHover: false,
         },
       ],
     }));
@@ -201,6 +212,7 @@ export function ProductForm({
         url: image.url,
         sortOrder: index,
         isPrimary: image.isPrimary,
+        isCardHover: image.isCardHover === true,
       })),
       fitProfile: form.fitProfile,
     };
@@ -418,6 +430,7 @@ export function ProductForm({
       <section className={sectionClass}>
         <h2 className={adminSectionTitle}>{sections.images}</h2>
         <div className="space-y-6">
+          <p className="text-sm text-neutral-600">{fields.cardHoverHint}</p>
           {form.images.map((image, index) => (
             <div
               key={image.id ?? `${image.url}-${index}`}
@@ -434,7 +447,7 @@ export function ProductForm({
               </div>
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm text-neutral-700">{image.url}</p>
-                <div className="mt-3 flex flex-wrap gap-4">
+                <div className="mt-3 flex flex-wrap gap-x-6 gap-y-3">
                   <label className="flex items-center gap-2 text-sm text-neutral-800">
                     <input
                       type="radio"
@@ -443,6 +456,15 @@ export function ProductForm({
                       onChange={() => setPrimaryImage(index)}
                     />
                     {fields.primary}
+                  </label>
+                  <label className="flex items-center gap-2 text-sm text-neutral-800">
+                    <input
+                      type="radio"
+                      name="card-hover-image"
+                      checked={image.isCardHover === true}
+                      onChange={() => setCardHoverImage(index)}
+                    />
+                    {fields.cardHover}
                   </label>
                   <button
                     type="button"
@@ -455,6 +477,18 @@ export function ProductForm({
               </div>
             </div>
           ))}
+
+          {form.images.length > 0 ? (
+            <label className="flex items-center gap-2 text-sm text-neutral-600">
+              <input
+                type="radio"
+                name="card-hover-image"
+                checked={!form.images.some((image) => image.isCardHover)}
+                onChange={() => setCardHoverImage(null)}
+              />
+              {fields.cardHoverNone}
+            </label>
+          ) : null}
 
           <div className="grid gap-6 sm:grid-cols-2">
             <div>

@@ -37,6 +37,7 @@ export type AdminProductInput = {
     url: string;
     sortOrder: number;
     isPrimary: boolean;
+    isCardHover?: boolean;
   }>;
   fitProfile: ProductFitProfile;
 };

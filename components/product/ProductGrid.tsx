@@ -30,6 +30,7 @@ export function ProductGrid({
                 ? fabricCharacterBySlug[product.fabricSlug]
                 : null
             }
+            wearHover
           />
         </li>
       ))}

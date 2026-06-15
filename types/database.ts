@@ -103,6 +103,7 @@ export type ProductImageRow = {
   url: string;
   sort_order: number;
   is_primary: boolean;
+  is_card_hover: boolean;
   created_at: string;
 };
 

@@ -77,6 +77,7 @@ function mapAdminDetail(
         url: image.url,
         sortOrder: image.sortOrder,
         isPrimary: image.isPrimary,
+        isCardHover: image.isCardHover ?? false,
       })),
     fitProfile: parseFitProfileFromRow(row.slug, row.fit_profile),
     createdAt: row.created_at,
@@ -203,6 +204,7 @@ async function syncImages(
           url: image.url,
           sort_order: index,
           is_primary: image.isPrimary,
+          is_card_hover: image.isCardHover === true,
         })
         .eq("id", image.id);
 
@@ -215,6 +217,7 @@ async function syncImages(
         url: image.url,
         sort_order: index,
         is_primary: image.isPrimary,
+        is_card_hover: image.isCardHover === true,
       });
 
       if (error) {

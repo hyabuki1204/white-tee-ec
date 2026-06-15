@@ -18,10 +18,13 @@ import type {
 
 type ProductQueryRow = ProductRow & {
   product_images: Array<{
+    id: string;
     url: string;
     is_primary: boolean;
     sort_order: number;
+    is_card_hover?: boolean;
   }> | null;
+  product_variants: ProductVariantRow[] | null;
 };
 
 type ProductDetailQueryRow = ProductRow & {
@@ -44,32 +47,50 @@ function pickPrimaryImageUrl(
 
 function mapQueryRowToProductWithImage(
   row: ProductQueryRow,
-): ProductWithPrimaryImage {
+): ProductWithPrimaryImage & { product_images: ProductQueryRow["product_images"] } {
   return {
     ...row,
     primary_image_url: pickPrimaryImageUrl(row.product_images),
+    product_images: row.product_images,
   };
 }
+
+function isMissingCardHoverColumn(message: string): boolean {
+  return message.includes("is_card_hover");
+}
+
+const PRODUCT_LIST_SELECT = `
+  *,
+  product_images(id, url, is_primary, sort_order, is_card_hover)
+`;
+
+const PRODUCT_LIST_SELECT_LEGACY = `
+  *,
+  product_images(id, url, is_primary, sort_order)
+`;
 
 async function getProductsFromSupabase(): Promise<Product[]> {
   const supabase = createSupabaseStaticClient();
 
-  const { data, error } = await supabase
+  let result = await supabase
     .from("products")
-    .select(
-      `
-      *,
-      product_images(url, is_primary, sort_order)
-    `,
-    )
+    .select(PRODUCT_LIST_SELECT)
     .eq("is_published", true)
     .order("created_at", { ascending: true });
 
-  if (error) {
-    throw new Error(`Failed to fetch products: ${error.message}`);
+  if (result.error && isMissingCardHoverColumn(result.error.message)) {
+    result = await supabase
+      .from("products")
+      .select(PRODUCT_LIST_SELECT_LEGACY)
+      .eq("is_published", true)
+      .order("created_at", { ascending: true });
   }
 
-  const rows = (data ?? []).map((row) =>
+  if (result.error) {
+    throw new Error(`Failed to fetch products: ${result.error.message}`);
+  }
+
+  const rows = (result.data ?? []).map((row) =>
     mapQueryRowToProductWithImage(row as unknown as ProductQueryRow),
   );
   return mapProductRowsToProducts(rows);
@@ -117,21 +138,23 @@ async function getProductsByIdsFromSupabase(ids: string[]): Promise<Product[]> {
 
   const supabase = createSupabaseStaticClient();
 
-  const { data, error } = await supabase
+  let result = await supabase
     .from("products")
-    .select(
-      `
-      *,
-      product_images(url, is_primary, sort_order)
-    `,
-    )
+    .select(PRODUCT_LIST_SELECT)
     .in("id", ids);
 
-  if (error) {
-    throw new Error(`Failed to fetch products by id: ${error.message}`);
+  if (result.error && isMissingCardHoverColumn(result.error.message)) {
+    result = await supabase
+      .from("products")
+      .select(PRODUCT_LIST_SELECT_LEGACY)
+      .in("id", ids);
   }
 
-  const rows = (data ?? []).map((row) =>
+  if (result.error) {
+    throw new Error(`Failed to fetch products by id: ${result.error.message}`);
+  }
+
+  const rows = (result.data ?? []).map((row) =>
     mapQueryRowToProductWithImage(row as unknown as ProductQueryRow),
   );
   return mapProductRowsToProducts(rows);

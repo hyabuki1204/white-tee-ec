@@ -78,6 +78,7 @@ function buildImages(productId: string, slug: string): Product["images"] {
     url: `/products/${slug}-0${index}.${ext}`,
     sortOrder: index - 1,
     isPrimary: index === 1,
+    isCardHover: index === 4,
   }));
 }
 

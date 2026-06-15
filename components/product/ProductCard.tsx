@@ -1,6 +1,7 @@
 import { FabricCharacterTraitLine } from "@/components/fabric/FabricCharacterTraitLine";
 import Image from "next/image";
 import Link from "next/link";
+import { getProductWearImageUrl } from "@/lib/products/wear-image";
 import { formatPrice } from "@/lib/utils/format-price";
 import type { FabricCharacter } from "@/lib/fabric/character";
 import type { Product } from "@/types";
@@ -10,14 +11,22 @@ type ProductCardProps = {
   fabricName?: string | null;
   fitLabel?: string | null;
   fabricCharacter?: FabricCharacter | null;
+  /** Swap to model-wear image on pointer hover (desktop). */
+  wearHover?: boolean;
 };
+
+const IMAGE_TRANSITION =
+  "transition-opacity duration-700 ease-[cubic-bezier(0.25,0.1,0.25,1)]";
 
 export function ProductCard({
   product,
   fabricName,
   fitLabel,
   fabricCharacter,
+  wearHover = false,
 }: ProductCardProps) {
+  const wearImageUrl = wearHover ? getProductWearImageUrl(product) : null;
+
   return (
     <article className="group">
       <Link href={`/products/${product.slug}`} className="block">
@@ -27,8 +36,22 @@ export function ProductCard({
             alt={product.name}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="object-cover transition-transform duration-[850ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] group-hover:scale-[1.02]"
+            className={`object-cover ${IMAGE_TRANSITION} ${
+              wearImageUrl
+                ? "[@media(hover:hover)]:group-hover:opacity-0"
+                : "transition-transform duration-[850ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] [@media(hover:hover)]:group-hover:scale-[1.02]"
+            }`}
           />
+          {wearImageUrl ? (
+            <Image
+              src={wearImageUrl}
+              alt=""
+              aria-hidden
+              fill
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              className={`object-cover opacity-0 ${IMAGE_TRANSITION} [@media(hover:hover)]:group-hover:opacity-100`}
+            />
+          ) : null}
         </div>
 
         <div className="mt-8 flex flex-col gap-2 md:mt-9">
