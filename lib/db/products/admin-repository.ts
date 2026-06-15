@@ -3,7 +3,6 @@ import "server-only";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { mapFullProductRow, mapImageRow, mapVariantRow } from "@/lib/db/products/mapper";
-import { parseFitProfileFromRow } from "@/lib/products/parse-fit-profile";
 import type {
   AdminProductDeleteResult,
   AdminProductDetail,
@@ -50,6 +49,8 @@ function mapAdminDetail(
   images: ProductImageRow[],
   hasOrders: boolean,
 ): AdminProductDetail {
+  const mapped = mapFullProductRow(row, variants, images);
+
   return {
     id: row.id,
     slug: row.slug,
@@ -60,9 +61,10 @@ function mapAdminDetail(
     fitNote: row.fit_note,
     material: row.material,
     care: row.care,
-    sizeGuide: mapFullProductRow(row, variants, images).sizeGuide,
+    sizeGuide: mapped.sizeGuide,
     isPublished: row.is_published,
     fabricSlug: row.fabric_slug ?? "",
+    sleeveType: mapped.sleeveType,
     variants: variants.map((variant) => ({
       size: variant.size as AdminProductDetail["variants"][number]["size"],
       sku: variant.sku,
@@ -79,7 +81,7 @@ function mapAdminDetail(
         isPrimary: image.isPrimary,
         isCardHover: image.isCardHover ?? false,
       })),
-    fitProfile: parseFitProfileFromRow(row.slug, row.fit_profile),
+    fitProfile: mapped.fitProfile,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     hasOrders,
@@ -228,6 +230,11 @@ async function syncImages(
 }
 
 function buildProductPayload(input: AdminProductInput) {
+  const fitProfile = {
+    ...input.fitProfile,
+    fitType: input.fitProfile.fitType,
+  };
+
   return {
     slug: input.slug,
     name: input.name,
@@ -240,7 +247,9 @@ function buildProductPayload(input: AdminProductInput) {
     size_guide: input.sizeGuide,
     is_published: input.isPublished,
     fabric_slug: input.fabricSlug,
-    fit_profile: input.fitProfile,
+    sleeve_type: input.sleeveType,
+    fit_type: input.fitProfile.fitType,
+    fit_profile: fitProfile,
   };
 }
 

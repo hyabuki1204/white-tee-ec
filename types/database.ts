@@ -66,6 +66,8 @@ export type ProductRow = {
   price: number;
   fabric_slug: string | null;
   fit_profile: Json | null;
+  sleeve_type: "short" | "long";
+  fit_type: "slim" | "regular" | "relaxed" | "boxy";
   created_at: string;
   updated_at: string;
 };
@@ -84,6 +86,8 @@ export type ProductInsert = {
   price: number;
   fabric_slug?: string | null;
   fit_profile?: Json | null;
+  sleeve_type?: "short" | "long";
+  fit_type?: "slim" | "regular" | "relaxed" | "boxy";
   created_at?: string;
   updated_at?: string;
 };

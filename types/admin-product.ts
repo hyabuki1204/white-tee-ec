@@ -1,5 +1,5 @@
 import type { ProductSize, SizeGuideMeasurement } from "@/types";
-import type { ProductFitProfile } from "@/types/product-fit";
+import type { ProductFitProfile, SleeveType } from "@/types/product-fit";
 
 /** Admin list view of a product. */
 export type AdminProductListItem = {
@@ -26,6 +26,7 @@ export type AdminProductInput = {
   sizeGuide: SizeGuideMeasurement[];
   isPublished: boolean;
   fabricSlug: string;
+  sleeveType: SleeveType;
   variants: Array<{
     size: ProductSize;
     sku: string | null;

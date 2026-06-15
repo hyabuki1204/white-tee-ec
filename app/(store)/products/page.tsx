@@ -2,19 +2,30 @@ import type { Metadata } from "next";
 import { Container } from "@/components/layout/Container";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { ProductFabricFilter } from "@/components/product/ProductFabricFilter";
+import { ProductSilhouetteFilter } from "@/components/product/ProductSilhouetteFilter";
 import { getFabricBySlug, getFabrics } from "@/lib/fabric/queries";
 import { getProducts } from "@/lib/products/queries";
+import {
+  FIT_TYPE_LABELS,
+  isFitType,
+  isSleeveType,
+  SLEEVE_TYPE_LABELS,
+} from "@/lib/products/silhouette";
 import { SITE_UI_COPY } from "@/lib/copy/site-ui";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 
 type ProductsPageProps = {
-  searchParams: Promise<{ fabric?: string }>;
+  searchParams: Promise<{
+    fabric?: string;
+    sleeve?: string;
+    fit?: string;
+  }>;
 };
 
 export async function generateMetadata({
   searchParams,
 }: ProductsPageProps): Promise<Metadata> {
-  const { fabric: fabricSlug } = await searchParams;
+  const { fabric: fabricSlug, sleeve, fit } = await searchParams;
 
   if (fabricSlug) {
     const fabric = await getFabricBySlug(fabricSlug);
@@ -28,6 +39,19 @@ export async function generateMetadata({
     }
   }
 
+  if (isSleeveType(sleeve)) {
+    const sleeveLabel = SLEEVE_TYPE_LABELS[sleeve];
+    const fitLabel = isFitType(fit) ? FIT_TYPE_LABELS[fit] : null;
+
+    return buildPageMetadata({
+      title: fitLabel ? `${sleeveLabel} · ${fitLabel}` : sleeveLabel,
+      description: "White tees — crew, pocket, relaxed, and long sleeve.",
+      path: fit
+        ? `/products?sleeve=${sleeve}&fit=${fit}`
+        : `/products?sleeve=${sleeve}`,
+    });
+  }
+
   return buildPageMetadata({
     title: "Products",
     description: "White tees — crew, pocket, relaxed, and long sleeve.",
@@ -36,17 +60,30 @@ export async function generateMetadata({
 }
 
 export default async function ProductsPage({ searchParams }: ProductsPageProps) {
-  const { fabric: fabricSlug } = await searchParams;
+  const { fabric: fabricSlug, sleeve: sleeveParam, fit: fitParam } =
+    await searchParams;
   const [allProducts, fabrics] = await Promise.all([
     getProducts(),
     getFabrics(),
   ]);
 
+  const activeSleeve = isSleeveType(sleeveParam) ? sleeveParam : null;
+  const activeFit = isFitType(fitParam) ? fitParam : null;
   const fabric = fabricSlug ? await getFabricBySlug(fabricSlug) : null;
-  const products =
-    fabric !== null
-      ? allProducts.filter((product) => product.fabricSlug === fabric.slug)
-      : allProducts;
+
+  let products = allProducts;
+
+  if (fabric) {
+    products = products.filter((product) => product.fabricSlug === fabric.slug);
+  }
+
+  if (activeSleeve) {
+    products = products.filter((product) => product.sleeveType === activeSleeve);
+  }
+
+  if (activeFit) {
+    products = products.filter((product) => product.fitType === activeFit);
+  }
 
   const fabricNameBySlug = Object.fromEntries(
     fabrics.map((entry) => [entry.slug, entry.name]),
@@ -79,7 +116,19 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
         )}
       </header>
 
-      <ProductFabricFilter fabrics={fabrics} activeSlug={fabric?.slug ?? null} />
+      <ProductSilhouetteFilter
+        products={allProducts}
+        activeSleeve={activeSleeve}
+        activeFit={activeFit}
+        fabricSlug={fabric?.slug ?? null}
+      />
+
+      <ProductFabricFilter
+        fabrics={fabrics}
+        activeSlug={fabric?.slug ?? null}
+        activeSleeve={activeSleeve}
+        activeFit={activeFit}
+      />
 
       <ProductGrid
         products={products}

@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
-import { CartProvider } from "@/components/cart/CartProvider";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { Main } from "@/components/layout/Main";
 import { SkipLink } from "@/components/layout/SkipLink";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { getFabrics } from "@/lib/fabric/queries";
+import { buildStoreNavMenu } from "@/lib/navigation/store-nav";
+import { getProducts } from "@/lib/products/queries";
 import { buildOrganizationSchema } from "@/lib/seo/json-ld";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 import { getSeoSettings } from "@/lib/seo/queries";
@@ -24,17 +26,20 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function StoreLayout({
+export default async function StoreLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [fabrics, products] = await Promise.all([getFabrics(), getProducts()]);
+  const storeNav = buildStoreNavMenu(fabrics, products);
+
   return (
     <>
       <JsonLd data={buildOrganizationSchema()} />
       <SkipLink />
       <div className="flex min-h-screen flex-col bg-background">
-        <Header />
+        <Header storeNav={storeNav} />
         <Main>{children}</Main>
         <Footer />
       </div>

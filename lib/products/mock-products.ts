@@ -7,6 +7,7 @@ import {
   createDefaultSizeGuide,
 } from "@/lib/products/defaults";
 import { getDefaultFitProfile } from "@/lib/products/fit-profiles";
+import { getDefaultSleeveType } from "@/lib/products/silhouette";
 import type { Product, ProductVariant } from "@/types";
 
 const DETAIL_BY_SLUG: Record<
@@ -87,6 +88,8 @@ export const MOCK_PRODUCTS: Product[] = PRODUCT_CATALOG.map(
   ({ id, slug, name, price, description, imageUrl, skuCode }) => {
     const detail = DETAIL_BY_SLUG[slug];
 
+    const fitProfile = getDefaultFitProfile(slug);
+
     return {
       id,
       slug,
@@ -103,7 +106,9 @@ export const MOCK_PRODUCTS: Product[] = PRODUCT_CATALOG.map(
       images: buildImages(id, slug),
       isPublished: true,
       fabricSlug: PRODUCT_FABRIC_SLUG_BY_PRODUCT_SLUG[slug] ?? null,
-      fitProfile: getDefaultFitProfile(slug),
+      sleeveType: getDefaultSleeveType(slug),
+      fitType: fitProfile.fitType,
+      fitProfile,
     };
   },
 );

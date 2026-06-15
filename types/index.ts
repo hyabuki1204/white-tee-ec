@@ -43,12 +43,15 @@ export type Product = {
   images: ProductImage[];
   isPublished: boolean;
   fabricSlug: string | null;
+  sleeveType: import("@/types/product-fit").SleeveType;
+  fitType: import("@/types/product-fit").FitType;
   fitProfile: ProductFitProfile;
 };
 
 export type {
   FitPreference,
   FitType,
+  SleeveType,
   ProductFitProfile,
   ProductModelProfile,
   SizeReferenceBand,

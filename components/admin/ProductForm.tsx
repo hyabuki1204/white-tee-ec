@@ -25,8 +25,9 @@ import {
   DEFAULT_MATERIAL,
   slugifyProductName,
 } from "@/lib/products/defaults";
+import { SLEEVE_TYPES } from "@/lib/products/silhouette";
 import type { AdminProductDetail } from "@/types/admin-product";
-import type { ProductSize } from "@/types";
+import type { ProductSize, SleeveType } from "@/types";
 
 type ProductFormProps = {
   mode: "create" | "edit";
@@ -206,6 +207,7 @@ export function ProductForm({
       sizeGuide: form.sizeGuide,
       isPublished: form.isPublished,
       fabricSlug: form.fabricSlug,
+      sleeveType: form.sleeveType,
       variants: form.variants,
       images: form.images.map((image, index) => ({
         id: image.id,
@@ -658,6 +660,24 @@ export function ProductForm({
 
       <section className={sectionClass}>
         <h2 className={adminSectionTitle}>{sections.fitProfile}</h2>
+        <div className="mb-8 max-w-xs">
+          <label className="block space-y-2">
+            <span className={adminLabel}>{fields.sleeveType}</span>
+            <select
+              value={form.sleeveType}
+              onChange={(event) =>
+                updateField("sleeveType", event.target.value as SleeveType)
+              }
+              className={adminInput}
+            >
+              {SLEEVE_TYPES.map((sleeveType) => (
+                <option key={sleeveType} value={sleeveType}>
+                  {sleeveType === "short" ? "半袖 (Short sleeve)" : "長袖 (Long sleeve)"}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
         <ProductFitProfileFields
           value={form.fitProfile}
           onChange={(fitProfile) => updateField("fitProfile", fitProfile)}

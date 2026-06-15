@@ -14,6 +14,25 @@ import type {
 } from "@/types/database";
 import { parseSizeGuide } from "@/lib/products/defaults";
 import { parseFitProfileFromRow } from "@/lib/products/parse-fit-profile";
+import {
+  getDefaultSleeveType,
+  isFitType,
+  isSleeveType,
+} from "@/lib/products/silhouette";
+import type { FitType, SleeveType } from "@/types/product-fit";
+
+function mapSilhouetteFields(
+  row: Pick<ProductRow, "slug" | "fit_profile" | "sleeve_type" | "fit_type">,
+): { sleeveType: SleeveType; fitType: FitType } {
+  const fitProfile = parseFitProfileFromRow(row.slug, row.fit_profile);
+
+  return {
+    sleeveType: isSleeveType(row.sleeve_type)
+      ? row.sleeve_type
+      : getDefaultSleeveType(row.slug),
+    fitType: isFitType(row.fit_type) ? row.fit_type : fitProfile.fitType,
+  };
+}
 
 export function mapSizeGuideFromRow(value: unknown): SizeGuideMeasurement[] {
   return parseSizeGuide(value);
@@ -73,6 +92,8 @@ export function mapProductRowToProduct(
     }> | null;
   },
 ): Product {
+  const silhouette = mapSilhouetteFields(row);
+
   return {
     id: row.id,
     slug: row.slug,
@@ -89,7 +110,12 @@ export function mapProductRowToProduct(
     images: mapListImages(row.product_images),
     isPublished: row.is_published,
     fabricSlug: row.fabric_slug,
-    fitProfile: parseFitProfileFromRow(row.slug, row.fit_profile),
+    sleeveType: silhouette.sleeveType,
+    fitType: silhouette.fitType,
+    fitProfile: {
+      ...parseFitProfileFromRow(row.slug, row.fit_profile),
+      fitType: silhouette.fitType,
+    },
   };
 }
 
@@ -103,6 +129,8 @@ export function mapFullProductRow(
     .sort((a, b) => a.sortOrder - b.sortOrder);
   const primaryImage =
     mappedImages.find((image) => image.isPrimary) ?? mappedImages[0];
+  const silhouette = mapSilhouetteFields(row);
+  const fitProfile = parseFitProfileFromRow(row.slug, row.fit_profile);
 
   return {
     id: row.id,
@@ -120,7 +148,9 @@ export function mapFullProductRow(
     images: mappedImages,
     isPublished: row.is_published,
     fabricSlug: row.fabric_slug,
-    fitProfile: parseFitProfileFromRow(row.slug, row.fit_profile),
+    sleeveType: silhouette.sleeveType,
+    fitType: silhouette.fitType,
+    fitProfile: { ...fitProfile, fitType: silhouette.fitType },
   };
 }
 

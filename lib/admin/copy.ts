@@ -185,6 +185,7 @@ export const ADMIN_COPY = {
       shoulder: "肩幅",
       chest: "身幅",
       sleeve: "袖丈",
+      sleeveType: "袖丈（半袖 / 長袖）",
       enableOneSize: "サイズを1つ以上有効にしてください。",
       fitType: "フィットタイプ",
       fitLabel: "フィットラベル（店舗表示）",

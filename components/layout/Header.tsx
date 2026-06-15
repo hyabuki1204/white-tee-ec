@@ -6,12 +6,18 @@ import { useEffect, useRef, useState } from "react";
 import { CartNavLink } from "@/components/layout/CartNavLink";
 import { Container } from "@/components/layout/Container";
 import { isNavActive, MobileNav } from "@/components/layout/MobileNav";
+import { NavDropdown } from "@/components/layout/NavDropdown";
 import { NAV_ITEMS } from "@/components/layout/nav-items";
+import type { StoreNavMenu } from "@/lib/navigation/store-nav";
 import { cn } from "@/lib/utils";
 
 const HERO_SCROLL_RATIO = 0.72;
 
-export function Header() {
+type HeaderProps = {
+  storeNav: StoreNavMenu;
+};
+
+export function Header({ storeNav }: HeaderProps) {
   const pathname = usePathname();
   const isHome = pathname === "/";
   const isAdmin = pathname.startsWith("/admin");
@@ -110,6 +116,32 @@ export function Header() {
             >
               <ul className="flex flex-wrap items-center justify-end gap-x-10">
                 {navLinks.map((item) => {
+                  if (item.href === "/fabric") {
+                    return (
+                      <NavDropdown
+                        key={item.href}
+                        label={item.label}
+                        href={storeNav.fabric.href}
+                        isActive={isNavActive(pathname, "/fabric")}
+                        allLabel={storeNav.fabric.allLabel}
+                        links={storeNav.fabric.links}
+                      />
+                    );
+                  }
+
+                  if (item.href === "/products") {
+                    return (
+                      <NavDropdown
+                        key={item.href}
+                        label={item.label}
+                        href={storeNav.products.href}
+                        isActive={isNavActive(pathname, "/products")}
+                        allLabel={storeNav.products.allLabel}
+                        groups={storeNav.products.groups}
+                      />
+                    );
+                  }
+
                   const isActive = isNavActive(pathname, item.href);
 
                   return (
@@ -175,7 +207,11 @@ export function Header() {
       </header>
 
       <div id="mobile-navigation">
-        <MobileNav isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
+        <MobileNav
+          isOpen={menuOpen}
+          onClose={() => setMenuOpen(false)}
+          storeNav={storeNav}
+        />
       </div>
     </>
   );

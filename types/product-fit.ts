@@ -2,6 +2,8 @@ import type { ProductSize } from "@/types";
 
 export type FitType = "slim" | "regular" | "relaxed" | "boxy";
 
+export type SleeveType = "short" | "long";
+
 export type FitPreference = "just-fit" | "relaxed" | "oversized";
 
 export type ProductModelProfile = {

@@ -13,6 +13,7 @@ import {
   parseSizeGuide,
 } from "@/lib/products/defaults";
 import { getDefaultFitProfile } from "@/lib/products/fit-profiles";
+import { getDefaultSleeveType, isSleeveType } from "@/lib/products/silhouette";
 
 type ValidationResult =
   | { ok: true; data: AdminProductInput }
@@ -113,6 +114,11 @@ export function parseAdminProductInput(body: unknown): ValidationResult {
     return { ok: false, error: fitProfile };
   }
 
+  const sleeveTypeRaw = input.sleeveType;
+  const sleeveType = isSleeveType(sleeveTypeRaw)
+    ? sleeveTypeRaw
+    : getDefaultSleeveType(slug);
+
   return {
     ok: true,
     data: {
@@ -127,6 +133,7 @@ export function parseAdminProductInput(body: unknown): ValidationResult {
       sizeGuide,
       isPublished,
       fabricSlug,
+      sleeveType,
       variants: variants.data,
       images: images.data,
       fitProfile,
@@ -285,6 +292,7 @@ export function toAdminProductFormDefaults(): AdminProductDetail {
     sizeGuide: createDefaultSizeGuide(),
     isPublished: true,
     fabricSlug: "heavyweight-jersey",
+    sleeveType: "short",
     variants: PRODUCT_SIZES.map((size) => ({
       size,
       sku: null,

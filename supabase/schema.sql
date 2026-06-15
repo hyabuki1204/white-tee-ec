@@ -57,11 +57,17 @@ create table public.products (
   is_published boolean not null default true,
   price integer not null check (price >= 0),
   fabric_slug text references public.fabrics (slug) on delete restrict,
+  fit_profile jsonb,
+  sleeve_type text not null default 'short'
+    check (sleeve_type in ('short', 'long')),
+  fit_type text not null default 'regular'
+    check (fit_type in ('slim', 'regular', 'relaxed', 'boxy')),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
 
 create index products_fabric_slug_idx on public.products (fabric_slug);
+create index products_sleeve_fit_idx on public.products (sleeve_type, fit_type);
 
 -- ---------------------------------------------------------------------------
 -- product_variants (size / SKU / stock)
