@@ -35,7 +35,8 @@ export function ProductCard({
             src={product.imageUrl}
             alt={product.name}
             fill
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            quality={90}
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 480px"
             className={`object-cover ${IMAGE_TRANSITION} ${
               wearImageUrl
                 ? "[@media(hover:hover)]:group-hover:opacity-0"
@@ -48,7 +49,8 @@ export function ProductCard({
               alt=""
               aria-hidden
               fill
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              quality={90}
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 480px"
               className={`object-cover opacity-0 ${IMAGE_TRANSITION} [@media(hover:hover)]:group-hover:opacity-100`}
             />
           ) : null}
