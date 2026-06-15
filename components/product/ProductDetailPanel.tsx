@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect } from "react";
+import { ProductPurchaseReassurance } from "@/components/product/ProductPurchaseReassurance";
 import { AddToCartButton } from "@/components/product/AddToCartButton";
 import { ProductDetailTabs } from "@/components/product/ProductDetailTabs";
 import { useProductPurchase } from "@/components/product/ProductPurchaseContext";
@@ -124,6 +125,7 @@ export function ProductDetailPanel({
               </p>
             ) : null}
           </div>
+          <ProductPurchaseReassurance />
         </div>
       </section>
 

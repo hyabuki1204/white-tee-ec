@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { JaHelperText } from "@/components/ui/JaHelperText";
-import { getStoryLink } from "@/lib/stories/links";
+import { getStoryLink, getStorySecondaryLink } from "@/lib/stories/links";
 import type { StoryEntryContent } from "@/types/site-content";
 
 type StoryCardProps = {
@@ -10,6 +10,7 @@ type StoryCardProps = {
 
 export function StoryCard({ story }: StoryCardProps) {
   const storyLink = getStoryLink(story.id);
+  const secondaryLink = getStorySecondaryLink(story.id);
 
   return (
     <article className="flex w-full flex-col items-center text-center">
@@ -42,12 +43,22 @@ export function StoryCard({ story }: StoryCardProps) {
       ) : null}
 
       {storyLink ? (
-        <Link
-          href={storyLink.href}
-          className="mt-8 text-[11px] font-light tracking-[0.08em] text-neutral-400 transition-opacity duration-300 hover:opacity-60 md:mt-10"
-        >
-          {storyLink.label}
-        </Link>
+        <div className="mt-8 flex flex-col items-center gap-3 md:mt-10">
+          <Link
+            href={storyLink.href}
+            className="text-[11px] font-light tracking-[0.08em] text-neutral-400 transition-opacity duration-300 hover:opacity-60 md:text-[10px]"
+          >
+            {storyLink.label}
+          </Link>
+          {secondaryLink ? (
+            <Link
+              href={secondaryLink.href}
+              className="text-[10px] font-light tracking-[0.08em] text-neutral-400 transition-opacity duration-300 hover:opacity-60 md:text-[10px]"
+            >
+              {secondaryLink.label}
+            </Link>
+          ) : null}
+        </div>
       ) : null}
     </article>
   );

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
+import { FabricCompareOverview } from "@/components/fabric/FabricCompareOverview";
 import { FabricGrid } from "@/components/fabric/FabricGrid";
 import { FabricIntro } from "@/components/fabric/FabricIntro";
 import { Container } from "@/components/layout/Container";
@@ -43,7 +44,8 @@ export default async function FabricPage() {
           ]}
         />
         <FabricIntro />
-        <div className="mt-28 md:mt-36 lg:mt-44">
+        <FabricCompareOverview fabrics={fabrics} variant="full" className="mt-20 md:mt-28 lg:mt-32" />
+        <div className="mt-20 md:mt-28 lg:mt-32">
           <FabricGrid
             fabrics={fabrics}
             productCountBySlug={productCountBySlug}

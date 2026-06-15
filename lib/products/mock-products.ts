@@ -69,8 +69,8 @@ function buildImages(productId: string, slug: string): Product["images"] {
     { index: 1, ext: "jpg" },
     { index: 2, ext: "jpg" },
     { index: 3, ext: "jpg" },
-    { index: 4, ext: "svg" },
-    { index: 5, ext: "svg" },
+    { index: 4, ext: "jpg" },
+    { index: 5, ext: "jpg" },
   ];
 
   return entries.map(({ index, ext }) => ({

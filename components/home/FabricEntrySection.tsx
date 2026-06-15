@@ -6,13 +6,9 @@ import type { Fabric } from "@/lib/fabric/content";
 
 type FabricEntrySectionProps = {
   fabrics: Fabric[];
-  introLines: [string, string];
 };
 
-export function FabricEntrySection({
-  fabrics,
-  introLines,
-}: FabricEntrySectionProps) {
+export function FabricEntrySection({ fabrics }: FabricEntrySectionProps) {
   if (fabrics.length === 0) {
     return null;
   }
@@ -20,22 +16,8 @@ export function FabricEntrySection({
   const { fabric: copy } = SITE_UI_COPY;
 
   return (
-    <section aria-label="Fabric">
-      <Container
-        as="div"
-        className="pt-16 pb-16 sm:pt-20 sm:pb-20 md:pt-24 md:pb-28 lg:pt-28 lg:pb-32"
-      >
-        <header className="mb-12 sm:mb-16 md:mb-20 lg:mb-24">
-          <p className="text-center text-[12px] font-light tracking-[0.14em] text-neutral-500 md:text-[11px] md:tracking-[0.16em]">
-            {copy.title}
-          </p>
-          <p className="mx-auto mt-6 max-w-sm text-center text-[13px] font-light leading-[1.95] tracking-[0.02em] text-neutral-600 sm:mt-8 md:mt-10 md:text-xs md:leading-[2.1] md:tracking-[0.03em] md:text-neutral-500">
-            {introLines[0]}
-            <br />
-            {introLines[1]}
-          </p>
-        </header>
-
+    <section aria-label="Fabric preview">
+      <Container as="div" className="pb-16 sm:pb-20 md:pb-28 lg:pb-32">
         <ul className="grid grid-cols-1 gap-x-7 gap-y-20 sm:grid-cols-2 sm:gap-x-9 sm:gap-y-24 lg:grid-cols-3 lg:gap-x-10 lg:gap-y-32">
           {fabrics.map((fabric) => (
             <li key={fabric.slug}>
@@ -44,10 +26,10 @@ export function FabricEntrySection({
           ))}
         </ul>
 
-        <div className="mt-14 sm:mt-20 md:mt-24">
+        <div className="mt-14 sm:mt-16 md:mt-20">
           <Link
             href="/fabric"
-            className="inline-block py-2 text-[12px] font-light tracking-[0.08em] text-neutral-600 transition-opacity duration-500 hover:opacity-50 md:text-[11px] md:text-neutral-500"
+            className="inline-block py-2 text-[11px] font-light tracking-[0.08em] text-neutral-400 transition-opacity duration-500 hover:opacity-50 md:text-[10px]"
           >
             {copy.allFabrics}
           </Link>

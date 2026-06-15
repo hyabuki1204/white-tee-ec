@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Container } from "@/components/layout/Container";
 import { ProductGrid } from "@/components/product/ProductGrid";
+import { ProductFabricFilter } from "@/components/product/ProductFabricFilter";
 import { getFabricBySlug, getFabrics } from "@/lib/fabric/queries";
 import { getProducts } from "@/lib/products/queries";
 import { SITE_UI_COPY } from "@/lib/copy/site-ui";
@@ -50,6 +51,9 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   const fabricNameBySlug = Object.fromEntries(
     fabrics.map((entry) => [entry.slug, entry.name]),
   );
+  const fabricCharacterBySlug = Object.fromEntries(
+    fabrics.map((entry) => [entry.slug, entry.character]),
+  );
 
   const { product: copy } = SITE_UI_COPY;
 
@@ -75,9 +79,12 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
         )}
       </header>
 
+      <ProductFabricFilter fabrics={fabrics} activeSlug={fabric?.slug ?? null} />
+
       <ProductGrid
         products={products}
         fabricNameBySlug={fabricNameBySlug}
+        fabricCharacterBySlug={fabricCharacterBySlug}
       />
     </Container>
   );

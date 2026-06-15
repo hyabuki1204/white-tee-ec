@@ -39,24 +39,22 @@ export default async function Home() {
   const fabricNameBySlug = Object.fromEntries(
     fabrics.map((fabric) => [fabric.slug, fabric.name]),
   );
+  const fabricCharacterBySlug = Object.fromEntries(
+    fabrics.map((fabric) => [fabric.slug, fabric.character]),
+  );
 
   return (
     <>
-      <HeroSection
-        heroImage={homeContent.heroImage}
-        heroCopy={homeContent.heroCopy}
-      />
+      <HeroSection heroImage={homeContent.heroImage} />
       <CopySection
         heroCopy={homeContent.heroCopy}
-        conceptLines={homeContent.conceptLines}
+        fabricIntroLines={homeContent.fabricIntroLines}
       />
-      <FabricEntrySection
-        fabrics={fabricPreview}
-        introLines={homeContent.fabricIntroLines}
-      />
+      <FabricEntrySection fabrics={fabricPreview} />
       <FeaturedProductsSection
         products={featured}
         fabricNameBySlug={fabricNameBySlug}
+        fabricCharacterBySlug={fabricCharacterBySlug}
       />
       <BrandLinksSection />
     </>

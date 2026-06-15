@@ -1,3 +1,4 @@
+import { KanemasaLine } from "@/components/brand/KanemasaLine";
 import { FabricCharacterDisplay } from "@/components/fabric/FabricCharacterDisplay";
 import { JaHelperText } from "@/components/ui/JaHelperText";
 import { getFabricPresentation } from "@/lib/fabric/presentation";
@@ -32,6 +33,7 @@ export function FabricDetailIntro({ fabric }: FabricDetailIntroProps) {
         </JaHelperText>
       ) : null}
       <FabricCharacterDisplay character={fabric.character} variant="detail" />
+      <KanemasaLine variant="factory" className="mt-10 sm:mt-12 md:mt-14" />
     </header>
   );
 }

@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
-import { buildStripeLineItems } from "@/lib/checkout/build-line-items";
+import {
+  buildStripeLineItems,
+  getCheckoutSubtotal,
+} from "@/lib/checkout/build-line-items";
+import { getShippingCost } from "@/lib/cart/shipping";
 import { getStripe } from "@/lib/stripe/client";
 import type { CheckoutRequestItem } from "@/lib/checkout/build-line-items";
 
@@ -21,6 +25,8 @@ export async function POST(request: Request) {
   try {
     const body = (await request.json()) as CheckoutRequestBody;
     const lineItems = await buildStripeLineItems(body.items);
+    const subtotal = getCheckoutSubtotal(lineItems);
+    const shippingCost = getShippingCost(subtotal);
     const origin = getOrigin(request);
 
     const stripe = getStripe();
@@ -31,6 +37,21 @@ export async function POST(request: Request) {
       shipping_address_collection: {
         allowed_countries: ["JP"],
       },
+      shipping_options: [
+        {
+          shipping_rate_data: {
+            type: "fixed_amount",
+            fixed_amount: {
+              amount: shippingCost,
+              currency: "jpy",
+            },
+            display_name:
+              shippingCost === 0
+                ? "Free shipping"
+                : "Standard shipping",
+          },
+        },
+      ],
       success_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/checkout/cancel`,
     });

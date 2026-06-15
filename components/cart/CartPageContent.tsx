@@ -1,10 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { CartFabricCrossSell } from "@/components/cart/CartFabricCrossSell";
 import { CartItem } from "@/components/cart/CartItem";
 import { CartSummary } from "@/components/cart/CartSummary";
 import { SITE_UI_COPY } from "@/lib/copy/site-ui";
+import { getFabricCrossSellProducts } from "@/lib/products/cross-sell";
 import { useCartStore } from "@/lib/cart/store";
+import type { Product } from "@/types";
 import type { ProductSize } from "@/types";
 
 export type CartVariantLookup = Record<
@@ -26,11 +29,22 @@ export type CartProductLookup = Record<
 
 type CartPageContentProps = {
   productLookup: CartProductLookup;
+  allProducts: Product[];
+  fabricNameBySlug: Record<string, string>;
 };
 
-export function CartPageContent({ productLookup }: CartPageContentProps) {
+export function CartPageContent({
+  productLookup,
+  allProducts,
+  fabricNameBySlug,
+}: CartPageContentProps) {
   const items = useCartStore((state) => state.items);
   const { cart: copy } = SITE_UI_COPY;
+
+  const crossSellProducts = getFabricCrossSellProducts(
+    items.map((item) => item.productId),
+    allProducts,
+  );
 
   if (items.length === 0) {
     return (
@@ -89,6 +103,11 @@ export function CartPageContent({ productLookup }: CartPageContentProps) {
       <ul className="divide-y divide-neutral-200/70">{itemElements}</ul>
 
       <CartSummary hasUnavailableItems={hasUnavailableItems} />
+
+      <CartFabricCrossSell
+        products={crossSellProducts}
+        fabricNameBySlug={fabricNameBySlug}
+      />
     </div>
   );
 }

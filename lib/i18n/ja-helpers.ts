@@ -46,6 +46,15 @@ export const FABRIC_JA_BY_SLUG: Record<string, FabricJaCopy> = {
 export const PRODUCT_SIZE_GUIDE_JA =
   "平置き採寸・cm表記。実寸は多少の誤差があります。";
 
+/** Fabric Character trait labels — subordinate to English in UI. */
+export const FABRIC_CHARACTER_JA = {
+  thickness: "厚み",
+  softness: "やわらかさ",
+  structure: "ハリ",
+  sheerness: "透け感",
+  surface: "表面感",
+} as const;
+
 export function getStoryJaHelper(storyId: string): string | null {
   return STORY_JA_HELPERS[storyId] ?? null;
 }

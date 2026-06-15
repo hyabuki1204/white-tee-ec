@@ -24,8 +24,8 @@ export type Fabric = {
 export const FABRIC_PAGE_TITLE = "Fabric";
 
 export const FABRIC_INTRO_LINES = [
-  "Every white tee begins with the cloth.",
-  "Weight, hand, and how quietly it holds light.",
+  "The cloth comes first.",
+  "Weight, hand, light.",
 ] as const;
 
 /** Product slug → fabric slug (mock-mode fallback). */

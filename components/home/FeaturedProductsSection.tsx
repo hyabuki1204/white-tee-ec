@@ -7,11 +7,13 @@ import type { Product } from "@/types";
 type FeaturedProductsSectionProps = {
   products: Product[];
   fabricNameBySlug?: Record<string, string>;
+  fabricCharacterBySlug?: Record<string, import("@/lib/fabric/character").FabricCharacter>;
 };
 
 export function FeaturedProductsSection({
   products,
   fabricNameBySlug,
+  fabricCharacterBySlug,
 }: FeaturedProductsSectionProps) {
   if (products.length === 0) {
     return null;
@@ -37,6 +39,11 @@ export function FeaturedProductsSection({
                     : null
                 }
                 fitLabel={product.fitProfile.fitLabel}
+                fabricCharacter={
+                  product.fabricSlug && fabricCharacterBySlug
+                    ? fabricCharacterBySlug[product.fabricSlug]
+                    : null
+                }
               />
             </li>
           ))}
@@ -45,7 +52,7 @@ export function FeaturedProductsSection({
         <div className="mt-20 md:mt-24">
           <Link
             href="/products"
-            className="text-[11px] font-light tracking-[0.08em] text-neutral-500 transition-opacity duration-500 hover:opacity-50"
+            className="text-[11px] font-light tracking-[0.08em] text-neutral-400 transition-opacity duration-500 hover:opacity-50 md:text-[10px]"
           >
             {copy.allPieces}
           </Link>

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { FabricCharacterMini } from "@/components/fabric/FabricCharacterMini";
+import { FabricCharacterTraitLine } from "@/components/fabric/FabricCharacterTraitLine";
 import { JaHelperText } from "@/components/ui/JaHelperText";
 import { SITE_UI_COPY } from "@/lib/copy/site-ui";
 import { FABRIC_IMAGE_ASPECT, getFabricPresentation } from "@/lib/fabric/presentation";
@@ -69,7 +69,12 @@ export function FabricCard({
               {copy.pieceCount(productCount)}
             </p>
           ) : null}
-          <FabricCharacterMini character={fabric.character} />
+          <FabricCharacterTraitLine
+            trait="thickness"
+            level={fabric.character.thickness}
+            align="start"
+            className="pt-1"
+          />
           {fabric.taglineJa ? (
             <JaHelperText spacing="tight" className="!mt-2 max-w-none">
               {fabric.taglineJa}

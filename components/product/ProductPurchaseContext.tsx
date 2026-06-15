@@ -11,6 +11,7 @@ import {
   type RefObject,
 } from "react";
 import { getCartItemKey } from "@/lib/cart/cart-utils";
+import { setLastViewedProductSlug } from "@/lib/navigation/last-product";
 import { useCartStore } from "@/lib/cart/store";
 import { SITE_UI_COPY } from "@/lib/copy/site-ui";
 import type { Product, ProductSize } from "@/types";
@@ -85,6 +86,10 @@ export function ProductPurchaseProvider({
   const maxQuantity = Math.max(0, stockQuantity - inCartQuantity);
   const isOutOfStock = selectedVariant ? stockQuantity < 1 : false;
   const canAdd = selectedSize !== null && !isOutOfStock && maxQuantity > 0;
+
+  useEffect(() => {
+    setLastViewedProductSlug(product.slug);
+  }, [product.slug]);
 
   useEffect(() => {
     if (quantity > maxQuantity && maxQuantity > 0) {

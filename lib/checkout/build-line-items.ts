@@ -42,6 +42,17 @@ async function getCheckoutProducts(
 }
 
 /** Validate cart items and build Stripe line_items with server-side prices. */
+export function getCheckoutSubtotal(
+  lineItems: Stripe.Checkout.SessionCreateParams.LineItem[],
+): number {
+  return lineItems.reduce((sum, item) => {
+    const unitAmount = item.price_data?.unit_amount ?? 0;
+    const quantity = item.quantity ?? 1;
+    return sum + unitAmount * quantity;
+  }, 0);
+}
+
+/** Validate cart items and build Stripe line_items with server-side prices. */
 export async function buildStripeLineItems(
   items: CheckoutRequestItem[],
 ): Promise<Stripe.Checkout.SessionCreateParams.LineItem[]> {

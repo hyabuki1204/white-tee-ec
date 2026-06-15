@@ -2,7 +2,7 @@
 
 import { ProductDetailPanel } from "@/components/product/ProductDetailPanel";
 import { ProductDetailTabs } from "@/components/product/ProductDetailTabs";
-import { ProductFabricChip } from "@/components/product/ProductFabricChip";
+import { ProductFabricContext } from "@/components/product/ProductFabricContext";
 import { ProductModelFitInfo } from "@/components/product/ProductModelFitInfo";
 import { MobilePurchaseBar } from "@/components/product/MobilePurchaseBar";
 import { ProductPurchaseProvider } from "@/components/product/ProductPurchaseContext";
@@ -34,7 +34,7 @@ export function ProductInfo({ product, fabric }: ProductInfoProps) {
               {product.name}
             </h1>
             {fabric ? (
-              <ProductFabricChip fabric={fabric} />
+              <ProductFabricContext fabric={fabric} />
             ) : null}
             <p className="text-[13px] font-light tracking-[0.05em] text-neutral-600 md:text-xs md:text-neutral-500">
               {formatPrice(product.price)}

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 import { CartPageContent } from "@/components/cart/CartPageContent";
 import { SITE_UI_COPY } from "@/lib/copy/site-ui";
+import { getFabrics } from "@/lib/fabric/queries";
 import { getProducts } from "@/lib/products/queries";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 
@@ -16,7 +17,10 @@ export const metadata: Metadata = buildPageMetadata({
 });
 
 export default async function CartPage() {
-  const products = await getProducts();
+  const [products, fabrics] = await Promise.all([getProducts(), getFabrics()]);
+  const fabricNameBySlug = Object.fromEntries(
+    fabrics.map((fabric) => [fabric.slug, fabric.name]),
+  );
   const productLookup = Object.fromEntries(
     products.map((product) => [
       product.id,
@@ -44,7 +48,11 @@ export default async function CartPage() {
         </p>
       </header>
 
-      <CartPageContent productLookup={productLookup} />
+      <CartPageContent
+        productLookup={productLookup}
+        allProducts={products}
+        fabricNameBySlug={fabricNameBySlug}
+      />
 
       <p className="mt-12 text-center md:mt-16">
         <Link

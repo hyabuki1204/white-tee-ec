@@ -1,18 +1,22 @@
+import { FabricCharacterTraitLine } from "@/components/fabric/FabricCharacterTraitLine";
 import Image from "next/image";
 import Link from "next/link";
 import { formatPrice } from "@/lib/utils/format-price";
+import type { FabricCharacter } from "@/lib/fabric/character";
 import type { Product } from "@/types";
 
 type ProductCardProps = {
   product: Product;
   fabricName?: string | null;
   fitLabel?: string | null;
+  fabricCharacter?: FabricCharacter | null;
 };
 
 export function ProductCard({
   product,
   fabricName,
   fitLabel,
+  fabricCharacter,
 }: ProductCardProps) {
   return (
     <article className="group">
@@ -40,6 +44,14 @@ export function ProductCard({
             <p className="text-[10px] font-light tracking-[0.06em] text-neutral-400">
               {fitLabel}
             </p>
+          ) : null}
+          {fabricCharacter ? (
+            <FabricCharacterTraitLine
+              trait="thickness"
+              level={fabricCharacter.thickness}
+              align="start"
+              className="pt-0.5"
+            />
           ) : null}
           <p className="text-[11px] font-light tracking-wide text-neutral-400 transition-opacity duration-[850ms] ease-out delay-100 group-hover:opacity-60">
             {formatPrice(product.price)}

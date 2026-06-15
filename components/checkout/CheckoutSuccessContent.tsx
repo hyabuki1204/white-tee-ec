@@ -2,13 +2,20 @@
 
 import Link from "next/link";
 import { useEffect } from "react";
+import { CartFabricCrossSell } from "@/components/cart/CartFabricCrossSell";
+import { CheckoutOrderSummaryDisplay } from "@/components/checkout/CheckoutOrderSummary";
 import { Container } from "@/components/layout/Container";
+import type { CheckoutOrderSummary } from "@/lib/checkout/session-summary";
 import { SITE_UI_COPY } from "@/lib/copy/site-ui";
 import { useCartStore } from "@/lib/cart/store";
+import type { Product } from "@/types";
 
 type CheckoutSuccessContentProps = {
   verified: boolean;
   sessionId?: string | null;
+  orderSummary?: CheckoutOrderSummary | null;
+  crossSellProducts?: Product[];
+  fabricNameBySlug?: Record<string, string>;
 };
 
 const { checkout: copy } = SITE_UI_COPY;
@@ -16,6 +23,9 @@ const { checkout: copy } = SITE_UI_COPY;
 export function CheckoutSuccessContent({
   verified,
   sessionId,
+  orderSummary,
+  crossSellProducts = [],
+  fabricNameBySlug = {},
 }: CheckoutSuccessContentProps) {
   const clearCart = useCartStore((state) => state.clearCart);
 
@@ -44,6 +54,14 @@ export function CheckoutSuccessContent({
             <p className="mt-4 text-[11px] font-light tracking-[0.04em] text-neutral-500">
               {copy.nextSteps}
             </p>
+            {orderSummary ? (
+              <div className="mt-2">
+                <p className="text-[10px] font-light uppercase tracking-[0.12em] text-neutral-400">
+                  {copy.orderSummaryLabel}
+                </p>
+                <CheckoutOrderSummaryDisplay summary={orderSummary} />
+              </div>
+            ) : null}
           </>
         ) : (
           <>
@@ -72,6 +90,15 @@ export function CheckoutSuccessContent({
             </Link>
           ) : null}
         </div>
+
+        {verified && crossSellProducts.length > 0 ? (
+          <div className="mx-auto mt-16 max-w-4xl text-left">
+            <CartFabricCrossSell
+              products={crossSellProducts}
+              fabricNameBySlug={fabricNameBySlug}
+            />
+          </div>
+        ) : null}
       </div>
     </Container>
   );

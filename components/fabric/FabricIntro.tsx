@@ -1,3 +1,4 @@
+import { KanemasaLine } from "@/components/brand/KanemasaLine";
 import {
   FABRIC_INTRO_LINES,
   FABRIC_PAGE_TITLE,
@@ -6,7 +7,7 @@ import {
 export function FabricIntro() {
   return (
     <header className="flex w-full flex-col items-center text-center">
-      <p className="text-[13px] tracking-[0.24em] text-neutral-600 md:text-xs md:tracking-[0.3em] md:text-neutral-500">
+      <p className="text-[11px] font-light tracking-[0.24em] text-neutral-400 md:text-[10px] md:tracking-[0.3em]">
         {FABRIC_PAGE_TITLE}
       </p>
 
@@ -18,6 +19,8 @@ export function FabricIntro() {
           </span>
         ))}
       </p>
+
+      <KanemasaLine variant="factory" className="mt-10 sm:mt-12 md:mt-14" />
     </header>
   );
 }

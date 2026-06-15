@@ -61,6 +61,9 @@ export default async function FabricDetailPage({ params }: FabricPageProps) {
   const fabricNameBySlug = Object.fromEntries(
     fabrics.map((entry) => [entry.slug, entry.name]),
   );
+  const fabricCharacterBySlug = Object.fromEntries(
+    fabrics.map((entry) => [entry.slug, entry.character]),
+  );
 
   const breadcrumbSchema = buildBreadcrumbSchema([
     { name: "Home", path: "/" },
@@ -94,6 +97,7 @@ export default async function FabricDetailPage({ params }: FabricPageProps) {
             products={products}
             fabricSlug={fabric.slug}
             fabricNameBySlug={fabricNameBySlug}
+            fabricCharacterBySlug={fabricCharacterBySlug}
           />
         </div>
       </Container>
