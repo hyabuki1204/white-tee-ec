@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ContentImageField } from "@/components/admin/ContentImageField";
+import { FabricCharacterFields } from "@/components/admin/FabricCharacterFields";
 import { ADMIN_COPY } from "@/lib/admin/copy";
 import {
   adminBtnPrimary,
@@ -46,6 +47,7 @@ export function FabricForm({ initialFabric }: FabricFormProps) {
           imageUrl: form.imageUrl,
           imageAlt: form.imageAlt,
           sortOrder: form.sortOrder,
+          character: form.character,
         }),
       });
 
@@ -133,6 +135,11 @@ export function FabricForm({ initialFabric }: FabricFormProps) {
           className={adminInput}
         />
       </label>
+
+      <FabricCharacterFields
+        value={form.character}
+        onChange={(character) => setForm({ ...form, character })}
+      />
 
       <label className={adminField}>
         <span className={adminLabel}>{fields.sortOrder}</span>

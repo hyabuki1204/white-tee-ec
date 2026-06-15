@@ -36,6 +36,10 @@ export default async function Home() {
   );
   const fabricPreview = fabrics.slice(0, homeContent.fabricPreviewCount);
 
+  const fabricNameBySlug = Object.fromEntries(
+    fabrics.map((fabric) => [fabric.slug, fabric.name]),
+  );
+
   return (
     <>
       <HeroSection
@@ -46,10 +50,13 @@ export default async function Home() {
         heroCopy={homeContent.heroCopy}
         conceptLines={homeContent.conceptLines}
       />
-      <FeaturedProductsSection products={featured} />
       <FabricEntrySection
         fabrics={fabricPreview}
         introLines={homeContent.fabricIntroLines}
+      />
+      <FeaturedProductsSection
+        products={featured}
+        fabricNameBySlug={fabricNameBySlug}
       />
       <BrandLinksSection />
     </>

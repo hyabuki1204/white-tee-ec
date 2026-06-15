@@ -43,6 +43,7 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
         <ul className="flex flex-col">
           {links.map((item) => {
             const isActive = isNavActive(pathname, item.href);
+            const isFabric = item.href === "/fabric";
 
             return (
               <li key={item.href}>
@@ -51,6 +52,7 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
                   onClick={onClose}
                   className={cn(
                     "flex min-h-11 items-center text-[15px] font-light tracking-wide transition-colors md:text-sm",
+                    isFabric && "tracking-[0.12em]",
                     isActive
                       ? "text-neutral-900"
                       : "text-neutral-600 active:text-neutral-900",

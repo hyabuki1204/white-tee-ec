@@ -1,4 +1,6 @@
 import type { FabricRow } from "@/types/database";
+import { attachFabricJaHelpers } from "@/lib/fabric/i18n";
+import { parseFabricCharacterFromRow } from "@/lib/fabric/character";
 import type { Fabric } from "@/lib/fabric/content";
 
 export function mapFabricRow(row: FabricRow): Fabric {
@@ -8,7 +10,7 @@ export function mapFabricRow(row: FabricRow): Fabric {
       )
     : [];
 
-  return {
+  return attachFabricJaHelpers({
     slug: row.slug,
     name: row.name,
     tagline: row.tagline,
@@ -16,7 +18,8 @@ export function mapFabricRow(row: FabricRow): Fabric {
     imageUrl: row.image_url,
     imageAlt: row.image_alt,
     sortOrder: row.sort_order,
-  };
+    character: parseFabricCharacterFromRow(row.slug, row),
+  });
 }
 
 export function mapFabricRows(rows: FabricRow[]): Fabric[] {

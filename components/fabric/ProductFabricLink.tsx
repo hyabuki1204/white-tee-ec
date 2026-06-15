@@ -1,5 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+import { FabricCharacterDisplay } from "@/components/fabric/FabricCharacterDisplay";
+import { JaHelperText } from "@/components/ui/JaHelperText";
 import { Container } from "@/components/layout/Container";
 import { SITE_UI_COPY } from "@/lib/copy/site-ui";
 import { FABRIC_IMAGE_ASPECT, getFabricPresentation } from "@/lib/fabric/presentation";
@@ -54,6 +56,15 @@ export function ProductFabricLink({ fabric }: ProductFabricLinkProps) {
             >
               {fabric.tagline}
             </p>
+            {fabric.helperJa ? (
+              <JaHelperText spacing="default" className="mx-auto max-w-sm">
+                {fabric.helperJa}
+              </JaHelperText>
+            ) : null}
+            <FabricCharacterDisplay
+              character={fabric.character}
+              variant="compact"
+            />
           </div>
         </Link>
       </Container>

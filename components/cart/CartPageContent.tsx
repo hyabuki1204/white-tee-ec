@@ -38,43 +38,57 @@ export function CartPageContent({ productLookup }: CartPageContentProps) {
         <p className="text-[13px] tracking-[0.24em] text-neutral-600 md:text-xs md:tracking-[0.3em] md:text-neutral-500">
           {copy.empty}
         </p>
-        <Link
-          href="/products"
-          className="mt-8 inline-flex min-h-11 items-center justify-center px-2 text-[13px] font-light tracking-wide text-neutral-800 transition-opacity active:opacity-60 md:text-xs md:text-neutral-900 md:hover:opacity-60"
-        >
-          {copy.continue}
-        </Link>
+        <div className="mt-8 flex flex-col items-center gap-4">
+          <Link
+            href="/products"
+            className="inline-flex min-h-11 items-center justify-center px-2 text-[13px] font-light tracking-wide text-neutral-800 transition-opacity active:opacity-60 md:text-xs md:text-neutral-900 md:hover:opacity-60"
+          >
+            {copy.viewProducts}
+          </Link>
+          <Link
+            href="/fabric"
+            className="text-[11px] font-light tracking-[0.06em] text-neutral-400 transition-opacity duration-300 hover:opacity-60"
+          >
+            {copy.exploreFabric}
+          </Link>
+        </div>
       </div>
     );
   }
 
+  let hasUnavailableItems = false;
+
+  const itemElements = items.map((item) => {
+    const product = productLookup[item.productId];
+    const variantStock =
+      product?.variants[item.variant]?.stockQuantity ?? 0;
+    const maxQuantity = Math.max(variantStock, 0);
+    const isUnavailable = !product || maxQuantity < 1;
+
+    if (isUnavailable) {
+      hasUnavailableItems = true;
+    }
+
+    return (
+      <li key={`${item.productId}-${item.variant}`}>
+        <CartItem
+          item={item}
+          productName={product?.name ?? "Unknown Product"}
+          productSlug={product?.slug}
+          imageUrl={product?.imageUrl}
+          currentPrice={product?.price ?? item.price}
+          maxQuantity={maxQuantity}
+          isUnavailable={isUnavailable}
+        />
+      </li>
+    );
+  });
+
   return (
     <div className="max-w-xl">
-      <ul className="divide-y divide-neutral-200/70">
-        {items.map((item) => {
-          const product = productLookup[item.productId];
-          const variantStock =
-            product?.variants[item.variant]?.stockQuantity ?? 0;
-          const maxQuantity = Math.max(variantStock, 0);
-          const isUnavailable = !product || maxQuantity < 1;
+      <ul className="divide-y divide-neutral-200/70">{itemElements}</ul>
 
-          return (
-            <li key={`${item.productId}-${item.variant}`}>
-              <CartItem
-                item={item}
-                productName={product?.name ?? "Unknown Product"}
-                productSlug={product?.slug}
-                imageUrl={product?.imageUrl}
-                currentPrice={product?.price ?? item.price}
-                maxQuantity={maxQuantity}
-                isUnavailable={isUnavailable}
-              />
-            </li>
-          );
-        })}
-      </ul>
-
-      <CartSummary />
+      <CartSummary hasUnavailableItems={hasUnavailableItems} />
     </div>
   );
 }

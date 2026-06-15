@@ -18,6 +18,7 @@ export default async function AboutPage() {
       <AboutContent
         headline={about.headline}
         bodyParagraphs={about.bodyParagraphs}
+        helperJa={about.helperJa}
       />
     </Container>
   );

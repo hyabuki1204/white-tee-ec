@@ -1,3 +1,9 @@
+import {
+  FABRIC_CHARACTER_BY_SLUG,
+  type FabricCharacter,
+} from "@/lib/fabric/character";
+import { attachFabricJaHelpers } from "@/lib/fabric/i18n";
+
 export type Fabric = {
   slug: string;
   name: string;
@@ -8,6 +14,11 @@ export type Fabric = {
   imageUrl: string;
   imageAlt: string;
   sortOrder: number;
+  character: FabricCharacter;
+  /** One-line Japanese summary for detail / product link. */
+  helperJa?: string | null;
+  /** Optional lighter Japanese line under tagline on cards. */
+  taglineJa?: string | null;
 };
 
 export const FABRIC_PAGE_TITLE = "Fabric";
@@ -39,6 +50,7 @@ export const FABRICS: Fabric[] = [
     imageUrl: "/fabric/heavyweight-jersey.jpg",
     imageAlt: "Heavyweight white cotton jersey texture",
     sortOrder: 1,
+    character: FABRIC_CHARACTER_BY_SLUG["heavyweight-jersey"]!,
   },
   {
     slug: "lightweight-jersey",
@@ -51,6 +63,7 @@ export const FABRICS: Fabric[] = [
     imageUrl: "/fabric/lightweight-jersey.jpg",
     imageAlt: "Lightweight white cotton jersey texture",
     sortOrder: 2,
+    character: FABRIC_CHARACTER_BY_SLUG["lightweight-jersey"]!,
   },
   {
     slug: "relaxed-jersey",
@@ -63,6 +76,7 @@ export const FABRICS: Fabric[] = [
     imageUrl: "/fabric/relaxed-jersey.jpg",
     imageAlt: "Relaxed white cotton jersey texture",
     sortOrder: 3,
+    character: FABRIC_CHARACTER_BY_SLUG["relaxed-jersey"]!,
   },
   {
     slug: "compact-jersey",
@@ -75,6 +89,7 @@ export const FABRICS: Fabric[] = [
     imageUrl: "/fabric/compact-jersey.jpg",
     imageAlt: "Compact white cotton jersey texture",
     sortOrder: 4,
+    character: FABRIC_CHARACTER_BY_SLUG["compact-jersey"]!,
   },
   {
     slug: "essential-jersey",
@@ -87,6 +102,7 @@ export const FABRICS: Fabric[] = [
     imageUrl: "/fabric/essential-jersey.jpg",
     imageAlt: "Essential white cotton jersey texture",
     sortOrder: 5,
+    character: FABRIC_CHARACTER_BY_SLUG["essential-jersey"]!,
   },
   {
     slug: "box-jersey",
@@ -99,5 +115,6 @@ export const FABRICS: Fabric[] = [
     imageUrl: "/fabric/box-jersey.jpg",
     imageAlt: "Box white cotton jersey texture",
     sortOrder: 6,
+    character: FABRIC_CHARACTER_BY_SLUG["box-jersey"]!,
   },
 ];

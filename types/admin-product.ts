@@ -1,4 +1,5 @@
 import type { ProductSize, SizeGuideMeasurement } from "@/types";
+import type { ProductFitProfile } from "@/types/product-fit";
 
 /** Admin list view of a product. */
 export type AdminProductListItem = {
@@ -37,6 +38,7 @@ export type AdminProductInput = {
     sortOrder: number;
     isPrimary: boolean;
   }>;
+  fitProfile: ProductFitProfile;
 };
 
 /** Admin detail view returned from repository. */

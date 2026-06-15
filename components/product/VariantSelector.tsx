@@ -1,30 +1,26 @@
 "use client";
 
-import { useState } from "react";
 import { SITE_UI_COPY } from "@/lib/copy/site-ui";
 import { cn } from "@/lib/utils";
+import { useProductPurchase } from "@/components/product/ProductPurchaseContext";
 import type { ProductSize, ProductVariant } from "@/types";
 
 type VariantSelectorProps = {
   variants: ProductVariant[];
-  selectedSize: ProductSize | null;
-  onSelect: (size: ProductSize) => void;
 };
 
-export function VariantSelector({
-  variants,
-  selectedSize,
-  onSelect,
-}: VariantSelectorProps) {
-  const [flashSize, setFlashSize] = useState<ProductSize | null>(null);
+export function VariantSelector({ variants }: VariantSelectorProps) {
+  const {
+    selectedSize,
+    setSelectedSize,
+    recommendedSize,
+    openSizeTab,
+  } = useProductPurchase();
   const { product: copy } = SITE_UI_COPY;
 
   const handleSelect = (size: ProductSize, inStock: boolean) => {
     if (!inStock) return;
-
-    onSelect(size);
-    setFlashSize(size);
-    window.setTimeout(() => setFlashSize(null), 180);
+    setSelectedSize(size);
   };
 
   if (variants.length === 0) {
@@ -41,16 +37,25 @@ export function VariantSelector({
         <p className="text-[11px] font-light tracking-[0.14em] text-neutral-500 md:text-[10px] md:tracking-[0.16em] md:text-neutral-400">
           {copy.size}
         </p>
-        {selectedSize ? (
-          <p className="text-[11px] font-light tracking-[0.05em] text-neutral-600 md:text-[10px] md:text-neutral-500">
-            {copy.sizeSelected(selectedSize)}
-          </p>
-        ) : null}
+        <div className="flex items-baseline gap-4">
+          <button
+            type="button"
+            onClick={openSizeTab}
+            className="text-[11px] font-light tracking-[0.06em] text-neutral-400 underline-offset-4 transition-opacity duration-300 hover:text-neutral-600 hover:underline md:text-[10px]"
+          >
+            {copy.sizeGuide}
+          </button>
+          {selectedSize ? (
+            <p className="text-[11px] font-light tracking-[0.05em] text-neutral-600 md:text-[10px] md:text-neutral-500">
+              {copy.sizeSelected(selectedSize)}
+            </p>
+          ) : null}
+        </div>
       </div>
       <ul className="-mx-1 flex flex-wrap gap-x-1 gap-y-2">
         {variants.map((variant) => {
           const isSelected = selectedSize === variant.size;
-          const isFlashing = flashSize === variant.size;
+          const isRecommended = recommendedSize === variant.size;
           const inStock = variant.stockQuantity > 0;
 
           return (
@@ -62,14 +67,14 @@ export function VariantSelector({
                 className={cn(
                   "relative flex min-h-11 min-w-11 items-center justify-center px-3 text-[13px] font-light tracking-wide transition-opacity duration-300 md:min-h-0 md:min-w-0 md:px-0 md:pb-2 md:text-xs",
                   !inStock && "cursor-not-allowed text-neutral-300 line-through",
-                  inStock && isFlashing && "opacity-40",
+                  inStock && isSelected && "text-neutral-900 opacity-100",
                   inStock &&
-                    !isFlashing &&
-                    isSelected &&
-                    "text-neutral-900 opacity-100",
-                  inStock &&
-                    !isFlashing &&
                     !isSelected &&
+                    isRecommended &&
+                    "text-neutral-700 opacity-100 ring-1 ring-neutral-300/60 md:ring-0 md:underline md:decoration-neutral-400 md:underline-offset-4",
+                  inStock &&
+                    !isSelected &&
+                    !isRecommended &&
                     "text-neutral-500 opacity-80 active:opacity-100 md:text-neutral-400 md:opacity-60 md:hover:opacity-80",
                 )}
                 aria-pressed={isSelected}

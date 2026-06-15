@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import { SITE_UI_COPY } from "@/lib/copy/site-ui";
 import { cn } from "@/lib/utils";
 import type { Product, ProductImage } from "@/types";
 
@@ -26,6 +27,10 @@ function resolveImages(product: Product): ProductImage[] {
   }
 
   return [];
+}
+
+function isModelImage(index: number): boolean {
+  return index === 3 || index === 4;
 }
 
 type ThumbnailProps = {
@@ -68,6 +73,7 @@ function Thumbnail({
 
 export function ProductGallery({ product }: ProductGalleryProps) {
   const images = resolveImages(product);
+  const { product: copy } = SITE_UI_COPY;
 
   const [activeIndex, setActiveIndex] = useState(
     Math.max(
@@ -78,6 +84,7 @@ export function ProductGallery({ product }: ProductGalleryProps) {
 
   const activeImage = images[activeIndex] ?? images[0];
   const hasMultipleImages = images.length > 1;
+  const showModelCaption = isModelImage(activeIndex);
 
   if (!activeImage) {
     return (
@@ -119,14 +126,20 @@ export function ProductGallery({ product }: ProductGalleryProps) {
             />
 
             {hasMultipleImages ? (
-              <span className="absolute bottom-5 right-5 text-[10px] font-light tracking-[0.14em] text-neutral-400 md:bottom-8 md:right-8 lg:bottom-10 lg:right-10">
+              <span className="absolute bottom-5 right-5 text-[11px] font-light tracking-[0.14em] text-neutral-400 md:bottom-8 md:right-8 md:text-[10px] lg:bottom-10 lg:right-10">
                 {activeIndex + 1}/{images.length}
+              </span>
+            ) : null}
+
+            {showModelCaption ? (
+              <span className="absolute bottom-5 left-5 text-[11px] font-light tracking-[0.12em] text-neutral-400 md:bottom-8 md:left-8 md:text-[10px] lg:bottom-10 lg:left-10">
+                {copy.modelCaption}
               </span>
             ) : null}
           </div>
 
           {hasMultipleImages ? (
-            <div className="flex gap-3 overflow-x-auto px-6 pb-6 pt-3 [-ms-overflow-style:none] [scrollbar-width:none] lg:hidden [&::-webkit-scrollbar]:hidden">
+            <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth px-6 pb-6 pt-3 [-ms-overflow-style:none] [scrollbar-width:none] lg:hidden [&::-webkit-scrollbar]:hidden">
               {images.map((image, index) => (
                 <Thumbnail
                   key={image.id}
@@ -134,7 +147,7 @@ export function ProductGallery({ product }: ProductGalleryProps) {
                   index={index}
                   isActive={index === activeIndex}
                   onSelect={() => setActiveIndex(index)}
-                  className="h-[4.5rem] w-[3.25rem]"
+                  className="h-[4.5rem] w-[3.25rem] snap-start"
                 />
               ))}
             </div>

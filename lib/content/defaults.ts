@@ -17,6 +17,7 @@ import {
   HOME_HERO_IMAGE,
 } from "@/lib/home/content";
 import { FABRIC_INTRO_LINES } from "@/lib/fabric/content";
+import { ABOUT_JA_HELPER, STORY_JA_HELPERS } from "@/lib/i18n/ja-helpers";
 import {
   STORIES_INTRO_LINES,
   STORIES_PAGE_TITLE,
@@ -43,6 +44,7 @@ export const DEFAULT_HOME_CONTENT: HomePageContent = {
 export const DEFAULT_ABOUT_CONTENT: AboutPageContent = {
   headline: ABOUT_HEADLINE,
   bodyParagraphs: ABOUT_BODY_PARAGRAPHS.map((paragraph) => [...paragraph]),
+  helperJa: ABOUT_JA_HELPER,
 };
 
 export const DEFAULT_STORIES_CONTENT: StoriesPageContent = {
@@ -54,6 +56,7 @@ export const DEFAULT_STORIES_CONTENT: StoriesPageContent = {
     lines: [...entry.lines],
     imageUrl: entry.imageUrl,
     imageAlt: entry.imageAlt,
+    helperJa: STORY_JA_HELPERS[entry.id] ?? null,
   })),
 };
 

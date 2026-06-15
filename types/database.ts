@@ -26,6 +26,11 @@ export type FabricRow = {
   image_url: string;
   image_alt: string;
   sort_order: number;
+  character_thickness?: number;
+  character_softness?: number;
+  character_structure?: number;
+  character_sheerness?: number;
+  character_surface?: number;
   created_at: string;
   updated_at: string;
 };
@@ -38,6 +43,11 @@ export type FabricInsert = {
   image_url?: string;
   image_alt?: string;
   sort_order?: number;
+  character_thickness?: number;
+  character_softness?: number;
+  character_structure?: number;
+  character_sheerness?: number;
+  character_surface?: number;
   created_at?: string;
   updated_at?: string;
 };
@@ -55,6 +65,7 @@ export type ProductRow = {
   is_published: boolean;
   price: number;
   fabric_slug: string | null;
+  fit_profile: Json | null;
   created_at: string;
   updated_at: string;
 };
@@ -72,6 +83,7 @@ export type ProductInsert = {
   is_published?: boolean;
   price: number;
   fabric_slug?: string | null;
+  fit_profile?: Json | null;
   created_at?: string;
   updated_at?: string;
 };

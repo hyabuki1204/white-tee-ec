@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 import { CartPageContent } from "@/components/cart/CartPageContent";
 import { SITE_UI_COPY } from "@/lib/copy/site-ui";
@@ -44,6 +45,15 @@ export default async function CartPage() {
       </header>
 
       <CartPageContent productLookup={productLookup} />
+
+      <p className="mt-12 text-center md:mt-16">
+        <Link
+          href="/shipping"
+          className="text-[11px] font-light tracking-[0.06em] text-neutral-400 transition-opacity duration-300 hover:opacity-60"
+        >
+          Shipping & Returns
+        </Link>
+      </p>
     </Container>
   );
 }

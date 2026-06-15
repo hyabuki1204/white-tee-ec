@@ -38,5 +38,7 @@ export default async function CheckoutSuccessPage({
   const { session_id: sessionId } = await searchParams;
   const verified = await verifyCheckoutSession(sessionId);
 
-  return <CheckoutSuccessContent verified={verified} />;
+  return (
+    <CheckoutSuccessContent verified={verified} sessionId={sessionId} />
+  );
 }

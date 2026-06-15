@@ -92,7 +92,7 @@ export function Header() {
         className={cn(
           "border-b border-neutral-200/70 bg-background transition-opacity duration-700 ease-out",
           !isHome && "fixed inset-x-0 top-0 z-50",
-          isMuted ? "opacity-[0.65]" : "opacity-100",
+          isMuted ? "opacity-[0.72] md:opacity-[0.65]" : "opacity-100",
         )}
       >
         <Container as="div" className="py-8 md:py-10">

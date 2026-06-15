@@ -1,13 +1,19 @@
 import "server-only";
 
 import { FABRICS } from "@/lib/fabric/content";
+import { attachFabricJaHelpers } from "@/lib/fabric/i18n";
 import { mapFabricRow, mapFabricRows } from "@/lib/db/fabrics/mapper";
 import { createSupabaseStaticClient } from "@/lib/supabase/static";
 import { getDataSource, isSupabaseConfigured } from "@/lib/supabase/env";
 import type { Fabric } from "@/lib/fabric/content";
 
+function findMockFabric(slug: string): Fabric | null {
+  const fabric = FABRICS.find((item) => item.slug === slug);
+  return fabric ? attachFabricJaHelpers(fabric) : null;
+}
+
 function getDefaultFabrics(): Fabric[] {
-  return [...FABRICS].sort((a, b) => a.sortOrder - b.sortOrder);
+  return [...FABRICS].map(attachFabricJaHelpers).sort((a, b) => a.sortOrder - b.sortOrder);
 }
 
 function isMissingFabricsTableError(message: string): boolean {
@@ -55,7 +61,7 @@ async function getFabricBySlugFromSupabase(slug: string): Promise<Fabric | null>
 
     if (error) {
       if (isMissingFabricsTableError(error.message)) {
-        return FABRICS.find((fabric) => fabric.slug === slug) ?? null;
+        return findMockFabric(slug);
       }
 
       throw new Error(`Failed to fetch fabric: ${error.message}`);
@@ -70,7 +76,7 @@ async function getFabricBySlugFromSupabase(slug: string): Promise<Fabric | null>
     const message = error instanceof Error ? error.message : String(error);
 
     if (isMissingFabricsTableError(message)) {
-      return FABRICS.find((fabric) => fabric.slug === slug) ?? null;
+      return findMockFabric(slug);
     }
 
     throw error;
@@ -89,7 +95,7 @@ export async function getFabricBySlugFromDb(
   slug: string,
 ): Promise<Fabric | null> {
   if (getDataSource() !== "supabase" || !isSupabaseConfigured()) {
-    return FABRICS.find((fabric) => fabric.slug === slug) ?? null;
+    return findMockFabric(slug);
   }
 
   return getFabricBySlugFromSupabase(slug);

@@ -1,3 +1,4 @@
+import type { FabricCharacter } from "@/lib/fabric/character";
 import type { AdminFabricInput } from "@/types/admin-fabric";
 
 type ParseResult =
@@ -49,6 +50,11 @@ export function parseAdminFabricInput(value: unknown): ParseResult {
     return { ok: false, error: "Sort order must be a non-negative integer." };
   }
 
+  const characterError = parseCharacterInput(input.character);
+  if (characterError) {
+    return { ok: false, error: characterError };
+  }
+
   return {
     ok: true,
     data: {
@@ -58,6 +64,32 @@ export function parseAdminFabricInput(value: unknown): ParseResult {
       imageUrl: (input.imageUrl as string).trim(),
       imageAlt: (input.imageAlt as string).trim(),
       sortOrder,
+      character: input.character as FabricCharacter,
     },
   };
+}
+
+function parseCharacterInput(value: unknown): string | null {
+  if (!value || typeof value !== "object") {
+    return "Fabric character is required.";
+  }
+
+  const row = value as Record<string, unknown>;
+  const keys = [
+    "thickness",
+    "softness",
+    "structure",
+    "sheerness",
+    "surface",
+  ] as const;
+
+  for (const key of keys) {
+    const level = Number(row[key]);
+
+    if (!Number.isInteger(level) || level < 1 || level > 5) {
+      return `Character ${key} must be an integer from 1 to 5.`;
+    }
+  }
+
+  return null;
 }

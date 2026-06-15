@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1000" viewBox="0 0 800 1000" role="img" aria-label="heavyweight-crew-neck model side">
+  <rect width="100%" height="100%" fill="#f2f1ed"/>
+  <ellipse cx="420" cy="930" rx="120" ry="14" fill="#e8e6e1" opacity="0.7"/>
+  <path d="M410 640 L405 900" stroke="#d4d2cb" stroke-width="30" stroke-linecap="round"/>
+  <path d="M395 390 Q455 400 460 660 Q455 670 395 660 Z" fill="#fafaf9"/>
+  <path d="M430 430 Q520 500 505 590" stroke="#d4d2cb" stroke-width="24" stroke-linecap="round" fill="none"/>
+  <ellipse cx="430" cy="340" rx="36" ry="44" fill="#ddd9d2"/>
+  <text x="50%" y="960" text-anchor="middle" fill="#c8c4bc" font-family="system-ui,sans-serif" font-size="11" letter-spacing="0.18em">MODEL · SIDE</text>
+</svg>

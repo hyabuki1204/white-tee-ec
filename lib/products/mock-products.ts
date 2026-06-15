@@ -6,6 +6,7 @@ import {
   PRODUCT_SIZES,
   createDefaultSizeGuide,
 } from "@/lib/products/defaults";
+import { getDefaultFitProfile } from "@/lib/products/fit-profiles";
 import type { Product, ProductVariant } from "@/types";
 
 const DETAIL_BY_SLUG: Record<
@@ -64,9 +65,17 @@ function buildVariants(skuCode: string): ProductVariant[] {
 }
 
 function buildImages(productId: string, slug: string): Product["images"] {
-  return [1, 2, 3].map((index) => ({
+  const entries = [
+    { index: 1, ext: "jpg" },
+    { index: 2, ext: "jpg" },
+    { index: 3, ext: "jpg" },
+    { index: 4, ext: "svg" },
+    { index: 5, ext: "svg" },
+  ];
+
+  return entries.map(({ index, ext }) => ({
     id: `${productId}-image-${index - 1}`,
-    url: `/products/${slug}-0${index}.jpg`,
+    url: `/products/${slug}-0${index}.${ext}`,
     sortOrder: index - 1,
     isPrimary: index === 1,
   }));
@@ -93,6 +102,7 @@ export const MOCK_PRODUCTS: Product[] = PRODUCT_CATALOG.map(
       images: buildImages(id, slug),
       isPublished: true,
       fabricSlug: PRODUCT_FABRIC_SLUG_BY_PRODUCT_SLUG[slug] ?? null,
+      fitProfile: getDefaultFitProfile(slug),
     };
   },
 );

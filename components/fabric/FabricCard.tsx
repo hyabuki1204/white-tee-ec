@@ -1,5 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
+import { FabricCharacterMini } from "@/components/fabric/FabricCharacterMini";
+import { JaHelperText } from "@/components/ui/JaHelperText";
+import { SITE_UI_COPY } from "@/lib/copy/site-ui";
 import { FABRIC_IMAGE_ASPECT, getFabricPresentation } from "@/lib/fabric/presentation";
 import { cn } from "@/lib/utils";
 import type { Fabric } from "@/lib/fabric/content";
@@ -7,11 +10,17 @@ import type { Fabric } from "@/lib/fabric/content";
 type FabricCardProps = {
   fabric: Fabric;
   variant?: "default" | "entry";
+  productCount?: number;
 };
 
-export function FabricCard({ fabric, variant = "default" }: FabricCardProps) {
+export function FabricCard({
+  fabric,
+  variant = "default",
+  productCount,
+}: FabricCardProps) {
   const isEntry = variant === "entry";
   const presentation = getFabricPresentation(fabric.slug);
+  const { fabric: copy } = SITE_UI_COPY;
 
   return (
     <article className="group">
@@ -55,6 +64,17 @@ export function FabricCard({ fabric, variant = "default" }: FabricCardProps) {
           >
             {fabric.tagline}
           </p>
+          {productCount !== undefined ? (
+            <p className="text-[10px] font-light tracking-[0.08em] text-neutral-400">
+              {copy.pieceCount(productCount)}
+            </p>
+          ) : null}
+          <FabricCharacterMini character={fabric.character} />
+          {fabric.taglineJa ? (
+            <JaHelperText spacing="tight" className="!mt-2 max-w-none">
+              {fabric.taglineJa}
+            </JaHelperText>
+          ) : null}
         </div>
       </Link>
     </article>

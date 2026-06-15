@@ -1,4 +1,6 @@
 /** Size guide row stored in products.size_guide (jsonb). */
+import type { ProductFitProfile } from "@/types/product-fit";
+
 export type SizeGuideMeasurement = {
   size: ProductSize;
   length: number;
@@ -39,7 +41,18 @@ export type Product = {
   images: ProductImage[];
   isPublished: boolean;
   fabricSlug: string | null;
+  fitProfile: ProductFitProfile;
 };
+
+export type {
+  FitPreference,
+  FitType,
+  ProductFitProfile,
+  ProductModelProfile,
+  SizeReferenceBand,
+  SizeRecommendationInput,
+  SizeRecommendationResult,
+} from "@/types/product-fit";
 
 export type ProductSize = "S" | "M" | "L" | "XL";
 

@@ -13,6 +13,7 @@ import type {
   ProductWithPrimaryImage,
 } from "@/types/database";
 import { parseSizeGuide } from "@/lib/products/defaults";
+import { parseFitProfileFromRow } from "@/lib/products/parse-fit-profile";
 
 export function mapSizeGuideFromRow(value: unknown): SizeGuideMeasurement[] {
   return parseSizeGuide(value);
@@ -53,6 +54,7 @@ export function mapProductRowToProduct(row: ProductWithPrimaryImage): Product {
     images: [],
     isPublished: row.is_published,
     fabricSlug: row.fabric_slug,
+    fitProfile: parseFitProfileFromRow(row.slug, row.fit_profile),
   };
 }
 
@@ -83,6 +85,7 @@ export function mapFullProductRow(
     images: mappedImages,
     isPublished: row.is_published,
     fabricSlug: row.fabric_slug,
+    fitProfile: parseFitProfileFromRow(row.slug, row.fit_profile),
   };
 }
 

@@ -8,11 +8,15 @@ import { useCartStore } from "@/lib/cart/store";
 
 type CheckoutSuccessContentProps = {
   verified: boolean;
+  sessionId?: string | null;
 };
 
 const { checkout: copy } = SITE_UI_COPY;
 
-export function CheckoutSuccessContent({ verified }: CheckoutSuccessContentProps) {
+export function CheckoutSuccessContent({
+  verified,
+  sessionId,
+}: CheckoutSuccessContentProps) {
   const clearCart = useCartStore((state) => state.clearCart);
 
   useEffect(() => {
@@ -32,6 +36,14 @@ export function CheckoutSuccessContent({ verified }: CheckoutSuccessContentProps
             <p className="mt-6 text-sm font-light text-neutral-700">
               {copy.orderConfirmed}
             </p>
+            {sessionId ? (
+              <p className="mt-3 text-[11px] font-light tracking-[0.06em] text-neutral-400">
+                {copy.orderId(sessionId.slice(-8).toUpperCase())}
+              </p>
+            ) : null}
+            <p className="mt-4 text-[11px] font-light tracking-[0.04em] text-neutral-500">
+              {copy.nextSteps}
+            </p>
           </>
         ) : (
           <>
@@ -44,12 +56,22 @@ export function CheckoutSuccessContent({ verified }: CheckoutSuccessContentProps
           </>
         )}
 
-        <Link
-          href="/products"
-          className="mt-10 inline-block text-xs font-light tracking-wide text-neutral-900 transition-opacity hover:opacity-60"
-        >
-          {copy.continue}
-        </Link>
+        <div className="mt-10 flex flex-col items-center gap-4">
+          <Link
+            href="/products"
+            className="text-xs font-light tracking-wide text-neutral-900 transition-opacity hover:opacity-60"
+          >
+            {copy.continue}
+          </Link>
+          {verified ? (
+            <Link
+              href="/fabric"
+              className="text-[11px] font-light tracking-[0.06em] text-neutral-400 transition-opacity duration-300 hover:opacity-60"
+            >
+              {copy.exploreFabric}
+            </Link>
+          ) : null}
+        </div>
       </div>
     </Container>
   );

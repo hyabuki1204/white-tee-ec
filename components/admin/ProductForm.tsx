@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { ProductDeleteButton } from "@/components/admin/ProductDeleteButton";
+import { ProductFitProfileFields } from "@/components/admin/ProductFitProfileFields";
 import { ADMIN_COPY } from "@/lib/admin/copy";
 import {
   adminBtnPrimary,
@@ -201,6 +202,7 @@ export function ProductForm({
         sortOrder: index,
         isPrimary: image.isPrimary,
       })),
+      fitProfile: form.fitProfile,
     };
 
     try {
@@ -618,6 +620,14 @@ export function ProductForm({
             </tbody>
           </table>
         </div>
+      </section>
+
+      <section className={sectionClass}>
+        <h2 className={adminSectionTitle}>{sections.fitProfile}</h2>
+        <ProductFitProfileFields
+          value={form.fitProfile}
+          onChange={(fitProfile) => updateField("fitProfile", fitProfile)}
+        />
       </section>
 
       <div className={`${sectionClass} flex flex-col gap-4 sm:flex-row sm:items-center`}>

@@ -1,4 +1,7 @@
 import Image from "next/image";
+import Link from "next/link";
+import { JaHelperText } from "@/components/ui/JaHelperText";
+import { getStoryLink } from "@/lib/stories/links";
 import type { StoryEntryContent } from "@/types/site-content";
 
 type StoryCardProps = {
@@ -6,6 +9,8 @@ type StoryCardProps = {
 };
 
 export function StoryCard({ story }: StoryCardProps) {
+  const storyLink = getStoryLink(story.id);
+
   return (
     <article className="flex w-full flex-col items-center text-center">
       <div className="relative aspect-[4/3] w-full overflow-hidden bg-background">
@@ -30,6 +35,20 @@ export function StoryCard({ story }: StoryCardProps) {
           </span>
         ))}
       </p>
+      {story.helperJa ? (
+        <JaHelperText spacing="default" className="mx-auto">
+          {story.helperJa}
+        </JaHelperText>
+      ) : null}
+
+      {storyLink ? (
+        <Link
+          href={storyLink.href}
+          className="mt-8 text-[11px] font-light tracking-[0.08em] text-neutral-400 transition-opacity duration-300 hover:opacity-60 md:mt-10"
+        >
+          {storyLink.label}
+        </Link>
+      ) : null}
     </article>
   );
 }

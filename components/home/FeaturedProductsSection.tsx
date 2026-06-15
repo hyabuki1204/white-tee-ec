@@ -6,10 +6,12 @@ import type { Product } from "@/types";
 
 type FeaturedProductsSectionProps = {
   products: Product[];
+  fabricNameBySlug?: Record<string, string>;
 };
 
 export function FeaturedProductsSection({
   products,
+  fabricNameBySlug,
 }: FeaturedProductsSectionProps) {
   if (products.length === 0) {
     return null;
@@ -20,14 +22,22 @@ export function FeaturedProductsSection({
   return (
     <section aria-label="Selection">
       <Container as="div" className="pt-12 pb-20 sm:pt-14 sm:pb-24 md:pt-16 md:pb-28 lg:pt-20 lg:pb-32">
-        <p className="mb-14 text-[10px] font-light tracking-[0.14em] text-neutral-400 md:mb-16">
+        <p className="mb-14 text-[11px] font-light tracking-[0.14em] text-neutral-400 md:mb-16 md:text-[10px]">
           {copy.selection}
         </p>
 
         <ul className="grid grid-cols-1 gap-x-8 gap-y-20 sm:grid-cols-2 sm:gap-x-10 lg:grid-cols-3 lg:gap-x-12">
           {products.map((product) => (
             <li key={product.id}>
-              <ProductCard product={product} />
+              <ProductCard
+                product={product}
+                fabricName={
+                  product.fabricSlug && fabricNameBySlug
+                    ? fabricNameBySlug[product.fabricSlug]
+                    : null
+                }
+                fitLabel={product.fitProfile.fitLabel}
+              />
             </li>
           ))}
         </ul>

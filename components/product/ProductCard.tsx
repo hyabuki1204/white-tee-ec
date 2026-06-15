@@ -5,9 +5,15 @@ import type { Product } from "@/types";
 
 type ProductCardProps = {
   product: Product;
+  fabricName?: string | null;
+  fitLabel?: string | null;
 };
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({
+  product,
+  fabricName,
+  fitLabel,
+}: ProductCardProps) {
   return (
     <article className="group">
       <Link href={`/products/${product.slug}`} className="block">
@@ -22,9 +28,19 @@ export function ProductCard({ product }: ProductCardProps) {
         </div>
 
         <div className="mt-8 flex flex-col gap-2 md:mt-9">
+          {fabricName ? (
+            <p className="text-[10px] font-light tracking-[0.1em] text-neutral-400">
+              {fabricName}
+            </p>
+          ) : null}
           <h2 className="text-[11px] font-light tracking-[0.06em] text-neutral-800 transition-opacity duration-[850ms] ease-out delay-75 group-hover:opacity-45">
             {product.name}
           </h2>
+          {fitLabel ? (
+            <p className="text-[10px] font-light tracking-[0.06em] text-neutral-400">
+              {fitLabel}
+            </p>
+          ) : null}
           <p className="text-[11px] font-light tracking-wide text-neutral-400 transition-opacity duration-[850ms] ease-out delay-100 group-hover:opacity-60">
             {formatPrice(product.price)}
           </p>

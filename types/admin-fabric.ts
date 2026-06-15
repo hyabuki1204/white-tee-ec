@@ -1,3 +1,5 @@
+import type { FabricCharacter } from "@/lib/fabric/character";
+
 /** Admin list view of a fabric. */
 export type AdminFabricListItem = {
   slug: string;
@@ -16,6 +18,7 @@ export type AdminFabricDetail = {
   imageUrl: string;
   imageAlt: string;
   sortOrder: number;
+  character: FabricCharacter;
 };
 
 export type AdminFabricInput = Omit<AdminFabricDetail, "slug">;

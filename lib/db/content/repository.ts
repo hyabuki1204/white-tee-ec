@@ -79,6 +79,7 @@ function mergeAboutContent(raw: unknown): AboutPageContent {
   return {
     headline: input.headline ?? DEFAULT_ABOUT_CONTENT.headline,
     bodyParagraphs: input.bodyParagraphs ?? DEFAULT_ABOUT_CONTENT.bodyParagraphs,
+    helperJa: input.helperJa ?? DEFAULT_ABOUT_CONTENT.helperJa,
   };
 }
 
@@ -93,10 +94,23 @@ function mergeStoriesContent(raw: unknown): StoriesPageContent {
       ? ([input.introLines[0], input.introLines[1]] as [string, string])
       : DEFAULT_STORIES_CONTENT.introLines;
 
+  const mergeEntry = (
+    entry: StoriesPageContent["entries"][number],
+  ): StoriesPageContent["entries"][number] => {
+    const fallback = DEFAULT_STORIES_CONTENT.entries.find(
+      (item) => item.id === entry.id,
+    );
+
+    return {
+      ...entry,
+      helperJa: entry.helperJa ?? fallback?.helperJa ?? null,
+    };
+  };
+
   return {
     pageTitle: input.pageTitle ?? DEFAULT_STORIES_CONTENT.pageTitle,
     introLines,
-    entries: input.entries ?? DEFAULT_STORIES_CONTENT.entries,
+    entries: (input.entries ?? DEFAULT_STORIES_CONTENT.entries).map(mergeEntry),
   };
 }
 

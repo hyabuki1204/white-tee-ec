@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1000" viewBox="0 0 800 1000" role="img" aria-label="compact-cotton-tee model front">
+  <rect width="100%" height="100%" fill="#f2f1ed"/>
+  <ellipse cx="400" cy="930" rx="130" ry="14" fill="#e8e6e1" opacity="0.7"/>
+  <path d="M355 640 L352 900 M445 640 L448 900" stroke="#d4d2cb" stroke-width="30" stroke-linecap="round"/>
+  <rect x="325" y="390" width="150" height="270" rx="10" fill="#fafaf9"/>
+  <path d="M325 430 L250 580 M475 430 L550 580" stroke="#d4d2cb" stroke-width="24" stroke-linecap="round"/>
+  <rect x="368" y="310" width="64" height="88" rx="32" fill="#ddd9d2"/>
+  <text x="50%" y="960" text-anchor="middle" fill="#c8c4bc" font-family="system-ui,sans-serif" font-size="11" letter-spacing="0.18em">MODEL · FRONT</text>
+</svg>

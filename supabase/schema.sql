@@ -28,6 +28,11 @@ create table public.fabrics (
   image_url text not null default '',
   image_alt text not null default '',
   sort_order integer not null default 0,
+  character_thickness smallint not null default 3 check (character_thickness between 1 and 5),
+  character_softness smallint not null default 3 check (character_softness between 1 and 5),
+  character_structure smallint not null default 3 check (character_structure between 1 and 5),
+  character_sheerness smallint not null default 2 check (character_sheerness between 1 and 5),
+  character_surface smallint not null default 3 check (character_surface between 1 and 5),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );

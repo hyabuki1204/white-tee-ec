@@ -7,9 +7,15 @@ const DISPLAY_LIMIT = 6;
 
 type FabricRelatedProductsProps = {
   products: Product[];
+  fabricSlug: string;
+  fabricNameBySlug?: Record<string, string>;
 };
 
-export function FabricRelatedProducts({ products }: FabricRelatedProductsProps) {
+export function FabricRelatedProducts({
+  products,
+  fabricSlug,
+  fabricNameBySlug,
+}: FabricRelatedProductsProps) {
   if (products.length === 0) {
     return null;
   }
@@ -23,11 +29,11 @@ export function FabricRelatedProducts({ products }: FabricRelatedProductsProps) 
         {copy.inThisFabric}
       </p>
 
-      <ProductGrid products={displayed} />
+      <ProductGrid products={displayed} fabricNameBySlug={fabricNameBySlug} />
 
       <div className="mt-24 text-center md:mt-28">
         <Link
-          href="/products"
+          href={`/products?fabric=${fabricSlug}`}
           className="text-[11px] font-light tracking-[0.08em] text-neutral-500 transition-opacity duration-500 hover:opacity-50"
         >
           {copy.viewAll}

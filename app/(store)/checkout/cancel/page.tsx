@@ -22,12 +22,29 @@ export default function CheckoutCancelPage() {
         <p className="mt-6 text-sm font-light text-neutral-700">
           {copy.paymentIncomplete}
         </p>
-        <Link
-          href="/cart"
-          className="mt-10 inline-block text-xs font-light tracking-wide text-neutral-900 transition-opacity hover:opacity-60"
-        >
-          {copy.backToBag}
-        </Link>
+        <p className="mt-4 text-[11px] font-light tracking-[0.04em] text-neutral-500">
+          {copy.cancelRecovery}
+        </p>
+        <div className="mt-10 flex flex-col items-center gap-4">
+          <Link
+            href="/cart"
+            className="text-xs font-light tracking-wide text-neutral-900 transition-opacity hover:opacity-60"
+          >
+            {copy.backToBag}
+          </Link>
+          <Link
+            href="/products"
+            className="text-[11px] font-light tracking-[0.06em] text-neutral-400 transition-opacity duration-300 hover:opacity-60"
+          >
+            {copy.viewProducts}
+          </Link>
+          <Link
+            href="/fabric"
+            className="text-[11px] font-light tracking-[0.06em] text-neutral-400 transition-opacity duration-300 hover:opacity-60"
+          >
+            {copy.exploreFabric}
+          </Link>
+        </div>
       </div>
     </Container>
   );

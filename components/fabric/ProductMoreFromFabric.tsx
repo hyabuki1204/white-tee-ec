@@ -7,9 +7,13 @@ const DISPLAY_LIMIT = 3;
 
 type ProductMoreFromFabricProps = {
   products: Product[];
+  fabricNameBySlug?: Record<string, string>;
 };
 
-export function ProductMoreFromFabric({ products }: ProductMoreFromFabricProps) {
+export function ProductMoreFromFabric({
+  products,
+  fabricNameBySlug,
+}: ProductMoreFromFabricProps) {
   if (products.length === 0) {
     return null;
   }
@@ -27,7 +31,15 @@ export function ProductMoreFromFabric({ products }: ProductMoreFromFabricProps) 
         <ul className="mx-auto grid max-w-4xl grid-cols-1 gap-x-10 gap-y-24 sm:grid-cols-2 sm:gap-x-12 lg:grid-cols-3 lg:gap-x-14">
           {displayed.map((product) => (
             <li key={product.id}>
-              <ProductCard product={product} />
+              <ProductCard
+                product={product}
+                fabricName={
+                  product.fabricSlug && fabricNameBySlug
+                    ? fabricNameBySlug[product.fabricSlug]
+                    : null
+                }
+                fitLabel={product.fitProfile.fitLabel}
+              />
             </li>
           ))}
         </ul>

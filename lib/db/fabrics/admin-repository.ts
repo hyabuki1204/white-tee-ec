@@ -31,6 +31,7 @@ function mapDetail(row: FabricRow): AdminFabricDetail {
     imageUrl: fabric.imageUrl,
     imageAlt: fabric.imageAlt,
     sortOrder: fabric.sortOrder,
+    character: { ...fabric.character },
   };
 }
 
@@ -98,6 +99,11 @@ export async function updateAdminFabric(
       image_url: input.imageUrl,
       image_alt: input.imageAlt,
       sort_order: input.sortOrder,
+      character_thickness: input.character.thickness,
+      character_softness: input.character.softness,
+      character_structure: input.character.structure,
+      character_sheerness: input.character.sheerness,
+      character_surface: input.character.surface,
     })
     .eq("slug", slug)
     .select("*")

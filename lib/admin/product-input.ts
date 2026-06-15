@@ -1,3 +1,4 @@
+import { parseAdminFitProfile } from "@/lib/admin/product-fit-input";
 import type {
   AdminProductDetail,
   AdminProductInput,
@@ -11,6 +12,7 @@ import {
   isValidProductSlug,
   parseSizeGuide,
 } from "@/lib/products/defaults";
+import { getDefaultFitProfile } from "@/lib/products/fit-profiles";
 
 type ValidationResult =
   | { ok: true; data: AdminProductInput }
@@ -106,6 +108,11 @@ export function parseAdminProductInput(body: unknown): ValidationResult {
     return { ok: false, error: images.error };
   }
 
+  const fitProfile = parseAdminFitProfile(input.fitProfile);
+  if (typeof fitProfile === "string") {
+    return { ok: false, error: fitProfile };
+  }
+
   return {
     ok: true,
     data: {
@@ -122,6 +129,7 @@ export function parseAdminProductInput(body: unknown): ValidationResult {
       fabricSlug,
       variants: variants.data,
       images: images.data,
+      fitProfile,
     },
   };
 }
@@ -271,6 +279,7 @@ export function toAdminProductFormDefaults(): AdminProductDetail {
       enabled: true,
     })),
     images: [],
+    fitProfile: getDefaultFitProfile(""),
     createdAt: now,
     updatedAt: now,
     hasOrders: false,

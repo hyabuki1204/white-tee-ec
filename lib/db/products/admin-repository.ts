@@ -3,6 +3,7 @@ import "server-only";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { mapFullProductRow, mapImageRow, mapVariantRow } from "@/lib/db/products/mapper";
+import { parseFitProfileFromRow } from "@/lib/products/parse-fit-profile";
 import type {
   AdminProductDeleteResult,
   AdminProductDetail,
@@ -77,6 +78,7 @@ function mapAdminDetail(
         sortOrder: image.sortOrder,
         isPrimary: image.isPrimary,
       })),
+    fitProfile: parseFitProfileFromRow(row.slug, row.fit_profile),
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     hasOrders,
@@ -235,6 +237,7 @@ function buildProductPayload(input: AdminProductInput) {
     size_guide: input.sizeGuide,
     is_published: input.isPublished,
     fabric_slug: input.fabricSlug,
+    fit_profile: input.fitProfile,
   };
 }
 

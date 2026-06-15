@@ -12,6 +12,8 @@ export type HomePageContent = {
 export type AboutPageContent = {
   headline: string;
   bodyParagraphs: string[][];
+  /** One-line Japanese summary at the end. */
+  helperJa?: string | null;
 };
 
 export type StoryEntryContent = {
@@ -20,6 +22,8 @@ export type StoryEntryContent = {
   lines: string[];
   imageUrl: string;
   imageAlt: string;
+  /** One-line Japanese summary below English copy. */
+  helperJa?: string | null;
 };
 
 export type StoriesPageContent = {

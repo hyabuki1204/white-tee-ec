@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
+import { SITE_UI_COPY } from "@/lib/copy/site-ui";
 
 const FOOTER_LINKS = [
+  { href: "/fabric", label: SITE_UI_COPY.nav.fabric },
+  { href: "/products", label: SITE_UI_COPY.nav.products },
   { href: "/contact", label: "Contact" },
   { href: "/shipping", label: "Shipping & Returns" },
   { href: "/privacy", label: "Privacy" },

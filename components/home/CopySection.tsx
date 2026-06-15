@@ -1,9 +1,14 @@
+import Link from "next/link";
+import { SITE_UI_COPY } from "@/lib/copy/site-ui";
+
 type CopySectionProps = {
   heroCopy: string;
   conceptLines: [string, string];
 };
 
 export function CopySection({ heroCopy, conceptLines }: CopySectionProps) {
+  const { home: copy } = SITE_UI_COPY;
+
   return (
     <section
       aria-label="Brand statement"
@@ -18,6 +23,13 @@ export function CopySection({ heroCopy, conceptLines }: CopySectionProps) {
         <br />
         {conceptLines[1]}
       </p>
+
+      <Link
+        href="/fabric"
+        className="mt-10 hidden text-[11px] font-light tracking-[0.1em] text-neutral-400 transition-opacity duration-300 hover:opacity-60 md:inline-block"
+      >
+        {copy.exploreFabric}
+      </Link>
     </section>
   );
 }
