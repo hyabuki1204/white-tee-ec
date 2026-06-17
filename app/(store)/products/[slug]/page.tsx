@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { ProductFabricLink } from "@/components/fabric/ProductFabricLink";
 import { ProductMoreFromFabric } from "@/components/fabric/ProductMoreFromFabric";
-import { ProductGallery } from "@/components/product/ProductGallery";
-import { ProductInfo } from "@/components/product/ProductInfo";
+import { ProductPageLayout } from "@/components/product/ProductPageLayout";
+import { RecentlyViewed } from "@/components/product/RecentlyViewed";
+import { RecordProductView } from "@/components/product/RecordProductView";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Container } from "@/components/layout/Container";
 import { SITE_UI_COPY } from "@/lib/copy/site-ui";
+import { getGraphpaperDisplayName } from "@/lib/products/display-name";
 import {
   getFabricForProduct,
   getFabrics,
@@ -16,6 +17,7 @@ import {
 import {
   getAllProductSlugs,
   getProductBySlug,
+  getProducts,
 } from "@/lib/products/queries";
 import {
   buildBreadcrumbSchema,
@@ -42,8 +44,11 @@ export async function generateMetadata({
     return { title: "Not Found" };
   }
 
+  const fabric = await getFabricForProduct(product);
+  const displayName = getGraphpaperDisplayName(product, fabric?.name);
+
   return buildPageMetadata({
-    title: product.name,
+    title: displayName,
     description: product.description,
     path: `/products/${product.slug}`,
     image: product.imageUrl,
@@ -59,26 +64,28 @@ export default async function ProductPage({ params }: ProductPageProps) {
   }
 
   const fabric = await getFabricForProduct(product);
-  const [relatedProducts, fabrics] = await Promise.all([
+  const [relatedProducts, fabrics, allProducts] = await Promise.all([
     fabric !== null
       ? getRelatedProductsForFabric(fabric.slug, product.slug)
       : Promise.resolve([]),
     getFabrics(),
+    getProducts(),
   ]);
 
   const fabricNameBySlug = Object.fromEntries(
     fabrics.map((entry) => [entry.slug, entry.name]),
   );
+  const displayName = getGraphpaperDisplayName(product, fabric?.name);
 
   const breadcrumbItems = fabric
     ? [
         { name: "Home", path: "/" },
         { name: fabric.name, path: `/fabric/${fabric.slug}` },
-        { name: product.name, path: `/products/${product.slug}` },
+        { name: displayName, path: `/products/${product.slug}` },
       ]
     : [
         { name: "Home", path: "/" },
-        { name: product.name, path: `/products/${product.slug}` },
+        { name: displayName, path: `/products/${product.slug}` },
       ];
 
   const structuredData = [
@@ -91,11 +98,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
     ? [
         { label: bc.home, href: "/" },
         { label: fabric.name, href: `/fabric/${fabric.slug}` },
-        { label: product.name },
+        { label: displayName },
       ]
     : [
         { label: bc.home, href: "/" },
-        { label: product.name },
+        { label: displayName },
       ];
 
   return (
@@ -104,25 +111,31 @@ export default async function ProductPage({ params }: ProductPageProps) {
       <Container as="div" className="px-6 pt-6 lg:hidden">
         <Breadcrumbs items={uiBreadcrumbs} />
       </Container>
-      <section className="lg:grid lg:grid-cols-[minmax(0,2fr)_minmax(0,0.9fr)] lg:items-start lg:gap-x-12 xl:grid-cols-[minmax(0,2.1fr)_minmax(0,0.85fr)] xl:gap-x-16">
-        <ProductGallery product={product} />
-        <div>
-          <Container as="div" className="hidden px-6 pt-6 lg:block xl:px-10">
-            <Breadcrumbs items={uiBreadcrumbs} />
-          </Container>
-          <ProductInfo product={product} fabric={fabric} />
-        </div>
-      </section>
+      <Container as="div" className="hidden px-6 pt-6 lg:block xl:px-10">
+        <Breadcrumbs items={uiBreadcrumbs} />
+      </Container>
+
+      <ProductPageLayout
+        product={product}
+        fabric={fabric}
+        fabricName={fabric?.name}
+        displayName={displayName}
+      />
+
+      <RecordProductView slug={product.slug} />
 
       {fabric !== null ? (
-        <>
-          <ProductFabricLink fabric={fabric} />
-          <ProductMoreFromFabric
-            products={relatedProducts}
-            fabricNameBySlug={fabricNameBySlug}
-          />
-        </>
+        <ProductMoreFromFabric
+          products={relatedProducts}
+          fabricNameBySlug={fabricNameBySlug}
+        />
       ) : null}
+
+      <RecentlyViewed
+        currentSlug={product.slug}
+        allProducts={allProducts}
+        fabricNameBySlug={fabricNameBySlug}
+      />
     </>
   );
 }

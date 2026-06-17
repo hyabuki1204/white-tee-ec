@@ -1,4 +1,8 @@
 import type { FitType, SleeveType } from "@/types/product-fit";
+import {
+  PRODUCT_CATALOG,
+  PRODUCT_CATALOG_BY_SLUG,
+} from "@/lib/products/product-catalog";
 
 export const SLEEVE_TYPES: SleeveType[] = ["short", "long"];
 
@@ -16,12 +20,18 @@ export const FIT_TYPE_LABELS: Record<FitType, string> = {
   boxy: "Boxy",
 };
 
-export const SLEEVE_TYPE_BY_SLUG: Record<string, SleeveType> = {
-  "long-sleeve-essential": "long",
-};
+/** @deprecated Prefer PRODUCT_CATALOG sleeveType. */
+export const SLEEVE_TYPE_BY_SLUG: Record<string, SleeveType> =
+  Object.fromEntries(
+    PRODUCT_CATALOG.map((entry) => [entry.slug, entry.sleeveType]),
+  );
 
 export function getDefaultSleeveType(slug: string): SleeveType {
-  return SLEEVE_TYPE_BY_SLUG[slug] ?? "short";
+  return PRODUCT_CATALOG_BY_SLUG[slug]?.sleeveType ?? "short";
+}
+
+export function getDefaultFitType(slug: string): FitType {
+  return PRODUCT_CATALOG_BY_SLUG[slug]?.fitType ?? "regular";
 }
 
 export function isSleeveType(value: unknown): value is SleeveType {
@@ -29,7 +39,23 @@ export function isSleeveType(value: unknown): value is SleeveType {
 }
 
 export function isFitType(value: unknown): value is FitType {
-  return FIT_TYPES.includes(value as FitType);
+  return (
+    value === "slim" ||
+    value === "regular" ||
+    value === "relaxed" ||
+    value === "boxy"
+  );
+}
+
+export function getProductsByFabricAndSleeve(
+  products: { fabricSlug: string | null; sleeveType: SleeveType; slug: string }[],
+  fabricSlug: string,
+  sleeve: SleeveType,
+): typeof products {
+  return products.filter(
+    (product) =>
+      product.fabricSlug === fabricSlug && product.sleeveType === sleeve,
+  );
 }
 
 export function buildProductsFilterHref(options: {

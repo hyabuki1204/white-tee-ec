@@ -119,6 +119,7 @@ export type OrderRow = {
   total_amount: number;
   stripe_payment_intent_id: string | null;
   shipping_address: Json | null;
+  order_notes: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -131,6 +132,7 @@ export type OrderInsert = {
   total_amount: number;
   stripe_payment_intent_id?: string | null;
   shipping_address?: Json | null;
+  order_notes?: string | null;
   created_at?: string;
   updated_at?: string;
 };

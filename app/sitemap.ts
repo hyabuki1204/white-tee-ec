@@ -1,15 +1,19 @@
 import type { MetadataRoute } from "next";
 import { getFabricSlugs } from "@/lib/fabric/queries";
+import { getJournalSlugs } from "@/lib/content/journal";
 import { getAllProductSlugs } from "@/lib/products/queries";
 import { getSiteUrl } from "@/lib/seo/site";
 
 const STATIC_PATHS = [
   "",
   "/fabric",
-  "/products",
+  "/products?sleeve=short",
+  "/products?sleeve=long",
   "/about",
-  "/stories",
+  "/journal",
   "/contact",
+  "/store-guide",
+  "/stockist",
   "/shipping",
   "/privacy",
   "/terms",
@@ -42,5 +46,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.75,
   }));
 
-  return [...staticEntries, ...fabricEntries, ...productEntries];
+  const journalSlugs = getJournalSlugs();
+  const journalEntries: MetadataRoute.Sitemap = journalSlugs.map((slug) => ({
+    url: `${baseUrl}/journal/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly",
+    priority: 0.65,
+  }));
+
+  return [...staticEntries, ...fabricEntries, ...journalEntries, ...productEntries];
 }

@@ -1,20 +1,25 @@
-import type { FabricCharacter } from "@/lib/fabric/character";
 import { ProductCard } from "@/components/product/ProductCard";
 import type { Product } from "@/types";
 
 type ProductGridProps = {
   products: Product[];
   fabricNameBySlug?: Record<string, string>;
-  fabricCharacterBySlug?: Record<string, FabricCharacter>;
 };
 
 export function ProductGrid({
   products,
   fabricNameBySlug,
-  fabricCharacterBySlug,
 }: ProductGridProps) {
+  if (products.length === 0) {
+    return (
+      <p className="py-16 text-center text-[12px] font-light tracking-wide text-neutral-400">
+        No pieces match these filters.
+      </p>
+    );
+  }
+
   return (
-    <ul className="grid grid-cols-1 gap-x-6 gap-y-24 sm:grid-cols-2 sm:gap-x-8 sm:gap-y-28 lg:grid-cols-3 lg:gap-x-9 lg:gap-y-32">
+    <ul className="grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-5 sm:gap-y-12 lg:grid-cols-3 lg:gap-x-6 lg:gap-y-14">
       {products.map((product) => (
         <li key={product.id}>
           <ProductCard
@@ -24,13 +29,6 @@ export function ProductGrid({
                 ? fabricNameBySlug[product.fabricSlug]
                 : null
             }
-            fitLabel={product.fitProfile.fitLabel}
-            fabricCharacter={
-              product.fabricSlug && fabricCharacterBySlug
-                ? fabricCharacterBySlug[product.fabricSlug]
-                : null
-            }
-            wearHover
           />
         </li>
       ))}

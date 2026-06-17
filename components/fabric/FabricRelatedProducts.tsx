@@ -1,5 +1,4 @@
 import Link from "next/link";
-import type { FabricCharacter } from "@/lib/fabric/character";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { SITE_UI_COPY } from "@/lib/copy/site-ui";
 import type { Product } from "@/types";
@@ -10,14 +9,12 @@ type FabricRelatedProductsProps = {
   products: Product[];
   fabricSlug: string;
   fabricNameBySlug?: Record<string, string>;
-  fabricCharacterBySlug?: Record<string, FabricCharacter>;
 };
 
 export function FabricRelatedProducts({
   products,
   fabricSlug,
   fabricNameBySlug,
-  fabricCharacterBySlug,
 }: FabricRelatedProductsProps) {
   if (products.length === 0) {
     return null;
@@ -35,7 +32,6 @@ export function FabricRelatedProducts({
       <ProductGrid
         products={displayed}
         fabricNameBySlug={fabricNameBySlug}
-        fabricCharacterBySlug={fabricCharacterBySlug}
       />
 
       <div className="mt-24 text-center md:mt-28">

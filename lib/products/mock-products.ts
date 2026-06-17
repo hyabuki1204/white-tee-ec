@@ -4,57 +4,11 @@ import {
   DEFAULT_CARE,
   DEFAULT_MATERIAL,
   PRODUCT_SIZES,
-  createDefaultSizeGuide,
 } from "@/lib/products/defaults";
 import { getDefaultFitProfile } from "@/lib/products/fit-profiles";
+import { getProductDetailSeed } from "@/lib/products/product-details";
 import { getDefaultSleeveType } from "@/lib/products/silhouette";
 import type { Product, ProductVariant } from "@/types";
-
-const DETAIL_BY_SLUG: Record<
-  string,
-  {
-    detailDescription: string;
-    fitNote: string | null;
-    sizeGuide: Product["sizeGuide"];
-  }
-> = {
-  "heavyweight-crew-neck": {
-    detailDescription:
-      "厚手のコットン100%ジャージー。しっかりとした密度で、白の輪郭がはっきりと立つ一枚です。",
-    fitNote: "Regular fit",
-    sizeGuide: createDefaultSizeGuide(),
-  },
-  "lightweight-pocket-tee": {
-    detailDescription:
-      "軽量なコットン100%。肌に沿うような柔らかさと、通気性のよい風合い。左胸のポケット付き。",
-    fitNote: "Regular fit",
-    sizeGuide: createDefaultSizeGuide(),
-  },
-  "relaxed-fit-tee": {
-    detailDescription:
-      "ゆとりのあるシルエットとドロップショルダー。肩のラインを落とし、体のラインを強調しない着心地。",
-    fitNote: "Relaxed fit",
-    sizeGuide: createDefaultSizeGuide(),
-  },
-  "compact-cotton-tee": {
-    detailDescription:
-      "コンパクトな身幅と短めの着丈。インナーとして重ねやすく、ジャケットの下にも余計なボリュームを出しません。",
-    fitNote: "Slim fit",
-    sizeGuide: createDefaultSizeGuide(),
-  },
-  "long-sleeve-essential": {
-    detailDescription:
-      "長袖の定番Tシャツ。袖口はシンプルな仕上げで、季節を問わず白の質感を楽しめる一着です。",
-    fitNote: "Regular fit",
-    sizeGuide: createDefaultSizeGuide(),
-  },
-  "box-fit-tee": {
-    detailDescription:
-      "ボックスシルエット。直線的なラインが、白の存在感を静かに引き立てます。",
-    fitNote: "Box fit",
-    sizeGuide: createDefaultSizeGuide(),
-  },
-};
 
 function buildVariants(skuCode: string): ProductVariant[] {
   return PRODUCT_SIZES.map((size, index) => ({
@@ -66,17 +20,11 @@ function buildVariants(skuCode: string): ProductVariant[] {
 }
 
 function buildImages(productId: string, slug: string): Product["images"] {
-  const entries = [
-    { index: 1, ext: "jpg" },
-    { index: 2, ext: "jpg" },
-    { index: 3, ext: "jpg" },
-    { index: 4, ext: "jpg" },
-    { index: 5, ext: "jpg" },
-  ];
+  const entries = [1, 2, 3, 4, 5];
 
-  return entries.map(({ index, ext }) => ({
+  return entries.map((index) => ({
     id: `${productId}-image-${index - 1}`,
-    url: `/products/${slug}-0${index}.${ext}`,
+    url: `/products/${slug}-0${index}.jpg`,
     sortOrder: index - 1,
     isPrimary: index === 1,
     isCardHover: index === 4,
@@ -85,9 +33,18 @@ function buildImages(productId: string, slug: string): Product["images"] {
 
 /** Mock product list — mirrors Supabase seed data (same ids / slugs). */
 export const MOCK_PRODUCTS: Product[] = PRODUCT_CATALOG.map(
-  ({ id, slug, name, price, description, imageUrl, skuCode }) => {
-    const detail = DETAIL_BY_SLUG[slug];
-
+  ({
+    id,
+    slug,
+    name,
+    price,
+    description,
+    imageUrl,
+    skuCode,
+    fabricSlug,
+    fitType,
+  }) => {
+    const detail = getProductDetailSeed(slug);
     const fitProfile = getDefaultFitProfile(slug);
 
     return {
@@ -97,17 +54,18 @@ export const MOCK_PRODUCTS: Product[] = PRODUCT_CATALOG.map(
       price,
       description,
       imageUrl,
-      detailDescription: detail?.detailDescription ?? description,
-      fitNote: detail?.fitNote ?? null,
+      detailDescription: detail.detailDescription || description,
+      fitNote: detail.fitNote,
       material: DEFAULT_MATERIAL,
       care: DEFAULT_CARE,
-      sizeGuide: detail?.sizeGuide ?? createDefaultSizeGuide(),
+      sizeGuide: detail.sizeGuide,
       variants: buildVariants(skuCode),
       images: buildImages(id, slug),
       isPublished: true,
-      fabricSlug: PRODUCT_FABRIC_SLUG_BY_PRODUCT_SLUG[slug] ?? null,
+      fabricSlug:
+        fabricSlug ?? PRODUCT_FABRIC_SLUG_BY_PRODUCT_SLUG[slug] ?? null,
       sleeveType: getDefaultSleeveType(slug),
-      fitType: fitProfile.fitType,
+      fitType,
       fitProfile,
     };
   },

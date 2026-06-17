@@ -347,6 +347,7 @@ export function ContentEditor({ initialContent, products }: ContentEditorProps) 
 
         {activeTab === "stories" ? (
           <>
+            <p className={adminMuted}>{copy.journalNotice}</p>
             <label className={adminField}>
               <span className={adminLabel}>{copy.stories.pageTitle}</span>
               <input

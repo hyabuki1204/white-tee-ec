@@ -1,12 +1,7 @@
 import type { Metadata } from "next";
-import { BrandLinksSection } from "@/components/home/BrandLinksSection";
-import { CopySection } from "@/components/home/CopySection";
-import { FabricEntrySection } from "@/components/home/FabricEntrySection";
-import { FeaturedProductsSection } from "@/components/home/FeaturedProductsSection";
-import { HeroSection } from "@/components/home/HeroSection";
-import { getSiteContent } from "@/lib/content/queries";
+import { HomeProductCatalog } from "@/components/home/HomeProductCatalog";
+import { getFeaturedJournalArticles } from "@/lib/content/journal";
 import { getFabrics } from "@/lib/fabric/queries";
-import { pickFeaturedProducts } from "@/lib/home/featured-products";
 import { getProducts } from "@/lib/products/queries";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 import { getSeoSettings } from "@/lib/seo/queries";
@@ -23,40 +18,21 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Home() {
-  const [homeContent, products, fabrics] = await Promise.all([
-    getSiteContent("home"),
+  const [products, fabrics] = await Promise.all([
     getProducts(),
     getFabrics(),
   ]);
 
-  const featured = pickFeaturedProducts(
-    products,
-    homeContent.featuredProductCount,
-    homeContent.featuredProductSlugs,
-  );
-  const fabricPreview = fabrics.slice(0, homeContent.fabricPreviewCount);
-
   const fabricNameBySlug = Object.fromEntries(
     fabrics.map((fabric) => [fabric.slug, fabric.name]),
   );
-  const fabricCharacterBySlug = Object.fromEntries(
-    fabrics.map((fabric) => [fabric.slug, fabric.character]),
-  );
 
   return (
-    <>
-      <HeroSection heroImage={homeContent.heroImage} />
-      <CopySection
-        heroCopy={homeContent.heroCopy}
-        fabricIntroLines={homeContent.fabricIntroLines}
-      />
-      <FabricEntrySection fabrics={fabricPreview} />
-      <FeaturedProductsSection
-        products={featured}
-        fabricNameBySlug={fabricNameBySlug}
-        fabricCharacterBySlug={fabricCharacterBySlug}
-      />
-      <BrandLinksSection />
-    </>
+    <HomeProductCatalog
+      products={products}
+      fabrics={fabrics}
+      journalArticles={getFeaturedJournalArticles(3)}
+      fabricNameBySlug={fabricNameBySlug}
+    />
   );
 }

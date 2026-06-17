@@ -1,148 +1,36 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 import { CartNavLink } from "@/components/layout/CartNavLink";
-import { NAV_ITEMS } from "@/components/layout/nav-items";
-import type { StoreNavMenu } from "@/lib/navigation/store-nav";
+import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
+import { STORE_MOBILE_PRIMARY_NAV } from "@/lib/store-ui/nav-links";
+import { isNavActive, isNavDropdownActive } from "@/lib/store-ui/nav-active";
 import { cn } from "@/lib/utils";
 
 type MobileNavProps = {
   isOpen: boolean;
   onClose: () => void;
-  storeNav: StoreNavMenu;
 };
 
-function isNavActive(pathname: string, href: string): boolean {
-  if (href === "/") {
-    return pathname === "/";
-  }
+const LEGAL_LINKS = [
+  { label: GRAPHPAPER_STORE_COPY.footer.privacy, href: "/privacy" },
+  { label: GRAPHPAPER_STORE_COPY.footer.terms, href: "/terms" },
+  { label: GRAPHPAPER_STORE_COPY.footer.legal, href: "/legal" },
+] as const;
 
-  return pathname === href || pathname.startsWith(`${href}/`);
-}
+const SECONDARY_LINKS = [
+  { label: GRAPHPAPER_STORE_COPY.footer.storeGuide, href: "/store-guide" },
+  { label: GRAPHPAPER_STORE_COPY.footer.shipping, href: "/shipping" },
+  { label: GRAPHPAPER_STORE_COPY.footer.stockist, href: "/stockist" },
+  { label: GRAPHPAPER_STORE_COPY.footer.contact, href: "/contact" },
+  { label: GRAPHPAPER_STORE_COPY.footer.about, href: "/about" },
+] as const;
 
-function MobileNavSection({
-  label,
-  href,
-  isActive,
-  onClose,
-  allLabel,
-  links = [],
-  groups = [],
-}: {
-  label: string;
-  href: string;
-  isActive: boolean;
-  onClose: () => void;
-  allLabel: string;
-  links?: Array<{ label: string; href: string }>;
-  groups?: StoreNavMenu["products"]["groups"];
-}) {
-  const [expanded, setExpanded] = useState(isActive);
-  const hasChildren = links.length > 0 || groups.length > 0;
-
-  return (
-    <li>
-      <div className="flex items-center">
-        <Link
-          href={href}
-          onClick={onClose}
-          className={cn(
-            "flex min-h-11 flex-1 items-center text-[15px] font-light tracking-wide transition-colors md:text-sm",
-            label === "Fabric" && "tracking-[0.12em]",
-            isActive
-              ? "text-neutral-900"
-              : "text-neutral-600 active:text-neutral-900",
-          )}
-          aria-current={isActive ? "page" : undefined}
-        >
-          {label}
-        </Link>
-        {hasChildren ? (
-          <button
-            type="button"
-            aria-expanded={expanded}
-            aria-label={`${expanded ? "Collapse" : "Expand"} ${label}`}
-            onClick={() => setExpanded((open) => !open)}
-            className="flex h-11 w-11 items-center justify-center text-neutral-400"
-          >
-            <span
-              aria-hidden
-              className={cn(
-                "text-[10px] transition-transform",
-                expanded && "rotate-180",
-              )}
-            >
-              ▾
-            </span>
-          </button>
-        ) : null}
-      </div>
-
-      {hasChildren && expanded ? (
-        <ul className="mb-2 ml-3 space-y-1 border-l border-neutral-200/80 pl-4">
-          <li>
-            <Link
-              href={href}
-              onClick={onClose}
-              className="flex min-h-9 items-center text-[13px] font-light tracking-wide text-neutral-500"
-            >
-              {allLabel}
-            </Link>
-          </li>
-
-          {groups.map((group) => (
-            <li key={group.label} className="pt-2">
-              {group.href ? (
-                <Link
-                  href={group.href}
-                  onClick={onClose}
-                  className="flex min-h-8 items-center text-[11px] font-light uppercase tracking-[0.08em] text-neutral-400"
-                >
-                  {group.label}
-                </Link>
-              ) : (
-                <p className="min-h-8 text-[11px] font-light uppercase tracking-[0.08em] text-neutral-400">
-                  {group.label}
-                </p>
-              )}
-              <ul className="mt-1 space-y-1">
-                {group.links.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      onClick={onClose}
-                      className="flex min-h-9 items-center text-[13px] font-light tracking-wide text-neutral-600"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </li>
-          ))}
-
-          {links.map((link) => (
-            <li key={link.href}>
-              <Link
-                href={link.href}
-                onClick={onClose}
-                className="flex min-h-9 items-center text-[13px] font-light tracking-wide text-neutral-600"
-              >
-                {link.label}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      ) : null}
-    </li>
-  );
-}
-
-export function MobileNav({ isOpen, onClose, storeNav }: MobileNavProps) {
+export function MobileNav({ isOpen, onClose }: MobileNavProps) {
   const pathname = usePathname();
-  const links = NAV_ITEMS.filter((item) => item.href !== "/cart");
+  const searchParams = useSearchParams();
+  const search = searchParams.toString();
 
   if (!isOpen) {
     return null;
@@ -159,69 +47,100 @@ export function MobileNav({ isOpen, onClose, storeNav }: MobileNavProps) {
 
       <nav
         aria-label="Mobile navigation"
-        className="absolute inset-x-0 top-0 max-h-[100dvh] overflow-y-auto bg-background px-6 pb-10 pt-[calc(var(--header-height)+0.5rem)] shadow-sm"
+        className="absolute inset-x-0 top-0 max-h-[100dvh] overflow-y-auto bg-background px-6 pb-10 pt-[calc(var(--header-height)+0.75rem)]"
       >
         <ul className="flex flex-col">
-          {links.map((item) => {
-            if (item.href === "/fabric") {
+          {STORE_MOBILE_PRIMARY_NAV.map((item) => {
+            const hasChildren = Boolean(item.children?.length);
+            const itemActive = isNavDropdownActive(
+              pathname,
+              item.href,
+              search,
+              item.children,
+            );
+
+            if (!hasChildren) {
               return (
-                <MobileNavSection
-                  key={item.href}
-                  label={item.label}
-                  href={storeNav.fabric.href}
-                  isActive={isNavActive(pathname, "/fabric")}
-                  onClose={onClose}
-                  allLabel={storeNav.fabric.allLabel}
-                  links={storeNav.fabric.links}
-                />
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    onClick={onClose}
+                    className={cn(
+                      "flex min-h-12 items-center text-[12px] font-light tracking-[0.16em] transition-opacity active:opacity-60",
+                      itemActive ? "text-neutral-900" : "text-neutral-600",
+                    )}
+                  >
+                    {item.label}
+                  </Link>
+                </li>
               );
             }
-
-            if (item.href === "/products") {
-              return (
-                <MobileNavSection
-                  key={item.href}
-                  label={item.label}
-                  href={storeNav.products.href}
-                  isActive={isNavActive(pathname, "/products")}
-                  onClose={onClose}
-                  allLabel={storeNav.products.allLabel}
-                  groups={storeNav.products.groups}
-                />
-              );
-            }
-
-            const isActive = isNavActive(pathname, item.href);
 
             return (
-              <li key={item.href}>
+              <li key={item.href} className="border-b border-neutral-200/50 pb-2">
                 <Link
                   href={item.href}
                   onClick={onClose}
                   className={cn(
-                    "flex min-h-11 items-center text-[15px] font-light tracking-wide transition-colors md:text-sm",
-                    isActive
-                      ? "text-neutral-900"
-                      : "text-neutral-600 active:text-neutral-900",
+                    "flex min-h-12 items-center text-[12px] font-light tracking-[0.16em] transition-opacity active:opacity-60",
+                    itemActive ? "text-neutral-900" : "text-neutral-600",
                   )}
-                  aria-current={isActive ? "page" : undefined}
                 >
                   {item.label}
                 </Link>
+                <ul className="mb-1 ml-3 border-l border-neutral-200/70 pl-4">
+                  {item.children?.map((child) => {
+                    const childActive = isNavActive(pathname, child.href, search);
+
+                    return (
+                      <li key={`${child.href}-${child.label}`}>
+                        <Link
+                          href={child.href}
+                          onClick={onClose}
+                          className={cn(
+                            "flex min-h-10 items-center text-[11px] font-light tracking-[0.12em] transition-opacity active:opacity-60",
+                            childActive ? "text-neutral-900" : "text-neutral-500",
+                          )}
+                        >
+                          {child.label}
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
               </li>
             );
           })}
 
-          <li>
-            <CartNavLink
-              onNavigate={onClose}
-              className="flex min-h-11 items-center text-[15px] md:text-sm"
-            />
+          <li className="mt-4 border-t border-neutral-200/70 pt-4">
+            <CartNavLink onNavigate={onClose} />
           </li>
+
+          {SECONDARY_LINKS.map((item) => (
+            <li key={item.href}>
+              <Link
+                href={item.href}
+                onClick={onClose}
+                className="flex min-h-11 items-center text-[13px] font-light tracking-wide text-neutral-500"
+              >
+                {item.label}
+              </Link>
+            </li>
+          ))}
+
+          {LEGAL_LINKS.map((item) => (
+            <li key={item.href}>
+              <Link
+                href={item.href}
+                onClick={onClose}
+                className="flex min-h-10 items-center text-[12px] font-light tracking-[0.06em] text-neutral-400"
+              >
+                {item.label}
+              </Link>
+            </li>
+          ))}
         </ul>
       </nav>
     </div>
   );
 }
-
-export { isNavActive };

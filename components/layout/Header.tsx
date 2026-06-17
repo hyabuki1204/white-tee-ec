@@ -1,34 +1,30 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { CartNavLink } from "@/components/layout/CartNavLink";
 import { Container } from "@/components/layout/Container";
-import { isNavActive, MobileNav } from "@/components/layout/MobileNav";
-import { NavDropdown } from "@/components/layout/NavDropdown";
-import { NAV_ITEMS } from "@/components/layout/nav-items";
-import type { StoreNavMenu } from "@/lib/navigation/store-nav";
+import { HeaderNavDropdown } from "@/components/layout/HeaderNavDropdown";
+import { MobileNav } from "@/components/layout/MobileNav";
+import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
+import {
+  STORE_HEADER_LEFT_NAV,
+  STORE_HEADER_RIGHT_NAV,
+} from "@/lib/store-ui/nav-links";
 import { cn } from "@/lib/utils";
 
-const HERO_SCROLL_RATIO = 0.72;
-
-type HeaderProps = {
-  storeNav: StoreNavMenu;
-};
-
-export function Header({ storeNav }: HeaderProps) {
+export function Header() {
   const pathname = usePathname();
-  const isHome = pathname === "/";
+  const searchParams = useSearchParams();
+  const search = searchParams.toString();
   const isAdmin = pathname.startsWith("/admin");
   const headerRef = useRef<HTMLElement>(null);
-  const [isInHero, setIsInHero] = useState(isHome);
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    if (isAdmin) {
-      return;
-    }
+    if (isAdmin) return;
 
     const header = headerRef.current;
     if (!header) return;
@@ -36,138 +32,84 @@ export function Header({ storeNav }: HeaderProps) {
     const setHeaderHeight = () => {
       document.documentElement.style.setProperty(
         "--header-height",
-        `${header.offsetHeight + 12}px`,
+        `${header.offsetHeight}px`,
       );
     };
 
     setHeaderHeight();
-
     const resizeObserver = new ResizeObserver(setHeaderHeight);
     resizeObserver.observe(header);
 
-    return () => {
-      resizeObserver.disconnect();
-    };
+    return () => resizeObserver.disconnect();
   }, [pathname, isAdmin]);
-
-  useEffect(() => {
-    if (!isHome) {
-      setIsInHero(false);
-      return;
-    }
-
-    const update = () => {
-      const threshold = window.innerHeight * HERO_SCROLL_RATIO;
-      setIsInHero(window.scrollY < threshold);
-    };
-
-    update();
-    window.addEventListener("scroll", update, { passive: true });
-    window.addEventListener("resize", update, { passive: true });
-
-    return () => {
-      window.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
-    };
-  }, [isHome]);
 
   useEffect(() => {
     setMenuOpen(false);
   }, [pathname]);
 
   useEffect(() => {
-    document.body.style.overflow = menuOpen ? "hidden" : "";
-
-    return () => {
-      document.body.style.overflow = "";
-    };
+    if (menuOpen) {
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = "";
+      };
+    }
   }, [menuOpen]);
-
-  const isMuted = isHome && isInHero;
 
   if (isAdmin) {
     return null;
   }
 
-  const navLinks = NAV_ITEMS.filter((item) => item.href !== "/cart");
-
   return (
     <>
       <header
         ref={headerRef}
-        className={cn(
-          "border-b border-neutral-200/70 bg-background transition-opacity duration-700 ease-out",
-          !isHome && "fixed inset-x-0 top-0 z-50",
-          isMuted ? "opacity-[0.72] md:opacity-[0.65]" : "opacity-100",
-        )}
+        className="fixed inset-x-0 top-0 z-50 border-b border-neutral-200/70 bg-background"
       >
-        <Container as="div" className="py-8 md:py-10">
-          <div className="flex items-center justify-between gap-6">
+        <AnnouncementBar />
+
+        <Container as="div" className="py-5 md:py-6">
+          <div className="hidden md:grid md:grid-cols-[1fr_auto_1fr] md:items-center md:gap-x-8">
+            <nav aria-label="Main navigation" className="justify-self-start">
+              <ul className="flex items-center gap-x-8 lg:gap-x-10">
+                {STORE_HEADER_LEFT_NAV.map((item) => (
+                  <li key={item.href}>
+                    <HeaderNavDropdown item={item} />
+                  </li>
+                ))}
+              </ul>
+            </nav>
+
             <Link
               href="/"
-              className="text-[12px] tracking-[0.35em] text-neutral-800 transition-opacity hover:opacity-60 md:text-xs"
+              className="justify-self-center text-[11px] tracking-[0.32em] text-neutral-800 transition-opacity hover:opacity-60 lg:text-[12px]"
             >
-              WHITE TEE
+              {GRAPHPAPER_STORE_COPY.brandLine}
             </Link>
 
-            <nav
-              aria-label="Main navigation"
-              className="hidden md:block"
-            >
-              <ul className="flex flex-wrap items-center justify-end gap-x-10">
-                {navLinks.map((item) => {
-                  if (item.href === "/fabric") {
-                    return (
-                      <NavDropdown
-                        key={item.href}
-                        label={item.label}
-                        href={storeNav.fabric.href}
-                        isActive={isNavActive(pathname, "/fabric")}
-                        allLabel={storeNav.fabric.allLabel}
-                        links={storeNav.fabric.links}
-                      />
-                    );
-                  }
-
-                  if (item.href === "/products") {
-                    return (
-                      <NavDropdown
-                        key={item.href}
-                        label={item.label}
-                        href={storeNav.products.href}
-                        isActive={isNavActive(pathname, "/products")}
-                        allLabel={storeNav.products.allLabel}
-                        groups={storeNav.products.groups}
-                      />
-                    );
-                  }
-
-                  const isActive = isNavActive(pathname, item.href);
-
-                  return (
-                    <li key={item.href}>
-                      <Link
-                        href={item.href}
-                        className={cn(
-                          "text-sm font-light tracking-wide transition-colors",
-                          isActive
-                            ? "text-neutral-900"
-                            : "text-neutral-600 hover:text-neutral-900",
-                        )}
-                        aria-current={isActive ? "page" : undefined}
-                      >
-                        {item.label}
-                      </Link>
-                    </li>
-                  );
-                })}
+            <nav aria-label="Secondary navigation" className="justify-self-end">
+              <ul className="flex items-center gap-x-8 lg:gap-x-10">
+                {STORE_HEADER_RIGHT_NAV.map((item) => (
+                  <li key={item.href}>
+                    <HeaderNavDropdown item={item} />
+                  </li>
+                ))}
                 <li>
                   <CartNavLink />
                 </li>
               </ul>
             </nav>
+          </div>
 
-            <div className="flex items-center gap-1 md:hidden">
+          <div className="flex items-center justify-between gap-6 md:hidden">
+            <Link
+              href="/"
+              className="text-[11px] tracking-[0.32em] text-neutral-800 transition-opacity hover:opacity-60"
+            >
+              {GRAPHPAPER_STORE_COPY.brandLine}
+            </Link>
+
+            <div className="flex items-center gap-1">
               <CartNavLink
                 showLabel={false}
                 className="flex min-h-11 min-w-11 items-center justify-center"
@@ -207,11 +149,7 @@ export function Header({ storeNav }: HeaderProps) {
       </header>
 
       <div id="mobile-navigation">
-        <MobileNav
-          isOpen={menuOpen}
-          onClose={() => setMenuOpen(false)}
-          storeNav={storeNav}
-        />
+        <MobileNav isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
       </div>
     </>
   );

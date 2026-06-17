@@ -61,9 +61,6 @@ export default async function FabricDetailPage({ params }: FabricPageProps) {
   const fabricNameBySlug = Object.fromEntries(
     fabrics.map((entry) => [entry.slug, entry.name]),
   );
-  const fabricCharacterBySlug = Object.fromEntries(
-    fabrics.map((entry) => [entry.slug, entry.character]),
-  );
 
   const breadcrumbSchema = buildBreadcrumbSchema([
     { name: "Home", path: "/" },
@@ -78,7 +75,7 @@ export default async function FabricDetailPage({ params }: FabricPageProps) {
       <JsonLd data={breadcrumbSchema} />
       <FabricHero fabric={fabric} />
 
-      <Container as="section" className="py-16 sm:py-20 md:py-28 lg:py-36">
+      <Container as="section" className="py-12 sm:py-16 md:py-20">
         <Breadcrumbs
           items={[
             { label: bc.home, href: "/" },
@@ -88,16 +85,15 @@ export default async function FabricDetailPage({ params }: FabricPageProps) {
           className="mx-auto max-w-6xl"
         />
 
-        <div className="mx-auto max-w-6xl">
+        <div className="mx-auto mt-10 max-w-6xl md:mt-12">
           <FabricDetailIntro fabric={fabric} />
         </div>
 
-        <div className="mx-auto mt-20 max-w-5xl sm:mt-28 md:mt-36 lg:mt-44">
+        <div className="mx-auto mt-16 max-w-6xl sm:mt-20 md:mt-24">
           <FabricRelatedProducts
             products={products}
             fabricSlug={fabric.slug}
             fabricNameBySlug={fabricNameBySlug}
-            fabricCharacterBySlug={fabricCharacterBySlug}
           />
         </div>
       </Container>

@@ -3,10 +3,17 @@
 import { useEffect, useState } from "react";
 import { AddToCartButton } from "@/components/product/AddToCartButton";
 import { useProductPurchase } from "@/components/product/ProductPurchaseContext";
-import { SITE_UI_COPY } from "@/lib/copy/site-ui";
+import {
+  getGraphpaperDisplayName,
+  STORE_BRAND_LINE,
+} from "@/lib/products/display-name";
 import { formatPrice } from "@/lib/utils/format-price";
 
-export function MobilePurchaseBar() {
+type MobilePurchaseBarProps = {
+  fabricName?: string | null;
+};
+
+export function MobilePurchaseBar({ fabricName }: MobilePurchaseBarProps) {
   const {
     product,
     selectedSize,
@@ -16,7 +23,8 @@ export function MobilePurchaseBar() {
     purchaseCtaRef,
   } = useProductPurchase();
   const [inlineCtaVisible, setInlineCtaVisible] = useState(true);
-  const { product: copy } = SITE_UI_COPY;
+
+  const displayName = getGraphpaperDisplayName(product, fabricName);
 
   useEffect(() => {
     const target = purchaseCtaRef.current;
@@ -50,11 +58,15 @@ export function MobilePurchaseBar() {
     >
       <div className="mx-auto flex max-w-lg items-center gap-4">
         <div className="min-w-0 flex-1">
-          <p className="truncate text-[11px] font-light tracking-[0.06em] text-neutral-600">
-            {selectedSize ? copy.sizeSelected(selectedSize) : copy.selectSize}
+          <p className="truncate text-[10px] font-light tracking-[0.12em] text-neutral-400">
+            {STORE_BRAND_LINE}
           </p>
-          <p className="text-[13px] font-light tracking-[0.04em] text-neutral-800">
+          <p className="truncate text-[11px] font-light tracking-[0.04em] text-neutral-800">
+            {displayName}
+          </p>
+          <p className="text-[12px] font-light tracking-[0.04em] text-neutral-600">
             {formatPrice(product.price)}
+            {selectedSize ? ` · ${selectedSize}` : null}
           </p>
         </div>
         <AddToCartButton

@@ -1,17 +1,16 @@
 import type { Metadata } from "next";
-import { Container } from "@/components/layout/Container";
-import { ProductGrid } from "@/components/product/ProductGrid";
-import { ProductFabricFilter } from "@/components/product/ProductFabricFilter";
-import { ProductSilhouetteFilter } from "@/components/product/ProductSilhouetteFilter";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { ProductListingLayout } from "@/components/product/ProductListingLayout";
 import { getFabricBySlug, getFabrics } from "@/lib/fabric/queries";
 import { getProducts } from "@/lib/products/queries";
 import {
+  buildProductsFilterHref,
   FIT_TYPE_LABELS,
   isFitType,
   isSleeveType,
   SLEEVE_TYPE_LABELS,
 } from "@/lib/products/silhouette";
-import { SITE_UI_COPY } from "@/lib/copy/site-ui";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 
 type ProductsPageProps = {
@@ -32,7 +31,7 @@ export async function generateMetadata({
 
     if (fabric) {
       return buildPageMetadata({
-        title: `${fabric.name} · Products`,
+        title: `${fabric.name} · TOPS`,
         description: fabric.tagline,
         path: `/products?fabric=${fabric.slug}`,
       });
@@ -53,7 +52,7 @@ export async function generateMetadata({
   }
 
   return buildPageMetadata({
-    title: "Products",
+    title: "TOPS",
     description: "White tees — crew, pocket, relaxed, and long sleeve.",
     path: "/products",
   });
@@ -62,12 +61,23 @@ export async function generateMetadata({
 export default async function ProductsPage({ searchParams }: ProductsPageProps) {
   const { fabric: fabricSlug, sleeve: sleeveParam, fit: fitParam } =
     await searchParams;
+
+  if (!isSleeveType(sleeveParam)) {
+    redirect(
+      buildProductsFilterHref({
+        fabric: fabricSlug ?? null,
+        sleeve: "short",
+        fit: isFitType(fitParam) ? fitParam : null,
+      }),
+    );
+  }
+
   const [allProducts, fabrics] = await Promise.all([
     getProducts(),
     getFabrics(),
   ]);
 
-  const activeSleeve = isSleeveType(sleeveParam) ? sleeveParam : null;
+  const activeSleeve = sleeveParam;
   const activeFit = isFitType(fitParam) ? fitParam : null;
   const fabric = fabricSlug ? await getFabricBySlug(fabricSlug) : null;
 
@@ -77,9 +87,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
     products = products.filter((product) => product.fabricSlug === fabric.slug);
   }
 
-  if (activeSleeve) {
-    products = products.filter((product) => product.sleeveType === activeSleeve);
-  }
+  products = products.filter((product) => product.sleeveType === activeSleeve);
 
   if (activeFit) {
     products = products.filter((product) => product.fitType === activeFit);
@@ -88,53 +96,16 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   const fabricNameBySlug = Object.fromEntries(
     fabrics.map((entry) => [entry.slug, entry.name]),
   );
-  const fabricCharacterBySlug = Object.fromEntries(
-    fabrics.map((entry) => [entry.slug, entry.character]),
-  );
-
-  const { product: copy } = SITE_UI_COPY;
 
   return (
-    <Container as="section" className="py-20 md:py-32 lg:py-40">
-      <header className="mb-20 md:mb-28">
-        <p className="text-xs tracking-[0.3em] text-neutral-500">
-          {SITE_UI_COPY.breadcrumbs.products}
-        </p>
-        {fabric ? (
-          <p className="mt-6 max-w-sm text-[13px] font-light leading-[1.95] tracking-[0.03em] text-neutral-600 md:text-xs md:leading-[2.15] md:text-neutral-500">
-            {copy.filteredIntro(fabric.name)}
-          </p>
-        ) : (
-          <div className="mt-6 max-w-sm space-y-2">
-            <p className="text-[13px] font-light leading-[1.95] tracking-[0.03em] text-neutral-600 md:text-xs md:leading-[2.15] md:text-neutral-500">
-              {copy.plpIntro}
-            </p>
-            <p className="text-[11px] font-light tracking-[0.04em] text-neutral-400 md:text-[10px]">
-              {copy.plpIntroSub}
-            </p>
-          </div>
-        )}
-      </header>
-
-      <ProductSilhouetteFilter
-        products={allProducts}
-        activeSleeve={activeSleeve}
-        activeFit={activeFit}
-        fabricSlug={fabric?.slug ?? null}
-      />
-
-      <ProductFabricFilter
-        fabrics={fabrics}
-        activeSlug={fabric?.slug ?? null}
-        activeSleeve={activeSleeve}
-        activeFit={activeFit}
-      />
-
-      <ProductGrid
-        products={products}
-        fabricNameBySlug={fabricNameBySlug}
-        fabricCharacterBySlug={fabricCharacterBySlug}
-      />
-    </Container>
+    <ProductListingLayout
+      products={products}
+      allProducts={allProducts}
+      fabrics={fabrics}
+      activeFabricSlug={fabric?.slug ?? null}
+      activeSleeve={activeSleeve}
+      activeFit={activeFit}
+      fabricNameBySlug={fabricNameBySlug}
+    />
   );
 }

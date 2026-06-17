@@ -39,6 +39,7 @@ export type AdminOrderDetail = {
   email: string | null;
   stripePaymentIntentId: string | null;
   shippingAddress: ShippingAddress | null;
+  orderNotes: string | null;
   items: AdminOrderDetailItem[];
 };
 

@@ -10,6 +10,7 @@ import {
   type ReactNode,
   type RefObject,
 } from "react";
+import { useCartDrawer } from "@/components/cart/CartDrawerContext";
 import { getCartItemKey } from "@/lib/cart/cart-utils";
 import { setLastViewedProductSlug } from "@/lib/navigation/last-product";
 import { useCartStore } from "@/lib/cart/store";
@@ -61,6 +62,7 @@ export function ProductPurchaseProvider({
 }: ProductPurchaseProviderProps) {
   const addItem = useCartStore((state) => state.addItem);
   const cartItems = useCartStore((state) => state.items);
+  const { openDrawer } = useCartDrawer();
   const { product: copy } = SITE_UI_COPY;
 
   const [selectedSize, setSelectedSizeState] = useState<ProductSize | null>(null);
@@ -119,7 +121,8 @@ export function ProductPurchaseProvider({
     });
 
     setIsAdded(true);
-  }, [addItem, canAdd, product.id, product.price, quantity, selectedSize]);
+    openDrawer();
+  }, [addItem, canAdd, openDrawer, product.id, product.price, quantity, selectedSize]);
 
   const registerOpenSizeTab = useCallback((fn: () => void) => {
     openSizeTabRef.current = fn;
@@ -127,6 +130,7 @@ export function ProductPurchaseProvider({
 
   const openSizeTab = useCallback(() => {
     openSizeTabRef.current?.();
+    document.getElementById("size-guide")?.scrollIntoView({ behavior: "smooth" });
   }, []);
 
   const buttonLabel = !selectedSize

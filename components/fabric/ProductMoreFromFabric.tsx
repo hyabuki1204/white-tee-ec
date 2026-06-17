@@ -38,7 +38,6 @@ export function ProductMoreFromFabric({
                     ? fabricNameBySlug[product.fabricSlug]
                     : null
                 }
-                fitLabel={product.fitProfile.fitLabel}
               />
             </li>
           ))}

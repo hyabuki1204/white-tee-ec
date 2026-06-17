@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { formatPrice } from "@/lib/utils/format-price";
-import { SITE_UI_COPY } from "@/lib/copy/site-ui";
+import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
 import { useCartStore } from "@/lib/cart/store";
 import type { CartLineItem } from "@/types/cart";
 
@@ -53,7 +53,7 @@ export function CartItem({
 }: CartItemProps) {
   const removeItem = useCartStore((state) => state.removeItem);
   const updateQuantity = useCartStore((state) => state.updateQuantity);
-  const { cart: copy, product: productCopy } = SITE_UI_COPY;
+  const { cart: copy } = GRAPHPAPER_STORE_COPY;
 
   const lineTotal = currentPrice * item.quantity;
   const priceChanged = currentPrice !== item.price;
@@ -88,14 +88,14 @@ export function CartItem({
             </h2>
           )}
           <p className="text-[13px] font-light text-neutral-600 md:text-xs md:text-neutral-500">
-            {productCopy.size} {item.variant} · {productCopy.qty} {item.quantity}
+            {copy.size} {item.variant} · {copy.qty} {item.quantity}
           </p>
           <p className="text-[13px] font-light text-neutral-600 md:text-xs md:text-neutral-500">
             {formatPrice(lineTotal)}
           </p>
           {priceChanged ? (
             <p className="text-[11px] font-light text-neutral-400">
-              {productCopy.priceUpdated(formatPrice(currentPrice))}
+              {copy.priceUpdated(formatPrice(currentPrice))}
             </p>
           ) : null}
           {isUnavailable ? (

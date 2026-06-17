@@ -1,18 +1,18 @@
-import { FabricCharacterTraitLine } from "@/components/fabric/FabricCharacterTraitLine";
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { getGraphpaperDisplayName, STORE_BRAND_LINE } from "@/lib/products/display-name";
 import { getProductWearImageUrl } from "@/lib/products/wear-image";
 import { formatPrice } from "@/lib/utils/format-price";
-import type { FabricCharacter } from "@/lib/fabric/character";
 import type { Product } from "@/types";
+import { cn } from "@/lib/utils";
 
 type ProductCardProps = {
   product: Product;
   fabricName?: string | null;
-  fitLabel?: string | null;
-  fabricCharacter?: FabricCharacter | null;
-  /** Swap to model-wear image on pointer hover (desktop). */
-  wearHover?: boolean;
+  soldOut?: boolean;
+  className?: string;
 };
 
 const IMAGE_TRANSITION =
@@ -21,27 +21,31 @@ const IMAGE_TRANSITION =
 export function ProductCard({
   product,
   fabricName,
-  fitLabel,
-  fabricCharacter,
-  wearHover = false,
+  soldOut = false,
+  className,
 }: ProductCardProps) {
-  const wearImageUrl = wearHover ? getProductWearImageUrl(product) : null;
+  const wearImageUrl = getProductWearImageUrl(product);
+  const displayName = getGraphpaperDisplayName(product, fabricName);
+  const outOfStock =
+    soldOut ||
+    product.variants.every((variant) => variant.stockQuantity < 1);
 
   return (
-    <article className="group">
+    <article className={cn("group", className)}>
       <Link href={`/products/${product.slug}`} className="block">
-        <div className="relative aspect-[4/5] overflow-hidden bg-background">
+        <div className="relative aspect-[4/5] overflow-hidden bg-[#f4f4f2]">
           <Image
             src={product.imageUrl}
-            alt={product.name}
+            alt={displayName}
             fill
             quality={90}
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 480px"
-            className={`object-cover ${IMAGE_TRANSITION} ${
-              wearImageUrl
-                ? "[@media(hover:hover)]:group-hover:opacity-0"
-                : "transition-transform duration-[850ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] [@media(hover:hover)]:group-hover:scale-[1.02]"
-            }`}
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            className={cn(
+              "object-cover",
+              IMAGE_TRANSITION,
+              wearImageUrl &&
+                "[@media(hover:hover)]:group-hover:opacity-0",
+            )}
           />
           {wearImageUrl ? (
             <Image
@@ -50,37 +54,38 @@ export function ProductCard({
               aria-hidden
               fill
               quality={90}
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 480px"
-              className={`object-cover opacity-0 ${IMAGE_TRANSITION} [@media(hover:hover)]:group-hover:opacity-100`}
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+              className={cn(
+                "object-cover opacity-0",
+                IMAGE_TRANSITION,
+                "[@media(hover:hover)]:group-hover:opacity-100",
+              )}
             />
           ) : null}
-        </div>
 
-        <div className="mt-8 flex flex-col gap-2 md:mt-9">
-          {fabricName ? (
-            <p className="text-[10px] font-light tracking-[0.1em] text-neutral-400">
-              {fabricName}
+          {outOfStock ? (
+            <span className="absolute left-3 top-3 bg-background/90 px-2 py-1 text-[9px] font-light tracking-[0.16em] text-neutral-600">
+              SOLD OUT
+            </span>
+          ) : null}
+
+          <div
+            className={cn(
+              "pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-neutral-900/60 via-neutral-900/25 to-transparent px-4 pb-4 pt-20",
+              "opacity-0 transition-opacity duration-700 [@media(hover:hover)]:group-hover:opacity-100",
+              "[@media(hover:none)]:opacity-100 [@media(hover:none)]:from-neutral-900/45",
+            )}
+          >
+            <p className="text-[10px] font-light tracking-[0.12em] text-white/85">
+              {STORE_BRAND_LINE}
             </p>
-          ) : null}
-          <h2 className="text-[11px] font-light tracking-[0.06em] text-neutral-800 transition-opacity duration-[850ms] ease-out delay-75 group-hover:opacity-45">
-            {product.name}
-          </h2>
-          {fitLabel ? (
-            <p className="text-[10px] font-light tracking-[0.06em] text-neutral-400">
-              {fitLabel}
+            <p className="mt-1 text-[11px] font-light leading-snug tracking-[0.03em] text-white">
+              {displayName}
             </p>
-          ) : null}
-          {fabricCharacter ? (
-            <FabricCharacterTraitLine
-              trait="thickness"
-              level={fabricCharacter.thickness}
-              align="start"
-              className="pt-0.5"
-            />
-          ) : null}
-          <p className="text-[11px] font-light tracking-wide text-neutral-400 transition-opacity duration-[850ms] ease-out delay-100 group-hover:opacity-60">
-            {formatPrice(product.price)}
-          </p>
+            <p className="mt-2 text-[11px] font-light tracking-wide text-white/90">
+              {formatPrice(product.price)}
+            </p>
+          </div>
         </div>
       </Link>
     </article>

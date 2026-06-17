@@ -28,15 +28,13 @@ export const FABRIC_INTRO_LINES = [
   "Weight, hand, light.",
 ] as const;
 
+import { PRODUCT_CATALOG } from "@/lib/products/product-catalog";
+
 /** Product slug → fabric slug (mock-mode fallback). */
-export const PRODUCT_FABRIC_SLUG_BY_PRODUCT_SLUG: Record<string, string> = {
-  "heavyweight-crew-neck": "heavyweight-jersey",
-  "lightweight-pocket-tee": "lightweight-jersey",
-  "relaxed-fit-tee": "relaxed-jersey",
-  "compact-cotton-tee": "compact-jersey",
-  "long-sleeve-essential": "essential-jersey",
-  "box-fit-tee": "box-jersey",
-};
+export const PRODUCT_FABRIC_SLUG_BY_PRODUCT_SLUG: Record<string, string> =
+  Object.fromEntries(
+    PRODUCT_CATALOG.map((entry) => [entry.slug, entry.fabricSlug]),
+  );
 
 export const FABRICS: Fabric[] = [
   {

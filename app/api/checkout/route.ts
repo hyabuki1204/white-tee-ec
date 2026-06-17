@@ -9,7 +9,25 @@ import type { CheckoutRequestItem } from "@/lib/checkout/build-line-items";
 
 type CheckoutRequestBody = {
   items: CheckoutRequestItem[];
+  orderNotes?: string;
 };
+
+const ORDER_NOTES_METADATA_KEY = "order_notes";
+const MAX_ORDER_NOTES_LENGTH = 500;
+
+function normalizeOrderNotes(value: unknown): string | undefined {
+  if (typeof value !== "string") {
+    return undefined;
+  }
+
+  const trimmed = value.trim();
+
+  if (!trimmed) {
+    return undefined;
+  }
+
+  return trimmed.slice(0, MAX_ORDER_NOTES_LENGTH);
+}
 
 function getOrigin(request: Request): string {
   const origin = request.headers.get("origin");
@@ -28,12 +46,16 @@ export async function POST(request: Request) {
     const subtotal = getCheckoutSubtotal(lineItems);
     const shippingCost = getShippingCost(subtotal);
     const origin = getOrigin(request);
+    const orderNotes = normalizeOrderNotes(body.orderNotes);
 
     const stripe = getStripe();
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       line_items: lineItems,
+      ...(orderNotes
+        ? { metadata: { [ORDER_NOTES_METADATA_KEY]: orderNotes } }
+        : {}),
       shipping_address_collection: {
         allowed_countries: ["JP"],
       },

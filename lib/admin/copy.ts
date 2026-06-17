@@ -79,7 +79,7 @@ export const ADMIN_COPY = {
     },
     content: {
       label: "ホームページ設定",
-      description: "Home / About / Stories の文言編集",
+      description: "Home / About の文言編集（Journal はコード管理）",
     },
     pages: {
       label: "固定ページ",
@@ -257,12 +257,15 @@ export const ADMIN_COPY = {
   },
   content: {
     title: "ホームページ設定",
-    subtitle: "店舗に表示される Home / About / Stories の文言を編集します。",
+    subtitle:
+      "店舗に表示される Home / About の文言を編集します。Journal は lib/content/journal.ts を参照。",
     tabs: {
       home: "Home",
       about: "About",
-      stories: "Stories",
+      stories: "Stories（旧）",
     },
+    journalNotice:
+      "ストアフロントの Journal（/journal）はコード側の lib/content/journal.ts で管理されています。このタブは旧 Stories CMS 用です。",
     imageField: {
       pathOrUrl: "画像パス / URL",
       upload: "画像をアップロード",
@@ -366,6 +369,8 @@ export const ADMIN_COPY = {
     payment: "決済状態",
     shipping: "配送先",
     shippingNotRegistered: "未登録",
+    orderNotes: "注文メモ",
+    orderNotesEmpty: "なし",
     stripePayment: "Stripe 決済",
   },
 } as const;

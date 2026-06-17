@@ -24,19 +24,25 @@ export default async function ContactPage() {
 
       <div className="space-y-4 border-t border-neutral-200/70 pt-10 text-center">
         <p>
-          <span className="text-neutral-400">Email</span>
+          <span className="text-[10px] font-light uppercase tracking-[0.14em] text-neutral-400">
+            Email
+          </span>
           <br />
           <a
             href={`mailto:${contact.email}`}
-            className="text-neutral-800 transition-opacity hover:opacity-60"
+            className="mt-2 inline-block text-[12px] font-light tracking-[0.03em] text-neutral-800 transition-opacity hover:opacity-60"
           >
             {contact.email}
           </a>
         </p>
         <p>
-          <span className="text-neutral-400">Hours</span>
+          <span className="text-[10px] font-light uppercase tracking-[0.14em] text-neutral-400">
+            Hours
+          </span>
           <br />
-          {contact.hours}
+          <span className="mt-2 inline-block text-[12px] font-light tracking-[0.03em] text-neutral-500">
+            {contact.hours}
+          </span>
         </p>
       </div>
     </LegalPageLayout>

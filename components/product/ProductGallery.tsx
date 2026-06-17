@@ -8,6 +8,7 @@ import type { Product, ProductImage } from "@/types";
 
 type ProductGalleryProps = {
   product: Product;
+  displayName?: string;
 };
 
 function resolveImages(product: Product): ProductImage[] {
@@ -71,9 +72,10 @@ function Thumbnail({
   );
 }
 
-export function ProductGallery({ product }: ProductGalleryProps) {
+export function ProductGallery({ product, displayName }: ProductGalleryProps) {
   const images = resolveImages(product);
   const { product: copy } = SITE_UI_COPY;
+  const imageAlt = displayName ?? product.name;
 
   const [activeIndex, setActiveIndex] = useState(
     Math.max(
@@ -175,7 +177,7 @@ export function ProductGallery({ product }: ProductGalleryProps) {
               >
                 <Image
                   src={image.url}
-                  alt={product.name}
+                  alt={imageAlt}
                   fill
                   priority={index === activeIndex}
                   sizes="100vw"
@@ -194,7 +196,7 @@ export function ProductGallery({ product }: ProductGalleryProps) {
           <div className="relative hidden aspect-[3/4] w-full lg:block lg:aspect-auto lg:h-full lg:flex-1">
             <Image
               src={activeImage.url}
-              alt={product.name}
+              alt={imageAlt}
               fill
               priority
               sizes="(max-width: 1024px) 100vw, 72vw"

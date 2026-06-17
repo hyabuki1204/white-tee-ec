@@ -93,6 +93,7 @@ export function mapOrderRowsToOrder(
     totalAmount: order.total_amount,
     stripePaymentIntentId: order.stripe_payment_intent_id,
     shippingAddress: parseShippingAddress(order.shipping_address),
+    orderNotes: order.order_notes ?? null,
     items: items.map(mapOrderItemRowToOrderItem),
     createdAt: order.created_at,
   };
@@ -111,6 +112,7 @@ export function buildOrderInsertPayload(input: CreateOrderInput) {
     total_amount: totalAmount,
     stripe_payment_intent_id: input.stripePaymentIntentId ?? null,
     shipping_address: input.shippingAddress ?? null,
+    order_notes: input.orderNotes?.trim() || null,
   };
 }
 

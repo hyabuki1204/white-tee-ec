@@ -36,7 +36,7 @@ function revalidateContentPaths(key: SiteContentKey) {
       revalidatePath("/admin/content");
       break;
     case "stories":
-      revalidatePath("/stories");
+      revalidatePath("/journal");
       revalidatePath("/admin/content");
       break;
     case "legal":

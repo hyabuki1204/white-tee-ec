@@ -41,6 +41,12 @@ export function OrderDetailSummary({ order }: OrderDetailSummaryProps) {
         </span>
       ),
     },
+    {
+      label: labels.orderNotes,
+      value: order.orderNotes?.trim()
+        ? order.orderNotes
+        : labels.orderNotesEmpty,
+    },
   ];
 
   if (order.stripePaymentIntentId) {

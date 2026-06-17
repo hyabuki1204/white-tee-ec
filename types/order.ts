@@ -20,6 +20,7 @@ export type Order = {
   totalAmount: number;
   stripePaymentIntentId: string | null;
   shippingAddress: ShippingAddress | null;
+  orderNotes: string | null;
   items: OrderItem[];
   createdAt: string;
 };
@@ -40,6 +41,7 @@ export type CreateOrderInput = {
   status?: OrderStatus;
   stripePaymentIntentId?: string | null;
   shippingAddress?: ShippingAddress | null;
+  orderNotes?: string | null;
   items: CreateOrderItemInput[];
 };
 
@@ -58,6 +60,7 @@ export type OrderInsertPayload = {
   total_amount: number;
   stripe_payment_intent_id: string | null;
   shipping_address: ShippingAddress | null;
+  order_notes: string | null;
 };
 
 /** Insert payload mapped to Supabase `order_items` table. */

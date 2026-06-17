@@ -115,6 +115,7 @@ create table public.orders (
   status public.order_status not null default 'pending',
   total_amount integer not null check (total_amount >= 0),
   stripe_payment_intent_id text unique,
+  order_notes text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );

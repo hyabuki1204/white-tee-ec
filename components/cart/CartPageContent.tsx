@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { CartFabricCrossSell } from "@/components/cart/CartFabricCrossSell";
 import { CartItem } from "@/components/cart/CartItem";
+import { CartOrderNotes } from "@/components/cart/CartOrderNotes";
 import { CartSummary } from "@/components/cart/CartSummary";
-import { SITE_UI_COPY } from "@/lib/copy/site-ui";
+import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
 import { getFabricCrossSellProducts } from "@/lib/products/cross-sell";
 import { useCartStore } from "@/lib/cart/store";
 import type { Product } from "@/types";
@@ -39,7 +41,8 @@ export function CartPageContent({
   fabricNameBySlug,
 }: CartPageContentProps) {
   const items = useCartStore((state) => state.items);
-  const { cart: copy } = SITE_UI_COPY;
+  const [orderNotes, setOrderNotes] = useState("");
+  const { cart: copy } = GRAPHPAPER_STORE_COPY;
 
   const crossSellProducts = getFabricCrossSellProducts(
     items.map((item) => item.productId),
@@ -54,10 +57,10 @@ export function CartPageContent({
         </p>
         <div className="mt-8 flex flex-col items-center gap-4">
           <Link
-            href="/products"
+            href="/products?sleeve=short"
             className="inline-flex min-h-11 items-center justify-center px-2 text-[13px] font-light tracking-wide text-neutral-800 transition-opacity active:opacity-60 md:text-xs md:text-neutral-900 md:hover:opacity-60"
           >
-            {copy.viewProducts}
+            {copy.viewAll}
           </Link>
           <Link
             href="/fabric"
@@ -102,7 +105,9 @@ export function CartPageContent({
     <div className="max-w-xl">
       <ul className="divide-y divide-neutral-200/70">{itemElements}</ul>
 
-      <CartSummary hasUnavailableItems={hasUnavailableItems} />
+      <CartOrderNotes value={orderNotes} onChange={setOrderNotes} />
+
+      <CartSummary hasUnavailableItems={hasUnavailableItems} orderNotes={orderNotes} />
 
       <CartFabricCrossSell
         products={crossSellProducts}

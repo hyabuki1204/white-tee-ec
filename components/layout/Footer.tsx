@@ -1,15 +1,21 @@
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
-import { SITE_UI_COPY } from "@/lib/copy/site-ui";
+import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
 
-const FOOTER_LINKS = [
-  { href: "/fabric", label: SITE_UI_COPY.nav.fabric },
-  { href: "/products", label: SITE_UI_COPY.nav.products },
-  { href: "/contact", label: "Contact" },
-  { href: "/shipping", label: "Shipping & Returns" },
-  { href: "/privacy", label: "Privacy" },
-  { href: "/terms", label: "Terms" },
-  { href: "/legal", label: "Legal Notice" },
+const PRIMARY_FOOTER_LINKS = [
+  { href: "/store-guide", label: GRAPHPAPER_STORE_COPY.footer.storeGuide },
+  { href: "/shipping", label: GRAPHPAPER_STORE_COPY.footer.shipping },
+  { href: "/stockist", label: GRAPHPAPER_STORE_COPY.footer.stockist },
+  { href: "/contact", label: GRAPHPAPER_STORE_COPY.footer.contact },
+] as const;
+
+const SECONDARY_FOOTER_LINKS = [
+  { href: "/about", label: GRAPHPAPER_STORE_COPY.footer.about },
+  { href: "/journal", label: GRAPHPAPER_STORE_COPY.footer.journal },
+  { href: "/fabric", label: GRAPHPAPER_STORE_COPY.footer.fabric },
+  { href: "/privacy", label: GRAPHPAPER_STORE_COPY.footer.privacy },
+  { href: "/terms", label: GRAPHPAPER_STORE_COPY.footer.terms },
+  { href: "/legal", label: GRAPHPAPER_STORE_COPY.footer.legal },
 ] as const;
 
 export function Footer() {
@@ -18,18 +24,30 @@ export function Footer() {
   return (
     <footer className="border-t border-neutral-200/70">
       <Container as="div" className="py-12 md:py-16">
-        <div className="flex flex-col items-center gap-8 text-center md:flex-row md:justify-between md:text-left">
-          <p className="text-xs tracking-[0.25em] text-neutral-400">
-            WHITE TEE
+        <div className="flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
+          <p className="text-[11px] tracking-[0.28em] text-neutral-400">
+            {GRAPHPAPER_STORE_COPY.brandLine}
           </p>
 
-          <nav aria-label="Footer">
-            <ul className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 md:justify-end">
-              {FOOTER_LINKS.map((link) => (
+          <nav aria-label="Footer" className="flex flex-col gap-8 sm:gap-10">
+            <ul className="flex flex-wrap gap-x-8 gap-y-3 md:gap-x-10">
+              {PRIMARY_FOOTER_LINKS.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-xs font-light tracking-wide text-neutral-500 transition-colors hover:text-neutral-900"
+                    className="text-[11px] font-light tracking-[0.06em] text-neutral-600 transition-opacity hover:opacity-60"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <ul className="flex flex-wrap gap-x-8 gap-y-3 md:gap-x-10">
+              {SECONDARY_FOOTER_LINKS.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-[11px] font-light tracking-[0.06em] text-neutral-500 transition-opacity hover:opacity-60"
                   >
                     {link.label}
                   </Link>
@@ -38,8 +56,8 @@ export function Footer() {
             </ul>
           </nav>
 
-          <p className="text-xs font-light text-neutral-400 md:min-w-[12rem] md:text-right">
-            &copy; {currentYear} WHITE TEE
+          <p className="text-[11px] font-light text-neutral-400 md:text-right">
+            &copy; {currentYear} {GRAPHPAPER_STORE_COPY.brandLine}
           </p>
         </div>
       </Container>

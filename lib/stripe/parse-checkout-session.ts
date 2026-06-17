@@ -116,6 +116,22 @@ export function buildCreateOrderInputFromCheckoutSession(
     status: "paid",
     stripePaymentIntentId: getPaymentIntentId(session),
     shippingAddress: extractShippingAddress(session),
+    orderNotes: normalizeOrderNotes(session.metadata?.order_notes),
     items: lineItems.map(mapLineItemToOrderItem),
   };
+}
+
+const ORDER_NOTES_MAX = 500;
+
+function normalizeOrderNotes(value: unknown): string | null {
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return null;
+  }
+
+  return trimmed.slice(0, ORDER_NOTES_MAX);
 }

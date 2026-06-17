@@ -1,16 +1,15 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { BagIcon } from "@/components/icons/BagIcon";
-import { SITE_UI_COPY } from "@/lib/copy/site-ui";
+import { useCartDrawer } from "@/components/cart/CartDrawerContext";
+import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
 import { useCartStore } from "@/lib/cart/store";
 import { cn } from "@/lib/utils";
 
 type CartNavLinkProps = {
   onNavigate?: () => void;
   className?: string;
-  /** Icon-only for compact header slots (mobile top bar). */
   showLabel?: boolean;
 };
 
@@ -21,7 +20,8 @@ export function CartNavLink({
 }: CartNavLinkProps) {
   const [mounted, setMounted] = useState(false);
   const count = useCartStore((state) => state.getItemCount());
-  const { cart: copy } = SITE_UI_COPY;
+  const { openDrawer } = useCartDrawer();
+  const copy = GRAPHPAPER_STORE_COPY.nav;
 
   useEffect(() => {
     setMounted(true);
@@ -31,19 +31,22 @@ export function CartNavLink({
   const badgeLabel = count > 99 ? "99+" : String(count);
 
   return (
-    <Link
-      href="/cart"
-      onClick={onNavigate}
+    <button
+      type="button"
+      onClick={() => {
+        openDrawer();
+        onNavigate?.();
+      }}
       className={cn(
-        "relative inline-flex items-center gap-2 text-[13px] font-light tracking-wide text-neutral-600 transition-colors hover:text-neutral-900 md:text-sm",
+        "relative inline-flex items-center gap-2 text-[11px] font-light tracking-[0.14em] text-neutral-600 transition-opacity hover:opacity-60",
         className,
       )}
       aria-label={
-        showBadge ? `${copy.title}, ${count} items` : copy.title
+        showBadge ? `${copy.bag}, ${count} items` : copy.bag
       }
     >
       <span className="relative flex shrink-0 items-center justify-center">
-        <BagIcon className="h-[18px] w-[18px] md:h-4 md:w-4" />
+        <BagIcon className="h-[17px] w-[17px]" />
         {showBadge ? (
           <span
             aria-hidden
@@ -53,7 +56,7 @@ export function CartNavLink({
           </span>
         ) : null}
       </span>
-      {showLabel ? <span>{copy.title}</span> : null}
-    </Link>
+      {showLabel ? <span>{copy.bag}</span> : null}
+    </button>
   );
 }

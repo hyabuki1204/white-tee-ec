@@ -23,7 +23,7 @@ on conflict (slug) do update set
   updated_at = now();
 
 -- ---------------------------------------------------------------------------
--- 2. products (6 items — ids match lib/products/product-catalog.ts)
+-- 2. products (12 items — ids match lib/products/product-catalog.ts)
 -- ---------------------------------------------------------------------------
 insert into public.products (
   id,
@@ -316,6 +316,9 @@ values
 on conflict (product_id, size) do update set
   sku = excluded.sku,
   stock_quantity = excluded.stock_quantity;
+
+-- WT-007 … WT-012: run supabase/migrations/add-twelve-sku-expansion.sql
+-- (or npm run db:migrate) to add 6 new products on existing databases.
 
 -- ---------------------------------------------------------------------------
 -- Verify (optional — run separately)

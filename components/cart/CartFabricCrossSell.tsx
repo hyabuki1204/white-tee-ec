@@ -1,5 +1,5 @@
 import { ProductCard } from "@/components/product/ProductCard";
-import { SITE_UI_COPY } from "@/lib/copy/site-ui";
+import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
 import type { Product } from "@/types";
 
 type CartFabricCrossSellProps = {
@@ -15,15 +15,15 @@ export function CartFabricCrossSell({
     return null;
   }
 
-  const { fabric: copy } = SITE_UI_COPY;
+  const copy = GRAPHPAPER_STORE_COPY.cart;
 
   return (
     <section
-      aria-label={copy.inThisFabric}
+      aria-label={copy.pairWith}
       className="mt-16 border-t border-neutral-200/60 pt-12 md:mt-20 md:pt-16"
     >
       <p className="mb-8 text-[11px] font-light tracking-[0.12em] text-neutral-400 md:text-[10px]">
-        {copy.inThisFabric}
+        {copy.pairWith}
       </p>
       <ul className="grid grid-cols-1 gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
         {products.map((product) => (
@@ -35,7 +35,6 @@ export function CartFabricCrossSell({
                   ? fabricNameBySlug[product.fabricSlug]
                   : null
               }
-              fitLabel={product.fitProfile.fitLabel}
             />
           </li>
         ))}

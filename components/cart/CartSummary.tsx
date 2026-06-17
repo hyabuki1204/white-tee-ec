@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { SITE_UI_COPY } from "@/lib/copy/site-ui";
+import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
 import {
   FREE_SHIPPING_THRESHOLD,
   getFreeShippingRemaining,
@@ -13,14 +13,18 @@ import { useCartStore } from "@/lib/cart/store";
 
 type CartSummaryProps = {
   hasUnavailableItems?: boolean;
+  orderNotes?: string;
 };
 
-export function CartSummary({ hasUnavailableItems = false }: CartSummaryProps) {
+export function CartSummary({
+  hasUnavailableItems = false,
+  orderNotes = "",
+}: CartSummaryProps) {
   const items = useCartStore((state) => state.items);
   const getTotal = useCartStore((state) => state.getTotal);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { cart: copy } = SITE_UI_COPY;
+  const { cart: copy } = GRAPHPAPER_STORE_COPY;
 
   const subtotal = getTotal();
   const shipping = getShippingCost(subtotal);
@@ -39,7 +43,10 @@ export function CartSummary({ hasUnavailableItems = false }: CartSummaryProps) {
       const response = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items }),
+        body: JSON.stringify({
+          items,
+          orderNotes: orderNotes.trim() || undefined,
+        }),
       });
 
       const data = (await response.json()) as { url?: string; error?: string };

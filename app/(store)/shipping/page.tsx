@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { LegalPageLayout } from "@/components/layout/LegalPageLayout";
+import Link from "next/link";
+import { Container } from "@/components/layout/Container";
 import { getShippingContent } from "@/lib/legal/queries";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 
@@ -15,13 +16,31 @@ export default async function ShippingPage() {
   const shipping = await getShippingContent();
 
   return (
-    <LegalPageLayout title={shipping.pageTitle}>
-      {shipping.sections.map((section) => (
-        <section key={section.title} className="space-y-4">
-          <h2 className="text-neutral-800">{section.title}</h2>
-          <p>{section.body}</p>
-        </section>
-      ))}
-    </LegalPageLayout>
+    <Container as="section" className="py-20 sm:py-24 md:py-32 lg:py-36">
+      <div className="mx-auto max-w-2xl">
+        <header className="text-center">
+          <p className="text-[10px] font-light tracking-[0.16em] text-neutral-400">
+            <Link href="/store-guide" className="transition-opacity hover:opacity-60">
+              Store Guide
+            </Link>
+          </p>
+          <h1 className="mt-4 text-[13px] font-light tracking-[0.28em] text-neutral-800 md:text-[14px]">
+            {shipping.pageTitle}
+          </h1>
+        </header>
+        <div className="mt-16 space-y-10 md:mt-20">
+          {shipping.sections.map((section) => (
+            <section key={section.title} className="space-y-3">
+              <h2 className="text-[10px] font-light uppercase tracking-[0.16em] text-neutral-400">
+                {section.title}
+              </h2>
+              <p className="text-[12px] font-light leading-[2] tracking-[0.03em] text-neutral-500">
+                {section.body}
+              </p>
+            </section>
+          ))}
+        </div>
+      </div>
+    </Container>
   );
 }
