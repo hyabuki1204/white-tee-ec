@@ -1,33 +1,33 @@
 import { Suspense } from "react";
-import { HomeFabricSection } from "@/components/home/HomeFabricSection";
-import { HomeHeroCarousel } from "@/components/home/HomeHeroCarousel";
-import { HomeJournalSection } from "@/components/home/HomeJournalSection";
+import { HomeCta } from "@/components/home/HomeCta";
+import { HomeDetail } from "@/components/home/HomeDetail";
+import { HomeHero } from "@/components/home/HomeHero";
 import { HomeProductGridWithSleeveToggle } from "@/components/home/HomeProductGridWithSleeveToggle";
+import { HomeProof } from "@/components/home/HomeProof";
+import { HomeStory } from "@/components/home/HomeStory";
 import { sortProductsByCatalogOrder } from "@/lib/products/catalog-sort";
-import type { Fabric } from "@/lib/fabric/content";
-import type { JournalArticle } from "@/lib/content/journal";
 import type { Product } from "@/types";
 
 type HomeProductCatalogProps = {
   products: Product[];
-  fabrics: Fabric[];
-  journalArticles: JournalArticle[];
   fabricNameBySlug: Record<string, string>;
 };
 
 export function HomeProductCatalog({
   products,
-  fabrics,
-  journalArticles,
   fabricNameBySlug,
 }: HomeProductCatalogProps) {
   const catalogProducts = sortProductsByCatalogOrder(products);
 
   return (
     <>
-      <section aria-label="Product catalog" className="pb-16 md:pb-24">
-        <HomeHeroCarousel />
+      <HomeHero />
 
+      <section
+        id="products"
+        aria-label="Product catalog"
+        className="border-t border-[#e8e8e6] pb-16 md:pb-24"
+      >
         <div className="mx-auto w-full max-w-7xl px-6 md:px-8 lg:px-12">
           <Suspense fallback={null}>
             <HomeProductGridWithSleeveToggle
@@ -38,8 +38,10 @@ export function HomeProductCatalog({
         </div>
       </section>
 
-      <HomeFabricSection fabrics={fabrics} />
-      <HomeJournalSection articles={journalArticles} />
+      <HomeProof />
+      <HomeDetail />
+      <HomeStory />
+      <HomeCta />
     </>
   );
 }
