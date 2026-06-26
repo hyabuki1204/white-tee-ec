@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { HomeProductCatalog } from "@/components/home/HomeProductCatalog";
-import { getFeaturedJournalArticles } from "@/lib/content/journal";
 import { getFabrics } from "@/lib/fabric/queries";
 import { getProducts } from "@/lib/products/queries";
 import { buildPageMetadata } from "@/lib/seo/metadata";
@@ -30,8 +29,6 @@ export default async function Home() {
   return (
     <HomeProductCatalog
       products={products}
-      fabrics={fabrics}
-      journalArticles={getFeaturedJournalArticles(3)}
       fabricNameBySlug={fabricNameBySlug}
     />
   );
