@@ -3,6 +3,7 @@
 import { AddToCartButton } from "@/components/product/AddToCartButton";
 import { PdpStoreGuide } from "@/components/product/PdpStoreGuide";
 import { ProductDetailsInline } from "@/components/product/ProductDetailsInline";
+import { ProductCredibility } from "@/components/product/ProductCredibility";
 import { ProductPurchaseFitGuide } from "@/components/product/ProductPurchaseFitGuide";
 import { ProductPurchaseReassurance } from "@/components/product/ProductPurchaseReassurance";
 import { ProductValueProposition } from "@/components/product/ProductValueProposition";
@@ -171,6 +172,8 @@ export function ProductPurchasePrimary({
           </div>
 
           <ProductPurchaseReassurance />
+
+          <ProductCredibility fabricName={fabricName} />
 
           <div aria-live="polite" className="min-h-[1.25rem]">
             {isAdded && selectedSize ? (
