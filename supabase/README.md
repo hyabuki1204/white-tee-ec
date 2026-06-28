@@ -41,6 +41,13 @@ npm run db:migrate
 
 Applies `supabase/migrations/*.sql` (product detail fields, storage bucket, order status).
 
+**Vercel (production):** On each deploy, `postbuild` automatically:
+
+1. Runs SQL migrations when `DATABASE_URL` is set
+2. Syncs premium prices via `SUPABASE_SERVICE_ROLE_KEY` (`scripts/apply-premium-pricing.mjs`)
+
+Manual pricing sync: `npm run db:apply-pricing`
+
 ## 5. Restart dev server
 
 ```powershell
