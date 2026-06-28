@@ -80,7 +80,7 @@ export const PRICE_POSITIONING = {
     "Six silhouettes across six jerseys — not one tee renamed twelve times.",
   ],
   range:
-    "Positioned alongside specialty Japanese labels at ¥12,000–18,000. Current collection from ¥7,200.",
+    "Collection ¥12,000–¥18,000. Core tees at ¥15,000.",
   care:
     "Built to soften with wear, not lose shape in a season.",
 } as const;

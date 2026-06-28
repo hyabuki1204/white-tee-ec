@@ -1,5 +1,6 @@
 "use client";
 
+import { CartCheckoutTrust } from "@/components/cart/CartCheckoutTrust";
 import { CartCheckoutButton } from "@/components/cart/CartCheckoutButton";
 import { useCheckout } from "@/lib/cart/use-checkout";
 
@@ -92,6 +93,8 @@ export function CartSummary({
           {checkout.error}
         </p>
       ) : null}
+
+      <CartCheckoutTrust />
 
       <div className={hideCheckoutOnMobile ? "hidden lg:block" : undefined}>
         <CartCheckoutButton
