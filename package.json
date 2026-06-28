@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "db:migrate": "node scripts/run-migrations.mjs"
+    "db:migrate": "node scripts/run-migrations.mjs",
+    "db:apply-pricing": "node scripts/apply-premium-pricing.mjs",
+    "postbuild": "node scripts/run-sql-migrations.mjs && node scripts/apply-premium-pricing.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.0",
