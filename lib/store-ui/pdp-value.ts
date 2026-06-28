@@ -1,5 +1,6 @@
 import type { FabricCharacter, FabricCharacterLevel } from "@/lib/fabric/character";
 import type { Fabric } from "@/lib/fabric/content";
+import { PRICE_POSITIONING } from "@/lib/store-ui/credibility";
 import type { Product } from "@/types";
 
 export const PDP_VALUE_IMAGES = {
@@ -66,6 +67,7 @@ export type PdpValueContent = {
   headline: string;
   lines: readonly string[];
   construction: readonly string[];
+  priceNote?: string;
   specs: { label: string; value: string }[];
   images: { src: string; alt: string }[];
 };
@@ -98,6 +100,7 @@ export function buildPdpValueContent(
       FABRIC_VALUE_LINES[fabricSlug] ??
       FABRIC_VALUE_LINES["essential-jersey"]!,
     construction: CONSTRUCTION_LINES,
+    priceNote: PRICE_POSITIONING.care,
     specs: [
       ...characterSpec(character),
       { label: "Fit", value: product.fitProfile.fitLabel },

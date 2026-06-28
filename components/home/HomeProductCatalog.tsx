@@ -1,7 +1,9 @@
 import { Suspense } from "react";
+import { HomeCredibility } from "@/components/home/HomeCredibility";
 import { HomeCta } from "@/components/home/HomeCta";
 import { HomeDetail } from "@/components/home/HomeDetail";
 import { HomeHero } from "@/components/home/HomeHero";
+import { HomePriceContext } from "@/components/home/HomePriceContext";
 import { HomeProductGridWithSleeveToggle } from "@/components/home/HomeProductGridWithSleeveToggle";
 import { HomeProof } from "@/components/home/HomeProof";
 import { HomeStory } from "@/components/home/HomeStory";
@@ -62,6 +64,8 @@ export function HomeProductCatalog({
 
       {featuredDetail ? <HomeDetail detail={featuredDetail} /> : null}
       <HomeStory />
+      <HomeCredibility />
+      <HomePriceContext />
       {featuredDetail ? <HomeCta productHref={featuredDetail.productHref} /> : null}
     </>
   );
