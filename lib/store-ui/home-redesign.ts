@@ -16,46 +16,57 @@ export const HOME_IMAGES = {
 export const HOME_COPY = {
   hero: {
     lines: [
-      "Material, knit, and pattern.",
-      "Considered from fiber to finish.",
-      "The white tee, designed.",
+      "Ultra-long staple cotton, knit to 180gsm.",
+      "Circular-knit in Wakayama, gauge 30.",
+      "Regular fit — sleeve drop and hem, refined.",
     ],
   },
   proof: [
-    { label: "Fabric", line: "Premium cotton jersey, 180gsm" },
-    { label: "Pattern", line: "Refined regular fit, balanced drop" },
-    { label: "Finish", line: "Flatlock seams, clean neckline" },
+    {
+      label: "Fabric",
+      line: "Ultra-long staple cotton, 180gsm compact jersey",
+    },
+    {
+      label: "Pattern",
+      line: "Drop-shoulder regular fit, hem length calibrated",
+    },
+    {
+      label: "Finish",
+      line: "Wakayama flatlock seams, hand-shaped collar",
+    },
   ],
   detail: {
     model: { height: "175cm", size: "L size" },
-    material: [
-      "Compact cotton jersey with a smooth hand.",
-      "Breathable knit, structured for daily wear.",
+    material: "Compact cotton jersey, smooth hand.",
+    specs: [
+      { label: "Sheerness", value: "Low — opaque in daylight" },
+      { label: "Thickness", value: "Mid-weight, 180gsm" },
+      { label: "Fit", value: "Regular, ease at shoulder" },
     ],
   },
   story: [
     {
       key: "material",
       title: "Material",
-      lines: ["Long-staple cotton selected for density and hand."],
+      lines: ["Ultra-long staple.", "180gsm."],
       image: HOME_IMAGES.story.material,
     },
     {
       key: "knitting",
       title: "Knitting",
-      lines: ["Circular knit at controlled gauge for even surface."],
+      lines: ["Wakayama.", "Gauge 30."],
       image: HOME_IMAGES.story.knitting,
     },
     {
       key: "design",
       title: "Design",
-      lines: ["Pattern refined for proportion and sleeve drop."],
+      lines: ["Sleeve drop.", "Body length."],
       image: HOME_IMAGES.story.design,
     },
     {
       key: "finish",
       title: "Finish",
-      lines: ["Seams pressed, collar shaped, inspected by hand."],
+      lines: ["Collar shaped.", "Seams pressed."],
       image: HOME_IMAGES.story.finish,
     },
   ],

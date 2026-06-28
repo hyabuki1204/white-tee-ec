@@ -18,22 +18,24 @@ export function HomeStory() {
               priority={index === 0}
               className="object-cover"
             />
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/70 via-transparent to-transparent" />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent" />
           </div>
 
-          <div className="absolute inset-x-0 bottom-0 px-8 pb-16 md:px-16 md:pb-[120px]">
+          <div className="absolute inset-x-0 bottom-0 px-8 pb-20 md:px-16 md:pb-[120px]">
             <div className="mx-auto w-full max-w-7xl">
               <p className="text-[11px] font-light tracking-[0.2em] text-[#9a9a9a]">
                 {step.title}
               </p>
-              {step.lines.map((line) => (
-                <p
-                  key={line}
-                  className="mt-4 text-[11px] font-light leading-[1.9] tracking-[0.04em] text-[#6c6c6c] md:text-[12px]"
-                >
-                  {line}
-                </p>
-              ))}
+              <div className="mt-6 space-y-1">
+                {step.lines.map((line) => (
+                  <p
+                    key={line}
+                    className="text-[12px] font-light leading-[1.8] tracking-[0.08em] text-[#6c6c6c] md:text-[13px]"
+                  >
+                    {line}
+                  </p>
+                ))}
+              </div>
             </div>
           </div>
         </article>
