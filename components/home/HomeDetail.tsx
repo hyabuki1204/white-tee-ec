@@ -1,23 +1,35 @@
 import Image from "next/image";
-import { HOME_COPY, HOME_IMAGES } from "@/lib/store-ui/home-redesign";
+import Link from "next/link";
+import { HOME_COPY } from "@/lib/store-ui/home-redesign";
+import type { HomeDetailContent } from "@/lib/store-ui/home-featured";
 
-const DETAIL_VIEWS = [
-  { src: HOME_IMAGES.detail.front, alt: "Front view" },
-  { src: HOME_IMAGES.detail.side, alt: "Side view" },
-  { src: HOME_IMAGES.detail.full, alt: "Full body view" },
-] as const;
+type HomeDetailProps = {
+  detail: HomeDetailContent;
+};
 
-export function HomeDetail() {
-  const { model, material, specs } = HOME_COPY.detail;
+export function HomeDetail({ detail }: HomeDetailProps) {
+  const { productName, productHref, model, material, specs, views } = detail;
 
   return (
     <section aria-label="Fit and material detail" className="border-t border-[#e8e8e6]">
       <div className="mx-auto w-full max-w-7xl px-8 py-20 md:px-16 md:py-32">
+        <header className="mb-8 md:mb-12">
+          <Link
+            href={productHref}
+            className="text-[11px] font-light tracking-[0.12em] text-[#6c6c6c] transition-opacity hover:opacity-60 md:text-[12px]"
+          >
+            {productName}
+          </Link>
+          <p className="mt-2 text-[11px] font-light tracking-[0.08em] text-[#9a9a9a]">
+            {HOME_COPY.detail.caption}
+          </p>
+        </header>
+
         <div className="grid grid-cols-3 gap-2 sm:gap-4">
-          {DETAIL_VIEWS.map((view) => (
+          {views.map((view) => (
             <div
               key={view.src}
-              className="relative aspect-[3/4] overflow-hidden bg-[#f4f4f2]"
+              className="relative aspect-[4/5] overflow-hidden bg-[#f4f4f2]"
             >
               <Image
                 src={view.src}

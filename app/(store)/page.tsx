@@ -29,6 +29,7 @@ export default async function Home() {
   return (
     <HomeProductCatalog
       products={products}
+      fabrics={fabrics}
       fabricNameBySlug={fabricNameBySlug}
     />
   );

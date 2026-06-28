@@ -1,12 +1,16 @@
 import Link from "next/link";
 import { HOME_COPY } from "@/lib/store-ui/home-redesign";
 
-export function HomeCta() {
+type HomeCtaProps = {
+  productHref: string;
+};
+
+export function HomeCta({ productHref }: HomeCtaProps) {
   return (
     <section aria-label="Shop" className="border-t border-[#e8e8e6]">
-      <div className="mx-auto flex w-full max-w-7xl justify-center px-8 py-16 md:px-16 md:py-[120px]">
+      <div className="mx-auto flex w-full max-w-7xl justify-center px-8 py-16 md:px-16 md:py-24">
         <Link
-          href={HOME_COPY.cta.href}
+          href={productHref}
           className="border border-[#c8c8c6] px-16 py-4 text-[11px] font-light tracking-[0.2em] text-[#6c6c6c] transition-opacity duration-300 hover:opacity-60"
         >
           {HOME_COPY.cta.label}
