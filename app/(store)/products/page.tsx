@@ -8,6 +8,7 @@ import {
   buildProductsFilterHref,
   FIT_TYPE_LABELS,
   isFitType,
+  isInStockProduct,
   isSleeveType,
   SLEEVE_TYPE_LABELS,
 } from "@/lib/products/silhouette";
@@ -18,6 +19,7 @@ type ProductsPageProps = {
     fabric?: string;
     sleeve?: string;
     fit?: string;
+    stock?: string;
   }>;
 };
 
@@ -59,7 +61,7 @@ export async function generateMetadata({
 }
 
 export default async function ProductsPage({ searchParams }: ProductsPageProps) {
-  const { fabric: fabricSlug, sleeve: sleeveParam, fit: fitParam } =
+  const { fabric: fabricSlug, sleeve: sleeveParam, fit: fitParam, stock } =
     await searchParams;
 
   if (!isSleeveType(sleeveParam)) {
@@ -79,6 +81,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
 
   const activeSleeve = sleeveParam;
   const activeFit = isFitType(fitParam) ? fitParam : null;
+  const inStockOnly = stock === "in";
   const fabric = fabricSlug ? await getFabricBySlug(fabricSlug) : null;
 
   let products = allProducts;
@@ -93,6 +96,10 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
     products = products.filter((product) => product.fitType === activeFit);
   }
 
+  if (inStockOnly) {
+    products = products.filter(isInStockProduct);
+  }
+
   const fabricNameBySlug = Object.fromEntries(
     fabrics.map((entry) => [entry.slug, entry.name]),
   );
@@ -105,6 +112,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
       activeFabricSlug={fabric?.slug ?? null}
       activeSleeve={activeSleeve}
       activeFit={activeFit}
+      inStockOnly={inStockOnly}
       fabricNameBySlug={fabricNameBySlug}
     />
   );

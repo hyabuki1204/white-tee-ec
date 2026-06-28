@@ -3,6 +3,9 @@
 import { AddToCartButton } from "@/components/product/AddToCartButton";
 import { PdpStoreGuide } from "@/components/product/PdpStoreGuide";
 import { ProductDetailsInline } from "@/components/product/ProductDetailsInline";
+import { ProductPurchaseFitGuide } from "@/components/product/ProductPurchaseFitGuide";
+import { ProductPurchaseReassurance } from "@/components/product/ProductPurchaseReassurance";
+import { ProductValueProposition } from "@/components/product/ProductValueProposition";
 import { useProductPurchase } from "@/components/product/ProductPurchaseContext";
 import { QuantitySelector } from "@/components/product/QuantitySelector";
 import { VariantSelector } from "@/components/product/VariantSelector";
@@ -10,6 +13,7 @@ import {
   getGraphpaperDisplayName,
   STORE_BRAND_LINE,
 } from "@/lib/products/display-name";
+import { buildPdpValueContent } from "@/lib/store-ui/pdp-value";
 import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
 import { SITE_UI_COPY } from "@/lib/copy/site-ui";
 import { formatPrice } from "@/lib/utils/format-price";
@@ -79,11 +83,19 @@ function PurchaseStatus() {
 }
 
 type ProductPurchasePrimaryProps = {
+  fabric?: Fabric | null;
   fabricName?: string | null;
+  fitProfile: ProductFitProfile;
+  availableSizes: ProductSize[];
+  showFitGuide?: boolean;
 };
 
 export function ProductPurchasePrimary({
+  fabric,
   fabricName,
+  fitProfile,
+  availableSizes,
+  showFitGuide = false,
 }: ProductPurchasePrimaryProps) {
   const {
     product,
@@ -102,6 +114,7 @@ export function ProductPurchasePrimary({
   const selectedVariant = product.variants.find(
     (variant) => variant.size === selectedSize,
   );
+  const valueContent = buildPdpValueContent(product, fabric);
 
   return (
     <div className={boxClassName}>
@@ -122,11 +135,20 @@ export function ProductPurchasePrimary({
         </div>
       </header>
 
+      <ProductValueProposition content={valueContent} />
+
       <section
         aria-label="Purchase options"
         className="mt-8 space-y-8"
       >
         <VariantSelector variants={product.variants} />
+
+        {showFitGuide ? (
+          <ProductPurchaseFitGuide
+            fitProfile={fitProfile}
+            availableSizes={availableSizes}
+          />
+        ) : null}
 
         <div className="space-y-4">
           <PurchaseStatus />
@@ -147,6 +169,8 @@ export function ProductPurchasePrimary({
               label={buttonLabel}
             />
           </div>
+
+          <ProductPurchaseReassurance />
 
           <div aria-live="polite" className="min-h-[1.25rem]">
             {isAdded && selectedSize ? (
@@ -171,12 +195,17 @@ export function ProductPurchasePrimary({
   );
 }
 
+type ProductPurchaseSecondaryProps = ProductPurchaseSectionsProps & {
+  hideFitTools?: boolean;
+};
+
 export function ProductPurchaseSecondary({
   detail,
   fabric,
   fitProfile,
   availableSizes,
-}: ProductPurchaseSectionsProps) {
+  hideFitTools = false,
+}: ProductPurchaseSecondaryProps) {
   return (
     <div className={boxClassName}>
       <ProductDetailsInline
@@ -184,6 +213,7 @@ export function ProductPurchaseSecondary({
         fabric={fabric}
         fitProfile={fitProfile}
         availableSizes={availableSizes}
+        hideFitTools={hideFitTools}
       />
       <PdpStoreGuide />
     </div>
@@ -200,12 +230,20 @@ export function ProductPurchaseAside({
   return (
     <aside className="hidden px-6 py-10 sm:py-12 md:px-10 md:py-16 lg:sticky lg:top-[var(--header-height)] lg:z-10 lg:block lg:max-h-[calc(100vh-var(--header-height))] lg:overflow-y-auto lg:px-10 lg:py-16 xl:px-12">
       <div className={boxClassName}>
-        <ProductPurchasePrimary fabricName={fabricName} />
+        <ProductPurchasePrimary
+          fabric={fabric}
+          fabricName={fabricName}
+          fitProfile={fitProfile}
+          availableSizes={availableSizes}
+          showFitGuide
+        />
         <ProductPurchaseSecondary
           detail={detail}
           fabric={fabric}
+          fabricName={fabricName}
           fitProfile={fitProfile}
           availableSizes={availableSizes}
+          hideFitTools
         />
       </div>
     </aside>
@@ -216,8 +254,14 @@ export function ProductPurchaseAside({
 export function ProductPurchaseBox(props: ProductPurchaseSectionsProps) {
   return (
     <div className={boxClassName}>
-      <ProductPurchasePrimary fabricName={props.fabricName} />
-      <ProductPurchaseSecondary {...props} />
+      <ProductPurchasePrimary
+        fabric={props.fabric}
+        fabricName={props.fabricName}
+        fitProfile={props.fitProfile}
+        availableSizes={props.availableSizes}
+        showFitGuide
+      />
+      <ProductPurchaseSecondary {...props} hideFitTools />
     </div>
   );
 }

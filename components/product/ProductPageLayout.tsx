@@ -49,7 +49,13 @@ export function ProductPageLayout({
         </div>
 
         <div className="order-2 px-6 pt-8 pb-2 lg:hidden">
-          <ProductPurchasePrimary fabricName={resolvedFabricName} />
+          <ProductPurchasePrimary
+            fabric={fabric}
+            fabricName={resolvedFabricName}
+            fitProfile={product.fitProfile}
+            availableSizes={availableSizes}
+            showFitGuide
+          />
         </div>
 
         <div className="order-3 lg:order-2">
@@ -57,7 +63,7 @@ export function ProductPageLayout({
         </div>
 
         <div className="order-4 px-6 pb-8 lg:hidden">
-          <ProductPurchaseSecondary {...sharedProps} />
+          <ProductPurchaseSecondary {...sharedProps} hideFitTools />
         </div>
       </section>
 
