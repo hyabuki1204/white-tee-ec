@@ -1,3 +1,5 @@
+import { RETURNS_POLICY } from "@/lib/store-ui/returns-policy";
+
 export const GRAPHPAPER_STORE_COPY = {
   brandLine: "WHITE TEE",
   nav: {
@@ -45,6 +47,7 @@ export const GRAPHPAPER_STORE_COPY = {
     total: "Total",
     taxIncluded: "Tax included",
     checkout: "Check Out",
+    continueShopping: "Continue shopping",
     viewAll: "View all pieces",
     exploreFabric: "Fabric",
     processing: "Processing…",
@@ -57,8 +60,7 @@ export const GRAPHPAPER_STORE_COPY = {
     freeShippingProgress: (remaining: string) =>
       `${remaining} more for free shipping`,
     freeShippingReached: "Free shipping applied",
-    shippingNote:
-      "Ships in 3–7 business days. Returns within 7 days if unworn.",
+    shippingNote: RETURNS_POLICY.shippingNote,
     dutiesNote:
       "Prices include tax. Shipping calculated at checkout.",
     size: "Size",

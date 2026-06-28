@@ -21,7 +21,6 @@ const copy = GRAPHPAPER_STORE_COPY.cart;
 export function CartDrawer() {
   const { isOpen, closeDrawer, products, fabricNameBySlug } = useCartDrawer();
   const items = useCartStore((state) => state.items);
-  const getTotal = useCartStore((state) => state.getTotal);
   const [orderNotes, setOrderNotes] = useState("");
 
   useEffect(() => {
@@ -103,8 +102,6 @@ export function CartDrawer() {
       </li>
     );
   });
-
-  const subtotal = getTotal();
 
   return (
     <>
@@ -229,20 +226,12 @@ export function CartDrawer() {
 
         {items.length > 0 ? (
           <div className="border-t border-neutral-200/70 px-6 py-6">
-            <div className="mb-4 flex items-baseline justify-between">
-              <span className="text-[11px] tracking-[0.08em] text-neutral-500">
-                {copy.items}
-              </span>
-              <span className="text-[11px] font-light text-neutral-800">
-                {formatPrice(subtotal)}
-              </span>
-            </div>
-            <p className="mb-4 text-[10px] font-light leading-relaxed tracking-[0.04em] text-neutral-400">
-              {copy.dutiesNote}
-            </p>
             <CartSummary
               hasUnavailableItems={hasUnavailableItems}
               orderNotes={orderNotes}
+              prominentCheckout
+              showContinueShopping
+              onContinueShopping={closeDrawer}
             />
           </div>
         ) : null}

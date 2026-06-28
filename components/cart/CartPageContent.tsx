@@ -5,6 +5,7 @@ import { useState } from "react";
 import { CartFabricCrossSell } from "@/components/cart/CartFabricCrossSell";
 import { CartItem } from "@/components/cart/CartItem";
 import { CartOrderNotes } from "@/components/cart/CartOrderNotes";
+import { CartStickyCheckout } from "@/components/cart/CartStickyCheckout";
 import { CartSummary } from "@/components/cart/CartSummary";
 import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
 import { getFabricCrossSellProducts } from "@/lib/products/cross-sell";
@@ -102,16 +103,25 @@ export function CartPageContent({
   });
 
   return (
-    <div className="max-w-xl">
+    <div className="max-w-xl pb-28 lg:pb-0">
       <ul className="divide-y divide-neutral-200/70">{itemElements}</ul>
 
       <CartOrderNotes value={orderNotes} onChange={setOrderNotes} />
 
-      <CartSummary hasUnavailableItems={hasUnavailableItems} orderNotes={orderNotes} />
+      <CartSummary
+        hasUnavailableItems={hasUnavailableItems}
+        orderNotes={orderNotes}
+        hideCheckoutOnMobile
+      />
 
       <CartFabricCrossSell
         products={crossSellProducts}
         fabricNameBySlug={fabricNameBySlug}
+      />
+
+      <CartStickyCheckout
+        hasUnavailableItems={hasUnavailableItems}
+        orderNotes={orderNotes}
       />
     </div>
   );

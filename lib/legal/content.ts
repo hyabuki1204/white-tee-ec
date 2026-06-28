@@ -1,4 +1,5 @@
 /** Legal and policy copy for storefront pages. */
+import { RETURNS_POLICY } from "@/lib/store-ui/returns-policy";
 
 export const LEGAL_BUSINESS = {
   name: "WHITE TEE",
@@ -28,6 +29,6 @@ export const SHIPPING_SECTIONS = [
   },
   {
     title: "返品・交換",
-    body: "未使用・未開封の商品に限り、到着後7日以内にご連絡いただければ返品を承ります。お客様都合の返品送料はお客様負担となります。",
+    body: RETURNS_POLICY.legalJa,
   },
 ] as const;
