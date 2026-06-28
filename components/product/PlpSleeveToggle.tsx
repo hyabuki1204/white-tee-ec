@@ -10,6 +10,7 @@ type PlpSleeveToggleProps = {
   activeSleeve: SleeveType;
   activeFabricSlug?: string | null;
   activeFit?: FitType | null;
+  inStockOnly?: boolean;
 };
 
 const SLEEVE_OPTIONS: { value: SleeveType; label: string }[] = [
@@ -28,7 +29,10 @@ export function PlpSleeveToggle({
   activeSleeve,
   activeFabricSlug,
   activeFit,
+  inStockOnly = false,
 }: PlpSleeveToggleProps) {
+  const stock = inStockOnly ? ("in" as const) : null;
+
   return (
     <nav
       aria-label="Filter by sleeve length"
@@ -41,6 +45,7 @@ export function PlpSleeveToggle({
             fabric: activeFabricSlug,
             sleeve: option.value,
             fit: activeFit,
+            stock,
           })}
           aria-current={activeSleeve === option.value ? "page" : undefined}
           className={toggleClass(activeSleeve === option.value)}

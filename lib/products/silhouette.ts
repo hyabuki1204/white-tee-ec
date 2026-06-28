@@ -62,6 +62,7 @@ export function buildProductsFilterHref(options: {
   sleeve?: SleeveType | null;
   fit?: FitType | null;
   fabric?: string | null;
+  stock?: "in" | null;
 }): string {
   const params = new URLSearchParams();
 
@@ -77,6 +78,16 @@ export function buildProductsFilterHref(options: {
     params.set("fit", options.fit);
   }
 
+  if (options.stock === "in") {
+    params.set("stock", "in");
+  }
+
   const query = params.toString();
   return query ? `/products?${query}` : "/products";
+}
+
+export function isInStockProduct(product: {
+  variants: { stockQuantity: number }[];
+}): boolean {
+  return product.variants.some((variant) => variant.stockQuantity > 0);
 }

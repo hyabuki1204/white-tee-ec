@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { FIT_TYPE_LABELS } from "@/lib/products/silhouette";
 import { getGraphpaperDisplayName, STORE_BRAND_LINE } from "@/lib/products/display-name";
 import { getProductWearImageUrl } from "@/lib/products/wear-image";
 import { formatPrice } from "@/lib/utils/format-price";
@@ -26,6 +27,8 @@ export function ProductCard({
 }: ProductCardProps) {
   const wearImageUrl = getProductWearImageUrl(product);
   const displayName = getGraphpaperDisplayName(product, fabricName);
+  const fitLabel = FIT_TYPE_LABELS[product.fitType];
+  const metaLine = [fabricName, fitLabel].filter(Boolean).join(" · ");
   const outOfStock =
     soldOut ||
     product.variants.every((variant) => variant.stockQuantity < 1);
@@ -79,6 +82,11 @@ export function ProductCard({
             <p className="text-[10px] font-light tracking-[0.12em] text-white/85">
               {STORE_BRAND_LINE}
             </p>
+            {metaLine ? (
+              <p className="mt-1 text-[10px] font-light tracking-[0.1em] text-white/75">
+                {metaLine}
+              </p>
+            ) : null}
             <p className="mt-1 text-[11px] font-light leading-snug tracking-[0.03em] text-white">
               {displayName}
             </p>

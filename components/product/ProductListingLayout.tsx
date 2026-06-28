@@ -14,6 +14,7 @@ type ProductListingLayoutProps = {
   activeFabricSlug?: string | null;
   activeSleeve: SleeveType;
   activeFit?: FitType | null;
+  inStockOnly?: boolean;
   fabricNameBySlug: Record<string, string>;
   title?: string;
 };
@@ -25,6 +26,7 @@ export function ProductListingLayout({
   activeFabricSlug,
   activeSleeve,
   activeFit,
+  inStockOnly = false,
   fabricNameBySlug,
   title = GRAPHPAPER_STORE_COPY.plp.title,
 }: ProductListingLayoutProps) {
@@ -50,6 +52,7 @@ export function ProductListingLayout({
             activeFabricSlug={activeFabricSlug}
             activeSleeve={activeSleeve}
             activeFit={activeFit}
+            inStockOnly={inStockOnly}
           />
 
           <div className="min-w-0 flex-1">
@@ -67,6 +70,7 @@ export function ProductListingLayout({
                 activeSleeve={activeSleeve}
                 activeFabricSlug={activeFabricSlug}
                 activeFit={activeFit}
+                inStockOnly={inStockOnly}
               />
             </header>
 

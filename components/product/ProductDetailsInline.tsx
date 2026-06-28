@@ -17,6 +17,7 @@ type ProductDetailsInlineProps = {
   fabric?: Fabric | null;
   fitProfile: ProductFitProfile;
   availableSizes: ProductSize[];
+  hideFitTools?: boolean;
 };
 
 const copy = GRAPHPAPER_STORE_COPY.pdp;
@@ -27,6 +28,7 @@ export function ProductDetailsInline({
   fabric,
   fitProfile,
   availableSizes,
+  hideFitTools = false,
 }: ProductDetailsInlineProps) {
   return (
     <div className="mt-12 space-y-10 border-t border-neutral-200/60 pt-10 sm:mt-14 sm:pt-12 lg:mt-16">
@@ -62,7 +64,9 @@ export function ProductDetailsInline({
         </p>
       </section>
 
-      <ProductModelFitInfo fitProfile={fitProfile} collapsible />
+      {hideFitTools ? null : (
+        <ProductModelFitInfo fitProfile={fitProfile} collapsible />
+      )}
 
       <section id="size-guide" aria-label={copy.sizeGuide} className="space-y-4">
         <h2 className="text-[10px] font-light uppercase tracking-[0.16em] text-neutral-400">
@@ -131,11 +135,13 @@ export function ProductDetailsInline({
         </JaHelperText>
       </section>
 
-      <SizeRecommendationTool
-        fitProfile={fitProfile}
-        availableSizes={availableSizes}
-        collapsible
-      />
+      {hideFitTools ? null : (
+        <SizeRecommendationTool
+          fitProfile={fitProfile}
+          availableSizes={availableSizes}
+          collapsible
+        />
+      )}
 
       {fabric ? (
         <details className="group border-t border-neutral-200/50 pt-8">
