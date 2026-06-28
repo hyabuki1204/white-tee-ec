@@ -1,5 +1,8 @@
 export const HOME_IMAGES = {
-  hero: "/home/hero.png",
+  hero: {
+    video: "/home/hero.mp4",
+    poster: "/home/hero.png",
+  },
   detail: {
     front: "/home/detail/front.png",
     side: "/home/detail/side.png",
