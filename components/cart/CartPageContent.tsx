@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { CartFabricCrossSell } from "@/components/cart/CartFabricCrossSell";
@@ -104,6 +105,16 @@ export function CartPageContent({
 
   return (
     <div className="max-w-xl pb-28 lg:pb-0">
+      <div className="relative mb-10 aspect-[21/9] overflow-hidden bg-[#f4f4f2]">
+        <Image
+          src="/store/checkout-trust.png"
+          alt=""
+          fill
+          sizes="(max-width: 768px) 100vw, 576px"
+          className="object-cover"
+        />
+      </div>
+
       <ul className="divide-y divide-neutral-200/70">{itemElements}</ul>
 
       <CartOrderNotes value={orderNotes} onChange={setOrderNotes} />

@@ -51,7 +51,7 @@ values
     'MACHINE WASH COLD WITH LIKE COLORS. DO NOT BLEACH. TUMBLE DRY LOW. COOL IRON IF NEEDED.',
     '[{"size":"S","length":68,"shoulder":44,"chest":52,"sleeve":20},{"size":"M","length":70,"shoulder":46,"chest":54,"sleeve":21},{"size":"L","length":72,"shoulder":48,"chest":56,"sleeve":22},{"size":"XL","length":74,"shoulder":50,"chest":58,"sleeve":23}]'::jsonb,
     true,
-    8800,
+    15000,
     'heavyweight-jersey'
   ),
   (
@@ -65,7 +65,7 @@ values
     'MACHINE WASH COLD WITH LIKE COLORS. DO NOT BLEACH. TUMBLE DRY LOW. COOL IRON IF NEEDED.',
     '[{"size":"S","length":68,"shoulder":44,"chest":52,"sleeve":20},{"size":"M","length":70,"shoulder":46,"chest":54,"sleeve":21},{"size":"L","length":72,"shoulder":48,"chest":56,"sleeve":22},{"size":"XL","length":74,"shoulder":50,"chest":58,"sleeve":23}]'::jsonb,
     true,
-    7200,
+    13000,
     'lightweight-jersey'
   ),
   (
@@ -79,7 +79,7 @@ values
     'MACHINE WASH COLD WITH LIKE COLORS. DO NOT BLEACH. TUMBLE DRY LOW. COOL IRON IF NEEDED.',
     '[{"size":"S","length":70,"shoulder":48,"chest":56,"sleeve":22},{"size":"M","length":72,"shoulder":50,"chest":58,"sleeve":23},{"size":"L","length":74,"shoulder":52,"chest":60,"sleeve":24},{"size":"XL","length":76,"shoulder":54,"chest":62,"sleeve":25}]'::jsonb,
     true,
-    7900,
+    14000,
     'relaxed-jersey'
   ),
   (
@@ -93,7 +93,7 @@ values
     'MACHINE WASH COLD WITH LIKE COLORS. DO NOT BLEACH. TUMBLE DRY LOW. COOL IRON IF NEEDED.',
     '[{"size":"S","length":66,"shoulder":42,"chest":48,"sleeve":19},{"size":"M","length":68,"shoulder":44,"chest":50,"sleeve":20},{"size":"L","length":70,"shoulder":46,"chest":52,"sleeve":21},{"size":"XL","length":72,"shoulder":48,"chest":54,"sleeve":22}]'::jsonb,
     true,
-    6500,
+    12000,
     'compact-jersey'
   ),
   (
@@ -107,7 +107,7 @@ values
     'MACHINE WASH COLD WITH LIKE COLORS. DO NOT BLEACH. TUMBLE DRY LOW. COOL IRON IF NEEDED.',
     '[{"size":"S","length":70,"shoulder":44,"chest":52,"sleeve":58},{"size":"M","length":72,"shoulder":46,"chest":54,"sleeve":59},{"size":"L","length":74,"shoulder":48,"chest":56,"sleeve":60},{"size":"XL","length":76,"shoulder":50,"chest":58,"sleeve":61}]'::jsonb,
     true,
-    9800,
+    16500,
     'essential-jersey'
   ),
   (
@@ -121,7 +121,7 @@ values
     'MACHINE WASH COLD WITH LIKE COLORS. DO NOT BLEACH. TUMBLE DRY LOW. COOL IRON IF NEEDED.',
     '[{"size":"S","length":70,"shoulder":48,"chest":56,"sleeve":22},{"size":"M","length":72,"shoulder":50,"chest":58,"sleeve":23},{"size":"L","length":74,"shoulder":52,"chest":60,"sleeve":24},{"size":"XL","length":76,"shoulder":54,"chest":62,"sleeve":25}]'::jsonb,
     true,
-    8400,
+    15000,
     'box-jersey'
   )
 on conflict (slug) do update set
