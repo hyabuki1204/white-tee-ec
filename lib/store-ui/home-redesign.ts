@@ -1,17 +1,12 @@
+import { HOME_FEATURED_PRODUCT_SLUG } from "@/lib/store-ui/home-featured";
+
 export const HOME_IMAGES = {
   hero: {
     video: "/home/hero.mp4",
     poster: "/home/hero.png",
   },
-  detail: {
-    front: "/home/detail/front.png",
-    side: "/home/detail/side.png",
-    full: "/home/detail/full.png",
-  },
   story: {
     material: "/home/story/material.png",
-    knitting: "/home/story/knitting.png",
-    design: "/home/story/design.png",
     finish: "/home/story/finish.png",
   },
 } as const;
@@ -19,19 +14,19 @@ export const HOME_IMAGES = {
 export const HOME_COPY = {
   hero: {
     lines: [
-      "Ultra-long staple cotton, knit to 180gsm.",
-      "Circular-knit in Wakayama, gauge 30.",
-      "Regular fit — sleeve drop and hem, refined.",
+      "White tees in six jersey weights.",
+      "Knit in Wakayama — slim to boxy.",
+      "One standard: material, pattern, finish.",
     ],
   },
   proof: [
     {
       label: "Fabric",
-      line: "Ultra-long staple cotton, 180gsm compact jersey",
+      line: "Ultra-long staple cotton across six weights",
     },
     {
       label: "Pattern",
-      line: "Drop-shoulder regular fit, hem length calibrated",
+      line: "Slim to boxy — each silhouette calibrated",
     },
     {
       label: "Finish",
@@ -39,42 +34,24 @@ export const HOME_COPY = {
     },
   ],
   detail: {
-    model: { height: "175cm", size: "L size" },
-    material: "Compact cotton jersey, smooth hand.",
-    specs: [
-      { label: "Sheerness", value: "Low — opaque in daylight" },
-      { label: "Thickness", value: "Mid-weight, 180gsm" },
-      { label: "Fit", value: "Regular, ease at shoulder" },
-    ],
+    caption: "Representative fit",
   },
   story: [
     {
       key: "material",
       title: "Material",
-      lines: ["Ultra-long staple.", "180gsm."],
+      lines: ["Ultra-long staple.", "Six weights."],
       image: HOME_IMAGES.story.material,
-    },
-    {
-      key: "knitting",
-      title: "Knitting",
-      lines: ["Wakayama.", "Gauge 30."],
-      image: HOME_IMAGES.story.knitting,
-    },
-    {
-      key: "design",
-      title: "Design",
-      lines: ["Sleeve drop.", "Body length."],
-      image: HOME_IMAGES.story.design,
     },
     {
       key: "finish",
       title: "Finish",
-      lines: ["Collar shaped.", "Seams pressed."],
+      lines: ["Wakayama.", "Hand finish."],
       image: HOME_IMAGES.story.finish,
     },
   ],
   cta: {
-    label: "VIEW PRODUCTS",
-    href: "/#products",
+    label: "VIEW PIECE",
+    productSlug: HOME_FEATURED_PRODUCT_SLUG,
   },
 } as const;

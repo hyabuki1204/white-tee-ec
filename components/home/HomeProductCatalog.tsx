@@ -5,23 +5,45 @@ import { HomeHero } from "@/components/home/HomeHero";
 import { HomeProductGridWithSleeveToggle } from "@/components/home/HomeProductGridWithSleeveToggle";
 import { HomeProof } from "@/components/home/HomeProof";
 import { HomeStory } from "@/components/home/HomeStory";
+import type { Fabric } from "@/lib/fabric/content";
+import {
+  buildHomeDetailContent,
+  findHomeFeaturedProduct,
+} from "@/lib/store-ui/home-featured";
 import { sortProductsByCatalogOrder } from "@/lib/products/catalog-sort";
 import type { Product } from "@/types";
 
 type HomeProductCatalogProps = {
   products: Product[];
+  fabrics: Fabric[];
   fabricNameBySlug: Record<string, string>;
 };
 
 export function HomeProductCatalog({
   products,
+  fabrics,
   fabricNameBySlug,
 }: HomeProductCatalogProps) {
   const catalogProducts = sortProductsByCatalogOrder(products);
+  const featuredProduct = findHomeFeaturedProduct(catalogProducts);
+  const featuredFabric = featuredProduct?.fabricSlug
+    ? fabrics.find((fabric) => fabric.slug === featuredProduct.fabricSlug) ?? null
+    : null;
+  const featuredDetail = featuredProduct
+    ? buildHomeDetailContent(
+        featuredProduct,
+        featuredFabric,
+        featuredProduct.fabricSlug
+          ? fabricNameBySlug[featuredProduct.fabricSlug]
+          : null,
+      )
+    : null;
 
   return (
     <>
       <HomeHero />
+
+      <HomeProof />
 
       <section
         id="products"
@@ -38,10 +60,9 @@ export function HomeProductCatalog({
         </div>
       </section>
 
-      <HomeProof />
-      <HomeDetail />
+      {featuredDetail ? <HomeDetail detail={featuredDetail} /> : null}
       <HomeStory />
-      <HomeCta />
+      {featuredDetail ? <HomeCta productHref={featuredDetail.productHref} /> : null}
     </>
   );
 }
