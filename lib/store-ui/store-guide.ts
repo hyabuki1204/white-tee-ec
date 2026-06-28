@@ -1,3 +1,5 @@
+import { RETURNS_POLICY } from "@/lib/store-ui/returns-policy";
+
 export type StoreGuideSection = {
   id: string;
   title: string;
@@ -18,8 +20,7 @@ export const STORE_GUIDE_SECTIONS: StoreGuideSection[] = [
   {
     id: "returns",
     title: "Returns",
-    summary:
-      "Unworn items may be returned within 7 days of delivery. Contact us to begin a return.",
+    summary: RETURNS_POLICY.storeGuideSummary,
     href: "/shipping",
     linkLabel: "Return policy",
   },

@@ -1,4 +1,6 @@
 /** Shared UI copy — quiet, consistent brand voice. */
+import { RETURNS_POLICY } from "@/lib/store-ui/returns-policy";
+
 export const SITE_UI_COPY = {
   nav: {
     fabric: "Fabric",
@@ -25,7 +27,7 @@ export const SITE_UI_COPY = {
     freeShippingProgress: (remaining: string) =>
       `${remaining} more for free shipping`,
     freeShippingReached: "Free shipping applied",
-    shippingNote: "Ships in 3–7 business days. Returns within 7 days if unworn.",
+    shippingNote: RETURNS_POLICY.shippingNote,
     exploreFabric: "Fabric",
     viewProducts: "Pieces",
   },
@@ -55,10 +57,10 @@ export const SITE_UI_COPY = {
     plpIntroSub: "Fabric, then fit.",
     filteredIntro: (fabricName: string) => `${fabricName}.`,
     reassurance: {
-      shipping: "Ships in 3–7 business days. ¥600 shipping; free over ¥10,000.",
-      returns: "Returns within 7 days if unworn.",
+      shipping: RETURNS_POLICY.shipping,
+      returns: RETURNS_POLICY.returns,
       shippingLink: "Shipping & Returns",
-      helperJa: "3〜7営業日で発送。¥10,000以上で送料無料。未使用品は7日以内返品可。",
+      helperJa: RETURNS_POLICY.helperJa,
     },
     gallerySwipeHint: "Swipe →",
   },
