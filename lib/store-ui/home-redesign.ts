@@ -1,10 +1,6 @@
 import { HOME_FEATURED_PRODUCT_SLUG } from "@/lib/store-ui/home-featured";
 
 export const HOME_IMAGES = {
-  hero: {
-    video: "/home/hero.mp4",
-    poster: "/home/hero.png",
-  },
   story: {
     material: "/home/story/material.png",
     finish: "/home/story/finish.png",
