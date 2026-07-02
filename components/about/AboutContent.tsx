@@ -1,12 +1,12 @@
 import Link from "next/link";
 import Image from "next/image";
-import type { AboutPageContent } from "@/types/site-content";
 import { JaHelperText } from "@/components/ui/JaHelperText";
+import type { AboutPageContent } from "@/types/site-content";
 import { SITE_UI_COPY } from "@/lib/copy/site-ui";
 
 type AboutContentProps = Pick<
   AboutPageContent,
-  "headline" | "bodyParagraphs" | "helperJa"
+  "headline" | "headlineJa" | "bodyParagraphs" | "bodyParagraphsJa" | "helperJa"
 >;
 
 const ABOUT_HERO = {
@@ -14,9 +14,38 @@ const ABOUT_HERO = {
   alt: "WHITE TEE atelier — knitting and cotton",
 } as const;
 
+function ParagraphBlock({
+  lines,
+  lang,
+  className,
+}: {
+  lines: string[];
+  lang?: "ja";
+  className?: string;
+}) {
+  return (
+    <p
+      lang={lang}
+      className={
+        className ??
+        "text-[13px] font-light leading-[1.95] tracking-[0.02em] text-neutral-600 md:text-[12px] md:leading-[2.1] md:tracking-[0.03em]"
+      }
+    >
+      {lines.map((line, index) => (
+        <span key={line}>
+          {line}
+          {index < lines.length - 1 ? <br /> : null}
+        </span>
+      ))}
+    </p>
+  );
+}
+
 export function AboutContent({
   headline,
+  headlineJa,
   bodyParagraphs,
+  bodyParagraphsJa,
   helperJa,
 }: AboutContentProps) {
   const { fabric: copy } = SITE_UI_COPY;
@@ -39,21 +68,29 @@ export function AboutContent({
         <h1 className="text-[13px] font-light tracking-[0.28em] text-neutral-800 md:text-[14px]">
           {headline}
         </h1>
+        {headlineJa ? (
+          <JaHelperText spacing="default" className="mx-auto max-w-sm">
+            {headlineJa}
+          </JaHelperText>
+        ) : null}
 
         <div className="mt-12 flex flex-col gap-8 sm:mt-16 sm:gap-10 md:mt-20 md:gap-12">
-          {bodyParagraphs.map((paragraph) => (
-            <p
-              key={paragraph[0]}
-              className="text-[13px] font-light leading-[1.95] tracking-[0.02em] text-neutral-600 md:text-[12px] md:leading-[2.1] md:tracking-[0.03em]"
-            >
-              {paragraph.map((line, index) => (
-                <span key={line}>
-                  {line}
-                  {index < paragraph.length - 1 ? <br /> : null}
-                </span>
-              ))}
-            </p>
-          ))}
+          {bodyParagraphs.map((paragraph, index) => {
+            const paragraphJa = bodyParagraphsJa?.[index];
+
+            return (
+              <div key={paragraph[0]} className="space-y-4">
+                <ParagraphBlock lines={paragraph} />
+                {paragraphJa ? (
+                  <ParagraphBlock
+                    lines={paragraphJa}
+                    lang="ja"
+                    className="text-[12px] font-extralight leading-[2.05] tracking-[0.03em] text-neutral-500 md:text-[11px] md:leading-[2.15]"
+                  />
+                ) : null}
+              </div>
+            );
+          })}
         </div>
 
         {helperJa ? (

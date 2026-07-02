@@ -1,6 +1,8 @@
 import {
   ABOUT_BODY_PARAGRAPHS,
+  ABOUT_BODY_PARAGRAPHS_JA,
   ABOUT_HEADLINE,
+  ABOUT_HEADLINE_JA,
 } from "@/lib/about/content";
 import {
   DEFAULT_CONTACT_CONTENT,
@@ -43,7 +45,9 @@ export const DEFAULT_HOME_CONTENT: HomePageContent = {
 
 export const DEFAULT_ABOUT_CONTENT: AboutPageContent = {
   headline: ABOUT_HEADLINE,
+  headlineJa: ABOUT_HEADLINE_JA,
   bodyParagraphs: ABOUT_BODY_PARAGRAPHS.map((paragraph) => [...paragraph]),
+  bodyParagraphsJa: ABOUT_BODY_PARAGRAPHS_JA.map((paragraph) => [...paragraph]),
   helperJa: ABOUT_JA_HELPER,
 };
 

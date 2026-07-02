@@ -1,4 +1,8 @@
-import { JOURNAL_INTRO_LINES, JOURNAL_PAGE_TITLE } from "@/lib/content/journal";
+import {
+  JOURNAL_INTRO_LINES,
+  JOURNAL_INTRO_LINES_JA,
+  JOURNAL_PAGE_TITLE,
+} from "@/lib/content/journal";
 
 export function JournalIntro() {
   return (
@@ -13,6 +17,12 @@ export function JournalIntro() {
             {index < JOURNAL_INTRO_LINES.length - 1 ? <br /> : null}
           </span>
         ))}
+      </p>
+      <p
+        lang="ja"
+        className="mx-auto mt-5 max-w-sm whitespace-pre-line font-extralight text-[11px] leading-[2.05] tracking-[0.03em] text-neutral-500 sm:mt-6 md:text-[10px] md:leading-[2.15] md:text-neutral-500/90"
+      >
+        {JOURNAL_INTRO_LINES_JA.join("\n")}
       </p>
     </header>
   );

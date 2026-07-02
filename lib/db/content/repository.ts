@@ -78,7 +78,10 @@ function mergeAboutContent(raw: unknown): AboutPageContent {
 
   return {
     headline: input.headline ?? DEFAULT_ABOUT_CONTENT.headline,
+    headlineJa: input.headlineJa ?? DEFAULT_ABOUT_CONTENT.headlineJa,
     bodyParagraphs: input.bodyParagraphs ?? DEFAULT_ABOUT_CONTENT.bodyParagraphs,
+    bodyParagraphsJa:
+      input.bodyParagraphsJa ?? DEFAULT_ABOUT_CONTENT.bodyParagraphsJa,
     helperJa: input.helperJa ?? DEFAULT_ABOUT_CONTENT.helperJa,
   };
 }

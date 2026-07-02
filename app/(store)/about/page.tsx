@@ -17,7 +17,9 @@ export default async function AboutPage() {
     <section aria-label="About WHITE TEE">
       <AboutContent
         headline={about.headline}
+        headlineJa={about.headlineJa}
         bodyParagraphs={about.bodyParagraphs}
+        bodyParagraphsJa={about.bodyParagraphsJa}
         helperJa={about.helperJa}
       />
     </section>
