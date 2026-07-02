@@ -2,11 +2,9 @@ import { Suspense } from "react";
 import { HomeCredibility } from "@/components/home/HomeCredibility";
 import { HomeCta } from "@/components/home/HomeCta";
 import { HomeDetail } from "@/components/home/HomeDetail";
-import { HomeFitGuide } from "@/components/home/HomeFitGuide";
 import { HomeHero } from "@/components/home/HomeHero";
 import { HomePriceContext } from "@/components/home/HomePriceContext";
 import { HomeProductGridWithSleeveToggle } from "@/components/home/HomeProductGridWithSleeveToggle";
-import { HomeProof } from "@/components/home/HomeProof";
 import { HomeStory } from "@/components/home/HomeStory";
 import type { Fabric } from "@/lib/fabric/content";
 import {
@@ -45,10 +43,6 @@ export function HomeProductCatalog({
   return (
     <>
       <HomeHero />
-
-      <HomeProof />
-
-      <HomeFitGuide />
 
       <section
         id="products"
