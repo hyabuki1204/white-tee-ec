@@ -1,16 +1,16 @@
-export const ABOUT_HEADLINE = "The space between cloth and skin.";
+export const ABOUT_HEADLINE = "布と肌のあいだ。";
 
 export const ABOUT_BODY_PARAGRAPHS = [
   [
-    "A white tee is the simplest garment,",
-    "and the hardest to make well.",
+    "白Tは、最もシンプルで、",
+    "最も難しい服です。",
   ],
   [
-    "We knit our own cloth.",
-    "Structure, cotton, air — in that order.",
+    "私たちは自分たちで布を編みます。",
+    "構造、綿、空気——その順番で。",
   ],
   [
-    "What you wear should disappear.",
-    "What remains should feel true.",
+    "着ていることを忘れる服。",
+    "残るのは、本当の白だけ。",
   ],
 ] as const;

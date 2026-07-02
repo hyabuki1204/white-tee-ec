@@ -18,7 +18,7 @@ export function PdpStoreGuide() {
           href="/store-guide"
           className="text-[10px] font-light tracking-[0.06em] text-neutral-400 transition-opacity hover:opacity-60"
         >
-          View all
+          すべて見る
         </Link>
       </div>
 

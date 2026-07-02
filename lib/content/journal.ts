@@ -16,17 +16,17 @@ export type JournalArticle = {
 export const JOURNAL_PAGE_TITLE = "Journal";
 
 export const JOURNAL_INTRO_LINES = [
-  "Notes from the atelier.",
-  "Cloth, machines, and the quiet work of white.",
+  "アトリエからの記録。",
+  "布、機械、白の静かな仕事。",
 ] as const;
 
 export const JOURNAL_ARTICLES: JournalArticle[] = [
   {
     slug: "circular-knitting-wakayama",
-    title: "Circular Knitting in Wakayama",
+    title: "和歌山の丸編み",
     publishedAt: "2025-11-12",
     excerpt:
-      "Our jersey is knit on circular machines in Wakayama — loop by loop, at a pace the cloth can hold.",
+      "和歌山の丸編み機で、ループを一つずつ。布が受け止められる速度で編み上げます。",
     helperJa: "和歌山の丸編み機で、一枚の布を静かに編み上げる。",
     heroImageUrl: "/journal/journal-knitting-machine.jpg",
     heroImageAlt: "Circular knitting machine producing white cotton jersey",
@@ -40,10 +40,10 @@ export const JOURNAL_ARTICLES: JournalArticle[] = [
   },
   {
     slug: "reading-jersey-by-hand",
-    title: "Reading Jersey by Hand",
+    title: "手で読むジャージー",
     publishedAt: "2025-10-28",
     excerpt:
-      "Weight, loop, and fall — how we choose a jersey before it becomes a tee.",
+      "重さ、ループ、落ち感——Tシャツになる前に、生地を選ぶ方法。",
     helperJa: "手触りと目で、ジャージの表情を読み分ける。",
     heroImageUrl: "/journal/journal-jersey-texture.jpg",
     heroImageAlt: "Close-up of white cotton jersey knit texture",
@@ -57,10 +57,10 @@ export const JOURNAL_ARTICLES: JournalArticle[] = [
   },
   {
     slug: "the-atelier-morning",
-    title: "The Atelier Morning",
+    title: "アトリエの朝",
     publishedAt: "2025-09-15",
     excerpt:
-      "Before cutting or sewing — light on the table, rolls of white, and the day arranged around cloth.",
+      "裁断や縫製の前——テーブルに落ちる光、白い布、布を中心に始まる一日。",
     helperJa: "裁断の前。布と光で始まる一日。",
     heroImageUrl: "/journal/journal-atelier.jpg",
     heroImageAlt: "Quiet textile atelier with white fabric and soft window light",
@@ -74,10 +74,10 @@ export const JOURNAL_ARTICLES: JournalArticle[] = [
   },
   {
     slug: "from-cotton-to-yarn",
-    title: "From Cotton to Yarn",
+    title: "綿から糸へ",
     publishedAt: "2025-08-02",
     excerpt:
-      "Long-staple cotton, spun fine — the raw material behind every white loop.",
+      "長繊維綿を、白いループのはじまりとなる糸へ。",
     helperJa: "長繊維綿を、白い糸へ。",
     heroImageUrl: "/journal/journal-raw-cotton.jpg",
     heroImageAlt: "Raw cotton bales and white yarn cones in a textile studio",

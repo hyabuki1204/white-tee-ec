@@ -79,21 +79,19 @@ export function ProductDetailsInline({
           <div className="overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <table className="min-w-[20rem] w-full text-left">
               <caption className="sr-only">
-                Size guide measurements in centimeters
+                {productCopy.sizeTableCaption}
               </caption>
               <thead>
                 <tr>
-                  {["Size", "Length", "Shoulder", "Chest", "Sleeve"].map(
-                    (label) => (
-                      <th
-                        key={label}
-                        scope="col"
-                        className="pb-3 pr-3 text-[11px] font-light tracking-[0.08em] text-neutral-400"
-                      >
-                        {label}
-                      </th>
-                    ),
-                  )}
+                  {productCopy.sizeTableHeaders.map((label) => (
+                    <th
+                      key={label}
+                      scope="col"
+                      className="pb-3 pr-3 text-[11px] font-light tracking-[0.08em] text-neutral-400"
+                    >
+                      {label}
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
@@ -127,8 +125,7 @@ export function ProductDetailsInline({
           </p>
         </div>
         <p className="text-[11px] font-light leading-[1.9] tracking-[0.04em] text-neutral-400">
-          Length from back collar to hem. Shoulder tip to tip. Chest measured
-          flat.
+          {productCopy.sizeTableExplainer}
         </p>
         <JaHelperText spacing="tight" className="max-w-sm">
           {PRODUCT_SIZE_GUIDE_JA}

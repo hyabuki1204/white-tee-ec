@@ -19,19 +19,19 @@ export type WearingNote = {
 
 export const EDITORIAL_VOICES: EditorialVoice[] = [
   {
-    source: "POPEYE",
-    line: "A white tee that begins at the knitting machine — not the label.",
-    detail: "Editorial · 2025",
+    source: "作り手のメモ",
+    line: "白Tは、着た瞬間より洗った後に差が出ます。首元、裾、肩線。その残り方を見てください。",
+    detail: "Kanemasa, Wakayama",
   },
   {
-    source: "BRUTUS",
-    line: "Six jersey weights, one factory. The difference is readable in the hand.",
-    detail: "Feature · 2025",
+    source: "スタイリングノート",
+    line: "1枚で着るなら Heavyweight、真夏は Lightweight、重ね着なら Compact が選びやすいです。",
+    detail: "サイズは普段のTシャツから",
   },
   {
-    source: "Atelier note",
-    line: "Most customers own two weights — heavyweight for structure, lightweight for heat.",
-    detail: "From purchase data",
+    source: "着用の声",
+    line: "多くの方が、構造用の Heavyweight と、暑い季節用の Lightweight の2枚を持っています。",
+    detail: "リピート購入データより",
   },
 ];
 
@@ -40,63 +40,61 @@ export const WEARING_NOTES: WearingNote[] = [
     fabric: "Heavyweight Jersey",
     months: 8,
     lines: [
-      "Collar holds its line. No curl at the neck after repeated washes.",
-      "Surface softens; structure stays. The tee looks quieter, not tired.",
+      "首元のラインが保たれ、繰り返しの洗濯後もクルミにくい。",
+      "表面はやわらかくなるが、形は残る。疲れた印象にはならない。",
     ],
   },
   {
     fabric: "Lightweight Jersey",
     months: 6,
     lines: [
-      "Breathable from the first wear. Drape opens slightly with washing.",
-      "Sheerness stays predictable in daylight — not a surprise after one wash.",
+      "最初から軽く、通気性がよい。洗うほどにドレープが開く。",
+      "日中の透け感は予測可能。1回洗った後に驚くことはない。",
     ],
   },
   {
     fabric: "Compact Jersey",
     months: 5,
     lines: [
-      "Slim line stays clean at hem and sleeve. Minimal stretch at cuff.",
-      "Smooth hand from day one — no surface fuzz after three washes.",
+      "裾と袖のラインがすっきり保たれる。袖口の伸びが少ない。",
+      "初日から滑らかな手触り。3回洗っても表面の毛羽立ちが出にくい。",
     ],
   },
 ];
 
 export const FACTS = [
-  { label: "Factory", value: "Kanemasa, Wakayama" },
-  { label: "Jersey weights", value: "Six calibrations" },
-  { label: "Cotton", value: "Ultra-long staple" },
-  { label: "Finish", value: "Hand-shaped collar" },
+  { label: "工場", value: "和歌山・Kanemasa" },
+  { label: "生地", value: "6種類のジャージー" },
+  { label: "綿", value: "超長繊維コットン" },
+  { label: "仕上げ", value: "手仕上げの襟" },
 ] as const;
 
 export const PRICE_POSITIONING = {
-  headline: "What the price holds",
+  headline: "価格に含まれるもの",
   intro:
-    "WHITE TEE is priced for in-house knitting, calibrated jersey weights, and finish work in Wakayama — not for a label on a blank.",
+    "WHITE TEE の価格は、ブランクへのラベル貼りではなく、和歌山での自社編立て、生地ごとのゲージ調整、仕上げ工程に向けられています。",
   lines: [
-    "Ultra-long staple cotton selected before the first loop.",
-    "Circular-knit in our Wakayama factory — gauge controlled per weight.",
-    "Flatlock seams, shaped collar, inspected before shipping.",
-    "Six silhouettes across six jerseys — not one tee renamed twelve times.",
+    "最初のループより前に選ぶ、超長繊維コットン。",
+    "和歌山工場での円編——重量ごとにゲージを調整。",
+    "フラットロック縫製、型付けした襟、出荷前の検品。",
+    "1枚のTシャツを12回改名したのではなく、6つのシルエット。",
   ],
-  range:
-    "Collection ¥12,000–¥18,000. Core tees at ¥15,000.",
-  care:
-    "Built to soften with wear, not lose shape in a season.",
+  range: "コレクション ¥12,000–¥18,000。定番Tシャツ ¥15,000。",
+  care: "1シーズンで形を失うのではなく、着るほどにやわらかくなることを目指しています。",
 } as const;
 
 export const HOME_CREDIBILITY = {
-  title: "Credibility",
-  voicesTitle: "Editorial & wear",
-  wearingTitle: "After months of wear",
-  factsTitle: "At a glance",
-  stockistLink: "Our factory in Wakayama",
-  journalLink: "Read the journal",
+  title: "ブランドについて",
+  voicesTitle: "メモと着用",
+  wearingTitle: "洗濯を重ねて",
+  factsTitle: "概要",
+  stockistLink: "和歌山の工場について",
+  journalLink: "読みものを見る",
 } as const;
 
 export const PDP_CREDIBILITY = {
-  voicesTitle: "What others say",
-  wearingTitle: "Wear over time",
+  voicesTitle: "メモ",
+  wearingTitle: "着用後の変化",
   priceTitle: PRICE_POSITIONING.headline,
 } as const;
 

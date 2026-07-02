@@ -11,37 +11,37 @@ export type StoreGuideSection = {
 export const STORE_GUIDE_SECTIONS: StoreGuideSection[] = [
   {
     id: "shipping",
-    title: "Shipping",
+    title: "配送",
     summary:
-      "Orders ship within 3–7 business days. Domestic shipping is ¥600; free on orders over ¥10,000.",
+      "ご注文確定後、3〜7営業日以内に発送します。送料は全国一律 ¥600（税込）。¥10,000以上で送料無料。",
     href: "/shipping",
-    linkLabel: "Shipping details",
+    linkLabel: "配送について",
   },
   {
     id: "returns",
-    title: "Returns",
+    title: "返品",
     summary: RETURNS_POLICY.storeGuideSummary,
     href: "/shipping",
-    linkLabel: "Return policy",
+    linkLabel: "返品について",
   },
   {
     id: "tracking",
-    title: "Order tracking",
+    title: "配送状況",
     summary:
-      "A tracking number is sent by email once your order leaves our atelier.",
+      "商品発送後、追跡番号をメールでお知らせします。",
     href: "/contact",
-    linkLabel: "Contact",
+    linkLabel: "お問い合わせ",
   },
   {
     id: "tax",
-    title: "Tax & duties",
+    title: "税・関税",
     summary:
-      "Prices include tax. No additional duties apply to domestic orders within Japan.",
+      "表示価格は税込です。国内配送に追加の関税はかかりません。",
   },
 ];
 
 export const STORE_GUIDE_PAGE = {
-  title: "Store Guide",
+  title: "ご利用ガイド",
   intro:
-    "Shipping, returns, and order support — the essentials for shopping with WHITE TEE.",
+    "配送、返品、注文サポート——WHITE TEE でお買い物する際の基本情報です。",
 } as const;

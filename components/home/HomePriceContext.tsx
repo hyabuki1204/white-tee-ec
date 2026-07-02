@@ -13,7 +13,7 @@ export function HomePriceContext() {
           <div className="relative aspect-[16/10] overflow-hidden bg-[#f4f4f2]">
             <Image
               src={CREDIBILITY_IMAGES.craft}
-              alt="Collar and fabric inspection at the atelier"
+              alt="襟と生地の検品"
               fill
               sizes="(max-width: 1024px) 100vw, 45vw"
               className="object-cover"

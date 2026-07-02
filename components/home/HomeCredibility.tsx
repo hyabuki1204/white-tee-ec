@@ -76,7 +76,7 @@ export function HomeCredibility() {
                   <li key={note.fabric} className="space-y-2">
                     <p className="text-[10px] font-light tracking-[0.1em] text-[#9a9a9a]">
                       {note.fabric}
-                      <span className="text-[#c8c8c6]"> · {note.months} months</span>
+                      <span className="text-[#c8c8c6]"> · {note.months}か月</span>
                     </p>
                     {note.lines.map((line) => (
                       <p

@@ -1,5 +1,4 @@
 import { FIT_TYPE_GLOSSARY } from "@/lib/products/fit-glossary";
-import { JaHelperText } from "@/components/ui/JaHelperText";
 import { SITE_UI_COPY } from "@/lib/copy/site-ui";
 import type { ProductFitProfile } from "@/types/product-fit";
 
@@ -30,9 +29,9 @@ function ModelFitContent({ fitProfile }: Pick<ProductModelFitInfoProps, "fitProf
         <p className="text-[11px] font-light leading-[1.85] tracking-[0.04em] text-neutral-500 md:text-[10px]">
           {copy.wearingSize(primaryModel.size)}
         </p>
-        <JaHelperText spacing="tight">
-          {copy.modelLineJa(primaryModel.heightCm, primaryModel.weightKg, primaryModel.size)}
-        </JaHelperText>
+        <p className="text-[11px] font-light leading-[1.85] tracking-[0.04em] text-neutral-400 md:text-[10px]">
+          {copy.sizeHint}
+        </p>
       </div>
 
       <div className="space-y-3">
