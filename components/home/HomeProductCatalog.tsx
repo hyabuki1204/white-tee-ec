@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 import { HomeCredibility } from "@/components/home/HomeCredibility";
 import { HomeCta } from "@/components/home/HomeCta";
-import { HomeDetail } from "@/components/home/HomeDetail";
 import { HomeHero } from "@/components/home/HomeHero";
 import { HomePriceContext } from "@/components/home/HomePriceContext";
 import { HomeProductGridWithSleeveToggle } from "@/components/home/HomeProductGridWithSleeveToggle";
@@ -59,7 +58,6 @@ export function HomeProductCatalog({
         </div>
       </section>
 
-      {featuredDetail ? <HomeDetail detail={featuredDetail} /> : null}
       <HomeStory />
       <HomeCredibility />
       <HomePriceContext />
