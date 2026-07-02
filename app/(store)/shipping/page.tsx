@@ -6,7 +6,7 @@ import { buildPageMetadata } from "@/lib/seo/metadata";
 
 export async function generateMetadata(): Promise<Metadata> {
   return buildPageMetadata({
-    title: "Shipping & Returns",
+    title: "配送・返品",
     description: "配送・返品について",
     path: "/shipping",
   });
@@ -21,7 +21,7 @@ export default async function ShippingPage() {
         <header className="text-center">
           <p className="text-[10px] font-light tracking-[0.16em] text-neutral-400">
             <Link href="/store-guide" className="transition-opacity hover:opacity-60">
-              Store Guide
+              ご利用ガイド
             </Link>
           </p>
           <h1 className="mt-4 text-[13px] font-light tracking-[0.28em] text-neutral-800 md:text-[14px]">

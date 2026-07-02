@@ -17,37 +17,37 @@ export const HOME_COPY = {
   },
   proof: [
     {
-      label: "Fabric",
-      line: "Ultra-long staple cotton across six weights",
+      label: "透けにくさ",
+      line: "生地ごとに厚みと編み密度を調整。1枚着でも安心できる白。",
     },
     {
-      label: "Pattern",
-      line: "Slim to boxy — each silhouette calibrated",
+      label: "形の残り方",
+      line: "洗濯を重ねても首元と肩線が保たれるよう、襟と縫製に時間をかけています。",
     },
     {
-      label: "Finish",
-      line: "Wakayama flatlock seams, hand-shaped collar",
+      label: "選びやすさ",
+      line: "6種類のジャージー × 6つのシルエット。体型と着方から選べます。",
     },
   ],
   detail: {
-    caption: "Representative fit",
+    caption: "代表モデルの着用例",
   },
   story: [
     {
       key: "material",
-      title: "Material",
-      lines: ["Ultra-long staple.", "Six weights."],
+      title: "素材",
+      lines: ["超長繊維コットン。", "6つの重量。"],
       image: HOME_IMAGES.story.material,
     },
     {
       key: "finish",
-      title: "Finish",
-      lines: ["Wakayama.", "Hand finish."],
+      title: "仕上げ",
+      lines: ["和歌山。", "手仕上げ。"],
       image: HOME_IMAGES.story.finish,
     },
   ],
   cta: {
-    label: "VIEW PIECE",
+    label: "詳しく見る",
     productSlug: HOME_FEATURED_PRODUCT_SLUG,
   },
 } as const;

@@ -5,10 +5,12 @@ type CartCheckoutTrustProps = {
   compact?: boolean;
 };
 
+const COMPACT_ITEM_IDS = ["production", "returns"] as const;
+
 export function CartCheckoutTrust({ compact = false }: CartCheckoutTrustProps) {
   const items = compact
     ? CHECKOUT_TRUST_COPY.items.filter((item) =>
-        ["Production", "Returns"].includes(item.label),
+        COMPACT_ITEM_IDS.includes(item.id as (typeof COMPACT_ITEM_IDS)[number]),
       )
     : CHECKOUT_TRUST_COPY.items;
 
@@ -28,7 +30,7 @@ export function CartCheckoutTrust({ compact = false }: CartCheckoutTrustProps) {
 
       <ul className={compact ? "space-y-2" : "space-y-4"}>
         {items.map((item) => (
-          <li key={item.label} className="space-y-1">
+          <li key={item.id} className="space-y-1">
             {!compact ? (
               <p className="text-[10px] font-light tracking-[0.1em] text-neutral-400">
                 {item.label}
@@ -37,7 +39,7 @@ export function CartCheckoutTrust({ compact = false }: CartCheckoutTrustProps) {
             <p className="text-[10px] font-light leading-[1.85] tracking-[0.04em] text-neutral-500">
               {compact ? (
                 <>
-                  <span className="text-neutral-400">{item.label}. </span>
+                  <span className="text-neutral-400">{item.label}。 </span>
                   {item.line}
                 </>
               ) : (
@@ -49,17 +51,12 @@ export function CartCheckoutTrust({ compact = false }: CartCheckoutTrustProps) {
       </ul>
 
       {!compact ? (
-        <>
-          <p className="text-[10px] font-light leading-[1.8] tracking-[0.04em] text-neutral-300">
-            {CHECKOUT_TRUST_COPY.helperJa}
-          </p>
-          <Link
-            href="/shipping"
-            className="inline-block text-[10px] font-light tracking-[0.08em] text-neutral-400 transition-opacity hover:opacity-60"
-          >
-            Shipping & Returns
-          </Link>
-        </>
+        <Link
+          href="/shipping"
+          className="inline-block text-[10px] font-light tracking-[0.08em] text-neutral-400 transition-opacity hover:opacity-60"
+        >
+          {CHECKOUT_TRUST_COPY.shippingLink}
+        </Link>
       ) : null}
     </div>
   );

@@ -15,11 +15,7 @@ type SizeRecommendationToolProps = {
   collapsibleOnlyMobile?: boolean;
 };
 
-const PREFERENCES: { value: FitPreference; label: string }[] = [
-  { value: "just-fit", label: "Just fit" },
-  { value: "relaxed", label: "Relaxed" },
-  { value: "oversized", label: "Oversized" },
-];
+const PREFERENCES = SITE_UI_COPY.sizeRecommendation.preferences;
 
 function SizeRecommendationContent({
   fitProfile,

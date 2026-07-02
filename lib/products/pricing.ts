@@ -22,7 +22,7 @@ export const PRICE_LADDER = {
   max: 18_000,
   core: 15_000,
   label: "¥12,000–¥18,000",
-  coreLabel: "Core tees at ¥15,000",
+  coreLabel: "定番Tシャツ ¥15,000",
 } as const;
 
 export function getCatalogPrice(slug: string, fallback: number): number {

@@ -2,29 +2,33 @@ import { RETURNS_POLICY } from "@/lib/store-ui/returns-policy";
 import { PRICE_LADDER } from "@/lib/products/pricing";
 
 export const CHECKOUT_TRUST_COPY = {
-  title: "Before you check out",
+  title: "ご注文前のご確認",
+  shippingLink: RETURNS_POLICY.shippingLink,
   items: [
     {
-      label: "Production",
-      line: "Knit and finished in Wakayama — in-house, not outsourced.",
+      id: "production",
+      label: "製造",
+      line: "和歌山の自社工場で編み立て・仕上げ。外注ではなく一貫製造です。",
     },
     {
-      label: "Shipping",
+      id: "shipping",
+      label: "配送",
       line: RETURNS_POLICY.shipping,
     },
     {
-      label: "Returns",
+      id: "returns",
+      label: "返品",
       line: RETURNS_POLICY.returns,
     },
     {
-      label: "Payment",
-      line: "Secure checkout via Stripe. Tax included.",
+      id: "payment",
+      label: "決済",
+      line: "Stripeによる安全な決済。表示価格は税込です。",
     },
     {
-      label: "Price",
-      line: `${PRICE_LADDER.label} collection. ${PRICE_LADDER.coreLabel}.`,
+      id: "price",
+      label: "価格",
+      line: `${PRICE_LADDER.label}のコレクション。${PRICE_LADDER.coreLabel}。`,
     },
   ],
-  helperJa:
-    "和歌山工場で製造。14日以内返品可。Stripeによる安全な決済。",
 } as const;

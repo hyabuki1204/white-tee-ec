@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {
   EDITORIAL_VOICES,
+  HOME_CREDIBILITY,
   PDP_CREDIBILITY,
   PRICE_POSITIONING,
   getWearingNoteForFabric,
@@ -42,7 +43,7 @@ export function ProductCredibility({ fabricName }: ProductCredibilityProps) {
             {PDP_CREDIBILITY.wearingTitle}
           </h2>
           <p className="mt-3 text-[10px] font-light tracking-[0.08em] text-neutral-400">
-            {wearingNote.fabric} · {wearingNote.months} months
+            {wearingNote.fabric} · {wearingNote.months}か月着用
           </p>
           <div className="mt-3 space-y-2">
             {wearingNote.lines.map((line) => (
@@ -67,11 +68,14 @@ export function ProductCredibility({ fabricName }: ProductCredibilityProps) {
         <p className="mt-3 text-[10px] font-light leading-[1.9] tracking-[0.04em] text-neutral-400">
           {PRICE_POSITIONING.range}
         </p>
+        <p className="mt-3 text-[10px] font-light leading-[1.9] tracking-[0.04em] text-neutral-400">
+          {PRICE_POSITIONING.care}
+        </p>
         <Link
           href="/stockist"
           className="mt-4 inline-block text-[10px] font-light tracking-[0.08em] text-neutral-400 transition-opacity hover:opacity-60"
         >
-          Our factory in Wakayama
+          {HOME_CREDIBILITY.stockistLink}
         </Link>
       </div>
     </section>

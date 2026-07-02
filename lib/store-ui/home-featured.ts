@@ -7,19 +7,19 @@ import type { Product } from "@/types";
 export const HOME_FEATURED_PRODUCT_SLUG = "heavyweight-crew-neck";
 
 const THICKNESS_LABEL: Record<FabricCharacterLevel, string> = {
-  1: "Lightweight, open knit",
-  2: "Light, fine gauge",
-  3: "Mid-weight",
-  4: "Substantial body",
-  5: "Heavyweight, dense knit",
+  1: "軽やか、開いた編み",
+  2: "薄手、細番手",
+  3: "中厚手",
+  4: "しっかりしたボディ感",
+  5: "ヘビーウェイト、密度高",
 };
 
 const SHEERNESS_LABEL: Record<FabricCharacterLevel, string> = {
-  1: "Low — opaque in daylight",
-  2: "Low — minimal show-through",
-  3: "Moderate in strong light",
-  4: "Noticeable in daylight",
-  5: "Sheer in daylight",
+  1: "低 — 日中も透けにくい",
+  2: "低 — 透け感は少ない",
+  3: "強い光下でやや見える",
+  4: "日中で透けやすい",
+  5: "日中でも透け感あり",
 };
 
 export type HomeDetailView = {
@@ -59,9 +59,9 @@ export function getHomeDetailViews(product: Product): HomeDetailView[] {
     side;
 
   return [
-    { src: product.imageUrl, alt: `${product.name} front` },
-    { src: side, alt: `${product.name} side` },
-    { src: full, alt: `${product.name} full` },
+    { src: product.imageUrl, alt: `${product.name} 正面` },
+    { src: side, alt: `${product.name} サイド` },
+    { src: full, alt: `${product.name} 全身` },
   ];
 }
 
@@ -84,20 +84,20 @@ export function buildHomeDetailContent(
     productHref: `/products/${product.slug}`,
     model: {
       height: model ? `${model.heightCm}cm` : "175cm",
-      size: model ? `${model.size} size` : "L size",
+      size: model ? `${model.size}` : "L",
     },
-    material: product.material || fabric?.tagline || "Compact cotton jersey.",
+    material: product.material || fabric?.tagline || "コットン100%ジャージー。",
     specs: [
       {
-        label: "Sheerness",
+        label: "透け感",
         value: characterLabel(SHEERNESS_LABEL, character.sheerness),
       },
       {
-        label: "Thickness",
+        label: "厚み",
         value: characterLabel(THICKNESS_LABEL, character.thickness),
       },
       {
-        label: "Fit",
+        label: "フィット",
         value: product.fitProfile.fitLabel,
       },
     ],

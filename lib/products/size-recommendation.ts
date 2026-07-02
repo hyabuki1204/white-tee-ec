@@ -98,16 +98,16 @@ export function recommendSize(
   const smaller = shiftSize(recommended, -1, available);
   const larger = shiftSize(recommended, 1, available);
 
-  const primaryLine = `Recommended size: ${recommended}`;
+  const primaryLine = `おすすめサイズ：${recommended}`;
 
   const secondaryParts: string[] = [];
 
   if (larger !== recommended) {
-    secondaryParts.push(`For a more relaxed fit, choose ${larger}.`);
+    secondaryParts.push(`ゆったり着たい方は ${larger} を。`);
   }
 
   if (smaller !== recommended) {
-    secondaryParts.push(`For a closer fit, choose ${smaller}.`);
+    secondaryParts.push(`よりフィットさせたい方は ${smaller} を。`);
   }
 
   const helperJa = buildHelperJa(recommended, smaller, larger);
