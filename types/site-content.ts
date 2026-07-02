@@ -11,7 +11,9 @@ export type HomePageContent = {
 
 export type AboutPageContent = {
   headline: string;
+  headlineJa?: string | null;
   bodyParagraphs: string[][];
+  bodyParagraphsJa?: string[][] | null;
   /** One-line Japanese summary at the end. */
   helperJa?: string | null;
 };

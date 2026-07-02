@@ -35,14 +35,14 @@ export const HOME_COPY = {
   story: [
     {
       key: "material",
-      title: "素材",
-      lines: ["超長繊維コットン。", "6つの重量。"],
+      title: "Material",
+      lines: ["Ultra-long staple.", "Six weights."],
       image: HOME_IMAGES.story.material,
     },
     {
       key: "finish",
-      title: "仕上げ",
-      lines: ["和歌山。", "手仕上げ。"],
+      title: "Finish",
+      lines: ["Wakayama.", "Hand finish."],
       image: HOME_IMAGES.story.finish,
     },
   ],
