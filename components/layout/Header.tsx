@@ -82,7 +82,7 @@ export function Header() {
 
             <Link
               href="/"
-              className="justify-self-center text-[11px] tracking-[0.32em] text-neutral-800 transition-opacity hover:opacity-60 lg:text-[12px]"
+              className="justify-self-center text-[12px] tracking-[0.32em] text-neutral-800 transition-opacity hover:opacity-60 lg:text-[13px]"
             >
               {GRAPHPAPER_STORE_COPY.brandLine}
             </Link>
@@ -104,7 +104,7 @@ export function Header() {
           <div className="flex items-center justify-between gap-6 md:hidden">
             <Link
               href="/"
-              className="text-[11px] tracking-[0.32em] text-neutral-800 transition-opacity hover:opacity-60"
+              className="text-[12px] tracking-[0.32em] text-neutral-800 transition-opacity hover:opacity-60"
             >
               {GRAPHPAPER_STORE_COPY.brandLine}
             </Link>

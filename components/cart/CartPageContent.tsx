@@ -54,19 +54,19 @@ export function CartPageContent({
   if (items.length === 0) {
     return (
       <div className="py-16 text-center sm:py-20">
-        <p className="text-[13px] tracking-[0.24em] text-neutral-600 md:text-xs md:tracking-[0.3em] md:text-neutral-500">
+        <p className="text-[14px] tracking-[0.24em] text-neutral-600 md:text-[13px] md:tracking-[0.3em] md:text-neutral-600">
           {copy.empty}
         </p>
         <div className="mt-8 flex flex-col items-center gap-4">
           <Link
             href="/products?sleeve=short"
-            className="inline-flex min-h-11 items-center justify-center px-2 text-[13px] font-light tracking-wide text-neutral-800 transition-opacity active:opacity-60 md:text-xs md:text-neutral-900 md:hover:opacity-60"
+            className="inline-flex min-h-11 items-center justify-center px-2 text-[14px] font-light tracking-wide text-neutral-800 transition-opacity active:opacity-60 md:text-[13px] md:text-neutral-900 md:hover:opacity-60"
           >
             {copy.viewAll}
           </Link>
           <Link
             href="/fabric"
-            className="text-[11px] font-light tracking-[0.06em] text-neutral-400 transition-opacity duration-300 hover:opacity-60"
+            className="text-[12px] font-light tracking-[0.06em] text-neutral-600 transition-opacity duration-300 hover:opacity-60"
           >
             {copy.exploreFabric}
           </Link>

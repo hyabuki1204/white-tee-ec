@@ -41,15 +41,15 @@ export function HomeFabricCard({ fabric, className }: HomeFabricCardProps) {
               "[@media(hover:none)]:opacity-100 [@media(hover:none)]:from-neutral-900/45",
             )}
           >
-            <p className="text-[10px] font-light tracking-[0.12em] text-white/85">
+            <p className="text-[11px] font-light tracking-[0.12em] text-white/85">
               {GRAPHPAPER_STORE_COPY.home.sectionFabric}
             </p>
-            <p className="mt-1 text-[11px] font-light leading-snug tracking-[0.06em] text-white">
+            <p className="mt-1 text-[12px] font-light leading-snug tracking-[0.06em] text-white">
               {fabric.name}
             </p>
             <p
               className={cn(
-                "mt-2 text-[11px] font-light leading-relaxed text-white/85",
+                "mt-2 text-[12px] font-light leading-relaxed text-white/85",
                 presentation.taglineTracking,
               )}
             >

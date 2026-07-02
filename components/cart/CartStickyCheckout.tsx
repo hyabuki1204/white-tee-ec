@@ -25,10 +25,10 @@ export function CartStickyCheckout({
         <CartCheckoutTrust compact />
         <div className="flex items-end justify-between gap-4">
           <div className="min-w-0">
-            <p className="text-[10px] font-light tracking-[0.1em] text-neutral-400">
+            <p className="text-[11px] font-light tracking-[0.1em] text-neutral-600">
               {checkout.copy.total}
             </p>
-            <p className="text-[15px] font-light tracking-[0.04em] text-neutral-800">
+            <p className="text-[16px] font-light tracking-[0.04em] text-neutral-800">
               {checkout.formatPrice(checkout.total)}
             </p>
           </div>
@@ -47,7 +47,7 @@ export function CartStickyCheckout({
       </div>
 
       {checkout.error ? (
-        <p className="mx-auto mt-3 max-w-xl text-[11px] font-light text-red-600">
+        <p className="mx-auto mt-3 max-w-xl text-[12px] font-light text-red-600">
           {checkout.error}
         </p>
       ) : null}

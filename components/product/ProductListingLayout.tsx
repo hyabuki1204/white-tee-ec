@@ -58,10 +58,10 @@ export function ProductListingLayout({
           <div className="min-w-0 flex-1">
             <header className="mb-8 flex flex-col gap-6 border-b border-neutral-200/70 pb-6 sm:flex-row sm:items-end sm:justify-between md:mb-10">
               <div>
-                <h1 className="text-[13px] font-light tracking-[0.28em] text-neutral-800">
+                <h1 className="text-[14px] font-light tracking-[0.28em] text-neutral-800">
                   {title}
                 </h1>
-                <p className="mt-3 text-[11px] font-light tracking-[0.08em] text-neutral-400">
+                <p className="mt-3 text-[12px] font-light tracking-[0.08em] text-neutral-600">
                   {GRAPHPAPER_STORE_COPY.plp.items(products.length)}
                 </p>
               </div>

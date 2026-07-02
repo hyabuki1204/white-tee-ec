@@ -21,34 +21,34 @@ export function HomePriceContext() {
           </div>
 
           <div className="space-y-6">
-            <h2 className="text-[11px] font-light tracking-[0.2em] text-[#9a9a9a]">
+            <h2 className="text-[12px] font-light tracking-[0.2em] text-[#7a7a7a]">
               {PRICE_POSITIONING.headline}
             </h2>
-            <p className="text-[12px] font-light leading-[2] tracking-[0.04em] text-[#6c6c6c] md:text-[13px]">
+            <p className="text-[13px] font-light leading-[2] tracking-[0.04em] text-[#505050] md:text-[15px]">
               {PRICE_POSITIONING.intro}
             </p>
             <div className="space-y-2">
               {PRICE_POSITIONING.lines.map((line) => (
                 <p
                   key={line}
-                  className="text-[11px] font-light leading-[1.95] tracking-[0.04em] text-[#6c6c6c]"
+                  className="text-[12px] font-light leading-[1.95] tracking-[0.04em] text-[#505050]"
                 >
                   {line}
                 </p>
               ))}
             </div>
-            <p className="text-[11px] font-light leading-[1.9] tracking-[0.04em] text-[#9a9a9a]">
+            <p className="text-[12px] font-light leading-[1.9] tracking-[0.04em] text-[#7a7a7a]">
               {PRICE_POSITIONING.range}
             </p>
-            <p className="text-[11px] font-light leading-[1.9] tracking-[0.04em] text-[#9a9a9a]">
+            <p className="text-[12px] font-light leading-[1.9] tracking-[0.04em] text-[#7a7a7a]">
               {PRICE_POSITIONING.care}
             </p>
 
             <blockquote className="border-l border-[#e8e8e6] pl-4">
-              <p className="text-[11px] font-light leading-[1.9] tracking-[0.04em] text-[#6c6c6c]">
+              <p className="text-[12px] font-light leading-[1.9] tracking-[0.04em] text-[#505050]">
                 {EDITORIAL_VOICES[1]?.line}
               </p>
-              <cite className="mt-2 block text-[10px] font-light not-italic tracking-[0.1em] text-[#9a9a9a]">
+              <cite className="mt-2 block text-[11px] font-light not-italic tracking-[0.1em] text-[#7a7a7a]">
                 {EDITORIAL_VOICES[1]?.source}
               </cite>
             </blockquote>

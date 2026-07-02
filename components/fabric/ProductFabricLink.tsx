@@ -43,12 +43,12 @@ export function ProductFabricLink({ fabric }: ProductFabricLinkProps) {
           </div>
 
           <div className="mx-auto mt-10 flex max-w-md flex-col items-center text-center sm:mt-14 md:mt-16 lg:mt-20">
-            <h2 className="text-[15px] font-light tracking-[0.1em] text-neutral-800 transition-opacity duration-500 group-hover:opacity-50 sm:mt-0 md:text-sm md:tracking-[0.12em]">
+            <h2 className="text-[16px] font-light tracking-[0.1em] text-neutral-800 transition-opacity duration-500 group-hover:opacity-50 sm:mt-0 md:text-sm md:tracking-[0.12em]">
               {fabric.name}
             </h2>
             <p
               className={cn(
-                "mt-5 text-[11px] font-light leading-[1.85] text-neutral-400 md:mt-6 md:text-[10px]",
+                "mt-5 text-[12px] font-light leading-[1.85] text-neutral-600 md:mt-6 md:text-[12px]",
                 presentation.taglineTracking,
               )}
             >

@@ -11,7 +11,7 @@ export function ProductValueProposition({
 }: ProductValuePropositionProps) {
   return (
     <section aria-label={content.headline} className="space-y-5 border-t border-neutral-200/50 pt-6">
-      <h2 className="text-[10px] font-light uppercase tracking-[0.16em] text-neutral-400">
+      <h2 className="text-[11px] font-light uppercase tracking-[0.16em] text-neutral-600">
         {content.headline}
       </h2>
 
@@ -36,7 +36,7 @@ export function ProductValueProposition({
         {content.lines.map((line) => (
           <p
             key={line}
-            className="text-[10px] font-light leading-[1.95] tracking-[0.04em] text-neutral-500"
+            className="text-[11px] font-light leading-[1.95] tracking-[0.04em] text-neutral-600"
           >
             {line}
           </p>
@@ -47,7 +47,7 @@ export function ProductValueProposition({
         {content.construction.map((line) => (
           <p
             key={line}
-            className="text-[10px] font-light leading-[1.9] tracking-[0.04em] text-neutral-400"
+            className="text-[11px] font-light leading-[1.9] tracking-[0.04em] text-neutral-600"
           >
             {line}
           </p>
@@ -55,22 +55,22 @@ export function ProductValueProposition({
       </div>
 
       {content.priceNote ? (
-        <p className="text-[10px] font-light leading-[1.9] tracking-[0.04em] text-neutral-400">
+        <p className="text-[11px] font-light leading-[1.9] tracking-[0.04em] text-neutral-600">
           {content.priceNote}
         </p>
       ) : null}
 
-      <p className="text-[10px] font-light leading-[1.9] tracking-[0.04em] text-neutral-400">
+      <p className="text-[11px] font-light leading-[1.9] tracking-[0.04em] text-neutral-600">
         {PRICE_POSITIONING.range}
       </p>
 
       <dl className="grid gap-3 pt-1">
         {content.specs.map((spec) => (
           <div key={spec.label} className="grid gap-0.5">
-            <dt className="text-[10px] font-light tracking-[0.1em] text-neutral-400">
+            <dt className="text-[11px] font-light tracking-[0.1em] text-neutral-600">
               {spec.label}
             </dt>
-            <dd className="text-[10px] font-light tracking-[0.04em] text-neutral-500">
+            <dd className="text-[11px] font-light tracking-[0.04em] text-neutral-600">
               {spec.value}
             </dd>
           </div>

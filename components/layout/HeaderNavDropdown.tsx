@@ -21,7 +21,7 @@ export function HeaderNavDropdown({ item }: HeaderNavDropdownProps) {
       <Link
         href={item.href}
         className={cn(
-          "text-[11px] font-light tracking-[0.18em] transition-opacity hover:opacity-60",
+          "text-[12px] font-light tracking-[0.18em] transition-opacity hover:opacity-60",
           active ? "text-neutral-900" : "text-neutral-600",
         )}
         aria-current={active ? "page" : undefined}
@@ -36,7 +36,7 @@ export function HeaderNavDropdown({ item }: HeaderNavDropdownProps) {
       <Link
         href={item.href}
         className={cn(
-          "inline-flex items-center gap-1.5 text-[11px] font-light tracking-[0.18em] transition-opacity hover:opacity-60",
+          "inline-flex items-center gap-1.5 text-[12px] font-light tracking-[0.18em] transition-opacity hover:opacity-60",
           active ? "text-neutral-900" : "text-neutral-600",
         )}
         aria-current={active ? "page" : undefined}
@@ -44,7 +44,7 @@ export function HeaderNavDropdown({ item }: HeaderNavDropdownProps) {
         {item.label}
         <span
           aria-hidden
-          className="text-[9px] tracking-normal text-neutral-400 transition-transform group-hover:rotate-180 group-focus-within:rotate-180"
+          className="text-[10px] tracking-normal text-neutral-600 transition-transform group-hover:rotate-180 group-focus-within:rotate-180"
         >
           ▾
         </span>
@@ -67,8 +67,8 @@ export function HeaderNavDropdown({ item }: HeaderNavDropdownProps) {
                 <Link
                   href={child.href}
                   className={cn(
-                    "block px-4 py-2.5 text-[11px] font-light tracking-[0.12em] transition-opacity hover:opacity-60",
-                    childActive ? "text-neutral-900" : "text-neutral-500",
+                    "block px-4 py-2.5 text-[12px] font-light tracking-[0.12em] transition-opacity hover:opacity-60",
+                    childActive ? "text-neutral-900" : "text-neutral-600",
                   )}
                   aria-current={childActive ? "page" : undefined}
                 >

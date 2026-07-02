@@ -47,19 +47,19 @@ export function HomeCredibility() {
 
           <div className="space-y-12">
             <div>
-              <p className="text-[11px] font-light tracking-[0.2em] text-[#9a9a9a]">
+              <p className="text-[12px] font-light tracking-[0.2em] text-[#7a7a7a]">
                 {HOME_CREDIBILITY.voicesTitle}
               </p>
               <ul className="mt-6 space-y-8">
                 {EDITORIAL_VOICES.map((voice) => (
                   <li key={voice.source} className="space-y-2">
-                    <p className="text-[10px] font-light tracking-[0.12em] text-[#9a9a9a]">
+                    <p className="text-[11px] font-light tracking-[0.12em] text-[#7a7a7a]">
                       {voice.source}
                       {voice.detail ? (
-                        <span className="text-[#c8c8c6]"> · {voice.detail}</span>
+                        <span className="text-[#a8a8a6]"> · {voice.detail}</span>
                       ) : null}
                     </p>
-                    <p className="text-[11px] font-light leading-[1.95] tracking-[0.04em] text-[#6c6c6c] md:text-[12px]">
+                    <p className="text-[12px] font-light leading-[1.95] tracking-[0.04em] text-[#505050] md:text-[14px]">
                       {voice.line}
                     </p>
                   </li>
@@ -68,20 +68,20 @@ export function HomeCredibility() {
             </div>
 
             <div>
-              <p className="text-[11px] font-light tracking-[0.2em] text-[#9a9a9a]">
+              <p className="text-[12px] font-light tracking-[0.2em] text-[#7a7a7a]">
                 {HOME_CREDIBILITY.wearingTitle}
               </p>
               <ul className="mt-6 space-y-8">
                 {WEARING_NOTES.map((note) => (
                   <li key={note.fabric} className="space-y-2">
-                    <p className="text-[10px] font-light tracking-[0.1em] text-[#9a9a9a]">
+                    <p className="text-[11px] font-light tracking-[0.1em] text-[#7a7a7a]">
                       {note.fabric}
-                      <span className="text-[#c8c8c6]"> · {note.months}か月</span>
+                      <span className="text-[#a8a8a6]"> · {note.months}か月</span>
                     </p>
                     {note.lines.map((line) => (
                       <p
                         key={line}
-                        className="text-[11px] font-light leading-[1.9] tracking-[0.04em] text-[#6c6c6c]"
+                        className="text-[12px] font-light leading-[1.9] tracking-[0.04em] text-[#505050]"
                       >
                         {line}
                       </p>
@@ -94,10 +94,10 @@ export function HomeCredibility() {
             <dl className="grid grid-cols-2 gap-6">
               {FACTS.map((fact) => (
                 <div key={fact.label} className="space-y-1">
-                  <dt className="text-[10px] font-light tracking-[0.12em] text-[#9a9a9a]">
+                  <dt className="text-[11px] font-light tracking-[0.12em] text-[#7a7a7a]">
                     {fact.label}
                   </dt>
-                  <dd className="text-[11px] font-light tracking-[0.04em] text-[#6c6c6c]">
+                  <dd className="text-[12px] font-light tracking-[0.04em] text-[#505050]">
                     {fact.value}
                   </dd>
                 </div>
@@ -107,13 +107,13 @@ export function HomeCredibility() {
             <div className="flex flex-wrap gap-x-6 gap-y-2 pt-2">
               <Link
                 href="/stockist"
-                className="text-[11px] font-light tracking-[0.08em] text-[#6c6c6c] transition-opacity hover:opacity-60"
+                className="text-[12px] font-light tracking-[0.08em] text-[#505050] transition-opacity hover:opacity-60"
               >
                 {HOME_CREDIBILITY.stockistLink}
               </Link>
               <Link
                 href="/journal"
-                className="text-[11px] font-light tracking-[0.08em] text-[#9a9a9a] transition-opacity hover:opacity-60"
+                className="text-[12px] font-light tracking-[0.08em] text-[#7a7a7a] transition-opacity hover:opacity-60"
               >
                 {HOME_CREDIBILITY.journalLink}
               </Link>

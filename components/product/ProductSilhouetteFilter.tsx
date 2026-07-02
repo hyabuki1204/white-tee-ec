@@ -42,8 +42,8 @@ export function ProductSilhouetteFilter({
 }: ProductSilhouetteFilterProps) {
   const linkClass = (isActive: boolean) =>
     cn(
-      "inline-flex min-h-9 items-center text-[11px] font-light tracking-[0.06em] transition-opacity duration-300 md:text-[10px]",
-      isActive ? "text-neutral-800" : "text-neutral-400 hover:opacity-60",
+      "inline-flex min-h-9 items-center text-[12px] font-light tracking-[0.06em] transition-opacity duration-300 md:text-[12px]",
+      isActive ? "text-neutral-800" : "text-neutral-600 hover:opacity-60",
     );
 
   const fitOptions = availableFits(products, activeSleeve);

@@ -136,7 +136,7 @@ export function ProductGallery({ product, displayName }: ProductGalleryProps) {
     return (
       <div className="bg-background lg:sticky lg:top-[var(--header-height)] lg:h-[calc(100vh-var(--header-height))]">
         <div className="flex aspect-[3/4] w-full items-center justify-center lg:aspect-auto lg:h-full">
-          <p className="text-xs font-light text-neutral-400">No image</p>
+          <p className="text-xs font-light text-neutral-600">No image</p>
         </div>
       </div>
     );
@@ -184,7 +184,7 @@ export function ProductGallery({ product, displayName }: ProductGalleryProps) {
                   className="object-contain p-4 md:p-8"
                 />
                 {isModelImage(index) ? (
-                  <span className="absolute bottom-5 left-5 text-[11px] font-light tracking-[0.12em] text-neutral-400 md:bottom-8 md:left-8">
+                  <span className="absolute bottom-5 left-5 text-[12px] font-light tracking-[0.12em] text-neutral-600 md:bottom-8 md:left-8">
                     {copy.modelCaption}
                   </span>
                 ) : null}
@@ -204,13 +204,13 @@ export function ProductGallery({ product, displayName }: ProductGalleryProps) {
             />
 
             {hasMultipleImages ? (
-              <span className="absolute bottom-5 right-5 text-[11px] font-light tracking-[0.14em] text-neutral-400 md:bottom-8 md:right-8 md:text-[10px] lg:bottom-10 lg:right-10">
+              <span className="absolute bottom-5 right-5 text-[12px] font-light tracking-[0.14em] text-neutral-600 md:bottom-8 md:right-8 md:text-[12px] lg:bottom-10 lg:right-10">
                 {activeIndex + 1}/{images.length}
               </span>
             ) : null}
 
             {showModelCaption ? (
-              <span className="absolute bottom-5 left-5 text-[11px] font-light tracking-[0.12em] text-neutral-400 md:bottom-8 md:left-8 md:text-[10px] lg:bottom-10 lg:left-10">
+              <span className="absolute bottom-5 left-5 text-[12px] font-light tracking-[0.12em] text-neutral-600 md:bottom-8 md:left-8 md:text-[12px] lg:bottom-10 lg:left-10">
                 {copy.modelCaption}
               </span>
             ) : null}
@@ -218,7 +218,7 @@ export function ProductGallery({ product, displayName }: ProductGalleryProps) {
 
           {hasMultipleImages ? (
             <>
-              <p className="px-6 pt-2 text-center text-[10px] font-light tracking-[0.08em] text-neutral-400 lg:hidden">
+              <p className="px-6 pt-2 text-center text-[11px] font-light tracking-[0.08em] text-neutral-600 lg:hidden">
                 {copy.gallerySwipeHint}
               </p>
               <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth px-6 pb-6 pt-3 [-ms-overflow-style:none] [scrollbar-width:none] lg:hidden [&::-webkit-scrollbar]:hidden">
@@ -233,7 +233,7 @@ export function ProductGallery({ product, displayName }: ProductGalleryProps) {
                   />
                 ))}
               </div>
-              <span className="px-6 pb-4 text-center text-[11px] font-light tracking-[0.14em] text-neutral-400 lg:hidden">
+              <span className="px-6 pb-4 text-center text-[12px] font-light tracking-[0.14em] text-neutral-600 lg:hidden">
                 {activeIndex + 1}/{images.length}
               </span>
             </>

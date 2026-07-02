@@ -12,7 +12,7 @@ export function ProductGrid({
 }: ProductGridProps) {
   if (products.length === 0) {
     return (
-      <p className="py-16 text-center text-[12px] font-light tracking-wide text-neutral-400">
+      <p className="py-16 text-center text-[13px] font-light tracking-wide text-neutral-600">
         No pieces match these filters.
       </p>
     );

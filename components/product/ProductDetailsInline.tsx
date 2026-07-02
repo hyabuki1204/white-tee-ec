@@ -33,33 +33,33 @@ export function ProductDetailsInline({
   return (
     <div className="mt-12 space-y-10 border-t border-neutral-200/60 pt-10 sm:mt-14 sm:pt-12 lg:mt-16">
       <section aria-label={copy.description} className="space-y-4">
-        <h2 className="text-[10px] font-light uppercase tracking-[0.16em] text-neutral-400">
+        <h2 className="text-[11px] font-light uppercase tracking-[0.16em] text-neutral-600">
           {copy.description}
         </h2>
-        <p className="text-[11px] font-light leading-[2] tracking-[0.03em] text-neutral-500">
+        <p className="text-[12px] font-light leading-[2] tracking-[0.03em] text-neutral-600">
           {detail.description}
         </p>
         {detail.fitNote ? (
-          <p className="text-[11px] font-light leading-[1.9] tracking-[0.04em] text-neutral-400">
+          <p className="text-[12px] font-light leading-[1.9] tracking-[0.04em] text-neutral-600">
             {detail.fitNote}
           </p>
         ) : null}
       </section>
 
       <section aria-label={copy.material} className="space-y-3">
-        <h2 className="text-[10px] font-light uppercase tracking-[0.16em] text-neutral-400">
+        <h2 className="text-[11px] font-light uppercase tracking-[0.16em] text-neutral-600">
           {copy.material}
         </h2>
-        <p className="text-[11px] font-light leading-[2] tracking-[0.04em] text-neutral-500">
+        <p className="text-[12px] font-light leading-[2] tracking-[0.04em] text-neutral-600">
           {detail.material}
         </p>
       </section>
 
       <section aria-label={copy.care} className="space-y-3">
-        <h2 className="text-[10px] font-light uppercase tracking-[0.16em] text-neutral-400">
+        <h2 className="text-[11px] font-light uppercase tracking-[0.16em] text-neutral-600">
           {copy.care}
         </h2>
-        <p className="text-[11px] font-light leading-[2.05] tracking-[0.03em] text-neutral-500">
+        <p className="text-[12px] font-light leading-[2.05] tracking-[0.03em] text-neutral-600">
           {detail.care}
         </p>
       </section>
@@ -69,10 +69,10 @@ export function ProductDetailsInline({
       )}
 
       <section id="size-guide" aria-label={copy.sizeGuide} className="space-y-4">
-        <h2 className="text-[10px] font-light uppercase tracking-[0.16em] text-neutral-400">
+        <h2 className="text-[11px] font-light uppercase tracking-[0.16em] text-neutral-600">
           {copy.sizeGuide}
         </h2>
-        <p className="text-[11px] font-light tracking-[0.1em] text-neutral-400">
+        <p className="text-[12px] font-light tracking-[0.1em] text-neutral-600">
           {productCopy.measurementsLabel}
         </p>
         <div className="relative">
@@ -87,7 +87,7 @@ export function ProductDetailsInline({
                     <th
                       key={label}
                       scope="col"
-                      className="pb-3 pr-3 text-[11px] font-light tracking-[0.08em] text-neutral-400"
+                      className="pb-3 pr-3 text-[12px] font-light tracking-[0.08em] text-neutral-600"
                     >
                       {label}
                     </th>
@@ -99,20 +99,20 @@ export function ProductDetailsInline({
                   <tr key={row.size}>
                     <th
                       scope="row"
-                      className="py-2 pr-3 text-left text-[11px] font-light text-neutral-600"
+                      className="py-2 pr-3 text-left text-[12px] font-light text-neutral-600"
                     >
                       {row.size}
                     </th>
-                    <td className="py-2 pr-3 text-[11px] font-light text-neutral-500">
+                    <td className="py-2 pr-3 text-[12px] font-light text-neutral-600">
                       {row.length}
                     </td>
-                    <td className="py-2 pr-3 text-[11px] font-light text-neutral-500">
+                    <td className="py-2 pr-3 text-[12px] font-light text-neutral-600">
                       {row.shoulder}
                     </td>
-                    <td className="py-2 pr-3 text-[11px] font-light text-neutral-500">
+                    <td className="py-2 pr-3 text-[12px] font-light text-neutral-600">
                       {row.chest}
                     </td>
-                    <td className="py-2 text-[11px] font-light text-neutral-500">
+                    <td className="py-2 text-[12px] font-light text-neutral-600">
                       {row.sleeve}
                     </td>
                   </tr>
@@ -120,11 +120,11 @@ export function ProductDetailsInline({
               </tbody>
             </table>
           </div>
-          <p className="mt-2 text-[11px] font-light tracking-[0.06em] text-neutral-300 md:hidden">
+          <p className="mt-2 text-[12px] font-light tracking-[0.06em] text-neutral-400 md:hidden">
             {productCopy.scrollHint}
           </p>
         </div>
-        <p className="text-[11px] font-light leading-[1.9] tracking-[0.04em] text-neutral-400">
+        <p className="text-[12px] font-light leading-[1.9] tracking-[0.04em] text-neutral-600">
           {productCopy.sizeTableExplainer}
         </p>
         <JaHelperText spacing="tight" className="max-w-sm">
@@ -142,12 +142,12 @@ export function ProductDetailsInline({
 
       {fabric ? (
         <details className="group border-t border-neutral-200/50 pt-8">
-          <summary className="cursor-pointer list-none text-[10px] font-light uppercase tracking-[0.14em] text-neutral-400 [&::-webkit-details-marker]:hidden">
+          <summary className="cursor-pointer list-none text-[11px] font-light uppercase tracking-[0.14em] text-neutral-600 [&::-webkit-details-marker]:hidden">
             <span className="group-open:opacity-60">{fabric.name}</span>
           </summary>
           <div className="space-y-4 pt-5">
             {fabric.tagline ? (
-              <p className="text-[11px] font-light leading-[1.85] tracking-[0.03em] text-neutral-400">
+              <p className="text-[12px] font-light leading-[1.85] tracking-[0.03em] text-neutral-600">
                 {fabric.tagline}
               </p>
             ) : null}
@@ -158,7 +158,7 @@ export function ProductDetailsInline({
             />
             <Link
               href={`/fabric/${fabric.slug}`}
-              className="inline-block text-[11px] font-light tracking-[0.06em] text-neutral-500 transition-opacity hover:opacity-60"
+              className="inline-block text-[12px] font-light tracking-[0.06em] text-neutral-600 transition-opacity hover:opacity-60"
             >
               {copy.aboutFabric(fabric.name)}
             </Link>

@@ -80,7 +80,7 @@ export default async function JournalArticlePage({
         <div className="mt-16 text-center md:mt-24">
           <Link
             href="/journal"
-            className="text-[11px] font-light tracking-[0.08em] text-neutral-400 transition-opacity duration-300 hover:opacity-60"
+            className="text-[12px] font-light tracking-[0.08em] text-neutral-600 transition-opacity duration-300 hover:opacity-60"
           >
             All journal entries
           </Link>

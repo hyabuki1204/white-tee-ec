@@ -42,7 +42,7 @@ function PurchaseStatus() {
 
   if (!selectedSize) {
     return (
-      <p className="min-h-[1rem] text-[11px] font-light leading-[1.8] tracking-[0.05em] text-neutral-400">
+      <p className="min-h-[1rem] text-[12px] font-light leading-[1.8] tracking-[0.05em] text-neutral-600">
         {productCopy.chooseSize}
       </p>
     );
@@ -50,7 +50,7 @@ function PurchaseStatus() {
 
   if (isOutOfStock) {
     return (
-      <p className="min-h-[1rem] text-[11px] font-light leading-[1.8] tracking-[0.05em] text-neutral-400">
+      <p className="min-h-[1rem] text-[12px] font-light leading-[1.8] tracking-[0.05em] text-neutral-600">
         {productCopy.unavailable}
       </p>
     );
@@ -58,7 +58,7 @@ function PurchaseStatus() {
 
   if (maxQuantity < 1) {
     return (
-      <p className="min-h-[1rem] text-[11px] font-light leading-[1.8] tracking-[0.05em] text-neutral-400">
+      <p className="min-h-[1rem] text-[12px] font-light leading-[1.8] tracking-[0.05em] text-neutral-600">
         {productCopy.allInBag}
       </p>
     );
@@ -66,7 +66,7 @@ function PurchaseStatus() {
 
   if (inCartQuantity > 0) {
     return (
-      <p className="min-h-[1rem] text-[11px] font-light leading-[1.8] tracking-[0.05em] text-neutral-400">
+      <p className="min-h-[1rem] text-[12px] font-light leading-[1.8] tracking-[0.05em] text-neutral-600">
         {productCopy.inBagMore(inCartQuantity, maxQuantity)}
       </p>
     );
@@ -74,7 +74,7 @@ function PurchaseStatus() {
 
   if (maxQuantity <= 5) {
     return (
-      <p className="min-h-[1rem] text-[11px] font-light leading-[1.8] tracking-[0.05em] text-neutral-400">
+      <p className="min-h-[1rem] text-[12px] font-light leading-[1.8] tracking-[0.05em] text-neutral-600">
         {productCopy.qtyLeft(maxQuantity)}
       </p>
     );
@@ -120,17 +120,17 @@ export function ProductPurchasePrimary({
   return (
     <div className={boxClassName}>
       <header className="shrink-0 space-y-5">
-        <p className="text-[10px] font-light tracking-[0.2em] text-neutral-400">
+        <p className="text-[11px] font-light tracking-[0.2em] text-neutral-600">
           {STORE_BRAND_LINE}
         </p>
-        <h1 className="text-[13px] font-light leading-[1.65] tracking-[0.04em] text-neutral-800">
+        <h1 className="text-[14px] font-light leading-[1.65] tracking-[0.04em] text-neutral-800">
           {displayName}
         </h1>
         <div>
-          <p className="text-[13px] font-light tracking-[0.05em] text-neutral-600">
+          <p className="text-[14px] font-light tracking-[0.05em] text-neutral-600">
             {formatPrice(product.price)}
           </p>
-          <p className="mt-2 text-[10px] font-light leading-[1.7] tracking-[0.04em] text-neutral-400">
+          <p className="mt-2 text-[11px] font-light leading-[1.7] tracking-[0.04em] text-neutral-600">
             {pdpCopy.dutiesNote}
           </p>
         </div>
@@ -177,7 +177,7 @@ export function ProductPurchasePrimary({
 
           <div aria-live="polite" className="min-h-[1.25rem]">
             {isAdded && selectedSize ? (
-              <p className="text-[11px] font-light leading-[1.8] tracking-[0.05em] text-neutral-400">
+              <p className="text-[12px] font-light leading-[1.8] tracking-[0.05em] text-neutral-600">
                 {productCopy.added(
                   selectedSize,
                   quantity > 1 ? quantity : undefined,
@@ -188,7 +188,7 @@ export function ProductPurchasePrimary({
           </div>
 
           {selectedVariant?.sku ? (
-            <p className="text-[10px] font-light tracking-[0.08em] text-neutral-400">
+            <p className="text-[11px] font-light tracking-[0.08em] text-neutral-600">
               {pdpCopy.sku} {selectedVariant.sku}
             </p>
           ) : null}

@@ -83,7 +83,7 @@ export function HomeHero() {
           >
             <span
               aria-hidden
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-[18px] font-light tracking-[0.08em] text-neutral-500 opacity-40 transition-opacity duration-300 group-hover:opacity-70 md:left-6 md:text-[20px]"
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-[18px] font-light tracking-[0.08em] text-neutral-600 opacity-40 transition-opacity duration-300 group-hover:opacity-70 md:left-6 md:text-[20px]"
             >
               ←
             </span>
@@ -97,7 +97,7 @@ export function HomeHero() {
           >
             <span
               aria-hidden
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-[18px] font-light tracking-[0.08em] text-neutral-500 opacity-40 transition-opacity duration-300 group-hover:opacity-70 md:right-6 md:text-[20px]"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-[18px] font-light tracking-[0.08em] text-neutral-600 opacity-40 transition-opacity duration-300 group-hover:opacity-70 md:right-6 md:text-[20px]"
             >
               →
             </span>
@@ -125,7 +125,7 @@ export function HomeHero() {
           {HOME_COPY.hero.lines.map((line) => (
             <p
               key={line}
-              className="text-[12px] font-light leading-[2] tracking-[0.06em] text-[#6c6c6c] md:text-[14px]"
+              className="text-[13px] font-light leading-[2] tracking-[0.06em] text-[#505050] md:text-[15px]"
             >
               {line}
             </p>

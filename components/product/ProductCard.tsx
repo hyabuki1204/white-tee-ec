@@ -69,7 +69,7 @@ export function ProductCard({
           ) : null}
 
           {outOfStock ? (
-            <span className="absolute left-3 top-3 bg-background/90 px-2 py-1 text-[9px] font-light tracking-[0.16em] text-neutral-600">
+            <span className="absolute left-3 top-3 bg-background/90 px-2 py-1 text-[10px] font-light tracking-[0.16em] text-neutral-600">
               SOLD OUT
             </span>
           ) : null}
@@ -81,23 +81,23 @@ export function ProductCard({
               "[@media(hover:none)]:opacity-100 [@media(hover:none)]:from-neutral-900/45",
             )}
           >
-            <p className="text-[10px] font-light tracking-[0.12em] text-white/85">
+            <p className="text-[12px] font-light tracking-[0.12em] text-white/90">
               {STORE_BRAND_LINE}
             </p>
             {metaLine ? (
-              <p className="mt-1 text-[10px] font-light tracking-[0.1em] text-white/75">
+              <p className="mt-1 text-[12px] font-light tracking-[0.1em] text-white/85">
                 {metaLine}
               </p>
             ) : null}
             {usageHint ? (
-              <p className="mt-1 text-[10px] font-light tracking-[0.08em] text-white/60">
+              <p className="mt-1 text-[12px] font-light tracking-[0.08em] text-white/75">
                 {usageHint}
               </p>
             ) : null}
-            <p className="mt-1 text-[11px] font-light leading-snug tracking-[0.03em] text-white">
+            <p className="mt-1 text-[12px] font-light leading-snug tracking-[0.03em] text-white">
               {displayName}
             </p>
-            <p className="mt-2 text-[11px] font-light tracking-wide text-white/90">
+            <p className="mt-2 text-[12px] font-light tracking-wide text-white/90">
               {formatPrice(product.price)}
             </p>
           </div>

@@ -124,14 +124,14 @@ export function CartDrawer() {
         )}
       >
         <div className="flex items-center justify-between border-b border-neutral-200/70 px-6 py-5">
-          <p className="text-[11px] font-light tracking-[0.2em] text-neutral-800">
+          <p className="text-[12px] font-light tracking-[0.2em] text-neutral-800">
             {copy.title}
           </p>
           <button
             type="button"
             onClick={closeDrawer}
             aria-label="Close"
-            className="flex h-10 w-10 items-center justify-center text-neutral-500 transition-opacity hover:opacity-60"
+            className="flex h-10 w-10 items-center justify-center text-neutral-600 transition-opacity hover:opacity-60"
           >
             <span className="text-lg leading-none">&times;</span>
           </button>
@@ -140,13 +140,13 @@ export function CartDrawer() {
         <div className="flex-1 overflow-y-auto px-6 py-6">
           {items.length === 0 ? (
             <div className="py-12 text-center">
-              <p className="text-[13px] font-light tracking-wide text-neutral-500">
+              <p className="text-[14px] font-light tracking-wide text-neutral-600">
                 {copy.empty}
               </p>
               <Link
                 href="/products"
                 onClick={closeDrawer}
-                className="mt-8 inline-flex min-h-11 items-center text-[12px] font-light tracking-[0.12em] text-neutral-800 transition-opacity hover:opacity-60"
+                className="mt-8 inline-flex min-h-11 items-center text-[13px] font-light tracking-[0.12em] text-neutral-800 transition-opacity hover:opacity-60"
               >
                 {copy.viewAll}
               </Link>
@@ -157,7 +157,7 @@ export function CartDrawer() {
 
               {crossSellProducts.length > 0 ? (
                 <section className="mt-10 border-t border-neutral-200/60 pt-8">
-                  <p className="mb-6 text-[10px] font-light tracking-[0.14em] text-neutral-400">
+                  <p className="mb-6 text-[11px] font-light tracking-[0.14em] text-neutral-600">
                     {copy.pairWith}
                   </p>
                   <ul className="space-y-6">
@@ -187,16 +187,16 @@ export function CartDrawer() {
                             />
                           </div>
                           <div className="min-w-0 pt-1">
-                            <p className="text-[10px] tracking-[0.08em] text-neutral-400">
+                            <p className="text-[11px] tracking-[0.08em] text-neutral-600">
                               {GRAPHPAPER_STORE_COPY.brandLine}
                             </p>
-                            <p className="mt-1 text-[11px] font-light tracking-[0.04em] text-neutral-800">
+                            <p className="mt-1 text-[12px] font-light tracking-[0.04em] text-neutral-800">
                               {displayName}
                             </p>
-                            <p className="mt-1 text-[10px] font-light tracking-[0.06em] text-neutral-400">
+                            <p className="mt-1 text-[11px] font-light tracking-[0.06em] text-neutral-600">
                               {FIT_TYPE_LABELS[product.fitType]}
                             </p>
-                            <p className="mt-2 text-[11px] text-neutral-500">
+                            <p className="mt-2 text-[12px] text-neutral-600">
                               {formatPrice(product.price)}
                             </p>
                           </div>
@@ -209,7 +209,7 @@ export function CartDrawer() {
               ) : null}
 
               <label className="mt-10 block">
-                <span className="text-[10px] font-light tracking-[0.12em] text-neutral-400">
+                <span className="text-[11px] font-light tracking-[0.12em] text-neutral-600">
                   {copy.orderNotes}
                 </span>
                 <textarea
@@ -217,7 +217,7 @@ export function CartDrawer() {
                   onChange={(event) => setOrderNotes(event.target.value)}
                   placeholder={copy.orderNotesPlaceholder}
                   rows={3}
-                  className="mt-3 w-full resize-none border border-neutral-200/80 bg-transparent px-3 py-3 text-[12px] font-light text-neutral-700 outline-none transition-colors focus:border-neutral-400"
+                  className="mt-3 w-full resize-none border border-neutral-200/80 bg-transparent px-3 py-3 text-[13px] font-light text-neutral-700 outline-none transition-colors focus:border-neutral-400"
                 />
               </label>
             </>

@@ -23,10 +23,10 @@ export default async function StoreGuidePage() {
     <Container as="section" className="py-20 sm:py-24 md:py-32 lg:py-36">
       <div className="mx-auto max-w-2xl">
         <header className="text-center">
-          <h1 className="text-[13px] font-light tracking-[0.28em] text-neutral-800 md:text-[14px]">
+          <h1 className="text-[14px] font-light tracking-[0.28em] text-neutral-800 md:text-[15px]">
             {STORE_GUIDE_PAGE.title}
           </h1>
-          <p className="mx-auto mt-6 max-w-md text-[13px] font-light leading-[1.95] tracking-[0.02em] text-neutral-600 md:mt-8 md:text-[12px] md:leading-[2.1] md:tracking-[0.03em] md:text-neutral-500">
+          <p className="mx-auto mt-6 max-w-md text-[14px] font-light leading-[1.95] tracking-[0.02em] text-neutral-600 md:mt-8 md:text-[14px] md:leading-[2.1] md:tracking-[0.03em] md:text-neutral-600">
             {STORE_GUIDE_PAGE.intro}
           </p>
         </header>
@@ -34,16 +34,16 @@ export default async function StoreGuidePage() {
         <div className="mt-16 space-y-12 md:mt-20">
           {STORE_GUIDE_SECTIONS.map((section) => (
             <section key={section.id} className="space-y-3">
-              <h2 className="text-[10px] font-light uppercase tracking-[0.16em] text-neutral-400">
+              <h2 className="text-[11px] font-light uppercase tracking-[0.16em] text-neutral-600">
                 {section.title}
               </h2>
-              <p className="text-[12px] font-light leading-[2] tracking-[0.03em] text-neutral-500">
+              <p className="text-[13px] font-light leading-[2] tracking-[0.03em] text-neutral-600">
                 {section.summary}
               </p>
               {section.href && section.linkLabel ? (
                 <Link
                   href={section.href}
-                  className="inline-block text-[11px] font-light tracking-[0.06em] text-neutral-500 transition-opacity hover:opacity-60"
+                  className="inline-block text-[12px] font-light tracking-[0.06em] text-neutral-600 transition-opacity hover:opacity-60"
                 >
                   {section.linkLabel}
                 </Link>
@@ -53,10 +53,10 @@ export default async function StoreGuidePage() {
 
           {shipping.sections.map((section) => (
             <section key={section.title} className="space-y-3 border-t border-neutral-200/60 pt-10">
-              <h2 className="text-[10px] font-light uppercase tracking-[0.16em] text-neutral-400">
+              <h2 className="text-[11px] font-light uppercase tracking-[0.16em] text-neutral-600">
                 {section.title}
               </h2>
-              <p className="text-[12px] font-light leading-[2] tracking-[0.03em] text-neutral-500">
+              <p className="text-[13px] font-light leading-[2] tracking-[0.03em] text-neutral-600">
                 {section.body}
               </p>
             </section>

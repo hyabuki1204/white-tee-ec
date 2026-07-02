@@ -29,14 +29,14 @@ export default async function LegalPage() {
 
   return (
     <LegalPageLayout title="Legal Notice">
-      <p className="text-center text-neutral-400">
+      <p className="text-center text-neutral-600">
         特定商取引法に基づく表記
       </p>
 
       <dl className="divide-y divide-neutral-200/70 border-t border-neutral-200/70">
         {rows.map((row) => (
           <div key={row.label} className="grid gap-2 py-6 md:grid-cols-[10rem_1fr]">
-            <dt className="text-neutral-400">{row.label}</dt>
+            <dt className="text-neutral-600">{row.label}</dt>
             <dd className="text-neutral-600">{row.value}</dd>
           </div>
         ))}
