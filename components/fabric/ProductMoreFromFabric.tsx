@@ -24,7 +24,7 @@ export function ProductMoreFromFabric({
   return (
     <section aria-label={copy.inThisFabric}>
       <Container as="div" className="py-16 sm:py-24 md:py-32 lg:py-40">
-        <p className="mb-12 text-center text-[11px] font-light tracking-[0.12em] text-neutral-400 sm:mb-16 md:mb-20 md:text-[10px]">
+        <p className="mb-12 text-center text-[12px] font-light tracking-[0.12em] text-neutral-600 sm:mb-16 md:mb-20 md:text-[12px]">
           {copy.inThisFabric}
         </p>
 

@@ -28,7 +28,7 @@ function ParagraphBlock({
       lang={lang}
       className={
         className ??
-        "text-[13px] font-light leading-[1.95] tracking-[0.02em] text-neutral-600 md:text-[12px] md:leading-[2.1] md:tracking-[0.03em]"
+        "text-[14px] font-light leading-[1.95] tracking-[0.02em] text-neutral-600 md:text-[14px] md:leading-[2.1] md:tracking-[0.03em]"
       }
     >
       {lines.map((line, index) => (
@@ -65,7 +65,7 @@ export function AboutContent({
       </section>
 
       <div className="mx-auto max-w-2xl px-6 py-16 text-center sm:py-20 md:py-28 lg:py-32">
-        <h1 className="text-[13px] font-light tracking-[0.28em] text-neutral-800 md:text-[14px]">
+        <h1 className="text-[14px] font-light tracking-[0.28em] text-neutral-800 md:text-[15px]">
           {headline}
         </h1>
         {headlineJa ? (
@@ -85,7 +85,7 @@ export function AboutContent({
                   <ParagraphBlock
                     lines={paragraphJa}
                     lang="ja"
-                    className="text-[12px] font-extralight leading-[2.05] tracking-[0.03em] text-neutral-500 md:text-[11px] md:leading-[2.15]"
+                    className="text-[13px] font-extralight leading-[2.05] tracking-[0.03em] text-neutral-600 md:text-[13px] md:leading-[2.15]"
                   />
                 ) : null}
               </div>
@@ -102,13 +102,13 @@ export function AboutContent({
         <div className="mt-16 flex flex-col items-center gap-4 md:mt-20">
           <Link
             href="/fabric"
-            className="text-[11px] font-light tracking-[0.08em] text-neutral-500 transition-opacity duration-300 hover:opacity-60"
+            className="text-[12px] font-light tracking-[0.08em] text-neutral-600 transition-opacity duration-300 hover:opacity-60"
           >
             {copy.exploreFabric}
           </Link>
           <Link
             href="/stockist"
-            className="text-[11px] font-light tracking-[0.08em] text-neutral-400 transition-opacity duration-300 hover:opacity-60"
+            className="text-[12px] font-light tracking-[0.08em] text-neutral-600 transition-opacity duration-300 hover:opacity-60"
           >
             Stockist →
           </Link>

@@ -23,7 +23,7 @@ export function VariantSelector({ variants }: VariantSelectorProps) {
 
   if (variants.length === 0) {
     return (
-      <p className="text-xs font-light text-neutral-400">
+      <p className="text-xs font-light text-neutral-600">
         No sizes available.
       </p>
     );
@@ -32,7 +32,7 @@ export function VariantSelector({ variants }: VariantSelectorProps) {
   return (
     <div className="space-y-6">
       <div className="space-y-3">
-        <p className="text-[10px] font-light tracking-[0.16em] text-neutral-400">
+        <p className="text-[11px] font-light tracking-[0.16em] text-neutral-600">
           {pdpCopy.color}
         </p>
         <div className="flex items-center gap-3">
@@ -40,7 +40,7 @@ export function VariantSelector({ variants }: VariantSelectorProps) {
             aria-hidden
             className="h-4 w-4 rounded-full border border-neutral-300 bg-white"
           />
-          <span className="text-[11px] font-light tracking-[0.06em] text-neutral-600">
+          <span className="text-[12px] font-light tracking-[0.06em] text-neutral-600">
             {pdpCopy.colorValue}
           </span>
         </div>
@@ -48,12 +48,12 @@ export function VariantSelector({ variants }: VariantSelectorProps) {
 
       <div className="space-y-3">
         <div className="flex items-baseline justify-between gap-4">
-          <p className="text-[10px] font-light tracking-[0.16em] text-neutral-400">
+          <p className="text-[11px] font-light tracking-[0.16em] text-neutral-600">
             Size
           </p>
           <a
             href="#size-guide"
-            className="text-[10px] font-light tracking-[0.06em] text-neutral-400 underline-offset-4 transition-opacity hover:text-neutral-600 hover:underline"
+            className="text-[11px] font-light tracking-[0.06em] text-neutral-600 underline-offset-4 transition-opacity hover:text-neutral-600 hover:underline"
           >
             Size guide
           </a>
@@ -74,9 +74,9 @@ export function VariantSelector({ variants }: VariantSelectorProps) {
                   aria-pressed={isSelected}
                   aria-label={`Size ${formatGraphpaperSizeLabel(variant.size)}${!inStock ? ", out of stock" : ""}`}
                   className={cn(
-                    "relative flex min-h-10 min-w-10 items-center justify-center px-2 text-[11px] font-light tracking-[0.04em] transition-opacity duration-300 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-neutral-400",
+                    "relative flex min-h-10 min-w-10 items-center justify-center px-2 text-[12px] font-light tracking-[0.04em] transition-opacity duration-300 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-neutral-400",
                     !inStock &&
-                      "cursor-not-allowed text-neutral-300 line-through",
+                      "cursor-not-allowed text-neutral-400 line-through",
                     inStock && isSelected && "text-neutral-900 opacity-100",
                     inStock &&
                       !isSelected &&
@@ -85,7 +85,7 @@ export function VariantSelector({ variants }: VariantSelectorProps) {
                     inStock &&
                       !isSelected &&
                       !isRecommended &&
-                      "text-neutral-500 opacity-80 hover:opacity-100",
+                      "text-neutral-600 opacity-80 hover:opacity-100",
                   )}
                 >
                   {formatGraphpaperSizeLabel(variant.size)}

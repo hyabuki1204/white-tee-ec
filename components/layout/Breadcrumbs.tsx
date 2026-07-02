@@ -18,14 +18,14 @@ export function Breadcrumbs({ items, className }: BreadcrumbsProps) {
 
   return (
     <nav aria-label="Breadcrumb" className={cn("mb-6 sm:mb-8", className)}>
-      <ol className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-light tracking-[0.06em] text-neutral-400">
+      <ol className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-light tracking-[0.06em] text-neutral-600">
         {items.map((item, index) => {
           const isLast = index === items.length - 1;
 
           return (
             <li key={`${item.label}-${index}`} className="flex items-center gap-2">
               {index > 0 ? (
-                <span aria-hidden className="text-neutral-300">
+                <span aria-hidden className="text-neutral-400">
                   /
                 </span>
               ) : null}
@@ -37,7 +37,7 @@ export function Breadcrumbs({ items, className }: BreadcrumbsProps) {
                   {item.label}
                 </Link>
               ) : (
-                <span className={isLast ? "text-neutral-500" : undefined}>
+                <span className={isLast ? "text-neutral-600" : undefined}>
                   {item.label}
                 </span>
               )}

@@ -36,18 +36,18 @@ export function HomeProductGridWithSleeveToggle({
 
   const toggleClass = (isActive: boolean) =>
     cn(
-      "text-[10px] font-light tracking-[0.12em] transition-opacity duration-300 md:text-[11px]",
-      isActive ? "text-neutral-800" : "text-neutral-400 hover:opacity-60",
+      "text-[11px] font-light tracking-[0.12em] transition-opacity duration-300 md:text-[13px]",
+      isActive ? "text-neutral-800" : "text-neutral-600 hover:opacity-60",
     );
 
   return (
     <>
       <header className="flex flex-col gap-6 border-b border-neutral-200/70 py-8 sm:flex-row sm:items-end sm:justify-between md:py-10">
         <div>
-          <h1 className="text-[13px] font-light tracking-[0.28em] text-neutral-800">
+          <h1 className="text-[14px] font-light tracking-[0.28em] text-neutral-800">
             {GRAPHPAPER_STORE_COPY.home.sectionAll}
           </h1>
-          <p className="mt-3 text-[11px] font-light tracking-[0.08em] text-neutral-400">
+          <p className="mt-3 text-[12px] font-light tracking-[0.08em] text-neutral-600">
             {GRAPHPAPER_STORE_COPY.plp.items(filteredProducts.length)}
           </p>
         </div>

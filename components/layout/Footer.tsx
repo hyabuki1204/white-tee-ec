@@ -25,7 +25,7 @@ export function Footer() {
     <footer className="border-t border-neutral-200/70">
       <Container as="div" className="py-12 md:py-16">
         <div className="flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
-          <p className="text-[11px] tracking-[0.28em] text-neutral-400">
+          <p className="text-[12px] tracking-[0.28em] text-neutral-600">
             {GRAPHPAPER_STORE_COPY.brandLine}
           </p>
 
@@ -35,7 +35,7 @@ export function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-[11px] font-light tracking-[0.06em] text-neutral-600 transition-opacity hover:opacity-60"
+                    className="text-[12px] font-light tracking-[0.06em] text-neutral-600 transition-opacity hover:opacity-60"
                   >
                     {link.label}
                   </Link>
@@ -47,7 +47,7 @@ export function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-[11px] font-light tracking-[0.06em] text-neutral-500 transition-opacity hover:opacity-60"
+                    className="text-[12px] font-light tracking-[0.06em] text-neutral-600 transition-opacity hover:opacity-60"
                   >
                     {link.label}
                   </Link>
@@ -56,7 +56,7 @@ export function Footer() {
             </ul>
           </nav>
 
-          <p className="text-[11px] font-light text-neutral-400 md:text-right">
+          <p className="text-[12px] font-light text-neutral-600 md:text-right">
             &copy; {currentYear} {GRAPHPAPER_STORE_COPY.brandLine}
           </p>
         </div>

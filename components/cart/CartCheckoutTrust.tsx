@@ -23,7 +23,7 @@ export function CartCheckoutTrust({ compact = false }: CartCheckoutTrustProps) {
       }
     >
       {!compact ? (
-        <p className="text-[10px] font-light tracking-[0.14em] text-neutral-400">
+        <p className="text-[11px] font-light tracking-[0.14em] text-neutral-600">
           {CHECKOUT_TRUST_COPY.title}
         </p>
       ) : null}
@@ -32,14 +32,14 @@ export function CartCheckoutTrust({ compact = false }: CartCheckoutTrustProps) {
         {items.map((item) => (
           <li key={item.id} className="space-y-1">
             {!compact ? (
-              <p className="text-[10px] font-light tracking-[0.1em] text-neutral-400">
+              <p className="text-[11px] font-light tracking-[0.1em] text-neutral-600">
                 {item.label}
               </p>
             ) : null}
-            <p className="text-[10px] font-light leading-[1.85] tracking-[0.04em] text-neutral-500">
+            <p className="text-[11px] font-light leading-[1.85] tracking-[0.04em] text-neutral-600">
               {compact ? (
                 <>
-                  <span className="text-neutral-400">{item.label}。 </span>
+                  <span className="text-neutral-600">{item.label}。 </span>
                   {item.line}
                 </>
               ) : (
@@ -53,7 +53,7 @@ export function CartCheckoutTrust({ compact = false }: CartCheckoutTrustProps) {
       {!compact ? (
         <Link
           href="/shipping"
-          className="inline-block text-[10px] font-light tracking-[0.08em] text-neutral-400 transition-opacity hover:opacity-60"
+          className="inline-block text-[11px] font-light tracking-[0.08em] text-neutral-600 transition-opacity hover:opacity-60"
         >
           {CHECKOUT_TRUST_COPY.shippingLink}
         </Link>

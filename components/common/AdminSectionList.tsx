@@ -25,7 +25,7 @@ export function AdminSectionList({ sections }: AdminSectionListProps) {
               </p>
               <p className="text-sm text-neutral-600">{section.description}</p>
             </div>
-            <span className="text-sm font-medium text-neutral-400 group-hover:text-neutral-700">
+            <span className="text-sm font-medium text-neutral-600 group-hover:text-neutral-700">
               →
             </span>
           </Link>

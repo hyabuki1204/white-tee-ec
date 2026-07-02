@@ -27,12 +27,12 @@ export function FabricHero({ fabric }: FabricHeroProps) {
       </div>
 
       <div className="px-6 py-10 text-center sm:py-12 md:py-14">
-        <h1 className="text-[13px] font-light tracking-[0.2em] text-neutral-800 md:text-[12px]">
+        <h1 className="text-[14px] font-light tracking-[0.2em] text-neutral-800 md:text-[14px]">
           {fabric.name}
         </h1>
         <p
           className={cn(
-            "mx-auto mt-5 max-w-sm text-[12px] font-light leading-[1.95] tracking-[0.02em] text-neutral-500 md:mt-6 md:text-[11px] md:leading-[2.05]",
+            "mx-auto mt-5 max-w-sm text-[13px] font-light leading-[1.95] tracking-[0.02em] text-neutral-600 md:mt-6 md:text-[13px] md:leading-[2.05]",
             presentation.taglineTracking,
           )}
         >

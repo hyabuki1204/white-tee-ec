@@ -93,7 +93,7 @@ function SizeRecommendationContent({
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-2 gap-3">
           <label className="block space-y-1.5">
-            <span className="text-[11px] font-light tracking-[0.06em] text-neutral-500 md:text-[10px]">
+            <span className="text-[12px] font-light tracking-[0.06em] text-neutral-600 md:text-[12px]">
               {copy.height}
             </span>
             <input
@@ -107,12 +107,12 @@ function SizeRecommendationContent({
                 setHeightCm(event.target.value);
                 setSubmitted(false);
               }}
-              className="w-full border-0 border-b border-neutral-200 bg-transparent py-1.5 text-xs font-light tracking-[0.04em] text-neutral-700 outline-none placeholder:text-neutral-300 focus:border-neutral-400"
+              className="w-full border-0 border-b border-neutral-200 bg-transparent py-1.5 text-xs font-light tracking-[0.04em] text-neutral-700 outline-none placeholder:text-neutral-400 focus:border-neutral-400"
             />
           </label>
 
           <label className="block space-y-1.5">
-            <span className="text-[11px] font-light tracking-[0.06em] text-neutral-500 md:text-[10px]">
+            <span className="text-[12px] font-light tracking-[0.06em] text-neutral-600 md:text-[12px]">
               {copy.weight}
             </span>
             <input
@@ -126,20 +126,20 @@ function SizeRecommendationContent({
                 setWeightKg(event.target.value);
                 setSubmitted(false);
               }}
-              className="w-full border-0 border-b border-neutral-200 bg-transparent py-1.5 text-xs font-light tracking-[0.04em] text-neutral-700 outline-none placeholder:text-neutral-300 focus:border-neutral-400"
+              className="w-full border-0 border-b border-neutral-200 bg-transparent py-1.5 text-xs font-light tracking-[0.04em] text-neutral-700 outline-none placeholder:text-neutral-400 focus:border-neutral-400"
             />
           </label>
         </div>
 
         <fieldset className="space-y-2 border-0 p-0">
-          <legend className="text-[11px] font-light tracking-[0.06em] text-neutral-500 md:text-[10px]">
+          <legend className="text-[12px] font-light tracking-[0.06em] text-neutral-600 md:text-[12px]">
             {copy.preference}
           </legend>
           <div className="flex flex-wrap gap-x-4 gap-y-2">
             {PREFERENCES.map((option) => (
               <label
                 key={option.value}
-                className="flex cursor-pointer items-center gap-2 text-[11px] font-light tracking-[0.04em] text-neutral-600"
+                className="flex cursor-pointer items-center gap-2 text-[12px] font-light tracking-[0.04em] text-neutral-600"
               >
                 <input
                   type="radio"
@@ -160,7 +160,7 @@ function SizeRecommendationContent({
 
         <button
           type="submit"
-          className="text-[11px] font-light uppercase tracking-[0.12em] text-neutral-500 underline-offset-4 hover:text-neutral-700 hover:underline md:text-[10px]"
+          className="text-[12px] font-light uppercase tracking-[0.12em] text-neutral-600 underline-offset-4 hover:text-neutral-700 hover:underline md:text-[12px]"
         >
           {copy.submit}
         </button>
@@ -172,19 +172,19 @@ function SizeRecommendationContent({
             {result.primaryLine}
           </p>
           {result.secondaryLine ? (
-            <p className="text-[11px] font-light leading-[1.75] tracking-[0.03em] text-neutral-500">
+            <p className="text-[12px] font-light leading-[1.75] tracking-[0.03em] text-neutral-600">
               {result.secondaryLine}
             </p>
           ) : null}
           {result.helperJa ? (
             <JaHelperText spacing="tight">{result.helperJa}</JaHelperText>
           ) : null}
-          <p className="pt-2 text-[11px] font-light leading-[1.7] tracking-[0.04em] text-neutral-400 md:text-[10px]">
+          <p className="pt-2 text-[12px] font-light leading-[1.7] tracking-[0.04em] text-neutral-600 md:text-[12px]">
             {copy.disclaimer}{" "}
             <button
               type="button"
               onClick={openSizeTab}
-              className="text-neutral-500 underline-offset-4 hover:text-neutral-700 hover:underline"
+              className="text-neutral-600 underline-offset-4 hover:text-neutral-700 hover:underline"
             >
               {productCopy.sizeGuide}
             </button>
@@ -193,7 +193,7 @@ function SizeRecommendationContent({
       ) : null}
 
       {showInvalid ? (
-        <p className="text-[11px] font-light tracking-[0.04em] text-neutral-400 md:text-[10px]">
+        <p className="text-[12px] font-light tracking-[0.04em] text-neutral-600 md:text-[12px]">
           {copy.invalidInput}
         </p>
       ) : null}
@@ -221,7 +221,7 @@ export function SizeRecommendationTool({
       <>
         <div className="lg:hidden">
           <details className="group border-0 pt-6">
-            <summary className="cursor-pointer list-none text-[10px] font-light uppercase tracking-[0.14em] text-neutral-400 [&::-webkit-details-marker]:hidden">
+            <summary className="cursor-pointer list-none text-[11px] font-light uppercase tracking-[0.14em] text-neutral-600 [&::-webkit-details-marker]:hidden">
               <span className="group-open:opacity-60">{copy.heading}</span>
             </summary>
             <div className="space-y-5 pt-5">{inner}</div>
@@ -231,7 +231,7 @@ export function SizeRecommendationTool({
           aria-label={copy.sectionLabel}
           className="hidden space-y-5 border-0 pt-10 sm:pt-12 md:pt-14 lg:block"
         >
-          <h2 className="text-[11px] font-light uppercase tracking-[0.14em] text-neutral-400 md:text-[10px]">
+          <h2 className="text-[12px] font-light uppercase tracking-[0.14em] text-neutral-600 md:text-[12px]">
             {copy.heading}
           </h2>
           {inner}
@@ -243,7 +243,7 @@ export function SizeRecommendationTool({
   if (collapsible) {
     return (
       <details className="group border-0 pt-6">
-        <summary className="cursor-pointer list-none text-[10px] font-light uppercase tracking-[0.14em] text-neutral-400 [&::-webkit-details-marker]:hidden">
+        <summary className="cursor-pointer list-none text-[11px] font-light uppercase tracking-[0.14em] text-neutral-600 [&::-webkit-details-marker]:hidden">
           <span className="group-open:opacity-60">{copy.heading}</span>
         </summary>
         <div className="space-y-5 pt-5">{inner}</div>
@@ -256,7 +256,7 @@ export function SizeRecommendationTool({
       aria-label={copy.sectionLabel}
       className="space-y-5 border-0 pt-10 sm:pt-12 md:pt-14"
     >
-      <h2 className="text-[11px] font-light uppercase tracking-[0.14em] text-neutral-400 md:text-[10px]">
+      <h2 className="text-[12px] font-light uppercase tracking-[0.14em] text-neutral-600 md:text-[12px]">
         {copy.heading}
       </h2>
       {inner}

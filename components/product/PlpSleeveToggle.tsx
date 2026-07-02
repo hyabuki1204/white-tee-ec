@@ -20,8 +20,8 @@ const SLEEVE_OPTIONS: { value: SleeveType; label: string }[] = [
 
 function toggleClass(isActive: boolean) {
   return cn(
-    "text-[10px] font-light tracking-[0.12em] transition-opacity duration-300 md:text-[11px]",
-    isActive ? "text-neutral-800" : "text-neutral-400 hover:opacity-60",
+    "text-[11px] font-light tracking-[0.12em] transition-opacity duration-300 md:text-[13px]",
+    isActive ? "text-neutral-800" : "text-neutral-600 hover:opacity-60",
   );
 }
 

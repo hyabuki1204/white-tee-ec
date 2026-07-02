@@ -7,10 +7,10 @@ export function HomeProof() {
         <ul className="grid grid-cols-1 gap-10 sm:grid-cols-3 sm:gap-8">
           {HOME_COPY.proof.map((item) => (
             <li key={item.label} className="text-center sm:text-left">
-              <p className="text-[11px] font-light tracking-[0.2em] text-[#9a9a9a]">
+              <p className="text-[12px] font-light tracking-[0.2em] text-[#7a7a7a]">
                 {item.label}
               </p>
-              <p className="mt-3 text-[11px] font-light leading-relaxed tracking-[0.04em] text-[#6c6c6c] md:text-[12px]">
+              <p className="mt-3 text-[12px] font-light leading-relaxed tracking-[0.04em] text-[#505050] md:text-[14px]">
                 {item.line}
               </p>
             </li>

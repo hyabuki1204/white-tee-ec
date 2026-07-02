@@ -66,7 +66,7 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
                     href={item.href}
                     onClick={onClose}
                     className={cn(
-                      "flex min-h-12 items-center text-[12px] font-light tracking-[0.16em] transition-opacity active:opacity-60",
+                      "flex min-h-12 items-center text-[13px] font-light tracking-[0.16em] transition-opacity active:opacity-60",
                       itemActive ? "text-neutral-900" : "text-neutral-600",
                     )}
                   >
@@ -82,7 +82,7 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
                   href={item.href}
                   onClick={onClose}
                   className={cn(
-                    "flex min-h-12 items-center text-[12px] font-light tracking-[0.16em] transition-opacity active:opacity-60",
+                    "flex min-h-12 items-center text-[13px] font-light tracking-[0.16em] transition-opacity active:opacity-60",
                     itemActive ? "text-neutral-900" : "text-neutral-600",
                   )}
                 >
@@ -98,8 +98,8 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
                           href={child.href}
                           onClick={onClose}
                           className={cn(
-                            "flex min-h-10 items-center text-[11px] font-light tracking-[0.12em] transition-opacity active:opacity-60",
-                            childActive ? "text-neutral-900" : "text-neutral-500",
+                            "flex min-h-10 items-center text-[12px] font-light tracking-[0.12em] transition-opacity active:opacity-60",
+                            childActive ? "text-neutral-900" : "text-neutral-600",
                           )}
                         >
                           {child.label}
@@ -121,7 +121,7 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
               <Link
                 href={item.href}
                 onClick={onClose}
-                className="flex min-h-11 items-center text-[13px] font-light tracking-wide text-neutral-500"
+                className="flex min-h-11 items-center text-[14px] font-light tracking-wide text-neutral-600"
               >
                 {item.label}
               </Link>
@@ -133,7 +133,7 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
               <Link
                 href={item.href}
                 onClick={onClose}
-                className="flex min-h-10 items-center text-[12px] font-light tracking-[0.06em] text-neutral-400"
+                className="flex min-h-10 items-center text-[13px] font-light tracking-[0.06em] text-neutral-600"
               >
                 {item.label}
               </Link>

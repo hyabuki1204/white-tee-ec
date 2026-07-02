@@ -44,7 +44,7 @@ export function JournalCard({
         <div className={cn(isEditorial ? "mt-6 md:mt-8" : "mt-5 md:mt-6")}>
           <time
             dateTime={article.publishedAt}
-            className="text-[10px] font-light tracking-[0.1em] text-neutral-400"
+            className="text-[11px] font-light tracking-[0.1em] text-neutral-600"
           >
             {formatJournalDate(article.publishedAt)}
           </time>
@@ -52,8 +52,8 @@ export function JournalCard({
             className={cn(
               "mt-2 font-light tracking-[0.06em] text-neutral-800 transition-opacity duration-500 [@media(hover:hover)]:group-hover:opacity-60",
               isEditorial
-                ? "text-[13px] leading-snug md:text-[14px]"
-                : "text-[12px] leading-snug",
+                ? "text-[14px] leading-snug md:text-[15px]"
+                : "text-[13px] leading-snug",
             )}
           >
             {article.title}
@@ -63,10 +63,10 @@ export function JournalCard({
           </JaHelperText>
           <p
             className={cn(
-              "mt-3 font-light leading-[1.85] text-neutral-500",
+              "mt-3 font-light leading-[1.85] text-neutral-600",
               isEditorial
-                ? "text-[12px] tracking-[0.02em] md:text-[11px]"
-                : "text-[11px] tracking-[0.02em]",
+                ? "text-[13px] tracking-[0.02em] md:text-[13px]"
+                : "text-[12px] tracking-[0.02em]",
             )}
           >
             {article.excerpt}

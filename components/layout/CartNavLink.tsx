@@ -38,7 +38,7 @@ export function CartNavLink({
         onNavigate?.();
       }}
       className={cn(
-        "relative inline-flex items-center gap-2 text-[11px] font-light tracking-[0.14em] text-neutral-600 transition-opacity hover:opacity-60",
+        "relative inline-flex items-center gap-2 text-[12px] font-light tracking-[0.14em] text-neutral-600 transition-opacity hover:opacity-60",
         className,
       )}
       aria-label={
@@ -50,7 +50,7 @@ export function CartNavLink({
         {showBadge ? (
           <span
             aria-hidden
-            className="absolute -right-1.5 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full border border-neutral-300/80 bg-background px-0.5 text-[9px] font-medium tabular-nums leading-none text-neutral-700"
+            className="absolute -right-1.5 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full border border-neutral-300/80 bg-background px-0.5 text-[10px] font-medium tabular-nums leading-none text-neutral-700"
           >
             {badgeLabel}
           </span>

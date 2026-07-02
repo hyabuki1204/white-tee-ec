@@ -17,16 +17,16 @@ export function HomeFabricSection({ fabrics }: HomeFabricSectionProps) {
       <div className="mx-auto w-full max-w-7xl px-6 md:px-8 lg:px-12">
         <header className="flex items-end justify-between border-b border-neutral-200/70 py-8 md:py-10">
           <div>
-            <h2 className="text-[13px] font-light tracking-[0.28em] text-neutral-800">
+            <h2 className="text-[14px] font-light tracking-[0.28em] text-neutral-800">
               {GRAPHPAPER_STORE_COPY.home.sectionFabric}
             </h2>
-            <p className="mt-3 text-[11px] font-light tracking-[0.08em] text-neutral-400">
+            <p className="mt-3 text-[12px] font-light tracking-[0.08em] text-neutral-600">
               {GRAPHPAPER_STORE_COPY.plp.items(fabrics.length)}
             </p>
           </div>
           <Link
             href="/fabric"
-            className="hidden text-[11px] font-light tracking-[0.08em] text-neutral-400 transition-opacity hover:opacity-60 sm:inline-block"
+            className="hidden text-[12px] font-light tracking-[0.08em] text-neutral-600 transition-opacity hover:opacity-60 sm:inline-block"
           >
             {GRAPHPAPER_STORE_COPY.home.viewAllFabric}
           </Link>
@@ -43,7 +43,7 @@ export function HomeFabricSection({ fabrics }: HomeFabricSectionProps) {
         <div className="mt-10 sm:hidden">
           <Link
             href="/fabric"
-            className="text-[11px] font-light tracking-[0.08em] text-neutral-400 transition-opacity hover:opacity-60"
+            className="text-[12px] font-light tracking-[0.08em] text-neutral-600 transition-opacity hover:opacity-60"
           >
             {GRAPHPAPER_STORE_COPY.home.viewAllFabric}
           </Link>

@@ -5,7 +5,7 @@ export default function ProductNotFound() {
   return (
     <Container as="section" className="py-32 md:py-40">
       <div className="text-center">
-        <p className="text-xs tracking-[0.3em] text-neutral-500">
+        <p className="text-xs tracking-[0.3em] text-neutral-600">
           Product not found
         </p>
         <Link

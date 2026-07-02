@@ -27,20 +27,20 @@ export default function CheckoutCancelPage() {
           />
         </div>
 
-        <p className="mt-10 text-[11px] font-light tracking-[0.28em] text-neutral-500">
+        <p className="mt-10 text-[12px] font-light tracking-[0.28em] text-neutral-600">
           {copy.cancelled}
         </p>
-        <p className="mt-4 text-[13px] font-light leading-[1.8] tracking-[0.03em] text-neutral-700">
+        <p className="mt-4 text-[14px] font-light leading-[1.8] tracking-[0.03em] text-neutral-700">
           {copy.paymentIncomplete}
         </p>
-        <p className="mt-4 text-[11px] font-light leading-[1.7] tracking-[0.04em] text-neutral-500">
+        <p className="mt-4 text-[12px] font-light leading-[1.7] tracking-[0.04em] text-neutral-600">
           {copy.cancelRecovery}
         </p>
         <CheckoutCancelRecovery />
         <p className="mt-8">
           <a
             href="/store-guide"
-            className="text-[11px] font-light tracking-[0.08em] text-neutral-400 transition-opacity hover:opacity-60"
+            className="text-[12px] font-light tracking-[0.08em] text-neutral-600 transition-opacity hover:opacity-60"
           >
             {GRAPHPAPER_STORE_COPY.footer.storeGuide}
           </a>

@@ -50,22 +50,22 @@ export function FabricCard({
           <h2
             className={
               isEntry
-                ? "text-[12px] font-light tracking-[0.1em] text-neutral-800 transition-opacity duration-[850ms] ease-out delay-75 group-hover:opacity-45"
-                : "text-[11px] font-light tracking-[0.11em] text-neutral-800 transition-opacity duration-[850ms] ease-out delay-75 group-hover:opacity-45"
+                ? "text-[13px] font-light tracking-[0.1em] text-neutral-800 transition-opacity duration-[850ms] ease-out delay-75 group-hover:opacity-45"
+                : "text-[12px] font-light tracking-[0.11em] text-neutral-800 transition-opacity duration-[850ms] ease-out delay-75 group-hover:opacity-45"
             }
           >
             {fabric.name}
           </h2>
           <p
             className={cn(
-              "text-[12px] font-light leading-[1.9] text-neutral-500 transition-opacity duration-[850ms] ease-out delay-100 group-hover:opacity-60 md:text-[11px] md:text-neutral-400",
+              "text-[13px] font-light leading-[1.9] text-neutral-600 transition-opacity duration-[850ms] ease-out delay-100 group-hover:opacity-60 md:text-[13px] md:text-neutral-600",
               presentation.taglineTracking,
             )}
           >
             {fabric.tagline}
           </p>
           {productCount !== undefined ? (
-            <p className="text-[10px] font-light tracking-[0.08em] text-neutral-400">
+            <p className="text-[11px] font-light tracking-[0.08em] text-neutral-600">
               {copy.pieceCount(productCount)}
             </p>
           ) : null}
