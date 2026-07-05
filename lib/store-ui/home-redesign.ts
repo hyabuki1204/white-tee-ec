@@ -2,18 +2,19 @@ import { HOME_FEATURED_PRODUCT_SLUG } from "@/lib/store-ui/home-featured";
 
 export const HOME_IMAGES = {
   story: {
-    material: "/home/story/material.png",
-    finish: "/home/story/finish.png",
+    material: "/fabric/heavyweight-jersey.svg",
+    finish: "/fabric/compact-jersey.svg",
   },
 } as const;
 
 export const HOME_COPY = {
   hero: {
     lines: [
-      "White tees in six jersey weights.",
-      "Knit in Wakayama — slim to boxy.",
-      "One standard: material, pattern, finish.",
+      "和歌山で編んだ、6種類の白Tシャツ。",
+      "袖丈とシルエットで選べる12モデル。",
+      "¥12,000〜 — 素材・縫製・仕上げにこだわった一着。",
     ],
+    shopCta: "商品を見る",
   },
   proof: [
     {
@@ -32,22 +33,35 @@ export const HOME_COPY = {
   detail: {
     caption: "代表モデルの着用例",
   },
+  storySection: {
+    label: "つくりについて",
+    intro:
+      "生地の選定から仕上げまで、和歌山の工場で一貫して行っています。購入前に知っておきたい要点だけ、ここにまとめました。",
+    fabricCta: "生地を比較する",
+    aboutCta: "ブランドについて",
+  },
   story: [
     {
       key: "material",
       title: "Material",
-      lines: ["Ultra-long staple.", "Six weights."],
+      lines: [
+        "超長綿から選んだ糸を、6段階のジャージー重量で編み上げ。",
+        "1枚着用から重ね着まで、用途に合わせて選べます。",
+      ],
       image: HOME_IMAGES.story.material,
     },
     {
       key: "finish",
       title: "Finish",
-      lines: ["Wakayama.", "Hand finish."],
+      lines: [
+        "和歌山・Kanemasa の円筒編み機で編み、手仕上げで襟と裾を整えます。",
+        "白は、着たあとの首元と肩線で品質がわかります。",
+      ],
       image: HOME_IMAGES.story.finish,
     },
   ],
   cta: {
-    label: "詳しく見る",
+    label: "すべての商品を見る",
     productSlug: HOME_FEATURED_PRODUCT_SLUG,
   },
 } as const;

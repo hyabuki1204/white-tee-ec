@@ -6,6 +6,7 @@ import { FIT_TYPE_LABELS } from "@/lib/products/silhouette";
 import { getGraphpaperDisplayName, STORE_BRAND_LINE } from "@/lib/products/display-name";
 import { getProductWearImageUrl } from "@/lib/products/wear-image";
 import { getProductUsageHint } from "@/lib/store-ui/product-usage";
+import { STORE_TYPO } from "@/lib/store-ui/typography";
 import { formatPrice } from "@/lib/utils/format-price";
 import type { Product } from "@/types";
 import { cn } from "@/lib/utils";
@@ -73,34 +74,26 @@ export function ProductCard({
               SOLD OUT
             </span>
           ) : null}
+        </div>
 
-          <div
-            className={cn(
-              "pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-neutral-900/60 via-neutral-900/25 to-transparent px-4 pb-4 pt-20",
-              "opacity-0 transition-opacity duration-700 [@media(hover:hover)]:group-hover:opacity-100",
-              "[@media(hover:none)]:opacity-100 [@media(hover:none)]:from-neutral-900/45",
-            )}
-          >
-            <p className="text-[12px] font-light tracking-[0.12em] text-white/90">
-              {STORE_BRAND_LINE}
+        <div className="mt-3 space-y-1.5 px-0.5">
+          <p className={STORE_TYPO.caption}>{STORE_BRAND_LINE}</p>
+          {metaLine ? (
+            <p className="text-[12px] font-light tracking-[0.08em] text-neutral-500">
+              {metaLine}
             </p>
-            {metaLine ? (
-              <p className="mt-1 text-[12px] font-light tracking-[0.1em] text-white/85">
-                {metaLine}
-              </p>
-            ) : null}
-            {usageHint ? (
-              <p className="mt-1 text-[12px] font-light tracking-[0.08em] text-white/75">
-                {usageHint}
-              </p>
-            ) : null}
-            <p className="mt-1 text-[12px] font-light leading-snug tracking-[0.03em] text-white">
-              {displayName}
+          ) : null}
+          {usageHint ? (
+            <p className="text-[11px] font-light tracking-[0.06em] text-neutral-400">
+              {usageHint}
             </p>
-            <p className="mt-2 text-[12px] font-light tracking-wide text-white/90">
-              {formatPrice(product.price)}
-            </p>
-          </div>
+          ) : null}
+          <p className="text-[13px] font-light leading-snug tracking-[0.02em] text-neutral-800 md:text-[14px]">
+            {displayName}
+          </p>
+          <p className="text-[13px] font-light tracking-[0.04em] text-neutral-700 md:text-[14px]">
+            {formatPrice(product.price)}
+          </p>
         </div>
       </Link>
     </article>

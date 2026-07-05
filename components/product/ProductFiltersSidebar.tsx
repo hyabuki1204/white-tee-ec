@@ -1,12 +1,8 @@
 import Link from "next/link";
-import {
-  buildProductsFilterHref,
-  FIT_TYPE_LABELS,
-  FIT_TYPES,
-} from "@/lib/products/silhouette";
+import { buildProductsFilterHref } from "@/lib/products/silhouette";
 import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
 import type { Fabric } from "@/lib/fabric/content";
-import type { FitType, SleeveType } from "@/types/product-fit";
+import type { SleeveType } from "@/types/product-fit";
 import type { Product } from "@/types";
 import { cn } from "@/lib/utils";
 
@@ -15,7 +11,6 @@ type ProductFiltersSidebarProps = {
   products: Product[];
   activeFabricSlug?: string | null;
   activeSleeve?: SleeveType | null;
-  activeFit?: FitType | null;
   inStockOnly?: boolean;
 };
 
@@ -34,30 +29,13 @@ function sectionTitle(label: string) {
   );
 }
 
-function availableFits(
-  products: Product[],
-  sleeve: SleeveType | null | undefined,
-): FitType[] {
-  const fits = new Set<FitType>();
-
-  for (const product of products) {
-    if (sleeve && product.sleeveType !== sleeve) continue;
-    fits.add(product.fitType);
-  }
-
-  return FIT_TYPES.filter((fit) => fits.has(fit));
-}
-
 export function ProductFiltersSidebar({
   fabrics,
-  products,
   activeFabricSlug,
   activeSleeve,
-  activeFit,
   inStockOnly = false,
 }: ProductFiltersSidebarProps) {
   const copy = GRAPHPAPER_STORE_COPY.filters;
-  const fitOptions = availableFits(products, activeSleeve);
 
   return (
     <>
@@ -68,10 +46,8 @@ export function ProductFiltersSidebar({
         <div className="mt-6 space-y-8">
           <FilterSections
             fabrics={fabrics}
-            fitOptions={fitOptions}
             activeFabricSlug={activeFabricSlug}
             activeSleeve={activeSleeve}
-            activeFit={activeFit}
             inStockOnly={inStockOnly}
           />
         </div>
@@ -86,10 +62,8 @@ export function ProductFiltersSidebar({
         </p>
         <FilterSections
           fabrics={fabrics}
-          fitOptions={fitOptions}
           activeFabricSlug={activeFabricSlug}
           activeSleeve={activeSleeve}
-          activeFit={activeFit}
           inStockOnly={inStockOnly}
         />
       </aside>
@@ -99,17 +73,13 @@ export function ProductFiltersSidebar({
 
 function FilterSections({
   fabrics,
-  fitOptions,
   activeFabricSlug,
   activeSleeve,
-  activeFit,
   inStockOnly = false,
 }: {
   fabrics: Fabric[];
-  fitOptions: FitType[];
   activeFabricSlug?: string | null;
   activeSleeve?: SleeveType | null;
-  activeFit?: FitType | null;
   inStockOnly?: boolean;
 }) {
   const copy = GRAPHPAPER_STORE_COPY.filters;
@@ -126,7 +96,6 @@ function FilterSections({
               href={buildProductsFilterHref({
                 fabric: activeFabricSlug,
                 sleeve: activeSleeve,
-                fit: activeFit,
               })}
               className={filterLinkClass(!stockOnly)}
             >
@@ -138,7 +107,6 @@ function FilterSections({
               href={buildProductsFilterHref({
                 fabric: activeFabricSlug,
                 sleeve: activeSleeve,
-                fit: activeFit,
                 stock: "in",
               })}
               className={filterLinkClass(stockOnly)}
@@ -156,7 +124,6 @@ function FilterSections({
             <Link
               href={buildProductsFilterHref({
                 sleeve: activeSleeve,
-                fit: activeFit,
                 stock: stockParam,
               })}
               className={filterLinkClass(!activeFabricSlug)}
@@ -170,7 +137,6 @@ function FilterSections({
                 href={buildProductsFilterHref({
                   fabric: fabric.slug,
                   sleeve: activeSleeve,
-                  fit: activeFit,
                   stock: stockParam,
                 })}
                 className={filterLinkClass(activeFabricSlug === fabric.slug)}
@@ -181,29 +147,6 @@ function FilterSections({
           ))}
         </ul>
       </section>
-
-      {activeSleeve && fitOptions.length > 0 ? (
-        <section>
-          {sectionTitle(copy.fit)}
-          <ul className="space-y-1">
-            {fitOptions.map((fit) => (
-              <li key={fit}>
-                <Link
-                  href={buildProductsFilterHref({
-                    fabric: activeFabricSlug,
-                    sleeve: activeSleeve,
-                    fit,
-                    stock: stockParam,
-                  })}
-                  className={filterLinkClass(activeFit === fit)}
-                >
-                  {FIT_TYPE_LABELS[fit]}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
     </div>
   );
 }

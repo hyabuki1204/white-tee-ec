@@ -1,45 +1,66 @@
 import Image from "next/image";
+import Link from "next/link";
 import { HOME_COPY } from "@/lib/store-ui/home-redesign";
+import { STORE_TYPO } from "@/lib/store-ui/typography";
 
 export function HomeStory() {
   return (
-    <section aria-label="Production story">
-      {HOME_COPY.story.map((step, index) => (
-        <article
-          key={step.key}
-          className="relative flex min-h-screen flex-col border-t border-[#e8e8e6]"
-        >
-          <div className="relative flex-1 overflow-hidden">
-            <Image
-              src={step.image}
-              alt=""
-              fill
-              sizes="100vw"
-              priority={index === 0}
-              className="object-cover"
-            />
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent" />
-          </div>
+    <section
+      aria-label="Production story"
+      className="border-t border-[#e8e8e6] bg-background"
+    >
+      <div className="mx-auto w-full max-w-7xl px-6 py-16 md:px-8 md:py-20 lg:px-12">
+        <div className="mb-10 md:mb-12">
+          <p className={STORE_TYPO.editorialLabel}>{HOME_COPY.storySection.label}</p>
+          <p className="mt-4 max-w-2xl text-[14px] font-light leading-[1.9] tracking-[0.04em] text-[#505050] md:text-[15px]">
+            {HOME_COPY.storySection.intro}
+          </p>
+        </div>
 
-          <div className="absolute inset-x-0 bottom-0 px-8 pb-20 md:px-16 md:pb-[120px]">
-            <div className="mx-auto w-full max-w-7xl">
-              <p className="text-[12px] font-light tracking-[0.2em] text-[#7a7a7a]">
-                {step.title}
-              </p>
-              <div className="mt-6 space-y-1">
-                {step.lines.map((line) => (
-                  <p
-                    key={line}
-                    className="text-[13px] font-light leading-[1.8] tracking-[0.08em] text-[#505050] md:text-[15px]"
-                  >
-                    {line}
-                  </p>
-                ))}
+        <div className="grid gap-8 md:grid-cols-2 md:gap-10">
+          {HOME_COPY.story.map((step) => (
+            <article key={step.key} className="flex flex-col">
+              <div className="relative aspect-[4/3] overflow-hidden bg-[#f4f4f2]">
+                <Image
+                  src={step.image}
+                  alt=""
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover"
+                />
               </div>
-            </div>
-          </div>
-        </article>
-      ))}
+              <div className="mt-5 space-y-3">
+                <p className={STORE_TYPO.editorialLabel}>{step.title}</p>
+                <div className="space-y-1">
+                  {step.lines.map((line) => (
+                    <p
+                      key={line}
+                      className="text-[13px] font-light leading-[1.8] tracking-[0.06em] text-[#505050] md:text-[14px]"
+                    >
+                      {line}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <div className="mt-12 flex flex-wrap gap-4 md:mt-14">
+          <Link
+            href="/fabric"
+            className="inline-flex min-h-11 items-center border border-neutral-300 px-6 py-3 text-[12px] font-light tracking-[0.14em] text-neutral-700 transition-colors hover:border-neutral-800 hover:text-neutral-900"
+          >
+            {HOME_COPY.storySection.fabricCta}
+          </Link>
+          <Link
+            href="/about"
+            className="inline-flex min-h-11 items-center text-[12px] font-light tracking-[0.12em] text-neutral-600 underline decoration-neutral-300 underline-offset-4 transition-opacity hover:opacity-60"
+          >
+            {HOME_COPY.storySection.aboutCta}
+          </Link>
+        </div>
+      </div>
     </section>
   );
 }

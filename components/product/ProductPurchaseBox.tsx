@@ -17,6 +17,10 @@ import {
 import { buildPdpValueContent } from "@/lib/store-ui/pdp-value";
 import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
 import { SITE_UI_COPY } from "@/lib/copy/site-ui";
+import {
+  PURCHASE_BOX_CLASS,
+  STORE_TYPO,
+} from "@/lib/store-ui/typography";
 import { formatPrice } from "@/lib/utils/format-price";
 import type { Fabric } from "@/lib/fabric/content";
 import type { ProductDetailContent, ProductSize } from "@/types";
@@ -33,8 +37,7 @@ type ProductPurchaseSectionsProps = {
 const pdpCopy = GRAPHPAPER_STORE_COPY.pdp;
 const { product: productCopy } = SITE_UI_COPY;
 
-const boxClassName =
-  "mx-auto flex w-full max-w-[18rem] flex-col sm:max-w-[16rem] lg:max-w-[13rem] xl:max-w-[14rem]";
+const boxClassName = PURCHASE_BOX_CLASS;
 
 function PurchaseStatus() {
   const { selectedSize, isOutOfStock, maxQuantity, inCartQuantity } =
@@ -119,18 +122,12 @@ export function ProductPurchasePrimary({
 
   return (
     <div className={boxClassName}>
-      <header className="shrink-0 space-y-5">
-        <p className="text-[11px] font-light tracking-[0.2em] text-neutral-600">
-          {STORE_BRAND_LINE}
-        </p>
-        <h1 className="text-[14px] font-light leading-[1.65] tracking-[0.04em] text-neutral-800">
-          {displayName}
-        </h1>
+      <header className="shrink-0 space-y-4 md:space-y-5">
+        <p className={STORE_TYPO.pdpBrand}>{STORE_BRAND_LINE}</p>
+        <h1 className={STORE_TYPO.pdpTitle}>{displayName}</h1>
         <div>
-          <p className="text-[14px] font-light tracking-[0.05em] text-neutral-600">
-            {formatPrice(product.price)}
-          </p>
-          <p className="mt-2 text-[11px] font-light leading-[1.7] tracking-[0.04em] text-neutral-600">
+          <p className={STORE_TYPO.pdpPrice}>{formatPrice(product.price)}</p>
+          <p className="mt-2 text-[12px] font-light leading-[1.7] tracking-[0.04em] text-neutral-600">
             {pdpCopy.dutiesNote}
           </p>
         </div>

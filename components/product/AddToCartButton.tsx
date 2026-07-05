@@ -21,16 +21,13 @@ export function AddToCartButton({
   compact = false,
 }: AddToCartButtonProps) {
   const className = cn(
-    "text-center uppercase transition-opacity duration-500",
+    "inline-flex items-center justify-center text-center uppercase transition-colors duration-300",
     compact
-      ? "shrink-0 px-4 py-2.5 text-[11px] tracking-[0.14em] underline-offset-4"
-      : "block w-full min-h-12 py-4 text-[13px] tracking-[0.18em] md:min-h-0 md:py-3 md:text-[13px] md:tracking-[0.2em]",
+      ? "shrink-0 border px-4 py-2.5 text-[11px] tracking-[0.14em]"
+      : "block w-full min-h-[3rem] border px-6 py-3.5 text-[12px] tracking-[0.18em] md:text-[13px] md:tracking-[0.2em]",
     disabled
-      ? "cursor-not-allowed text-neutral-400"
-      : cn(
-          "text-neutral-800 hover:opacity-50",
-          !compact && "border-b border-neutral-300/80 pb-4 md:border-neutral-200/90",
-        ),
+      ? "cursor-not-allowed border-neutral-200 bg-neutral-50 text-neutral-400"
+      : "border-neutral-800 bg-transparent text-neutral-900 hover:bg-neutral-900 hover:text-white",
   );
 
   if (href && !disabled) {
