@@ -2,12 +2,14 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { CartFabricCrossSell } from "@/components/cart/CartFabricCrossSell";
 import { CartItem } from "@/components/cart/CartItem";
 import { CartOrderNotes } from "@/components/cart/CartOrderNotes";
 import { CartStickyCheckout } from "@/components/cart/CartStickyCheckout";
 import { CartSummary } from "@/components/cart/CartSummary";
+import { useCartReconcile } from "@/lib/cart/use-cart-reconcile";
+import type { CartStockLookup } from "@/lib/cart/stock-validation";
 import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
 import { getFabricCrossSellProducts } from "@/lib/products/cross-sell";
 import { useCartStore } from "@/lib/cart/store";
@@ -45,6 +47,21 @@ export function CartPageContent({
   const items = useCartStore((state) => state.items);
   const [orderNotes, setOrderNotes] = useState("");
   const { cart: copy } = GRAPHPAPER_STORE_COPY;
+
+  const stockLookup = useMemo<CartStockLookup>(() => {
+    const lookup: CartStockLookup = {};
+
+    for (const [id, product] of Object.entries(productLookup)) {
+      lookup[id] = {
+        name: product.name,
+        variants: product.variants,
+      };
+    }
+
+    return lookup;
+  }, [productLookup]);
+
+  const reconcileNotice = useCartReconcile(stockLookup, true);
 
   const crossSellProducts = getFabricCrossSellProducts(
     items.map((item) => item.productId),
@@ -114,6 +131,15 @@ export function CartPageContent({
           className="object-cover"
         />
       </div>
+
+      {reconcileNotice ? (
+        <p
+          role="status"
+          className="mb-6 text-[12px] font-light leading-[1.8] tracking-[0.04em] text-red-600/90"
+        >
+          {reconcileNotice}
+        </p>
+      ) : null}
 
       <ul className="divide-y divide-neutral-200/70">{itemElements}</ul>
 

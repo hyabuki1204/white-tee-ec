@@ -11,6 +11,11 @@ import {
   type RefObject,
 } from "react";
 import { useCartDrawer } from "@/components/cart/CartDrawerContext";
+import {
+  getInCartQuantity,
+  getVariantStock,
+  validateAddToCart,
+} from "@/lib/cart/stock-validation";
 import { getCartItemKey } from "@/lib/cart/cart-utils";
 import { setLastViewedProductSlug } from "@/lib/navigation/last-product";
 import { useCartStore } from "@/lib/cart/store";
@@ -29,6 +34,7 @@ type ProductPurchaseContextValue = {
   maxQuantity: number;
   isOutOfStock: boolean;
   canAdd: boolean;
+  addError: string | null;
   buttonLabel: string;
   handleAddToCart: () => void;
   isAdded: boolean;
@@ -69,24 +75,19 @@ export function ProductPurchaseProvider({
   const [recommendedSize, setRecommendedSize] = useState<ProductSize | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
+  const [addError, setAddError] = useState<string | null>(null);
 
   const purchaseCtaRef = useRef<HTMLDivElement>(null);
   const openSizeTabRef = useRef<(() => void) | null>(null);
 
-  const selectedVariant = product.variants.find(
-    (variant) => variant.size === selectedSize,
-  );
   const inCartQuantity =
     selectedSize !== null
-      ? (cartItems.find(
-          (item) =>
-            getCartItemKey(item.productId, item.variant) ===
-            getCartItemKey(product.id, selectedSize),
-        )?.quantity ?? 0)
+      ? getInCartQuantity(cartItems, product.id, selectedSize)
       : 0;
-  const stockQuantity = selectedVariant?.stockQuantity ?? 0;
+  const stockQuantity =
+    selectedSize !== null ? getVariantStock(product, selectedSize) : 0;
   const maxQuantity = Math.max(0, stockQuantity - inCartQuantity);
-  const isOutOfStock = selectedVariant ? stockQuantity < 1 : false;
+  const isOutOfStock = selectedSize !== null ? stockQuantity < 1 : false;
   const canAdd = selectedSize !== null && !isOutOfStock && maxQuantity > 0;
 
   useEffect(() => {
@@ -103,15 +104,36 @@ export function ProductPurchaseProvider({
     setSelectedSizeState(size);
     setQuantity(1);
     setIsAdded(false);
+    setAddError(null);
   }, []);
 
   const setQuantityWithReset = useCallback((nextQuantity: number) => {
     setQuantity(nextQuantity);
     setIsAdded(false);
+    setAddError(null);
   }, []);
 
   const handleAddToCart = useCallback(() => {
-    if (!selectedSize || !canAdd) return;
+    if (!selectedSize) {
+      setAddError(copy.chooseSize);
+      setIsAdded(false);
+      return;
+    }
+
+    const validation = validateAddToCart({
+      product,
+      variant: selectedSize,
+      quantity,
+      cartItems,
+    });
+
+    if (!validation.ok) {
+      setAddError(validation.error);
+      setIsAdded(false);
+      return;
+    }
+
+    setAddError(null);
 
     addItem({
       productId: product.id,
@@ -122,7 +144,15 @@ export function ProductPurchaseProvider({
 
     setIsAdded(true);
     openDrawer();
-  }, [addItem, canAdd, openDrawer, product.id, product.price, quantity, selectedSize]);
+  }, [
+    addItem,
+    cartItems,
+    copy.chooseSize,
+    openDrawer,
+    product,
+    quantity,
+    selectedSize,
+  ]);
 
   const registerOpenSizeTab = useCallback((fn: () => void) => {
     openSizeTabRef.current = fn;
@@ -155,6 +185,7 @@ export function ProductPurchaseProvider({
         maxQuantity,
         isOutOfStock,
         canAdd,
+        addError,
         buttonLabel,
         handleAddToCart,
         isAdded,

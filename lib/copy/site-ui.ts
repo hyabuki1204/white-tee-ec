@@ -22,6 +22,9 @@ export const SITE_UI_COPY = {
     unavailable: "在庫なし — 削除してください",
     checkoutFailed: "決済に失敗しました。",
     checkoutBlocked: "在庫切れ商品を削除してください",
+    removedUnavailable: (count: number) =>
+      `在庫切れの商品 ${count}点をカートから除外しました。`,
+    trimmedUnavailable: "在庫数に合わせて数量を調整しました。",
     decreaseQty: "数量を減らす",
     increaseQty: "数量を増やす",
     freeShippingProgress: (remaining: string) =>
@@ -37,6 +40,10 @@ export const SITE_UI_COPY = {
     addToBag: "カートに入れる",
     outOfStock: "在庫切れ",
     maxInBag: "カート上限",
+    cannotAddOutOfStock: "このサイズは在庫切れのため、カートに追加できません。",
+    maxInBagError: "在庫分はすでにカートに入っています。",
+    insufficientStock: (available: number) =>
+      `追加できるのはあと${available}点までです。`,
     chooseSize: "サイズを選んでください",
     unavailable: "在庫なし",
     allInBag: "在庫分すべてカートに入っています",

@@ -17,7 +17,6 @@ export function MobilePurchaseBar({ fabricName }: MobilePurchaseBarProps) {
   const {
     product,
     selectedSize,
-    canAdd,
     buttonLabel,
     handleAddToCart,
     purchaseCtaRef,
@@ -70,7 +69,7 @@ export function MobilePurchaseBar({ fabricName }: MobilePurchaseBarProps) {
           </p>
         </div>
         <AddToCartButton
-          disabled={!canAdd}
+          disabled={!selectedSize}
           onAdd={handleAddToCart}
           label={buttonLabel}
           compact

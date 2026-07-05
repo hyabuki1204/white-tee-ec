@@ -108,6 +108,7 @@ export function ProductPurchasePrimary({
     setQuantity,
     maxQuantity,
     canAdd,
+    addError,
     buttonLabel,
     handleAddToCart,
     isAdded,
@@ -162,18 +163,19 @@ export function ProductPurchasePrimary({
 
           <div ref={purchaseCtaRef}>
             <AddToCartButton
-              disabled={!canAdd}
+              disabled={!selectedSize}
               onAdd={handleAddToCart}
               label={buttonLabel}
             />
           </div>
 
-          <ProductPurchaseReassurance />
-
-          <ProductCredibility fabricName={fabricName} />
-
-          <div aria-live="polite" className="min-h-[1.25rem]">
-            {isAdded && selectedSize ? (
+          <div aria-live="polite" className="min-h-[1.25rem] space-y-1">
+            {addError ? (
+              <p className="text-[12px] font-light leading-[1.8] tracking-[0.05em] text-red-600/90">
+                {addError}
+              </p>
+            ) : null}
+            {isAdded && selectedSize && !addError ? (
               <p className="text-[12px] font-light leading-[1.8] tracking-[0.05em] text-neutral-600">
                 {productCopy.added(
                   selectedSize,
@@ -183,6 +185,10 @@ export function ProductPurchasePrimary({
               </p>
             ) : null}
           </div>
+
+          <ProductPurchaseReassurance />
+
+          <ProductCredibility fabricName={fabricName} />
 
           {selectedVariant?.sku ? (
             <p className="text-[11px] font-light tracking-[0.08em] text-neutral-600">
