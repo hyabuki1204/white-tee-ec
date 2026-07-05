@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 import { HOME_COPY } from "@/lib/store-ui/home-redesign";
 import {
@@ -54,7 +55,7 @@ export function HomeHero() {
   return (
     <section
       aria-label="Introduction"
-      className="group relative h-screen w-full overflow-hidden bg-[#ececea]"
+      className="group relative h-[min(68vh,720px)] min-h-[360px] w-full overflow-hidden bg-[#ececea] md:min-h-[420px]"
     >
       {HOME_HERO_IMAGES.map((src, index) => (
         <Image
@@ -71,7 +72,7 @@ export function HomeHero() {
         />
       ))}
 
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background/80" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background/85" />
 
       {imageCount > 1 ? (
         <>
@@ -105,7 +106,7 @@ export function HomeHero() {
 
           <div
             aria-hidden
-            className="pointer-events-none absolute bottom-[108px] left-1/2 z-10 flex -translate-x-1/2 gap-2 md:bottom-[132px]"
+            className="pointer-events-none absolute bottom-[88px] left-1/2 z-10 flex -translate-x-1/2 gap-2 md:bottom-[104px]"
           >
             {HOME_HERO_IMAGES.map((src, index) => (
               <span
@@ -120,16 +121,25 @@ export function HomeHero() {
         </>
       ) : null}
 
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 px-8 pb-20 md:px-16 md:pb-[120px]">
-        <div className="mx-auto w-full max-w-7xl space-y-1 md:space-y-2">
-          {HOME_COPY.hero.lines.map((line) => (
-            <p
-              key={line}
-              className="text-[13px] font-light leading-[2] tracking-[0.06em] text-[#505050] md:text-[15px]"
-            >
-              {line}
-            </p>
-          ))}
+      <div className="absolute inset-x-0 bottom-0 z-10 px-8 pb-10 md:px-16 md:pb-14">
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+          <div className="space-y-1 md:space-y-2">
+            {HOME_COPY.hero.lines.map((line) => (
+              <p
+                key={line}
+                className="text-[14px] font-light leading-[1.85] tracking-[0.06em] text-[#505050] md:text-[15px]"
+              >
+                {line}
+              </p>
+            ))}
+          </div>
+
+          <Link
+            href="#products"
+            className="inline-flex min-h-11 shrink-0 items-center justify-center border border-neutral-800 px-8 py-3 text-[12px] font-light tracking-[0.18em] text-neutral-900 transition-colors hover:bg-neutral-900 hover:text-white"
+          >
+            {HOME_COPY.hero.shopCta}
+          </Link>
         </div>
       </div>
     </section>

@@ -4,6 +4,7 @@ import { ProductGrid } from "@/components/product/ProductGrid";
 import { ProductFiltersSidebar } from "@/components/product/ProductFiltersSidebar";
 import type { Fabric } from "@/lib/fabric/content";
 import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
+import { STORE_TYPO } from "@/lib/store-ui/typography";
 import type { FitType, SleeveType } from "@/types/product-fit";
 import type { Product } from "@/types";
 
@@ -51,17 +52,14 @@ export function ProductListingLayout({
             products={allProducts}
             activeFabricSlug={activeFabricSlug}
             activeSleeve={activeSleeve}
-            activeFit={activeFit}
             inStockOnly={inStockOnly}
           />
 
           <div className="min-w-0 flex-1">
             <header className="mb-8 flex flex-col gap-6 border-b border-neutral-200/70 pb-6 sm:flex-row sm:items-end sm:justify-between md:mb-10">
               <div>
-                <h1 className="text-[14px] font-light tracking-[0.28em] text-neutral-800">
-                  {title}
-                </h1>
-                <p className="mt-3 text-[12px] font-light tracking-[0.08em] text-neutral-600">
+                <h1 className={STORE_TYPO.catalogTitle}>{title}</h1>
+                <p className="mt-3 text-[13px] font-light tracking-[0.06em] text-neutral-600">
                   {GRAPHPAPER_STORE_COPY.plp.items(products.length)}
                 </p>
               </div>
