@@ -9,6 +9,8 @@ import { CartItem } from "@/components/cart/CartItem";
 import { CartSummary } from "@/components/cart/CartSummary";
 import type { CartProductLookup } from "@/components/cart/CartPageContent";
 import { useCheckout } from "@/lib/cart/use-checkout";
+import { useCartReconcile } from "@/lib/cart/use-cart-reconcile";
+import type { CartStockLookup } from "@/lib/cart/stock-validation";
 import { getFabricCrossSellProducts } from "@/lib/products/cross-sell";
 import { getGraphpaperDisplayName } from "@/lib/products/display-name";
 import { FIT_TYPE_LABELS } from "@/lib/products/silhouette";
@@ -74,6 +76,21 @@ export function CartDrawer() {
 
     return lookup;
   }, [fabricNameBySlug, products]);
+
+  const stockLookup = useMemo<CartStockLookup>(() => {
+    const lookup: CartStockLookup = {};
+
+    for (const [id, product] of Object.entries(productLookup)) {
+      lookup[id] = {
+        name: product.name,
+        variants: product.variants,
+      };
+    }
+
+    return lookup;
+  }, [productLookup]);
+
+  const reconcileNotice = useCartReconcile(stockLookup, isOpen);
 
   const crossSellProducts = getFabricCrossSellProducts(
     items.map((item) => item.productId),
@@ -167,6 +184,15 @@ export function CartDrawer() {
             </div>
           ) : (
             <>
+              {reconcileNotice ? (
+                <p
+                  role="status"
+                  className="mb-6 text-[12px] font-light leading-[1.8] tracking-[0.04em] text-red-600/90"
+                >
+                  {reconcileNotice}
+                </p>
+              ) : null}
+
               <ul className="divide-y divide-neutral-200/70">{itemElements}</ul>
 
               {crossSellProducts.length > 0 ? (

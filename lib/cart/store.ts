@@ -18,6 +18,7 @@ type CartState = {
     quantity: number,
   ) => void;
   clearCart: () => void;
+  replaceItems: (items: CartLineItem[]) => void;
   getTotal: () => number;
   getItemCount: () => number;
 };
@@ -80,6 +81,8 @@ export const useCartStore = create<CartState>()(
       },
 
       clearCart: () => set({ items: [] }),
+
+      replaceItems: (items) => set({ items }),
 
       getTotal: () => calculateCartTotal(get().items),
 
