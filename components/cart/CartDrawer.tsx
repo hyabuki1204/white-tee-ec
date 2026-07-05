@@ -3,10 +3,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { CartCheckoutButton } from "@/components/cart/CartCheckoutButton";
 import { useCartDrawer } from "@/components/cart/CartDrawerContext";
 import { CartItem } from "@/components/cart/CartItem";
 import { CartSummary } from "@/components/cart/CartSummary";
 import type { CartProductLookup } from "@/components/cart/CartPageContent";
+import { useCheckout } from "@/lib/cart/use-checkout";
 import { getFabricCrossSellProducts } from "@/lib/products/cross-sell";
 import { getGraphpaperDisplayName } from "@/lib/products/display-name";
 import { FIT_TYPE_LABELS } from "@/lib/products/silhouette";
@@ -24,10 +26,13 @@ export function CartDrawer() {
   const [orderNotes, setOrderNotes] = useState("");
 
   useEffect(() => {
-    document.body.style.overflow = isOpen ? "hidden" : "";
+    if (!isOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
 
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.overflow = previousOverflow;
     };
   }, [isOpen]);
 
@@ -103,6 +108,8 @@ export function CartDrawer() {
     );
   });
 
+  const checkout = useCheckout({ hasUnavailableItems, orderNotes });
+
   return (
     <>
       <button
@@ -119,14 +126,21 @@ export function CartDrawer() {
         aria-label={copy.title}
         aria-hidden={!isOpen}
         className={cn(
-          "fixed inset-y-0 right-0 z-[70] flex w-full max-w-md flex-col bg-background shadow-[-8px_0_32px_rgba(0,0,0,0.06)] transition-transform duration-400 ease-out",
+          "fixed inset-y-0 right-0 z-[70] flex h-[100dvh] max-h-[100dvh] w-full max-w-md flex-col bg-background shadow-[-8px_0_32px_rgba(0,0,0,0.06)] transition-transform duration-400 ease-out",
           isOpen ? "translate-x-0" : "translate-x-full",
         )}
       >
-        <div className="flex items-center justify-between border-b border-neutral-200/70 px-6 py-5">
-          <p className="text-[12px] font-light tracking-[0.2em] text-neutral-800">
-            {copy.title}
-          </p>
+        <div className="flex shrink-0 items-center justify-between border-b border-neutral-200/70 px-6 py-5">
+          <div>
+            <p className="text-[13px] font-light tracking-[0.2em] text-neutral-900">
+              {copy.title}
+            </p>
+            {items.length > 0 ? (
+              <p className="mt-1 text-[12px] font-light tracking-[0.06em] text-neutral-600">
+                {copy.items} · {items.length}
+              </p>
+            ) : null}
+          </div>
           <button
             type="button"
             onClick={closeDrawer}
@@ -137,7 +151,7 @@ export function CartDrawer() {
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-6 py-6">
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-y-contain px-6 py-4">
           {items.length === 0 ? (
             <div className="py-12 text-center">
               <p className="text-[14px] font-light tracking-wide text-neutral-600">
@@ -156,7 +170,7 @@ export function CartDrawer() {
               <ul className="divide-y divide-neutral-200/70">{itemElements}</ul>
 
               {crossSellProducts.length > 0 ? (
-                <section className="mt-10 border-t border-neutral-200/60 pt-8">
+                <section className="mt-8 border-t border-neutral-200/60 pt-8">
                   <p className="mb-6 text-[11px] font-light tracking-[0.14em] text-neutral-600">
                     {copy.pairWith}
                   </p>
@@ -171,44 +185,44 @@ export function CartDrawer() {
                       );
 
                       return (
-                      <li key={product.id}>
-                        <Link
-                          href={`/products/${product.slug}`}
-                          onClick={closeDrawer}
-                          className="group flex gap-4"
-                        >
-                          <div className="relative h-24 w-20 shrink-0 overflow-hidden bg-neutral-100">
-                            <Image
-                              src={product.imageUrl}
-                              alt={displayName}
-                              fill
-                              sizes="80px"
-                              className="object-cover transition-opacity duration-300 group-hover:opacity-70"
-                            />
-                          </div>
-                          <div className="min-w-0 pt-1">
-                            <p className="text-[11px] tracking-[0.08em] text-neutral-600">
-                              {GRAPHPAPER_STORE_COPY.brandLine}
-                            </p>
-                            <p className="mt-1 text-[12px] font-light tracking-[0.04em] text-neutral-800">
-                              {displayName}
-                            </p>
-                            <p className="mt-1 text-[11px] font-light tracking-[0.06em] text-neutral-600">
-                              {FIT_TYPE_LABELS[product.fitType]}
-                            </p>
-                            <p className="mt-2 text-[12px] text-neutral-600">
-                              {formatPrice(product.price)}
-                            </p>
-                          </div>
-                        </Link>
-                      </li>
+                        <li key={product.id}>
+                          <Link
+                            href={`/products/${product.slug}`}
+                            onClick={closeDrawer}
+                            className="group flex gap-4"
+                          >
+                            <div className="relative h-24 w-20 shrink-0 overflow-hidden bg-neutral-100">
+                              <Image
+                                src={product.imageUrl}
+                                alt={displayName}
+                                fill
+                                sizes="80px"
+                                className="object-cover transition-opacity duration-300 group-hover:opacity-70"
+                              />
+                            </div>
+                            <div className="min-w-0 pt-1">
+                              <p className="text-[11px] tracking-[0.08em] text-neutral-600">
+                                {GRAPHPAPER_STORE_COPY.brandLine}
+                              </p>
+                              <p className="mt-1 text-[12px] font-light tracking-[0.04em] text-neutral-800">
+                                {displayName}
+                              </p>
+                              <p className="mt-1 text-[11px] font-light tracking-[0.06em] text-neutral-600">
+                                {FIT_TYPE_LABELS[product.fitType]}
+                              </p>
+                              <p className="mt-2 text-[12px] text-neutral-600">
+                                {formatPrice(product.price)}
+                              </p>
+                            </div>
+                          </Link>
+                        </li>
                       );
                     })}
                   </ul>
                 </section>
               ) : null}
 
-              <label className="mt-10 block">
+              <label className="mt-8 block">
                 <span className="text-[11px] font-light tracking-[0.12em] text-neutral-600">
                   {copy.orderNotes}
                 </span>
@@ -220,19 +234,52 @@ export function CartDrawer() {
                   className="mt-3 w-full resize-none border border-neutral-200/80 bg-transparent px-3 py-3 text-[13px] font-light text-neutral-700 outline-none transition-colors focus:border-neutral-400"
                 />
               </label>
+
+              <div className="mt-8 pb-4">
+                <CartSummary
+                  hasUnavailableItems={hasUnavailableItems}
+                  orderNotes={orderNotes}
+                  showCheckout={false}
+                  showTopBorder
+                />
+              </div>
             </>
           )}
         </div>
 
         {items.length > 0 ? (
-          <div className="border-t border-neutral-200/70 px-6 py-6">
-            <CartSummary
-              hasUnavailableItems={hasUnavailableItems}
-              orderNotes={orderNotes}
-              prominentCheckout
-              showContinueShopping
-              onContinueShopping={closeDrawer}
+          <div className="shrink-0 border-t border-neutral-200/70 bg-background px-6 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+            <div className="mb-4 flex items-baseline justify-between">
+              <p className="text-[13px] tracking-wide text-neutral-600">
+                {copy.total}
+              </p>
+              <p className="text-[17px] font-light text-neutral-900">
+                {checkout.formatPrice(checkout.total)}
+              </p>
+            </div>
+            <p className="mb-4 text-[11px] font-light text-neutral-500">
+              {copy.taxIncluded}
+            </p>
+            {checkout.error ? (
+              <p className="mb-3 text-[13px] font-light text-red-600">
+                {checkout.error}
+              </p>
+            ) : null}
+            <CartCheckoutButton
+              label={copy.checkout}
+              loadingLabel={copy.processing}
+              disabled={checkout.checkoutDisabled}
+              isLoading={checkout.isLoading}
+              onClick={checkout.handleCheckout}
+              prominent
             />
+            <button
+              type="button"
+              onClick={closeDrawer}
+              className="mt-3 w-full py-2 text-[12px] font-light tracking-[0.1em] text-neutral-600 transition-opacity hover:opacity-60"
+            >
+              {copy.continueShopping}
+            </button>
           </div>
         ) : null}
       </aside>

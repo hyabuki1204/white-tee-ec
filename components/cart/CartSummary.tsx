@@ -11,6 +11,10 @@ type CartSummaryProps = {
   prominentCheckout?: boolean;
   showContinueShopping?: boolean;
   onContinueShopping?: () => void;
+  /** When false, omit checkout button (e.g. drawer uses a sticky footer). */
+  showCheckout?: boolean;
+  /** When false, omit top border (nested inside drawer scroll). */
+  showTopBorder?: boolean;
 };
 
 export function CartSummary({
@@ -20,12 +24,20 @@ export function CartSummary({
   prominentCheckout = false,
   showContinueShopping = false,
   onContinueShopping,
+  showCheckout = true,
+  showTopBorder = true,
 }: CartSummaryProps) {
   const checkout = useCheckout({ hasUnavailableItems, orderNotes });
   const { copy } = checkout;
 
   return (
-    <div className="space-y-6 border-t border-neutral-200/70 pt-8 sm:space-y-8 sm:pt-10">
+    <div
+      className={
+        showTopBorder
+          ? "space-y-6 border-t border-neutral-200/70 pt-8 sm:space-y-8 sm:pt-10"
+          : "space-y-6 sm:space-y-8"
+      }
+    >
       <div className="space-y-4">
         <div className="flex items-baseline justify-between">
           <p className="text-[14px] tracking-wide text-neutral-600 md:text-[13px] md:text-neutral-600">
@@ -96,16 +108,18 @@ export function CartSummary({
 
       <CartCheckoutTrust />
 
-      <div className={hideCheckoutOnMobile ? "hidden lg:block" : undefined}>
-        <CartCheckoutButton
-          label={copy.checkout}
-          loadingLabel={copy.processing}
-          disabled={checkout.checkoutDisabled}
-          isLoading={checkout.isLoading}
-          onClick={checkout.handleCheckout}
-          prominent={prominentCheckout}
-        />
-      </div>
+      {showCheckout ? (
+        <div className={hideCheckoutOnMobile ? "hidden lg:block" : undefined}>
+          <CartCheckoutButton
+            label={copy.checkout}
+            loadingLabel={copy.processing}
+            disabled={checkout.checkoutDisabled}
+            isLoading={checkout.isLoading}
+            onClick={checkout.handleCheckout}
+            prominent={prominentCheckout}
+          />
+        </div>
+      ) : null}
 
       {showContinueShopping && onContinueShopping ? (
         <button
