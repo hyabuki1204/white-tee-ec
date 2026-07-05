@@ -23,7 +23,7 @@ export function HomeStory() {
               <div className="relative aspect-[4/3] overflow-hidden bg-[#f4f4f2]">
                 <Image
                   src={step.image}
-                  alt=""
+                  alt={step.imageAlt}
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
                   className="object-cover"

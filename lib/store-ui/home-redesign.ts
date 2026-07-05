@@ -1,9 +1,11 @@
 import { HOME_FEATURED_PRODUCT_SLUG } from "@/lib/store-ui/home-featured";
+import { CREDIBILITY_IMAGES } from "@/lib/store-ui/credibility";
+import { PDP_VALUE_IMAGES } from "@/lib/store-ui/pdp-value";
 
 export const HOME_IMAGES = {
   story: {
-    material: "/fabric/heavyweight-jersey.svg",
-    finish: "/fabric/compact-jersey.svg",
+    material: PDP_VALUE_IMAGES.fabric,
+    finish: CREDIBILITY_IMAGES.factory,
   },
 } as const;
 
@@ -44,6 +46,7 @@ export const HOME_COPY = {
     {
       key: "material",
       title: "Material",
+      imageAlt: "白Tシャツの生地を拡大した写真",
       lines: [
         "超長綿から選んだ糸を、6段階のジャージー重量で編み上げ。",
         "1枚着用から重ね着まで、用途に合わせて選べます。",
@@ -53,6 +56,7 @@ export const HOME_COPY = {
     {
       key: "finish",
       title: "Finish",
+      imageAlt: "和歌山の円筒編み工場の写真",
       lines: [
         "和歌山・Kanemasa の円筒編み機で編み、手仕上げで襟と裾を整えます。",
         "白は、着たあとの首元と肩線で品質がわかります。",
