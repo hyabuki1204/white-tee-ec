@@ -158,21 +158,14 @@ create trigger products_set_updated_at
   for each row execute function public.set_updated_at();
 
 -- ---------------------------------------------------------------------------
--- RLS (Row Level Security) — NOT enabled yet
+-- RLS (Row Level Security)
 -- ---------------------------------------------------------------------------
--- Policy direction for later:
+-- Applied by migrations (see supabase/migrations/decrement-stock-and-rls.sql
+-- and ensure-rls-all-public-tables.sql). Run: npm run db:migrate
 --
--- products / product_variants / product_images:
---   - SELECT: public (anon + authenticated)
---   - INSERT/UPDATE/DELETE: service role or admin only
+-- products / product_variants / product_images / fabrics / site_content:
+--   SELECT: public (anon) for published/readable rows
+--   INSERT/UPDATE/DELETE: service role only (admin + webhooks)
 --
--- orders / order_items:
---   - SELECT: owner (user_id = auth.uid()) or service role
---   - INSERT: service role (Stripe webhook) or authenticated checkout
---   - UPDATE status: service role only (webhook)
---
--- Example (enable when ready):
---   alter table public.products enable row level security;
---   create policy "Public read products"
---     on public.products for select
---     using (true);
+-- orders / order_items / schema_migrations:
+--   service role only (no public policies)
