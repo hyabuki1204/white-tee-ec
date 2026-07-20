@@ -5,6 +5,7 @@ import { AdminConfirmDialog } from "@/components/admin/AdminConfirmDialog";
 import { ADMIN_COPY } from "@/lib/admin/copy";
 import {
   adminBtnPrimary,
+  adminBtnSecondary,
   adminError,
   adminField,
   adminInput,
@@ -164,6 +165,89 @@ export function ContentEditor({ initialContent, products }: ContentEditorProps) 
       <div className={`${adminSection} space-y-6`}>
         {activeTab === "home" ? (
           <>
+            <fieldset className={adminField}>
+              <legend className={adminLabel}>{copy.home.heroCarousel}</legend>
+              <p className={adminMuted}>{copy.home.heroCarouselHint}</p>
+              <div className="mt-3 space-y-4">
+                {home.heroCarouselImages.map((src, index) => (
+                  <div
+                    key={`hero-carousel-${index}`}
+                    className="space-y-3 border-t border-neutral-200 pt-4 first:border-t-0 first:pt-0"
+                  >
+                    <ContentImageField
+                      label={copy.home.heroCarouselImage(index + 1)}
+                      previewAspectClass="aspect-[21/9]"
+                      value={src}
+                      onChange={(heroCarouselImage) => {
+                        const next = [...home.heroCarouselImages];
+                        next[index] = heroCarouselImage;
+                        setHome({ ...home, heroCarouselImages: next });
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setHome({
+                          ...home,
+                          heroCarouselImages: home.heroCarouselImages.filter(
+                            (_, imageIndex) => imageIndex !== index,
+                          ),
+                        })
+                      }
+                      className={adminBtnSecondary}
+                      disabled={home.heroCarouselImages.length <= 1}
+                    >
+                      {copy.home.removeHeroCarouselImage}
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <button
+                type="button"
+                onClick={() =>
+                  setHome({
+                    ...home,
+                    heroCarouselImages: [...home.heroCarouselImages, ""],
+                  })
+                }
+                className={`${adminBtnSecondary} mt-4`}
+              >
+                {copy.home.addHeroCarouselImage}
+              </button>
+            </fieldset>
+
+            <label className={adminField}>
+              <span className={adminLabel}>{copy.home.announcementMessage}</span>
+              <input
+                value={home.announcementMessage}
+                onChange={(event) =>
+                  setHome({ ...home, announcementMessage: event.target.value })
+                }
+                className={adminInput}
+              />
+            </label>
+            <label className={adminField}>
+              <span className={adminLabel}>{copy.home.announcementLinkHref}</span>
+              <input
+                value={home.announcementLinkHref}
+                onChange={(event) =>
+                  setHome({ ...home, announcementLinkHref: event.target.value })
+                }
+                className={adminInput}
+              />
+            </label>
+            <label className={adminField}>
+              <span className={adminLabel}>{copy.home.announcementLinkLabel}</span>
+              <input
+                value={home.announcementLinkLabel}
+                onChange={(event) =>
+                  setHome({ ...home, announcementLinkLabel: event.target.value })
+                }
+                className={adminInput}
+              />
+            </label>
+
+            <p className={adminMuted}>{copy.home.legacyNotice}</p>
             <ContentImageField
               label={copy.home.heroImage}
               hint={copy.home.heroImageHint}

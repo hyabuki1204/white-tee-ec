@@ -23,6 +23,11 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     description: ADMIN_COPY.sections.content.description,
   },
   {
+    label: ADMIN_COPY.sections.journal.label,
+    href: "/admin/journal",
+    description: ADMIN_COPY.sections.journal.description,
+  },
+  {
     label: ADMIN_COPY.sections.pages.label,
     href: "/admin/pages",
     description: ADMIN_COPY.sections.pages.description,

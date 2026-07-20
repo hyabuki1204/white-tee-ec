@@ -2,7 +2,7 @@ import { JaHelperText } from "@/components/ui/JaHelperText";
 import {
   formatJournalDate,
   type JournalArticle,
-} from "@/lib/content/journal";
+} from "@/lib/content/journal-static";
 
 type JournalArticleBodyProps = {
   article: JournalArticle;

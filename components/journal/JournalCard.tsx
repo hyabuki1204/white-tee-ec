@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
-import { formatJournalDate } from "@/lib/content/journal";
+import { formatJournalDate } from "@/lib/content/journal-static";
 import { JaHelperText } from "@/components/ui/JaHelperText";
 import { cn } from "@/lib/utils";
-import type { JournalArticle } from "@/lib/content/journal";
+import type { JournalArticle } from "@/lib/content/journal-static";
 
 type JournalCardProps = {
   article: JournalArticle;

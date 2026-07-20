@@ -7,6 +7,7 @@ export const ADMIN_COPY = {
     products: "商品",
     fabrics: "生地",
     content: "ホームページ設定",
+    journal: "Journal",
     pages: "固定ページ",
     seo: "SEO設定",
     store: "ECサイト",
@@ -79,7 +80,11 @@ export const ADMIN_COPY = {
     },
     content: {
       label: "ホームページ設定",
-      description: "Home / About の文言編集（Journal はコード管理）",
+      description: "Hero カルーセル / お知らせ / About の編集",
+    },
+    journal: {
+      label: "Journal",
+      description: "Journal 記事・ページ設定の編集",
     },
     pages: {
       label: "固定ページ",
@@ -258,14 +263,14 @@ export const ADMIN_COPY = {
   content: {
     title: "ホームページ設定",
     subtitle:
-      "店舗に表示される Home / About の文言を編集します。Journal は lib/content/journal.ts を参照。",
+      "店舗に表示される Home / About の文言を編集します。Journal は Journal 管理画面から編集してください。",
     tabs: {
       home: "Home",
       about: "About",
       stories: "Stories（旧）",
     },
     journalNotice:
-      "ストアフロントの Journal（/journal）はコード側の lib/content/journal.ts で管理されています。このタブは旧 Stories CMS 用です。",
+      "ストアフロントの Journal（/journal）は Journal 管理画面から編集できます。このタブは旧 Stories CMS 用です。",
     imageField: {
       pathOrUrl: "画像パス / URL",
       upload: "画像をアップロード",
@@ -273,7 +278,18 @@ export const ADMIN_COPY = {
       uploadFailed: "画像のアップロードに失敗しました。",
     },
     home: {
-      heroImage: "Hero 画像",
+      heroCarousel: "Hero カルーセル画像",
+      heroCarouselHint:
+        "トップのスライドショー。21:9 推奨。1枚以上必要です。",
+      heroCarouselImage: (n: number) => `カルーセル画像 ${n}`,
+      addHeroCarouselImage: "カルーセル画像を追加",
+      removeHeroCarouselImage: "この画像を削除",
+      announcementMessage: "お知らせバー — メッセージ",
+      announcementLinkHref: "お知らせバー — リンク URL",
+      announcementLinkLabel: "お知らせバー — リンク文言",
+      legacyNotice:
+        "以下は旧 Home CMS フィールドです（Graphpaper リデザイン後は主にカルーセル・お知らせを使用）。",
+      heroImage: "Hero 画像（旧）",
       heroImageHint:
         "横長 16:9 推奨（例 1920×1080）。被写体は中央〜やや上に。最大 5 MB（JPEG / PNG / WebP / GIF）。",
       heroCopy: "Hero コピー",
@@ -304,6 +320,31 @@ export const ADMIN_COPY = {
       imageAlt: "画像 alt",
     },
     saveTab: (tab: string) => `${tab} を保存`,
+  },
+  journal: {
+    title: "Journal",
+    subtitle: "Journal ページと記事を編集します。",
+    pageTitle: "ページタイトル",
+    intro1: "イントロ 1行目",
+    intro2: "イントロ 2行目",
+    articles: "記事一覧",
+    entry: (n: number) => `記事 ${n}`,
+    slug: "スラッグ（URL）",
+    articleTitle: "タイトル",
+    publishedAt: "公開日",
+    excerpt: "抜粋",
+    helperJa: "日本語ヘルパー（任意）",
+    heroImage: "Hero 画像",
+    heroImageHint:
+      "16:9 推奨。最大 5 MB（JPEG / PNG / WebP / GIF）。",
+    heroImageAlt: "Hero 画像 alt",
+    featured: "ホームに表示（featured）",
+    body: "本文",
+    bodyHint: "段落ごとに空行で区切って入力",
+    addArticle: "記事を追加",
+    removeArticle: "記事を削除",
+    save: "Journal を保存",
+    unsaved: "未保存の変更があります。",
   },
   pages: {
     title: "固定ページ",

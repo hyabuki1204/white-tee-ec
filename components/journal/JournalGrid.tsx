@@ -1,5 +1,5 @@
 import { JournalCard } from "@/components/journal/JournalCard";
-import type { JournalArticle } from "@/lib/content/journal";
+import type { JournalArticle } from "@/lib/content/journal-static";
 
 type JournalGridProps = {
   articles: JournalArticle[];

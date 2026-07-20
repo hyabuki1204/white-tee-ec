@@ -24,7 +24,7 @@ function getReducedMotionServerSnapshot() {
   return false;
 }
 
-export function HomeHero() {
+export function HomeHero({ priceRange }: { priceRange: string }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const prefersReducedMotion = useSyncExternalStore(
     subscribeReducedMotion,
@@ -132,6 +132,9 @@ export function HomeHero() {
                 {line}
               </p>
             ))}
+            <p className="text-[14px] font-light leading-[1.85] tracking-[0.06em] text-[#505050] md:text-[15px]">
+              {priceRange} — 素材・縫製・仕上げにこだわった一着。
+            </p>
           </div>
 
           <Link

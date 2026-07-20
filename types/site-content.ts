@@ -7,6 +7,31 @@ export type HomePageContent = {
   fabricIntroLines: [string, string];
   /** Empty array = auto algorithm in pickFeaturedProducts */
   featuredProductSlugs: string[];
+  /** Graphpaper hero carousel — empty falls back to static defaults */
+  heroCarouselImages: string[];
+  announcementMessage: string;
+  announcementLinkHref: string;
+  announcementLinkLabel: string;
+};
+
+export type JournalArticleContent = {
+  slug: string;
+  title: string;
+  /** ISO date string for sorting and display */
+  publishedAt: string;
+  excerpt: string;
+  /** One-line Japanese helper under excerpt */
+  helperJa?: string | null;
+  heroImage: string;
+  heroImageAlt: string;
+  featured?: boolean;
+  body: string[];
+};
+
+export type JournalPageContent = {
+  pageTitle: string;
+  introLines: [string, string];
+  articles: JournalArticleContent[];
 };
 
 export type AboutPageContent = {
@@ -68,6 +93,7 @@ export type SiteContentKey =
   | "home"
   | "about"
   | "stories"
+  | "journal"
   | "legal"
   | "contact"
   | "shipping"
@@ -79,6 +105,7 @@ export type SiteContentMap = {
   home: HomePageContent;
   about: AboutPageContent;
   stories: StoriesPageContent;
+  journal: JournalPageContent;
   legal: LegalBusinessContent;
   contact: ContactPageContent;
   shipping: PolicyPageContent;

@@ -1,4 +1,5 @@
-import { JOURNAL_ARTICLES } from "@/lib/content/journal";
+import { getJournalArticles } from "@/lib/content/journal";
+import type { JournalArticle } from "@/lib/content/journal-static";
 
 export type StockistImage = {
   src: string;
@@ -69,8 +70,9 @@ export const STOCKIST_JOURNAL_SLUGS = [
   "from-cotton-to-yarn",
 ] as const;
 
-export function getStockistJournalArticles() {
+export async function getStockistJournalArticles(): Promise<JournalArticle[]> {
+  const articles = await getJournalArticles();
   return STOCKIST_JOURNAL_SLUGS.map((slug) =>
-    JOURNAL_ARTICLES.find((article) => article.slug === slug),
-  ).filter((article): article is NonNullable<typeof article> => article != null);
+    articles.find((article) => article.slug === slug),
+  ).filter((article): article is JournalArticle => article != null);
 }

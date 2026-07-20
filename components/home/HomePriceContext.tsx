@@ -5,7 +5,11 @@ import {
   PRICE_POSITIONING,
 } from "@/lib/store-ui/credibility";
 
-export function HomePriceContext() {
+type HomePriceContextProps = {
+  priceRange: string;
+};
+
+export function HomePriceContext({ priceRange }: HomePriceContextProps) {
   return (
     <section aria-label="Price context" className="border-t border-[#e8e8e6]">
       <div className="mx-auto w-full max-w-7xl px-8 py-20 md:px-16 md:py-24">
@@ -37,8 +41,11 @@ export function HomePriceContext() {
                 </p>
               ))}
             </div>
+            <p className="text-[13px] font-light leading-[1.9] tracking-[0.04em] text-[#505050]">
+              {priceRange}
+            </p>
             <p className="text-[12px] font-light leading-[1.9] tracking-[0.04em] text-[#7a7a7a]">
-              {PRICE_POSITIONING.range}
+              {PRICE_POSITIONING.rangeTemplate}
             </p>
             <p className="text-[12px] font-light leading-[1.9] tracking-[0.04em] text-[#7a7a7a]">
               {PRICE_POSITIONING.care}

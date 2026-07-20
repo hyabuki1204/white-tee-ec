@@ -5,18 +5,25 @@ import { JournalGrid } from "@/components/journal/JournalGrid";
 import { JournalIntro } from "@/components/journal/JournalIntro";
 import { Container } from "@/components/layout/Container";
 import { SITE_UI_COPY } from "@/lib/copy/site-ui";
-import { JOURNAL_ARTICLES } from "@/lib/content/journal";
+import { getJournalArticles, getJournalPageContent } from "@/lib/content/journal";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 
-export const metadata: Metadata = buildPageMetadata({
-  title: "Journal",
-  description:
-    "Notes from the atelier — knitting, fabric, and the quiet work behind WHITE TEE.",
-  path: "/journal",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  const content = await getJournalPageContent();
 
-export default function JournalPage() {
-  const sortedArticles = [...JOURNAL_ARTICLES].sort(
+  return buildPageMetadata({
+    title: content.pageTitle,
+    description: content.introLines.join(" "),
+    path: "/journal",
+  });
+}
+
+export default async function JournalPage() {
+  const [content, articles] = await Promise.all([
+    getJournalPageContent(),
+    getJournalArticles(),
+  ]);
+  const sortedArticles = [...articles].sort(
     (a, b) =>
       new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
   );
@@ -29,11 +36,14 @@ export default function JournalPage() {
         <Breadcrumbs
           items={[
             { label: bc.home, href: "/" },
-            { label: "Journal" },
+            { label: content.pageTitle },
           ]}
         />
         <div className="mt-12 md:mt-16">
-          <JournalIntro />
+          <JournalIntro
+            pageTitle={content.pageTitle}
+            introLines={content.introLines}
+          />
         </div>
         <div className="mt-16 md:mt-24">
           <JournalGrid articles={sortedArticles} />

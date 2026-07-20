@@ -46,7 +46,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.75,
   }));
 
-  const journalSlugs = getJournalSlugs();
+  const journalSlugs = await getJournalSlugs();
   const journalEntries: MetadataRoute.Sitemap = journalSlugs.map((slug) => ({
     url: `${baseUrl}/journal/${slug}`,
     lastModified: new Date(),

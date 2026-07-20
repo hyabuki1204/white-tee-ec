@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { SkipLink } from "@/components/layout/SkipLink";
 import { StoreChrome } from "@/components/layout/StoreChrome";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { getJournalNavArticles } from "@/lib/content/journal";
+import { getSiteContent } from "@/lib/content/queries";
 import { getFabrics } from "@/lib/fabric/queries";
 import { getProducts } from "@/lib/products/queries";
 import { buildOrganizationSchema } from "@/lib/seo/json-ld";
@@ -28,7 +30,12 @@ export default async function StoreLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [products, fabrics] = await Promise.all([getProducts(), getFabrics()]);
+  const [products, fabrics, home, journalNavArticles] = await Promise.all([
+    getProducts(),
+    getFabrics(),
+    getSiteContent("home"),
+    getJournalNavArticles(),
+  ]);
   const fabricNameBySlug = Object.fromEntries(
     fabrics.map((fabric) => [fabric.slug, fabric.name]),
   );
@@ -38,7 +45,16 @@ export default async function StoreLayout({
       <JsonLd data={buildOrganizationSchema()} />
       <SkipLink />
       <div className="flex min-h-screen flex-col bg-background">
-        <StoreChrome products={products} fabricNameBySlug={fabricNameBySlug}>
+        <StoreChrome
+          products={products}
+          fabricNameBySlug={fabricNameBySlug}
+          announcement={{
+            message: home.announcementMessage,
+            linkHref: home.announcementLinkHref,
+            linkLabel: home.announcementLinkLabel,
+          }}
+          journalNavArticles={journalNavArticles}
+        >
           {children}
         </StoreChrome>
       </div>

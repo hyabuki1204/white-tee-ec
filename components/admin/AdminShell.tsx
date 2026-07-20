@@ -18,6 +18,7 @@ const ADMIN_LINKS = [
   { href: "/admin/products", label: ADMIN_COPY.nav.products, exact: false },
   { href: "/admin/fabrics", label: ADMIN_COPY.nav.fabrics, exact: false },
   { href: "/admin/content", label: ADMIN_COPY.nav.content, exact: false },
+  { href: "/admin/journal", label: ADMIN_COPY.nav.journal, exact: false },
   { href: "/admin/pages", label: ADMIN_COPY.nav.pages, exact: false },
   { href: "/admin/seo", label: ADMIN_COPY.nav.seo, exact: false },
   { href: "/", label: ADMIN_COPY.nav.store, exact: true },

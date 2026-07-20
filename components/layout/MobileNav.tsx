@@ -4,13 +4,14 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { CartNavLink } from "@/components/layout/CartNavLink";
 import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
-import { STORE_MOBILE_PRIMARY_NAV } from "@/lib/store-ui/nav-links";
+import type { NavDropdownItem } from "@/lib/store-ui/nav-links";
 import { isNavActive, isNavDropdownActive } from "@/lib/store-ui/nav-active";
 import { cn } from "@/lib/utils";
 
 type MobileNavProps = {
   isOpen: boolean;
   onClose: () => void;
+  primaryNav: NavDropdownItem[];
 };
 
 const LEGAL_LINKS = [
@@ -27,7 +28,7 @@ const SECONDARY_LINKS = [
   { label: GRAPHPAPER_STORE_COPY.footer.about, href: "/about" },
 ] as const;
 
-export function MobileNav({ isOpen, onClose }: MobileNavProps) {
+export function MobileNav({ isOpen, onClose, primaryNav }: MobileNavProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const search = searchParams.toString();
@@ -50,7 +51,7 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
         className="absolute inset-x-0 top-0 max-h-[100dvh] overflow-y-auto bg-background px-6 pb-10 pt-[calc(var(--header-height)+0.75rem)]"
       >
         <ul className="flex flex-col">
-          {STORE_MOBILE_PRIMARY_NAV.map((item) => {
+          {primaryNav.map((item) => {
             const hasChildren = Boolean(item.children?.length);
             const itemActive = isNavDropdownActive(
               pathname,

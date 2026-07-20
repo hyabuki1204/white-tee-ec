@@ -5,12 +5,13 @@ import { HomeHero } from "@/components/home/HomeHero";
 import { HomePriceContext } from "@/components/home/HomePriceContext";
 import { HomeProductGridWithSleeveToggle } from "@/components/home/HomeProductGridWithSleeveToggle";
 import { HomeStory } from "@/components/home/HomeStory";
-import type { Fabric } from "@/lib/fabric/content";
+import { formatCatalogPriceRange } from "@/lib/products/price-range";
+import { sortProductsByCatalogOrder } from "@/lib/products/catalog-sort";
 import {
   buildHomeDetailContent,
   findHomeFeaturedProduct,
 } from "@/lib/store-ui/home-featured";
-import { sortProductsByCatalogOrder } from "@/lib/products/catalog-sort";
+import type { Fabric } from "@/lib/fabric/content";
 import type { Product } from "@/types";
 
 type HomeProductCatalogProps = {
@@ -25,6 +26,7 @@ export function HomeProductCatalog({
   fabricNameBySlug,
 }: HomeProductCatalogProps) {
   const catalogProducts = sortProductsByCatalogOrder(products);
+  const priceRange = formatCatalogPriceRange(catalogProducts);
   const featuredProduct = findHomeFeaturedProduct(catalogProducts);
   const featuredFabric = featuredProduct?.fabricSlug
     ? fabrics.find((fabric) => fabric.slug === featuredProduct.fabricSlug) ?? null
@@ -41,7 +43,7 @@ export function HomeProductCatalog({
 
   return (
     <>
-      <HomeHero />
+      <HomeHero priceRange={priceRange} />
 
       <section
         id="products"
@@ -60,7 +62,7 @@ export function HomeProductCatalog({
 
       <HomeStory />
       <HomeCredibility />
-      <HomePriceContext />
+      <HomePriceContext priceRange={priceRange} />
       {featuredDetail ? <HomeCta productHref={featuredDetail.productHref} /> : null}
     </>
   );

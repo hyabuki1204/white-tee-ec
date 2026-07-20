@@ -2,6 +2,7 @@ import type {
   AboutPageContent,
   ContactPageContent,
   HomePageContent,
+  JournalPageContent,
   LegalBusinessContent,
   PolicyPageContent,
   SeoSettingsContent,
@@ -99,6 +100,37 @@ export function parseHomeContentInput(value: unknown): ParseResult<HomePageConte
       )
     : [];
 
+  const heroCarouselImages = Array.isArray(input.heroCarouselImages)
+    ? input.heroCarouselImages.filter(
+        (src): src is string => typeof src === "string" && src.trim().length > 0,
+      )
+    : [];
+
+  if (heroCarouselImages.length === 0) {
+    return {
+      ok: false,
+      error: "Hero carousel images must contain at least one image.",
+    };
+  }
+
+  const announcementMessage = requireString(
+    input.announcementMessage,
+    "Announcement message",
+  );
+  if (!announcementMessage.ok) return announcementMessage;
+
+  const announcementLinkHref = requireString(
+    input.announcementLinkHref,
+    "Announcement link href",
+  );
+  if (!announcementLinkHref.ok) return announcementLinkHref;
+
+  const announcementLinkLabel = requireString(
+    input.announcementLinkLabel,
+    "Announcement link label",
+  );
+  if (!announcementLinkLabel.ok) return announcementLinkLabel;
+
   return {
     ok: true,
     data: {
@@ -109,6 +141,10 @@ export function parseHomeContentInput(value: unknown): ParseResult<HomePageConte
       fabricPreviewCount,
       fabricIntroLines: fabricIntroLines.data,
       featuredProductSlugs,
+      heroCarouselImages,
+      announcementMessage: announcementMessage.data,
+      announcementLinkHref: announcementLinkHref.data,
+      announcementLinkLabel: announcementLinkLabel.data,
     },
   };
 }
@@ -352,6 +388,83 @@ export function parseSeoContentInput(
   };
 }
 
+export function parseJournalContentInput(
+  value: unknown,
+): ParseResult<JournalPageContent> {
+  if (!value || typeof value !== "object") {
+    return { ok: false, error: "Invalid journal content payload." };
+  }
+
+  const input = value as Record<string, unknown>;
+  const pageTitle = requireString(input.pageTitle, "Page title");
+  if (!pageTitle.ok) return pageTitle;
+
+  const introLines = parseTuple2(input.introLines, "Intro lines");
+  if (!introLines.ok) return introLines;
+
+  if (!Array.isArray(input.articles) || input.articles.length === 0) {
+    return { ok: false, error: "Journal articles are required." };
+  }
+
+  const articles: JournalPageContent["articles"] = [];
+
+  for (const article of input.articles) {
+    if (!article || typeof article !== "object") {
+      return { ok: false, error: "Each journal article must be an object." };
+    }
+
+    const row = article as Record<string, unknown>;
+    const slug = requireString(row.slug, "Article slug");
+    if (!slug.ok) return slug;
+
+    const title = requireString(row.title, "Article title");
+    if (!title.ok) return title;
+
+    const publishedAt = requireString(row.publishedAt, "Published date");
+    if (!publishedAt.ok) return publishedAt;
+
+    const excerpt = requireString(row.excerpt, "Excerpt");
+    if (!excerpt.ok) return excerpt;
+
+    const heroImage = requireString(row.heroImage, "Hero image");
+    if (!heroImage.ok) return heroImage;
+
+    const heroImageAlt = requireString(row.heroImageAlt, "Hero image alt");
+    if (!heroImageAlt.ok) return heroImageAlt;
+
+    const body = parseStringArray(row.body, "Body paragraphs");
+    if (!body.ok) return body;
+
+    const helperJa =
+      row.helperJa === null || row.helperJa === undefined
+        ? null
+        : typeof row.helperJa === "string"
+          ? row.helperJa.trim() || null
+          : null;
+
+    articles.push({
+      slug: slug.data,
+      title: title.data,
+      publishedAt: publishedAt.data,
+      excerpt: excerpt.data,
+      helperJa,
+      heroImage: heroImage.data,
+      heroImageAlt: heroImageAlt.data,
+      featured: row.featured === true,
+      body: body.data,
+    });
+  }
+
+  return {
+    ok: true,
+    data: {
+      pageTitle: pageTitle.data,
+      introLines: introLines.data,
+      articles,
+    },
+  };
+}
+
 export function parseSiteContentInput(
   key: SiteContentKey,
   value: unknown,
@@ -363,6 +476,8 @@ export function parseSiteContentInput(
       return parseAboutContentInput(value);
     case "stories":
       return parseStoriesContentInput(value);
+    case "journal":
+      return parseJournalContentInput(value);
     case "legal":
       return parseLegalContentInput(value);
     case "contact":

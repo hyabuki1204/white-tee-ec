@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
-import { formatJournalDate } from "@/lib/content/journal";
+import { formatJournalDate } from "@/lib/content/journal-static";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 import {
   getStockistJournalArticles,
@@ -21,8 +21,8 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-export default function StockistPage() {
-  const journalArticles = getStockistJournalArticles();
+export default async function StockistPage() {
+  const journalArticles = await getStockistJournalArticles();
 
   return (
     <>

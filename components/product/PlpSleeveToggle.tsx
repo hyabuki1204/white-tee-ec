@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { buildProductsFilterHref } from "@/lib/products/silhouette";
 import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";

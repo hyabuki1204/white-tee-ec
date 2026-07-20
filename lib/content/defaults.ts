@@ -25,10 +25,18 @@ import {
   STORIES_PAGE_TITLE,
   STORY_ENTRIES,
 } from "@/lib/stories/content";
+import {
+  JOURNAL_ARTICLES,
+  JOURNAL_INTRO_LINES,
+  JOURNAL_PAGE_TITLE,
+} from "@/lib/content/journal-static";
+import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
+import { HOME_HERO_IMAGES } from "@/lib/store-ui/home-hero";
 import { DEFAULT_SEO_CONTENT } from "@/lib/seo/defaults";
 import type {
   AboutPageContent,
   HomePageContent,
+  JournalPageContent,
   SiteContentMap,
   StoriesPageContent,
 } from "@/types/site-content";
@@ -41,6 +49,10 @@ export const DEFAULT_HOME_CONTENT: HomePageContent = {
   fabricPreviewCount: HOME_FABRIC_PREVIEW_COUNT,
   fabricIntroLines: [...FABRIC_INTRO_LINES],
   featuredProductSlugs: [],
+  heroCarouselImages: [...HOME_HERO_IMAGES],
+  announcementMessage: GRAPHPAPER_STORE_COPY.announcement.message,
+  announcementLinkHref: GRAPHPAPER_STORE_COPY.announcement.linkHref,
+  announcementLinkLabel: GRAPHPAPER_STORE_COPY.announcement.linkLabel,
 };
 
 export const DEFAULT_ABOUT_CONTENT: AboutPageContent = {
@@ -64,10 +76,27 @@ export const DEFAULT_STORIES_CONTENT: StoriesPageContent = {
   })),
 };
 
+export const DEFAULT_JOURNAL_CONTENT: JournalPageContent = {
+  pageTitle: JOURNAL_PAGE_TITLE,
+  introLines: [...JOURNAL_INTRO_LINES],
+  articles: JOURNAL_ARTICLES.map((article) => ({
+    slug: article.slug,
+    title: article.title,
+    publishedAt: article.publishedAt,
+    excerpt: article.excerpt,
+    helperJa: article.helperJa ?? null,
+    heroImage: article.heroImageUrl,
+    heroImageAlt: article.heroImageAlt,
+    featured: article.featured ?? false,
+    body: [...article.body],
+  })),
+};
+
 export const DEFAULT_SITE_CONTENT: SiteContentMap = {
   home: DEFAULT_HOME_CONTENT,
   about: DEFAULT_ABOUT_CONTENT,
   stories: DEFAULT_STORIES_CONTENT,
+  journal: DEFAULT_JOURNAL_CONTENT,
   legal: DEFAULT_LEGAL_CONTENT,
   contact: DEFAULT_CONTACT_CONTENT,
   shipping: DEFAULT_SHIPPING_CONTENT,

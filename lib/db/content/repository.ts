@@ -4,6 +4,7 @@ import {
   DEFAULT_ABOUT_CONTENT,
   DEFAULT_CONTACT_CONTENT,
   DEFAULT_HOME_CONTENT,
+  DEFAULT_JOURNAL_CONTENT,
   DEFAULT_LEGAL_CONTENT,
   DEFAULT_PRIVACY_CONTENT,
   DEFAULT_SHIPPING_CONTENT,
@@ -18,6 +19,7 @@ import type {
   AboutPageContent,
   ContactPageContent,
   HomePageContent,
+  JournalPageContent,
   LegalBusinessContent,
   PolicyPageContent,
   SeoSettingsContent,
@@ -66,6 +68,19 @@ function mergeHomeContent(raw: unknown): HomePageContent {
           (slug): slug is string => typeof slug === "string",
         )
       : DEFAULT_HOME_CONTENT.featuredProductSlugs,
+    heroCarouselImages:
+      Array.isArray(input.heroCarouselImages) &&
+      input.heroCarouselImages.length > 0
+        ? input.heroCarouselImages.filter(
+            (src): src is string => typeof src === "string" && src.length > 0,
+          )
+        : DEFAULT_HOME_CONTENT.heroCarouselImages,
+    announcementMessage:
+      input.announcementMessage ?? DEFAULT_HOME_CONTENT.announcementMessage,
+    announcementLinkHref:
+      input.announcementLinkHref ?? DEFAULT_HOME_CONTENT.announcementLinkHref,
+    announcementLinkLabel:
+      input.announcementLinkLabel ?? DEFAULT_HOME_CONTENT.announcementLinkLabel,
   };
 }
 
@@ -114,6 +129,46 @@ function mergeStoriesContent(raw: unknown): StoriesPageContent {
     pageTitle: input.pageTitle ?? DEFAULT_STORIES_CONTENT.pageTitle,
     introLines,
     entries: (input.entries ?? DEFAULT_STORIES_CONTENT.entries).map(mergeEntry),
+  };
+}
+
+function mergeJournalContent(raw: unknown): JournalPageContent {
+  if (!raw || typeof raw !== "object") {
+    return DEFAULT_JOURNAL_CONTENT;
+  }
+
+  const input = raw as Partial<JournalPageContent>;
+  const introLines =
+    input.introLines && input.introLines.length === 2
+      ? ([input.introLines[0], input.introLines[1]] as [string, string])
+      : DEFAULT_JOURNAL_CONTENT.introLines;
+
+  const mergeArticle = (
+    article: JournalPageContent["articles"][number],
+  ): JournalPageContent["articles"][number] => {
+    const fallback = DEFAULT_JOURNAL_CONTENT.articles.find(
+      (item) => item.slug === article.slug,
+    );
+
+    return {
+      slug: article.slug,
+      title: article.title ?? fallback?.title ?? article.slug,
+      publishedAt: article.publishedAt ?? fallback?.publishedAt ?? "",
+      excerpt: article.excerpt ?? fallback?.excerpt ?? "",
+      helperJa: article.helperJa ?? fallback?.helperJa ?? null,
+      heroImage: article.heroImage ?? fallback?.heroImage ?? "",
+      heroImageAlt: article.heroImageAlt ?? fallback?.heroImageAlt ?? "",
+      featured: article.featured ?? fallback?.featured ?? false,
+      body: article.body ?? fallback?.body ?? [],
+    };
+  };
+
+  return {
+    pageTitle: input.pageTitle ?? DEFAULT_JOURNAL_CONTENT.pageTitle,
+    introLines,
+    articles: (input.articles ?? DEFAULT_JOURNAL_CONTENT.articles).map(
+      mergeArticle,
+    ),
   };
 }
 
@@ -197,6 +252,8 @@ function mergeContent<K extends SiteContentKey>(
       return mergeAboutContent(raw) as SiteContentMap[K];
     case "stories":
       return mergeStoriesContent(raw) as SiteContentMap[K];
+    case "journal":
+      return mergeJournalContent(raw) as SiteContentMap[K];
     case "legal":
       return mergeLegalContent(raw) as SiteContentMap[K];
     case "contact":
@@ -260,11 +317,12 @@ export async function getSiteContent<K extends SiteContentKey>(
 }
 
 export async function getAllSiteContent(): Promise<SiteContentMap> {
-  const [home, about, stories, legal, contact, shipping, privacy, terms, seo] =
+  const [home, about, stories, journal, legal, contact, shipping, privacy, terms, seo] =
     await Promise.all([
       getSiteContent("home"),
       getSiteContent("about"),
       getSiteContent("stories"),
+      getSiteContent("journal"),
       getSiteContent("legal"),
       getSiteContent("contact"),
       getSiteContent("shipping"),
@@ -273,7 +331,18 @@ export async function getAllSiteContent(): Promise<SiteContentMap> {
       getSiteContent("seo"),
     ]);
 
-  return { home, about, stories, legal, contact, shipping, privacy, terms, seo };
+  return {
+    home,
+    about,
+    stories,
+    journal,
+    legal,
+    contact,
+    shipping,
+    privacy,
+    terms,
+    seo,
+  };
 }
 
 export async function upsertSiteContent<K extends SiteContentKey>(

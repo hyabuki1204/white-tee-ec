@@ -10,21 +10,14 @@ import { ProductValueProposition } from "@/components/product/ProductValuePropos
 import { useProductPurchase } from "@/components/product/ProductPurchaseContext";
 import { QuantitySelector } from "@/components/product/QuantitySelector";
 import { VariantSelector } from "@/components/product/VariantSelector";
-import {
-  getGraphpaperDisplayName,
-  STORE_BRAND_LINE,
-} from "@/lib/products/display-name";
 import { buildPdpValueContent } from "@/lib/store-ui/pdp-value";
 import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
 import { SITE_UI_COPY } from "@/lib/copy/site-ui";
-import {
-  PURCHASE_BOX_CLASS,
-  STORE_TYPO,
-} from "@/lib/store-ui/typography";
-import { formatPrice } from "@/lib/utils/format-price";
+import { PURCHASE_BOX_CLASS } from "@/lib/store-ui/typography";
 import type { Fabric } from "@/lib/fabric/content";
 import type { ProductDetailContent, ProductSize } from "@/types";
 import type { ProductFitProfile } from "@/types/product-fit";
+import type { ReactNode } from "react";
 
 type ProductPurchaseSectionsProps = {
   detail: ProductDetailContent;
@@ -115,7 +108,6 @@ export function ProductPurchasePrimary({
     purchaseCtaRef,
   } = useProductPurchase();
 
-  const displayName = getGraphpaperDisplayName(product, fabricName);
   const selectedVariant = product.variants.find(
     (variant) => variant.size === selectedSize,
   );
@@ -123,23 +115,9 @@ export function ProductPurchasePrimary({
 
   return (
     <div className={boxClassName}>
-      <header className="shrink-0 space-y-4 md:space-y-5">
-        <p className={STORE_TYPO.pdpBrand}>{STORE_BRAND_LINE}</p>
-        <h1 className={STORE_TYPO.pdpTitle}>{displayName}</h1>
-        <div>
-          <p className={STORE_TYPO.pdpPrice}>{formatPrice(product.price)}</p>
-          <p className="mt-2 text-[12px] font-light leading-[1.7] tracking-[0.04em] text-neutral-600">
-            {pdpCopy.dutiesNote}
-          </p>
-        </div>
-      </header>
-
       <ProductValueProposition content={valueContent} />
 
-      <section
-        aria-label="Purchase options"
-        className="mt-8 space-y-8"
-      >
+      <section aria-label="Purchase options" className="mt-8 space-y-8">
         <VariantSelector variants={product.variants} />
 
         {showFitGuide ? (
@@ -232,17 +210,23 @@ export function ProductPurchaseAside({
   fabricName,
   fitProfile,
   availableSizes,
-}: ProductPurchaseSectionsProps) {
+  purchaseHeader,
+}: ProductPurchaseSectionsProps & {
+  purchaseHeader: ReactNode;
+}) {
   return (
     <aside className="hidden px-6 py-10 sm:py-12 md:px-10 md:py-16 lg:sticky lg:top-[var(--header-height)] lg:z-10 lg:block lg:max-h-[calc(100vh-var(--header-height))] lg:overflow-y-auto lg:px-10 lg:py-16 xl:px-12">
       <div className={boxClassName}>
-        <ProductPurchasePrimary
-          fabric={fabric}
-          fabricName={fabricName}
-          fitProfile={fitProfile}
-          availableSizes={availableSizes}
-          showFitGuide
-        />
+        {purchaseHeader}
+        <div className="mt-8">
+          <ProductPurchasePrimary
+            fabric={fabric}
+            fabricName={fabricName}
+            fitProfile={fitProfile}
+            availableSizes={availableSizes}
+            showFitGuide
+          />
+        </div>
         <ProductPurchaseSecondary
           detail={detail}
           fabric={fabric}

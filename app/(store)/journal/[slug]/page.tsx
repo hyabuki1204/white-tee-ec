@@ -8,6 +8,7 @@ import { Container } from "@/components/layout/Container";
 import { SITE_UI_COPY } from "@/lib/copy/site-ui";
 import {
   getJournalArticleBySlug,
+  getJournalPageContent,
   getJournalSlugs,
 } from "@/lib/content/journal";
 import { buildPageMetadata } from "@/lib/seo/metadata";
@@ -17,14 +18,15 @@ type JournalArticlePageProps = {
 };
 
 export async function generateStaticParams() {
-  return getJournalSlugs().map((slug) => ({ slug }));
+  const slugs = await getJournalSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({
   params,
 }: JournalArticlePageProps): Promise<Metadata> {
   const { slug } = await params;
-  const article = getJournalArticleBySlug(slug);
+  const article = await getJournalArticleBySlug(slug);
 
   if (!article) {
     return { title: "Not Found" };
@@ -43,7 +45,10 @@ export default async function JournalArticlePage({
   params,
 }: JournalArticlePageProps) {
   const { slug } = await params;
-  const article = getJournalArticleBySlug(slug);
+  const [article, content] = await Promise.all([
+    getJournalArticleBySlug(slug),
+    getJournalPageContent(),
+  ]);
 
   if (!article) {
     notFound();
@@ -57,7 +62,7 @@ export default async function JournalArticlePage({
         <Breadcrumbs
           items={[
             { label: bc.home, href: "/" },
-            { label: "Journal", href: "/journal" },
+            { label: content.pageTitle, href: "/journal" },
             { label: article.title },
           ]}
         />

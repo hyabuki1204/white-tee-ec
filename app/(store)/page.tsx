@@ -17,10 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Home() {
-  const [products, fabrics] = await Promise.all([
-    getProducts(),
-    getFabrics(),
-  ]);
+  const [products, fabrics] = await Promise.all([getProducts(), getFabrics()]);
 
   const fabricNameBySlug = Object.fromEntries(
     fabrics.map((fabric) => [fabric.slug, fabric.name]),

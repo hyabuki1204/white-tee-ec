@@ -10,18 +10,29 @@ import { HeaderNavDropdown } from "@/components/layout/HeaderNavDropdown";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
 import {
+  buildStoreHeaderRightNav,
+  buildStoreMobilePrimaryNav,
   STORE_HEADER_LEFT_NAV,
-  STORE_HEADER_RIGHT_NAV,
 } from "@/lib/store-ui/nav-links";
 import { cn } from "@/lib/utils";
 
-export function Header() {
+type HeaderProps = {
+  announcement: {
+    message: string;
+    linkHref: string;
+    linkLabel: string;
+  };
+  journalNavArticles: Array<{ slug: string; title: string }>;
+};
+
+export function Header({ announcement, journalNavArticles }: HeaderProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const search = searchParams.toString();
   const isAdmin = pathname.startsWith("/admin");
   const headerRef = useRef<HTMLElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const rightNav = buildStoreHeaderRightNav(journalNavArticles);
 
   useEffect(() => {
     if (isAdmin) return;
@@ -66,7 +77,11 @@ export function Header() {
         ref={headerRef}
         className="fixed inset-x-0 top-0 z-50 border-b border-neutral-200/70 bg-background"
       >
-        <AnnouncementBar />
+        <AnnouncementBar
+          message={announcement.message}
+          linkHref={announcement.linkHref}
+          linkLabel={announcement.linkLabel}
+        />
 
         <Container as="div" className="py-5 md:py-6">
           <div className="hidden md:grid md:grid-cols-[1fr_auto_1fr] md:items-center md:gap-x-8">
@@ -89,7 +104,7 @@ export function Header() {
 
             <nav aria-label="Secondary navigation" className="justify-self-end">
               <ul className="flex items-center gap-x-8 lg:gap-x-10">
-                {STORE_HEADER_RIGHT_NAV.map((item) => (
+                {rightNav.map((item) => (
                   <li key={item.href}>
                     <HeaderNavDropdown item={item} />
                   </li>
@@ -149,7 +164,11 @@ export function Header() {
       </header>
 
       <div id="mobile-navigation">
-        <MobileNav isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
+        <MobileNav
+          isOpen={menuOpen}
+          onClose={() => setMenuOpen(false)}
+          primaryNav={buildStoreMobilePrimaryNav(journalNavArticles)}
+        />
       </div>
     </>
   );

@@ -13,6 +13,7 @@ const VALID_KEYS: SiteContentKey[] = [
   "home",
   "about",
   "stories",
+  "journal",
   "legal",
   "contact",
   "shipping",
@@ -28,6 +29,7 @@ function isSiteContentKey(value: string): value is SiteContentKey {
 function revalidateContentPaths(key: SiteContentKey) {
   switch (key) {
     case "home":
+      revalidatePath("/", "layout");
       revalidatePath("/");
       revalidatePath("/admin/content");
       break;
@@ -36,8 +38,14 @@ function revalidateContentPaths(key: SiteContentKey) {
       revalidatePath("/admin/content");
       break;
     case "stories":
-      revalidatePath("/journal");
       revalidatePath("/admin/content");
+      break;
+    case "journal":
+      revalidatePath("/", "layout");
+      revalidatePath("/journal");
+      revalidatePath("/");
+      revalidatePath("/stockist");
+      revalidatePath("/admin/journal");
       break;
     case "legal":
       revalidatePath("/legal");

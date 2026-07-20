@@ -57,6 +57,7 @@ export async function generateMetadata({
     title: "TOPS",
     description: "White tees — crew, pocket, relaxed, and long sleeve.",
     path: "/products",
+    image: "/store/plp-banner.jpg",
   });
 }
 

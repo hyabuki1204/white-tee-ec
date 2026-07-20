@@ -105,6 +105,7 @@ export const GRAPHPAPER_STORE_COPY = {
     sectionJournal: "JOURNAL",
     viewAllFabric: "View all fabrics",
     viewAllJournal: "View all entries",
+    viewAllProducts: "View all pieces",
     journalIntro: "From the atelier",
   },
   footer: {

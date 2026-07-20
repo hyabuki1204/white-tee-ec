@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { JournalCard } from "@/components/journal/JournalCard";
 import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
-import type { JournalArticle } from "@/lib/content/journal";
+import type { JournalArticle } from "@/lib/content/journal-static";
 
 type HomeJournalSectionProps = {
   articles: JournalArticle[];
