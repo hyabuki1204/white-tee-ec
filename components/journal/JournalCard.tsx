@@ -58,9 +58,6 @@ export function JournalCard({
           >
             {article.title}
           </h3>
-          <JaHelperText spacing="tight" className="!mt-2 max-w-none">
-            {article.titleJa}
-          </JaHelperText>
           <p
             className={cn(
               "mt-3 font-light leading-[1.85] text-neutral-600",
@@ -71,9 +68,11 @@ export function JournalCard({
           >
             {article.excerpt}
           </p>
-          <JaHelperText spacing="tight" className="!mt-3 max-w-none">
-            {article.excerptJa}
-          </JaHelperText>
+          {article.helperJa ? (
+            <JaHelperText spacing="tight" className="!mt-3 max-w-none">
+              {article.helperJa}
+            </JaHelperText>
+          ) : null}
         </div>
       </Link>
     </article>

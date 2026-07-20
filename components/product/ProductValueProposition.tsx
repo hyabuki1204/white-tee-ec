@@ -1,6 +1,5 @@
 import Image from "next/image";
 import type { PdpValueContent } from "@/lib/store-ui/pdp-value";
-import { PRICE_POSITIONING } from "@/lib/store-ui/credibility";
 
 type ProductValuePropositionProps = {
   content: PdpValueContent;
@@ -59,10 +58,6 @@ export function ProductValueProposition({
           {content.priceNote}
         </p>
       ) : null}
-
-      <p className="text-[11px] font-light leading-[1.9] tracking-[0.04em] text-neutral-600">
-        {PRICE_POSITIONING.range}
-      </p>
 
       <dl className="grid gap-3 pt-1">
         {content.specs.map((spec) => (

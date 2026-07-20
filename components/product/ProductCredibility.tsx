@@ -66,7 +66,7 @@ export function ProductCredibility({ fabricName }: ProductCredibilityProps) {
           {PRICE_POSITIONING.intro}
         </p>
         <p className="mt-3 text-[11px] font-light leading-[1.9] tracking-[0.04em] text-neutral-600">
-          {PRICE_POSITIONING.range}
+          {PRICE_POSITIONING.rangeTemplate}
         </p>
         <p className="mt-3 text-[11px] font-light leading-[1.9] tracking-[0.04em] text-neutral-600">
           {PRICE_POSITIONING.care}
