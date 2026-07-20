@@ -25,6 +25,8 @@ import {
 } from "@/lib/seo/json-ld";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 
+export const dynamic = "force-dynamic";
+
 type ProductPageProps = {
   params: Promise<{ slug: string }>;
 };

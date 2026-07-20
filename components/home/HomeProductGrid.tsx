@@ -1,18 +1,16 @@
-"use client";
-
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { ProductGrid } from "@/components/product/ProductGrid";
-import { isSleeveType } from "@/lib/products/silhouette";
 import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
+import { isSleeveType } from "@/lib/products/silhouette";
 import { STORE_TYPO } from "@/lib/store-ui/typography";
 import { cn } from "@/lib/utils";
 import type { SleeveType } from "@/types/product-fit";
 import type { Product } from "@/types";
 
-type HomeProductGridWithSleeveToggleProps = {
+type HomeProductGridProps = {
   products: Product[];
   fabricNameBySlug: Record<string, string>;
+  activeSleeve?: SleeveType;
 };
 
 const SLEEVE_OPTIONS: { value: SleeveType; label: string }[] = [
@@ -24,30 +22,30 @@ function buildHomeSleeveHref(sleeve: SleeveType): string {
   return sleeve === "short" ? "/" : `/?sleeve=${sleeve}`;
 }
 
-export function HomeProductGridWithSleeveToggle({
+function toggleClass(isActive: boolean) {
+  return cn(
+    "text-[12px] font-light tracking-[0.12em] transition-opacity duration-300 md:text-[13px]",
+    isActive ? "text-neutral-900" : "text-neutral-600 hover:opacity-60",
+  );
+}
+
+export function HomeProductGrid({
   products,
   fabricNameBySlug,
-}: HomeProductGridWithSleeveToggleProps) {
-  const searchParams = useSearchParams();
-  const sleeveParam = searchParams.get("sleeve");
-  const sleeve: SleeveType = isSleeveType(sleeveParam) ? sleeveParam : "short";
+  activeSleeve = "short",
+}: HomeProductGridProps) {
+  const sleeve = isSleeveType(activeSleeve) ? activeSleeve : "short";
   const filteredProducts = products.filter(
     (product) => product.sleeveType === sleeve,
   );
-
-  const toggleClass = (isActive: boolean) =>
-    cn(
-      "text-[12px] font-light tracking-[0.12em] transition-opacity duration-300 md:text-[13px]",
-      isActive ? "text-neutral-900" : "text-neutral-600 hover:opacity-60",
-    );
 
   return (
     <>
       <header className="flex flex-col gap-6 border-b border-neutral-200/70 py-8 sm:flex-row sm:items-end sm:justify-between md:py-10">
         <div>
-          <h1 className={STORE_TYPO.catalogTitle}>
+          <h2 className={STORE_TYPO.catalogTitle}>
             {GRAPHPAPER_STORE_COPY.home.sectionAll}
-          </h1>
+          </h2>
           <p className="mt-3 text-[13px] font-light tracking-[0.06em] text-neutral-600">
             {GRAPHPAPER_STORE_COPY.plp.items(filteredProducts.length)}
           </p>

@@ -14,6 +14,8 @@ import {
 } from "@/lib/products/silhouette";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 
+export const dynamic = "force-dynamic";
+
 type ProductsPageProps = {
   searchParams: Promise<{
     fabric?: string;
