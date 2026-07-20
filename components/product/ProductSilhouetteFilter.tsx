@@ -42,7 +42,7 @@ export function ProductSilhouetteFilter({
 }: ProductSilhouetteFilterProps) {
   const linkClass = (isActive: boolean) =>
     cn(
-      "inline-flex min-h-9 items-center text-[12px] font-light tracking-[0.06em] transition-opacity duration-300 md:text-[12px]",
+      "inline-flex min-h-9 items-center text-[12px] font-normal tracking-[0.06em] transition-opacity duration-[var(--duration-fast)] md:text-[12px]",
       isActive ? "text-neutral-800" : "text-neutral-600 hover:opacity-60",
     );
 

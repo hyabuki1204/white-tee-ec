@@ -36,19 +36,19 @@ export function ProductFabricLink({ fabric }: ProductFabricLinkProps) {
               fill
               sizes="(max-width: 1024px) 100vw, 896px"
               className={cn(
-                "object-cover brightness-[0.96] contrast-[0.98] transition-transform duration-[1000ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] group-hover:scale-[1.012]",
+                "object-cover brightness-[0.96] contrast-[0.98] transition-opacity duration-[var(--duration-reveal)] ease-[var(--ease-quiet)] group-hover:opacity-90",
                 presentation.heroImagePosition,
               )}
             />
           </div>
 
           <div className="mx-auto mt-10 flex max-w-md flex-col items-center text-center sm:mt-14 md:mt-16 lg:mt-20">
-            <h2 className="text-[16px] font-light tracking-[0.1em] text-neutral-800 transition-opacity duration-500 group-hover:opacity-50 sm:mt-0 md:text-sm md:tracking-[0.12em]">
+            <h2 className="text-[14px] font-normal tracking-[0.1em] text-neutral-800 transition-opacity duration-[var(--duration-quiet)] group-hover:opacity-50 sm:mt-0 md:text-[14px] md:tracking-[0.12em]">
               {fabric.name}
             </h2>
             <p
               className={cn(
-                "mt-5 text-[12px] font-light leading-[1.85] text-neutral-600 md:mt-6 md:text-[12px]",
+                "mt-5 text-[12px] font-normal leading-[1.85] text-neutral-600 md:mt-6 md:text-[12px]",
                 presentation.taglineTracking,
               )}
             >

@@ -4,6 +4,7 @@ export const GRAPHPAPER_STORE_COPY = {
   brandLine: "WHITE TEE",
   nav: {
     all: "ALL",
+    products: "PRODUCTS",
     tops: "TOPS",
     topsAll: "All Tops",
     topsShortSleeve: "Short Sleeve",
@@ -12,17 +13,22 @@ export const GRAPHPAPER_STORE_COPY = {
     fabricAll: "All Fabrics",
     journal: "JOURNAL",
     journalAll: "All Entries",
-    bag: "Bag",
+    about: "ABOUT",
+    search: "SEARCH",
+    bag: "BAG",
   },
   announcement: {
     message: "¥10,000以上のご注文で送料無料。",
     linkHref: "/store-guide",
     linkLabel: "ご利用ガイド",
   },
+  shipping: {
+    freeNote: "¥10,000以上のご注文で送料無料。",
+  },
   plp: {
-    title: "TOPS",
+    title: "PRODUCTS",
     allTitle: "ALL",
-    items: (count: number) => `${count} 点`,
+    items: (count: number) => `${count} ITEMS`,
   },
   filters: {
     title: "絞り込み",
@@ -94,7 +100,7 @@ export const GRAPHPAPER_STORE_COPY = {
       retry: "Try again",
       back: "Back to home",
     },
-    loading: "Loading",
+    loading: "読み込み中",
   },
   home: {
     sectionAll: "ALL",

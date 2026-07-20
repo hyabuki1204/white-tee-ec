@@ -71,19 +71,19 @@ export function CartPageContent({
   if (items.length === 0) {
     return (
       <div className="py-16 text-center sm:py-20">
-        <p className="text-[14px] tracking-[0.24em] text-neutral-600 md:text-[13px] md:tracking-[0.3em] md:text-neutral-600">
+        <p className="text-[14px] tracking-[0.24em] text-neutral-600 md:text-[14px] md:tracking-[0.3em] md:text-neutral-600">
           {copy.empty}
         </p>
         <div className="mt-8 flex flex-col items-center gap-4">
           <Link
-            href="/products?sleeve=short"
-            className="inline-flex min-h-11 items-center justify-center px-2 text-[14px] font-light tracking-wide text-neutral-800 transition-opacity active:opacity-60 md:text-[13px] md:text-neutral-900 md:hover:opacity-60"
+            href="/products"
+            className="inline-flex min-h-11 items-center justify-center px-2 text-[14px] font-normal tracking-wide text-neutral-800 transition-opacity active:opacity-60 md:text-[14px] md:text-neutral-900 md:hover:opacity-60"
           >
             {copy.viewAll}
           </Link>
           <Link
             href="/fabric"
-            className="text-[12px] font-light tracking-[0.06em] text-neutral-600 transition-opacity duration-300 hover:opacity-60"
+            className="text-[12px] font-normal tracking-[0.06em] text-neutral-600 transition-opacity duration-[var(--duration-fast)] hover:opacity-60"
           >
             {copy.exploreFabric}
           </Link>
@@ -122,7 +122,7 @@ export function CartPageContent({
 
   return (
     <div className="max-w-xl pb-28 lg:pb-0">
-      <div className="relative mb-10 aspect-[21/9] overflow-hidden bg-[#f4f4f2]">
+      <div className="relative mb-10 aspect-[21/9] overflow-hidden bg-[var(--color-image-placeholder)]">
         <Image
           src="/store/checkout-trust.png"
           alt=""
@@ -135,7 +135,7 @@ export function CartPageContent({
       {reconcileNotice ? (
         <p
           role="status"
-          className="mb-6 text-[12px] font-light leading-[1.8] tracking-[0.04em] text-red-600/90"
+          className="mb-6 text-[12px] font-normal leading-[1.8] tracking-[0.04em] text-red-600/90"
         >
           {reconcileNotice}
         </p>

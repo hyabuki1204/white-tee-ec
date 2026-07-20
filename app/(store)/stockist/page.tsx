@@ -26,7 +26,7 @@ export default async function StockistPage() {
 
   return (
     <>
-      <section className="relative aspect-[16/10] overflow-hidden bg-[#f4f4f2] sm:aspect-[21/9]">
+      <section className="relative aspect-[16/10] overflow-hidden bg-[var(--color-image-placeholder)] sm:aspect-[21/9]">
         <Image
           src={STOCKIST_PAGE.heroImage.src}
           alt={STOCKIST_PAGE.heroImage.alt}
@@ -35,38 +35,35 @@ export default async function StockistPage() {
           sizes="100vw"
           className="object-cover brightness-[0.97] contrast-[0.98]"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-neutral-900/30 via-transparent to-transparent" />
-        <Container as="div" className="absolute inset-x-0 bottom-0 pb-10 pt-24 sm:pb-14">
-          <h1 className="text-[14px] font-light tracking-[0.28em] text-white md:text-[15px]">
-            {STOCKIST_PAGE.title}
-          </h1>
-        </Container>
       </section>
 
-      <Container as="section" className="py-16 sm:py-20 md:py-28 lg:py-36">
+      <Container as="section" className="py-[var(--space-6)] md:py-[var(--space-7)]">
         <div className="mx-auto max-w-2xl text-center">
+          <h1 className="type-label text-[var(--color-ink)]">
+            {STOCKIST_PAGE.title}
+          </h1>
           {STOCKIST_PAGE.intro.map((line) => (
             <p
               key={line}
-              className="text-[14px] font-light leading-[1.95] tracking-[0.02em] text-neutral-600 md:text-[14px] md:leading-[2.1] md:tracking-[0.03em] md:text-neutral-600"
+              className="text-[14px] font-normal leading-[1.95] tracking-[0.02em] text-neutral-600 md:text-[14px] md:leading-[2.1] md:tracking-[0.03em] md:text-neutral-600"
             >
               {line}
             </p>
           ))}
-          <p className="mt-6 text-[12px] font-light tracking-[0.06em] text-neutral-600">
+          <p className="mt-6 text-[12px] font-normal tracking-[0.06em] text-neutral-600">
             {STOCKIST_PAGE.helperJa}
           </p>
         </div>
 
         <div className="mx-auto mt-16 max-w-2xl md:mt-24">
-          <h2 className="text-[11px] font-light uppercase tracking-[0.16em] text-neutral-600">
+          <h2 className="type-label text-neutral-600">
             {STOCKIST_STORY.title}
           </h2>
           <div className="mt-6 space-y-6">
             {STOCKIST_STORY.paragraphs.map((paragraph) => (
               <p
                 key={paragraph.slice(0, 40)}
-                className="text-[13px] font-light leading-[2] tracking-[0.03em] text-neutral-600"
+                className="text-[14px] font-normal leading-[2] tracking-[0.03em] text-neutral-600"
               >
                 {paragraph}
               </p>
@@ -77,7 +74,7 @@ export default async function StockistPage() {
         <div className="mx-auto mt-16 max-w-4xl space-y-12 md:mt-24 md:space-y-16">
           {STOCKIST_IMAGES.map((image) => (
             <figure key={image.src} className="space-y-4">
-              <div className="relative aspect-[16/10] overflow-hidden bg-[#f4f4f2]">
+              <div className="relative aspect-[16/10] overflow-hidden bg-[var(--color-image-placeholder)]">
                 <Image
                   src={image.src}
                   alt={image.alt}
@@ -87,7 +84,7 @@ export default async function StockistPage() {
                 />
               </div>
               {image.caption ? (
-                <figcaption className="text-center text-[11px] font-light tracking-[0.12em] text-neutral-600">
+                <figcaption className="text-center text-[11px] font-normal tracking-[0.12em] text-neutral-600">
                   {image.caption}
                 </figcaption>
               ) : null}
@@ -96,11 +93,11 @@ export default async function StockistPage() {
         </div>
 
         <div className="mx-auto mt-16 max-w-2xl border-t border-neutral-200/60 pt-16 md:mt-24 md:pt-20">
-          <h2 className="text-[11px] font-light uppercase tracking-[0.16em] text-neutral-600">
+          <h2 className="type-label text-neutral-600">
             {STOCKIST_CONTACT.title}
           </h2>
 
-          <div className="mt-8 space-y-6 text-[13px] font-light leading-[2] tracking-[0.03em] text-neutral-600">
+          <div className="mt-8 space-y-6 text-[14px] font-normal leading-[2] tracking-[0.03em] text-neutral-600">
             <p className="text-neutral-700">{STOCKIST_CONTACT.name}</p>
             <address className="not-italic">
               {STOCKIST_CONTACT.addressLines.map((line) => (
@@ -135,7 +132,7 @@ export default async function StockistPage() {
             aria-label="Map placeholder"
             className="mt-10 flex aspect-[16/9] items-center justify-center border border-neutral-200/70 bg-neutral-50/80"
           >
-            <p className="max-w-xs px-6 text-center text-[12px] font-light leading-[1.9] tracking-[0.04em] text-neutral-600">
+            <p className="max-w-xs px-6 text-center text-[12px] font-normal leading-[1.9] tracking-[0.04em] text-neutral-600">
               {STOCKIST_CONTACT.mapNote}
             </p>
           </div>
@@ -143,7 +140,7 @@ export default async function StockistPage() {
 
         {journalArticles.length > 0 ? (
           <div className="mx-auto mt-16 max-w-2xl border-t border-neutral-200/60 pt-16 md:mt-24 md:pt-20">
-            <h2 className="text-[11px] font-light uppercase tracking-[0.16em] text-neutral-600">
+            <h2 className="type-label text-neutral-600">
               From the journal
             </h2>
             <ul className="mt-8 space-y-8">
@@ -153,13 +150,13 @@ export default async function StockistPage() {
                     href={`/journal/${article.slug}`}
                     className="group block transition-opacity hover:opacity-60"
                   >
-                    <p className="text-[11px] font-light tracking-[0.1em] text-neutral-600">
+                    <p className="text-[11px] font-normal tracking-[0.1em] text-neutral-600">
                       {formatJournalDate(article.publishedAt)}
                     </p>
-                    <p className="mt-2 text-[13px] font-light tracking-[0.04em] text-neutral-700">
+                    <p className="mt-2 text-[14px] font-normal tracking-[0.04em] text-neutral-700">
                       {article.title}
                     </p>
-                    <p className="mt-2 text-[12px] font-light leading-[1.8] tracking-[0.03em] text-neutral-600">
+                    <p className="mt-2 text-[12px] font-normal leading-[1.8] tracking-[0.03em] text-neutral-600">
                       {article.excerpt}
                     </p>
                   </Link>
@@ -169,7 +166,7 @@ export default async function StockistPage() {
             <div className="mt-12 text-center">
               <Link
                 href="/journal"
-                className="text-[12px] font-light tracking-[0.08em] text-neutral-600 transition-opacity hover:opacity-60"
+                className="text-[12px] font-normal tracking-[0.08em] text-neutral-600 transition-opacity hover:opacity-60"
               >
                 All journal entries
               </Link>

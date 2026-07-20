@@ -15,7 +15,7 @@ export function CartOrderNotes({ value, onChange }: CartOrderNotesProps) {
     <div className="mt-10 border-t border-neutral-200/70 pt-8">
       <label
         htmlFor="cart-order-notes"
-        className="text-[11px] font-light tracking-[0.14em] text-neutral-600"
+        className="text-[11px] font-normal tracking-[0.14em] text-neutral-600"
       >
         {copy.orderNotes}
       </label>
@@ -26,7 +26,7 @@ export function CartOrderNotes({ value, onChange }: CartOrderNotesProps) {
         rows={3}
         placeholder={copy.orderNotesPlaceholder}
         onChange={(event) => onChange(event.target.value)}
-        className="mt-3 w-full resize-none border border-neutral-200/80 bg-transparent px-3 py-3 text-[13px] font-light leading-[1.7] tracking-[0.02em] text-neutral-700 outline-none transition-colors placeholder:text-neutral-400 focus:border-neutral-400"
+        className="mt-3 w-full resize-none border border-neutral-200/80 bg-transparent px-3 py-3 text-[14px] font-normal leading-[1.7] tracking-[0.02em] text-neutral-700 outline-none transition-colors placeholder:text-neutral-400 focus:border-neutral-400"
       />
     </div>
   );

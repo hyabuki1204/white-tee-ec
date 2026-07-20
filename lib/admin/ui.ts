@@ -14,9 +14,9 @@ export const adminField = "block space-y-2";
 
 export const adminSection = "rounded-lg border border-neutral-200 bg-white p-6 md:p-8";
 
-export const adminSectionTitle = "mb-6 text-base font-semibold text-neutral-900";
+export const adminSectionTitle = "mb-6 text-base font-medium text-neutral-900";
 
-export const adminPageTitle = "text-2xl font-semibold tracking-tight text-neutral-900";
+export const adminPageTitle = "text-2xl font-medium tracking-tight text-neutral-900";
 
 export const adminPageSubtitle = "mt-2 text-sm text-neutral-600";
 
@@ -29,7 +29,7 @@ export const adminTableWrap = "overflow-x-auto rounded-lg border border-neutral-
 export const adminTable = "w-full min-w-[720px] border-collapse text-left text-sm";
 
 export const adminTh =
-  "border-b border-neutral-200 bg-neutral-50 px-4 py-3 text-left text-sm font-semibold text-neutral-800 whitespace-nowrap";
+  "border-b border-neutral-200 bg-neutral-50 px-4 py-3 text-left text-sm font-medium text-neutral-800 whitespace-nowrap";
 
 export const adminTd = "border-b border-neutral-100 px-4 py-3.5 text-sm text-neutral-900 align-middle";
 
@@ -54,13 +54,13 @@ export const adminSuccess = "text-sm font-medium text-green-800";
 export const adminEmpty = "py-16 text-center text-sm text-neutral-600";
 
 export const adminTabActive =
-  "border-b-2 border-neutral-900 pb-3 text-sm font-semibold text-neutral-900";
+  "border-b-2 border-neutral-900 pb-3 text-sm font-medium text-neutral-900";
 
 export const adminTabInactive =
   "border-b-2 border-transparent pb-3 text-sm font-medium text-neutral-500 hover:text-neutral-800";
 
 export const adminNavLinkActive =
-  "rounded-md bg-neutral-100 px-3 py-2 text-sm font-semibold text-neutral-900";
+  "rounded-md bg-neutral-100 px-3 py-2 text-sm font-medium text-neutral-900";
 
 export const adminNavLinkInactive =
   "rounded-md px-3 py-2 text-sm font-medium text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-neutral-900";

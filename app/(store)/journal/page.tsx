@@ -52,7 +52,7 @@ export default async function JournalPage() {
         <div className="mt-20 text-center md:mt-28">
           <Link
             href="/fabric"
-            className="text-[12px] font-light tracking-[0.08em] text-neutral-600 transition-opacity duration-300 hover:opacity-60"
+            className="text-[12px] font-normal tracking-[0.08em] text-neutral-600 transition-opacity duration-[var(--duration-fast)] hover:opacity-60"
           >
             {copy.exploreFabric}
           </Link>

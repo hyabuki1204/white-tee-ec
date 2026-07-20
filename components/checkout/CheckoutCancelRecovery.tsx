@@ -21,27 +21,27 @@ export function CheckoutCancelRecovery() {
       <button
         type="button"
         onClick={openDrawer}
-        className="text-[12px] font-light tracking-[0.14em] text-neutral-800 transition-opacity hover:opacity-60"
+        className="text-[12px] font-normal tracking-[0.14em] text-neutral-800 transition-opacity hover:opacity-60"
       >
         {copy.backToBag}
       </button>
       {lastProductSlug ? (
         <Link
           href={`/products/${lastProductSlug}`}
-          className="text-[12px] font-light tracking-[0.06em] text-neutral-600 transition-opacity duration-300 hover:opacity-60"
+          className="text-[12px] font-normal tracking-[0.06em] text-neutral-600 transition-opacity duration-[var(--duration-fast)] hover:opacity-60"
         >
           {copy.backToLastProduct}
         </Link>
       ) : null}
       <Link
-        href="/products?sleeve=short"
-        className="text-[12px] font-light tracking-[0.06em] text-neutral-600 transition-opacity duration-300 hover:opacity-60"
+        href="/products"
+        className="text-[12px] font-normal tracking-[0.06em] text-neutral-600 transition-opacity duration-[var(--duration-fast)] hover:opacity-60"
       >
         {copy.viewProducts}
       </Link>
       <Link
         href="/fabric"
-        className="text-[12px] font-light tracking-[0.06em] text-neutral-600 transition-opacity duration-300 hover:opacity-60"
+        className="text-[12px] font-normal tracking-[0.06em] text-neutral-600 transition-opacity duration-[var(--duration-fast)] hover:opacity-60"
       >
         {copy.exploreFabric}
       </Link>

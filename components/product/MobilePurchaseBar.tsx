@@ -57,13 +57,13 @@ export function MobilePurchaseBar({ fabricName }: MobilePurchaseBarProps) {
     >
       <div className="mx-auto flex max-w-lg items-center gap-4">
         <div className="min-w-0 flex-1">
-          <p className="truncate text-[11px] font-light tracking-[0.12em] text-neutral-600">
+          <p className="truncate text-[11px] font-normal tracking-[0.12em] text-neutral-600">
             {STORE_BRAND_LINE}
           </p>
-          <p className="truncate text-[13px] font-light tracking-[0.03em] text-neutral-900">
+          <p className="truncate text-[14px] font-normal tracking-[0.03em] text-neutral-900">
             {displayName}
           </p>
-          <p className="text-[14px] font-light tracking-[0.04em] text-neutral-700">
+          <p className="text-[14px] font-normal tracking-[0.04em] text-neutral-700">
             {formatPrice(product.price)}
             {selectedSize ? ` · ${selectedSize}` : null}
           </p>

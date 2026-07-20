@@ -28,7 +28,7 @@ export const CHECKOUT_TRUST_COPY = {
     {
       id: "price",
       label: "価格",
-      line: `${PRICE_LADDER.label}のコレクション。${PRICE_LADDER.coreLabel}。`,
+      line: `価格帯は ${PRICE_LADDER.label}。各商品ページに個別の税込価格を表示します。`,
     },
   ],
 } as const;

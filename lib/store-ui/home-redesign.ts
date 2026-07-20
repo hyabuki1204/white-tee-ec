@@ -11,10 +11,9 @@ export const HOME_IMAGES = {
 
 export const HOME_COPY = {
   hero: {
-    lines: [
-      "和歌山で編んだ、6種類の白Tシャツ。",
-      "袖丈とシルエットで選べる12モデル。",
-    ],
+    label: "WAKAYAMA, JAPAN",
+    headline: "和歌山で編んだ、6種類の白Tシャツ。",
+    subline: "袖丈とシルエットで選べる12モデル。",
     shopCta: "商品を見る",
   },
   proof: [

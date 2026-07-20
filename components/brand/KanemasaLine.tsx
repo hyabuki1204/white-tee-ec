@@ -29,7 +29,7 @@ export function KanemasaLine({
       {en.map((line) => (
         <p
           key={line}
-          className="text-[12px] font-light leading-[1.85] tracking-[0.05em] text-neutral-600 md:text-[12px]"
+          className="type-caption"
         >
           {line}
         </p>

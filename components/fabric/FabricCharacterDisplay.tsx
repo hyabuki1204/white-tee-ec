@@ -50,7 +50,7 @@ function CharacterRow({
             key={step}
             aria-hidden
             className={cn(
-              "rounded-full transition-colors",
+              "transition-colors",
               variant === "detail" ? "h-1.5 w-1.5" : "h-1 w-1",
               step <= level ? "bg-neutral-500" : "bg-neutral-200/90",
             )}

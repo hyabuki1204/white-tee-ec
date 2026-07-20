@@ -1,11 +1,8 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { redirect } from "next/navigation";
 import { ProductListingLayout } from "@/components/product/ProductListingLayout";
 import { getFabricBySlug, getFabrics } from "@/lib/fabric/queries";
 import { getProducts } from "@/lib/products/queries";
 import {
-  buildProductsFilterHref,
   FIT_TYPE_LABELS,
   isFitType,
   isInStockProduct,
@@ -35,7 +32,7 @@ export async function generateMetadata({
 
     if (fabric) {
       return buildPageMetadata({
-        title: `${fabric.name} · TOPS`,
+        title: `${fabric.name} · Products`,
         description: fabric.tagline,
         path: `/products?fabric=${fabric.slug}`,
       });
@@ -56,7 +53,7 @@ export async function generateMetadata({
   }
 
   return buildPageMetadata({
-    title: "TOPS",
+    title: "Products",
     description: "White tees — crew, pocket, relaxed, and long sleeve.",
     path: "/products",
     image: "/store/plp-banner.jpg",
@@ -67,22 +64,12 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   const { fabric: fabricSlug, sleeve: sleeveParam, fit: fitParam, stock } =
     await searchParams;
 
-  if (!isSleeveType(sleeveParam)) {
-    redirect(
-      buildProductsFilterHref({
-        fabric: fabricSlug ?? null,
-        sleeve: "short",
-        fit: isFitType(fitParam) ? fitParam : null,
-      }),
-    );
-  }
-
   const [allProducts, fabrics] = await Promise.all([
     getProducts(),
     getFabrics(),
   ]);
 
-  const activeSleeve = sleeveParam;
+  const activeSleeve = isSleeveType(sleeveParam) ? sleeveParam : null;
   const activeFit = isFitType(fitParam) ? fitParam : null;
   const inStockOnly = stock === "in";
   const fabric = fabricSlug ? await getFabricBySlug(fabricSlug) : null;
@@ -93,7 +80,9 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
     products = products.filter((product) => product.fabricSlug === fabric.slug);
   }
 
-  products = products.filter((product) => product.sleeveType === activeSleeve);
+  if (activeSleeve) {
+    products = products.filter((product) => product.sleeveType === activeSleeve);
+  }
 
   if (activeFit) {
     products = products.filter((product) => product.fitType === activeFit);

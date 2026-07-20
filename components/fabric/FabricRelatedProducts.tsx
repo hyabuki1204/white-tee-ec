@@ -25,7 +25,7 @@ export function FabricRelatedProducts({
 
   return (
     <section className="w-full" aria-label={copy.inThisFabric}>
-      <p className="mb-16 text-center text-[12px] font-light tracking-[0.12em] text-neutral-600 md:mb-20 md:text-[12px]">
+      <p className="mb-16 text-center text-[12px] font-normal tracking-[0.12em] text-neutral-600 md:mb-20 md:text-[12px]">
         {copy.inThisFabric}
       </p>
 
@@ -37,7 +37,7 @@ export function FabricRelatedProducts({
       <div className="mt-24 text-center md:mt-28">
         <Link
           href={`/products?fabric=${fabricSlug}`}
-          className="text-[12px] font-light tracking-[0.08em] text-neutral-600 transition-opacity duration-500 hover:opacity-50 md:text-[12px]"
+          className="text-[12px] font-normal tracking-[0.08em] text-neutral-600 transition-opacity duration-[var(--duration-quiet)] hover:opacity-50 md:text-[12px]"
         >
           {copy.viewAll}
         </Link>

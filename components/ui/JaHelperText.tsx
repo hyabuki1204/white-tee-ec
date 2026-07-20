@@ -23,7 +23,7 @@ export function JaHelperText({
     <p
       lang="ja"
       className={cn(
-        "max-w-xs font-extralight leading-[2.05] tracking-[0.03em] text-neutral-600",
+        "max-w-xs font-normal leading-[2.05] tracking-[0.03em] text-neutral-600",
         "text-[12px] md:leading-[2.15]",
         SPACING[spacing],
         className,

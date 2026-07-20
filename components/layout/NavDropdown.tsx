@@ -50,7 +50,7 @@ export function NavDropdown({
       <Link
         href={href}
         className={cn(
-          "inline-flex items-center gap-1.5 text-sm font-light tracking-wide transition-colors",
+          "inline-flex items-center gap-1.5 text-[14px] font-normal tracking-wide transition-colors",
           isActive ? "text-neutral-900" : "text-neutral-600 hover:text-neutral-900",
         )}
         aria-current={isActive ? "page" : undefined}
@@ -75,7 +75,7 @@ export function NavDropdown({
             <Link
               href={href}
               role="menuitem"
-              className="block py-1.5 text-[12px] font-light tracking-[0.06em] text-neutral-600 transition-opacity hover:opacity-60"
+              className="block py-1.5 text-[12px] font-normal tracking-[0.06em] text-neutral-600 transition-opacity hover:opacity-60"
             >
               {allLabel}
             </Link>
@@ -87,12 +87,12 @@ export function NavDropdown({
                       <Link
                         href={group.href}
                         role="menuitem"
-                        className="block py-1 text-[11px] font-light uppercase tracking-[0.1em] text-neutral-600 transition-opacity hover:opacity-60"
+                        className="block py-1 text-[11px] font-normal uppercase tracking-[0.1em] text-neutral-600 transition-opacity hover:opacity-60"
                       >
                         {group.label}
                       </Link>
                     ) : (
-                      <p className="py-1 text-[11px] font-light uppercase tracking-[0.1em] text-neutral-600">
+                      <p className="py-1 text-[11px] font-normal uppercase tracking-[0.1em] text-neutral-600">
                         {group.label}
                       </p>
                     )}
@@ -102,7 +102,7 @@ export function NavDropdown({
                           <Link
                             href={link.href}
                             role="menuitem"
-                            className="block py-1 pl-2 text-[12px] font-light tracking-[0.04em] text-neutral-600 transition-opacity hover:opacity-60"
+                            className="block py-1 pl-2 text-[12px] font-normal tracking-[0.04em] text-neutral-600 transition-opacity hover:opacity-60"
                           >
                             {link.label}
                           </Link>
@@ -120,7 +120,7 @@ export function NavDropdown({
                     <Link
                       href={link.href}
                       role="menuitem"
-                      className="block py-1 text-[12px] font-light tracking-[0.04em] text-neutral-600 transition-opacity hover:opacity-60"
+                      className="block py-1 text-[12px] font-normal tracking-[0.04em] text-neutral-600 transition-opacity hover:opacity-60"
                     >
                       {link.label}
                     </Link>

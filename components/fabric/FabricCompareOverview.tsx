@@ -39,12 +39,12 @@ function FullCompareHeader() {
       <span aria-hidden className="block" />
       {FABRIC_CHARACTER_KEYS.map((key) => (
         <div key={key} className="text-center">
-          <span className="block text-[10px] font-light tracking-[0.06em] text-neutral-600 sm:text-[11px]">
+          <span className="block text-[11px] font-normal tracking-[0.06em] text-neutral-600 sm:text-[11px]">
             {TRAIT_ABBREV[key]}
           </span>
           <span
             lang="ja"
-            className="mt-0.5 block text-[8px] font-extralight tracking-[0.02em] text-neutral-600/75"
+            className="mt-0.5 block text-[11px] font-normal tracking-[0.02em] text-neutral-600/75"
           >
             {FABRIC_CHARACTER_JA[key]}
           </span>
@@ -87,13 +87,13 @@ export function FabricCompareOverview({
                 <Link
                   href={`/fabric/${fabric.slug}`}
                   className={cn(
-                    "group block transition-opacity duration-300 hover:opacity-60",
+                    "group block transition-opacity duration-[var(--duration-fast)] hover:opacity-60",
                     variant === "full"
                       ? cn(FULL_GRID, "items-center")
                       : "flex flex-col items-center gap-2",
                   )}
                 >
-                  <span className="text-[12px] font-light tracking-[0.06em] text-neutral-700 md:text-[12px]">
+                  <span className="text-[12px] font-normal tracking-[0.06em] text-neutral-700 md:text-[12px]">
                     {fabric.name}
                   </span>
 

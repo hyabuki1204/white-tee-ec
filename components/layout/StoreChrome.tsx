@@ -12,18 +12,12 @@ type StoreChromeProps = {
   children: React.ReactNode;
   products: Product[];
   fabricNameBySlug: Record<string, string>;
-  announcement: {
-    message: string;
-    linkHref: string;
-    linkLabel: string;
-  };
-  journalNavArticles: Array<{ slug: string; title: string }>;
 };
 
 function HeaderFallback() {
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-neutral-200/70 bg-background">
-      <div className="h-[var(--header-height,4.5rem)]" aria-hidden />
+    <header className="fixed inset-x-0 top-0 z-50 h-[72px] border-b border-[var(--color-hairline)] bg-[var(--color-bg)]">
+      <div className="h-full" aria-hidden />
     </header>
   );
 }
@@ -32,16 +26,11 @@ export function StoreChrome({
   children,
   products,
   fabricNameBySlug,
-  announcement,
-  journalNavArticles,
 }: StoreChromeProps) {
   return (
     <CartDrawerProvider products={products} fabricNameBySlug={fabricNameBySlug}>
       <Suspense fallback={<HeaderFallback />}>
-        <Header
-          announcement={announcement}
-          journalNavArticles={journalNavArticles}
-        />
+        <Header products={products} fabricNameBySlug={fabricNameBySlug} />
       </Suspense>
       <Main>{children}</Main>
       <Footer />

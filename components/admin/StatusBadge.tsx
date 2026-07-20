@@ -12,7 +12,7 @@ export function StatusBadge({ status, className = "" }: StatusBadgeProps) {
 
   return (
     <span
-      className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${badge} ${className}`.trim()}
+      className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${badge} ${className}`.trim()}
     >
       {formatOrderStatusLabel(status)}
     </span>

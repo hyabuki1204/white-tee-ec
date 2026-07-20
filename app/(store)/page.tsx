@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { HomeProductCatalog } from "@/components/home/HomeProductCatalog";
+import { getFeaturedJournalArticles } from "@/lib/content/journal";
 import { getFabrics } from "@/lib/fabric/queries";
 import { getProducts } from "@/lib/products/queries";
-import { isSleeveType } from "@/lib/products/silhouette";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 import { getSeoSettings } from "@/lib/seo/queries";
 
@@ -19,15 +19,12 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-type HomePageProps = {
-  searchParams: Promise<{ sleeve?: string }>;
-};
-
-export default async function Home({ searchParams }: HomePageProps) {
-  const { sleeve: sleeveParam } = await searchParams;
-  const activeSleeve = isSleeveType(sleeveParam) ? sleeveParam : "short";
-
-  const [products, fabrics] = await Promise.all([getProducts(), getFabrics()]);
+export default async function Home() {
+  const [products, fabrics, journalArticles] = await Promise.all([
+    getProducts(),
+    getFabrics(),
+    getFeaturedJournalArticles(2),
+  ]);
 
   const fabricNameBySlug = Object.fromEntries(
     fabrics.map((fabric) => [fabric.slug, fabric.name]),
@@ -37,8 +34,8 @@ export default async function Home({ searchParams }: HomePageProps) {
     <HomeProductCatalog
       products={products}
       fabrics={fabrics}
+      journalArticles={journalArticles}
       fabricNameBySlug={fabricNameBySlug}
-      activeSleeve={activeSleeve}
     />
   );
 }

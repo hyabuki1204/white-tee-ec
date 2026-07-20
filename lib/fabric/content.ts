@@ -25,7 +25,7 @@ export const FABRIC_PAGE_TITLE = "Fabric";
 
 export const FABRIC_INTRO_LINES = [
   "The cloth comes first.",
-  "Weight, hand, light.",
+  "Weight, hand, light — six jerseys, each tuned for how white should sit.",
 ] as const;
 
 import { PRODUCT_CATALOG } from "@/lib/products/product-catalog";

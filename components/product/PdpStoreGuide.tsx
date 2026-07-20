@@ -11,12 +11,12 @@ export function PdpStoreGuide() {
       className="border-t border-neutral-200/60 pt-10 sm:pt-12"
     >
       <div className="flex items-baseline justify-between gap-4">
-        <h2 className="text-[11px] font-light uppercase tracking-[0.16em] text-neutral-600">
+        <h2 className="type-label text-neutral-600">
           {copy.storeGuideTitle}
         </h2>
         <Link
           href="/store-guide"
-          className="text-[11px] font-light tracking-[0.06em] text-neutral-600 transition-opacity hover:opacity-60"
+          className="text-[11px] font-normal tracking-[0.06em] text-neutral-600 transition-opacity hover:opacity-60"
         >
           すべて見る
         </Link>
@@ -25,16 +25,16 @@ export function PdpStoreGuide() {
       <ul className="mt-6 space-y-5">
         {STORE_GUIDE_SECTIONS.map((section) => (
           <li key={section.id} className="space-y-1.5">
-            <p className="text-[12px] font-light tracking-[0.08em] text-neutral-600">
+            <p className="text-[12px] font-normal tracking-[0.08em] text-neutral-600">
               {section.title}
             </p>
-            <p className="text-[12px] font-light leading-[1.85] tracking-[0.03em] text-neutral-600">
+            <p className="text-[12px] font-normal leading-[1.85] tracking-[0.03em] text-neutral-600">
               {section.summary}
             </p>
             {section.href && section.linkLabel ? (
               <Link
                 href={section.href}
-                className="inline-block pt-0.5 text-[11px] font-light tracking-[0.06em] text-neutral-600 transition-opacity hover:opacity-60"
+                className="inline-block pt-0.5 text-[11px] font-normal tracking-[0.06em] text-neutral-600 transition-opacity hover:opacity-60"
               >
                 {section.linkLabel}
               </Link>

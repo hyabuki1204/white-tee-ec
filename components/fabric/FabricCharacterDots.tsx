@@ -34,7 +34,6 @@ export function FabricCharacterDots({
           key={step}
           aria-hidden
           className={cn(
-            "rounded-full",
             size === "xs" ? "h-1 w-1" : "h-1 w-1",
             step <= level ? filled : empty,
           )}

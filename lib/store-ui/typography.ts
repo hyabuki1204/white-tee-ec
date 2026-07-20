@@ -1,34 +1,37 @@
 /**
- * Storefront typography — quiet editorial scale, bumped for readability.
- * Use these semantic classes instead of raw pixel sizes where possible.
+ * Storefront typography — maps 1:1 to design tokens in globals.css.
+ * Allowed sizes only: Display 22–26 / H2 20 / Label 11 / Body 14 / Caption 12 / Fine 11.
+ * Weights: 400 (regular) or 500 (medium). Never bold (700+).
  */
 export const STORE_TYPO = {
-  /** Section eyebrows, metadata */
-  caption: "text-[12px] font-light tracking-[0.12em] text-neutral-600",
-  /** Default body, nav links */
-  body: "text-[13px] font-light leading-[1.9] tracking-[0.04em] text-neutral-600",
-  /** Secondary body, descriptions */
-  bodyMuted:
-    "text-[13px] font-light leading-[2] tracking-[0.03em] text-neutral-600",
-  /** Page / section titles */
-  title: "text-[15px] font-light tracking-[0.24em] text-neutral-800",
-  /** PLP / home catalog heading */
-  catalogTitle:
-    "text-[16px] font-light tracking-[0.24em] text-neutral-900 md:text-[18px]",
-  /** PDP product name */
-  pdpTitle:
-    "text-[18px] font-light leading-[1.45] tracking-[0.03em] text-neutral-900 md:text-[20px] lg:text-[22px]",
-  /** PDP price */
-  pdpPrice:
-    "text-[17px] font-light tracking-[0.04em] text-neutral-800 md:text-[19px]",
-  /** PDP brand line */
-  pdpBrand: "text-[12px] font-light tracking-[0.2em] text-neutral-600",
-  /** Home editorial body */
-  editorialBody:
-    "text-[14px] font-light leading-[1.9] tracking-[0.04em] text-[#505050] md:text-[15px]",
-  /** Home editorial label */
-  editorialLabel:
-    "text-[12px] font-light tracking-[0.18em] text-[#7a7a7a]",
+  /** Hero headline only */
+  display: "type-display",
+  /** Section / page Japanese headings */
+  h2: "type-h2",
+  /** English section labels */
+  label: "type-label",
+  /** Default body copy */
+  body: "type-body text-[var(--color-ink-soft)]",
+  /** Body on ink (darker) */
+  bodyInk: "type-body text-[var(--color-ink)]",
+  /** Secondary / meta */
+  caption: "type-caption",
+  /** Legal notes, breadcrumbs, annotations */
+  fine: "type-fine",
+  /** @deprecated Prefer `label` */
+  editorialLabel: "type-label",
+  /** @deprecated Prefer `body` */
+  editorialBody: "type-body text-[var(--color-ink-soft)]",
+  /** @deprecated Prefer `label` */
+  title: "type-label text-[var(--color-ink)]",
+  /** @deprecated Prefer `label` */
+  catalogTitle: "type-label",
+  /** @deprecated Prefer `h2` */
+  pdpTitle: "type-h2",
+  /** @deprecated Prefer `bodyInk` */
+  pdpPrice: "type-body text-[var(--color-ink)]",
+  /** @deprecated Prefer `caption` */
+  pdpBrand: "type-caption",
 } as const;
 
 /** Purchase column width — readable on mobile and desktop. */

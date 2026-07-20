@@ -7,6 +7,7 @@ import { getSiteUrl } from "@/lib/seo/site";
 const STATIC_PATHS = [
   "",
   "/fabric",
+  "/products",
   "/products?sleeve=short",
   "/products?sleeve=long",
   "/about",

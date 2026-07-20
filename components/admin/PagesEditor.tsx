@@ -181,7 +181,7 @@ export function PagesEditor({ initialContent }: PagesEditorProps) {
           key={`${content.pageTitle}-section-${index}`}
           className="space-y-4 border-t border-neutral-200 pt-6"
         >
-          <p className="text-sm font-semibold text-neutral-800">
+          <p className="text-sm font-medium text-neutral-800">
             {copy.policy.section(index + 1)}
           </p>
           <label className={adminField}>

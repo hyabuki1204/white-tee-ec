@@ -39,7 +39,7 @@ export function CheckoutSuccessContent({
   return (
     <Container as="section" className="py-16 md:py-24">
       <div className="mx-auto max-w-md text-center">
-        <div className="relative mx-auto aspect-[4/3] max-w-sm overflow-hidden bg-[#f4f4f2]">
+        <div className="relative mx-auto aspect-[4/3] max-w-sm overflow-hidden bg-[var(--color-image-placeholder)]">
           <Image
             src="/store/store-empty-state.jpg"
             alt=""
@@ -51,23 +51,23 @@ export function CheckoutSuccessContent({
 
         {verified ? (
           <>
-            <p className="mt-10 text-[12px] font-light tracking-[0.28em] text-neutral-600">
+            <p className="mt-10 text-[12px] font-normal tracking-[0.28em] text-neutral-600">
               {copy.thankYou}
             </p>
-            <p className="mt-4 text-[14px] font-light leading-[1.8] tracking-[0.03em] text-neutral-800">
+            <p className="mt-4 text-[14px] font-normal leading-[1.8] tracking-[0.03em] text-neutral-800">
               {copy.orderConfirmed}
             </p>
             {sessionId ? (
-              <p className="mt-3 text-[11px] font-light tracking-[0.1em] text-neutral-600">
+              <p className="mt-3 text-[11px] font-normal tracking-[0.1em] text-neutral-600">
                 {copy.orderId(sessionId.slice(-8).toUpperCase())}
               </p>
             ) : null}
-            <p className="mt-4 text-[12px] font-light leading-[1.7] tracking-[0.04em] text-neutral-600">
+            <p className="mt-4 text-[12px] font-normal leading-[1.7] tracking-[0.04em] text-neutral-600">
               {copy.nextSteps}
             </p>
             {orderSummary ? (
               <div className="mt-8 border-t border-neutral-200/70 pt-8 text-left">
-                <p className="text-[11px] font-light tracking-[0.14em] text-neutral-600">
+                <p className="text-[11px] font-normal tracking-[0.14em] text-neutral-600">
                   {copy.orderSummaryLabel}
                 </p>
                 <CheckoutOrderSummaryDisplay summary={orderSummary} />
@@ -76,10 +76,10 @@ export function CheckoutSuccessContent({
           </>
         ) : (
           <>
-            <p className="mt-10 text-[12px] font-light tracking-[0.28em] text-neutral-600">
+            <p className="mt-10 text-[12px] font-normal tracking-[0.28em] text-neutral-600">
               {copy.paymentPending}
             </p>
-            <p className="mt-4 text-[14px] font-light leading-[1.8] tracking-[0.03em] text-neutral-700">
+            <p className="mt-4 text-[14px] font-normal leading-[1.8] tracking-[0.03em] text-neutral-700">
               {copy.paymentUnconfirmed}
             </p>
           </>
@@ -87,15 +87,15 @@ export function CheckoutSuccessContent({
 
         <div className="mt-10 flex flex-col items-center gap-4">
           <Link
-            href="/products?sleeve=short"
-            className="text-[12px] font-light tracking-[0.14em] text-neutral-800 transition-opacity hover:opacity-60"
+            href="/products"
+            className="text-[12px] font-normal tracking-[0.14em] text-neutral-800 transition-opacity hover:opacity-60"
           >
             {copy.viewProducts}
           </Link>
           {verified ? (
             <Link
               href="/store-guide"
-              className="text-[12px] font-light tracking-[0.08em] text-neutral-600 transition-opacity duration-300 hover:opacity-60"
+              className="text-[12px] font-normal tracking-[0.08em] text-neutral-600 transition-opacity duration-[var(--duration-fast)] hover:opacity-60"
             >
               {GRAPHPAPER_STORE_COPY.footer.storeGuide}
             </Link>

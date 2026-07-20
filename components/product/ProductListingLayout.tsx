@@ -4,7 +4,6 @@ import { ProductGrid } from "@/components/product/ProductGrid";
 import { ProductFiltersSidebar } from "@/components/product/ProductFiltersSidebar";
 import type { Fabric } from "@/lib/fabric/content";
 import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
-import { STORE_TYPO } from "@/lib/store-ui/typography";
 import type { FitType, SleeveType } from "@/types/product-fit";
 import type { Product } from "@/types";
 
@@ -13,7 +12,7 @@ type ProductListingLayoutProps = {
   allProducts: Product[];
   fabrics: Fabric[];
   activeFabricSlug?: string | null;
-  activeSleeve: SleeveType;
+  activeSleeve: SleeveType | null;
   activeFit?: FitType | null;
   inStockOnly?: boolean;
   fabricNameBySlug: Record<string, string>;
@@ -33,7 +32,7 @@ export function ProductListingLayout({
 }: ProductListingLayoutProps) {
   return (
     <>
-      <div className="relative aspect-[21/9] max-h-[28vh] w-full overflow-hidden bg-[#ececea] sm:max-h-[32vh] md:max-h-[36vh]">
+      <div className="relative aspect-[21/9] max-h-[28vh] w-full overflow-hidden bg-[var(--color-image-placeholder)] sm:max-h-[32vh] md:max-h-[36vh]">
         <Image
           src="/store/plp-banner.jpg"
           alt=""
@@ -42,7 +41,7 @@ export function ProductListingLayout({
           sizes="100vw"
           className="object-cover object-[center_20%] opacity-95"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/10 via-transparent to-background" />
+        <div className="absolute inset-0 bg-[var(--color-bg)]/70" />
       </div>
 
       <div className="mx-auto w-full max-w-7xl px-6 md:px-8 lg:px-12">
@@ -56,20 +55,20 @@ export function ProductListingLayout({
           />
 
           <div className="min-w-0 flex-1">
-            <header className="mb-8 flex flex-col gap-6 border-b border-neutral-200/70 pb-6 sm:flex-row sm:items-end sm:justify-between md:mb-10">
-              <div>
-                <h1 className={STORE_TYPO.catalogTitle}>{title}</h1>
-                <p className="mt-3 text-[13px] font-light tracking-[0.06em] text-neutral-600">
-                  {GRAPHPAPER_STORE_COPY.plp.items(products.length)}
-                </p>
-              </div>
+            <header className="mb-10">
+              <h1 className="type-label">{title}</h1>
+              <p className="type-label mt-3 text-[var(--color-ink)]">
+                {GRAPHPAPER_STORE_COPY.plp.items(products.length)}
+              </p>
 
-              <PlpSleeveToggle
-                activeSleeve={activeSleeve}
-                activeFabricSlug={activeFabricSlug}
-                activeFit={activeFit}
-                inStockOnly={inStockOnly}
-              />
+              <div className="mt-6">
+                <PlpSleeveToggle
+                  activeSleeve={activeSleeve}
+                  activeFabricSlug={activeFabricSlug}
+                  activeFit={activeFit}
+                  inStockOnly={inStockOnly}
+                />
+              </div>
             </header>
 
             <ProductGrid

@@ -14,14 +14,14 @@ export function JournalArticleBody({ article }: JournalArticleBodyProps) {
       <header className="mx-auto max-w-2xl text-center">
         <time
           dateTime={article.publishedAt}
-          className="text-[11px] font-light tracking-[0.12em] text-neutral-600"
+          className="text-[11px] font-normal tracking-[0.12em] text-neutral-600"
         >
           {formatJournalDate(article.publishedAt)}
         </time>
-        <h1 className="mt-5 text-[16px] font-light tracking-[0.1em] text-neutral-800 md:text-[16px] md:tracking-[0.12em]">
+        <h1 className="mt-5 text-[14px] font-normal tracking-[0.1em] text-neutral-800 md:text-[14px] md:tracking-[0.12em]">
           {article.title}
         </h1>
-        <p className="mt-6 text-[14px] font-light leading-[1.95] tracking-[0.02em] text-neutral-600 md:text-[14px] md:leading-[2.1]">
+        <p className="mt-6 text-[14px] font-normal leading-[1.95] tracking-[0.02em] text-neutral-600 md:text-[14px] md:leading-[2.1]">
           {article.excerpt}
         </p>
         {article.helperJa ? (
@@ -35,7 +35,7 @@ export function JournalArticleBody({ article }: JournalArticleBodyProps) {
         {article.body.map((paragraph) => (
           <p
             key={paragraph.slice(0, 32)}
-            className="text-[14px] font-light leading-[2] tracking-[0.02em] text-neutral-600 md:text-[14px] md:leading-[2.15] [&+&]:mt-8"
+            className="text-[14px] font-normal leading-[2] tracking-[0.02em] text-neutral-600 md:text-[14px] md:leading-[2.15] [&+&]:mt-8"
           >
             {paragraph}
           </p>

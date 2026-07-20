@@ -1,14 +1,12 @@
+import { ProductFabricSpecs } from "@/components/product/ProductFabricSpecs";
 import { ProductGallery } from "@/components/product/ProductGallery";
-import { MobilePurchaseBar } from "@/components/product/MobilePurchaseBar";
-import {
-  ProductPurchaseAside,
-  ProductPurchasePrimary,
-  ProductPurchaseSecondary,
-} from "@/components/product/ProductPurchaseBox";
+import { ProductPdpAccordion } from "@/components/product/ProductPdpAccordion";
+import { ProductPurchaseControls } from "@/components/product/ProductPurchaseControls";
 import { ProductPurchaseHeader } from "@/components/product/ProductPurchaseHeader";
 import { ProductPurchaseProvider } from "@/components/product/ProductPurchaseContext";
-import { toProductDetailContent } from "@/lib/db/products/mapper";
-import { PRODUCT_SIZES } from "@/lib/products/defaults";
+import { ProductSizeGuideTable } from "@/components/product/ProductSizeGuideTable";
+import { getFabricSpecRows } from "@/lib/fabric/specs";
+import { RETURNS_POLICY } from "@/lib/store-ui/returns-policy";
 import type { Fabric } from "@/lib/fabric/content";
 import type { Product } from "@/types";
 
@@ -22,65 +20,57 @@ type ProductPageLayoutProps = {
 export function ProductPageLayout({
   product,
   fabric,
-  fabricName,
   displayName,
 }: ProductPageLayoutProps) {
-  const detail = toProductDetailContent(product);
-  const resolvedFabricName = fabricName ?? fabric?.name;
-  const availableSizes =
-    product.variants.length > 0
-      ? product.variants.map((variant) => variant.size)
-      : [...PRODUCT_SIZES];
+  const specRows = getFabricSpecRows(product, fabric);
+  const description =
+    product.description?.trim() ||
+    product.detailDescription?.trim() ||
+    "";
 
-  const sharedProps = {
-    detail,
-    fabric,
-    fabricName: resolvedFabricName,
-    fitProfile: product.fitProfile,
-    availableSizes,
-  };
+  const accordionItems = [
+    {
+      id: "care",
+      title: "お手入れについて",
+      content: <p className="whitespace-pre-line">{product.care}</p>,
+    },
+    {
+      id: "shipping",
+      title: "配送・返品",
+      content: (
+        <div className="space-y-3">
+          <p>{RETURNS_POLICY.shipping}</p>
+          <p>{RETURNS_POLICY.returns}</p>
+        </div>
+      ),
+    },
+  ];
 
-  const purchaseHeader = (
-    <ProductPurchaseHeader
-      product={product}
-      displayName={displayName}
-      fabricName={resolvedFabricName}
-    />
+  const infoPanel = (
+    <div className="mx-auto w-full max-w-md lg:max-w-none">
+      <ProductPurchaseHeader
+        displayName={displayName}
+        price={product.price}
+        description={description}
+      />
+      <ProductFabricSpecs rows={specRows} />
+      <ProductPurchaseControls />
+      <ProductPdpAccordion items={accordionItems} />
+      <ProductSizeGuideTable rows={product.sizeGuide} />
+    </div>
   );
 
   return (
     <ProductPurchaseProvider product={product}>
-      <section className="flex flex-col lg:grid lg:grid-cols-[minmax(0,2fr)_minmax(0,0.9fr)] lg:items-start lg:gap-x-12 xl:grid-cols-[minmax(0,2.1fr)_minmax(0,0.85fr)] xl:gap-x-16">
-        <div className="order-1 lg:order-1">
+      <section className="lg:grid lg:grid-cols-[minmax(0,55fr)_minmax(0,45fr)] lg:items-start">
+        <div className="min-w-0">
           <ProductGallery product={product} displayName={displayName} />
         </div>
 
-        <div className="order-2 px-6 pt-8 pb-2 lg:hidden">
-          {purchaseHeader}
-          <div className="mt-8">
-            <ProductPurchasePrimary
-              fabric={fabric}
-              fabricName={resolvedFabricName}
-              fitProfile={product.fitProfile}
-              availableSizes={availableSizes}
-              showFitGuide
-            />
-          </div>
-        </div>
-
-        <div className="order-3 lg:order-2">
-          <ProductPurchaseAside
-            {...sharedProps}
-            purchaseHeader={purchaseHeader}
-          />
-        </div>
-
-        <div className="order-4 px-6 pb-8 lg:hidden">
-          <ProductPurchaseSecondary {...sharedProps} hideFitTools />
-        </div>
+        <aside className="px-6 py-10 md:px-10 lg:sticky lg:top-[var(--header-height)] lg:max-h-[calc(100vh-var(--header-height))] lg:overflow-y-auto lg:px-12 lg:py-12 xl:px-16">
+          {infoPanel}
+        </aside>
       </section>
-
-      <MobilePurchaseBar fabricName={resolvedFabricName} />
     </ProductPurchaseProvider>
   );
 }

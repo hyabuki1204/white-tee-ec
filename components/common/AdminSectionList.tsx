@@ -20,7 +20,7 @@ export function AdminSectionList({ sections }: AdminSectionListProps) {
             className="group flex items-center justify-between gap-6 px-6 py-6 transition-colors hover:bg-neutral-50"
           >
             <div className="space-y-1.5">
-              <p className="text-base font-semibold text-neutral-900">
+              <p className="text-base font-medium text-neutral-900">
                 {section.label}
               </p>
               <p className="text-sm text-neutral-600">{section.description}</p>

@@ -22,7 +22,7 @@ export function CartFabricCrossSell({
       aria-label={copy.pairWith}
       className="mt-16 border-t border-neutral-200/60 pt-12 md:mt-20 md:pt-16"
     >
-      <p className="mb-8 text-[12px] font-light tracking-[0.12em] text-neutral-600 md:text-[12px]">
+      <p className="mb-8 text-[12px] font-normal tracking-[0.12em] text-neutral-600 md:text-[12px]">
         {copy.pairWith}
       </p>
       <ul className="grid grid-cols-1 gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">

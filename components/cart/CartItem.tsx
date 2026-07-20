@@ -35,7 +35,7 @@ function QtyButton({
       onClick={onClick}
       disabled={disabled}
       aria-label={label}
-      className="flex h-10 w-10 items-center justify-center text-sm font-light text-neutral-600 transition-opacity active:opacity-70 disabled:cursor-not-allowed disabled:opacity-30 md:h-auto md:w-auto md:text-[13px] md:text-neutral-600 md:hover:text-neutral-900"
+      className="flex h-10 w-10 items-center justify-center text-[14px] font-normal text-neutral-600 transition-opacity active:opacity-70 disabled:cursor-not-allowed disabled:opacity-30 md:h-auto md:w-auto md:text-[14px] md:text-neutral-600 md:hover:text-neutral-900"
     >
       {children}
     </button>
@@ -78,28 +78,28 @@ export function CartItem({
           {productSlug ? (
             <Link
               href={`/products/${productSlug}`}
-              className="block py-0.5 text-[14px] font-light tracking-wide text-neutral-800 transition-opacity active:opacity-60 md:text-[13px] md:text-neutral-900 md:hover:opacity-60"
+              className="block py-0.5 text-[14px] font-normal tracking-wide text-neutral-800 transition-opacity active:opacity-60 md:text-[14px] md:text-neutral-900 md:hover:opacity-60"
             >
               {productName}
             </Link>
           ) : (
-            <h2 className="text-[14px] font-light tracking-wide text-neutral-800 md:text-[13px] md:text-neutral-900">
+            <h2 className="text-[14px] font-normal tracking-wide text-neutral-800 md:text-[14px] md:text-neutral-900">
               {productName}
             </h2>
           )}
-          <p className="text-[14px] font-light text-neutral-600 md:text-[13px] md:text-neutral-600">
+          <p className="text-[14px] font-normal text-neutral-600 md:text-[14px] md:text-neutral-600">
             {copy.size} {item.variant} · {copy.qty} {item.quantity}
           </p>
-          <p className="text-[14px] font-light text-neutral-600 md:text-[13px] md:text-neutral-600">
+          <p className="text-[14px] font-normal text-neutral-600 md:text-[14px] md:text-neutral-600">
             {formatPrice(lineTotal)}
           </p>
           {priceChanged ? (
-            <p className="text-[12px] font-light text-neutral-600">
+            <p className="text-[12px] font-normal text-neutral-600">
               {copy.priceUpdated(formatPrice(currentPrice))}
             </p>
           ) : null}
           {isUnavailable ? (
-            <p className="text-[12px] font-light text-red-600/80">
+            <p className="text-[12px] font-normal text-red-600/80">
               {copy.unavailable}
             </p>
           ) : null}
@@ -115,7 +115,7 @@ export function CartItem({
             >
               −
             </QtyButton>
-            <span className="min-w-6 text-center text-[14px] font-light tabular-nums text-neutral-700 md:min-w-4 md:text-[13px]">
+            <span className="min-w-6 text-center text-[14px] font-normal tabular-nums text-neutral-700 md:min-w-4 md:text-[14px]">
               {item.quantity}
             </span>
             <QtyButton
@@ -136,7 +136,7 @@ export function CartItem({
           <button
             type="button"
             onClick={() => removeItem(item.productId, item.variant)}
-            className="min-h-10 px-1 text-[13px] font-light text-neutral-600 transition-opacity active:opacity-60 md:min-h-0 md:text-[13px] md:text-neutral-600 md:hover:opacity-60"
+            className="min-h-10 px-1 text-[14px] font-normal text-neutral-600 transition-opacity active:opacity-60 md:min-h-0 md:text-[14px] md:text-neutral-600 md:hover:opacity-60"
           >
             {copy.remove}
           </button>

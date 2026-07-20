@@ -16,7 +16,7 @@ export function FabricDetailIntro({ fabric }: FabricDetailIntroProps) {
           <p
             key={`${line}-${index}`}
             className={cn(
-              "text-[13px] font-light leading-[2] tracking-[0.02em] text-neutral-600 md:text-[13px] md:leading-[2.1] md:text-neutral-600",
+              "text-[14px] font-normal leading-[2] tracking-[0.02em] text-neutral-600 md:text-[14px] md:leading-[2.1] md:text-neutral-600",
               presentation.taglineTracking,
             )}
           >

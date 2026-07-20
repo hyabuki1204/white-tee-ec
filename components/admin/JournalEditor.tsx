@@ -150,7 +150,7 @@ export function JournalEditor({ initialContent }: JournalEditorProps) {
         </label>
 
         <div className="flex flex-wrap items-center justify-between gap-4 border-t border-neutral-200 pt-6">
-          <p className="text-sm font-semibold text-neutral-800">{copy.articles}</p>
+          <p className="text-sm font-medium text-neutral-800">{copy.articles}</p>
           <button
             type="button"
             onClick={() =>
@@ -171,7 +171,7 @@ export function JournalEditor({ initialContent }: JournalEditorProps) {
             className="space-y-4 border-t border-neutral-200 pt-6"
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <p className="text-sm font-semibold text-neutral-800">
+              <p className="text-sm font-medium text-neutral-800">
                 {copy.entry(index + 1)}
               </p>
               {content.articles.length > 1 ? (

@@ -16,14 +16,14 @@ type ProductFiltersSidebarProps = {
 
 function filterLinkClass(isActive: boolean) {
   return cn(
-    "block py-1 text-[12px] font-light tracking-[0.04em] transition-opacity hover:opacity-60",
+    "block py-1 text-[12px] font-normal tracking-[0.04em] transition-opacity hover:opacity-60",
     isActive ? "text-neutral-900" : "text-neutral-600",
   );
 }
 
 function sectionTitle(label: string) {
   return (
-    <p className="mb-3 text-[11px] font-light tracking-[0.14em] text-neutral-600">
+    <p className="mb-3 text-[11px] font-normal tracking-[0.14em] text-neutral-600">
       {label}
     </p>
   );
@@ -40,7 +40,7 @@ export function ProductFiltersSidebar({
   return (
     <>
       <details className="border-b border-neutral-200/70 pb-6 lg:hidden" open>
-        <summary className="cursor-pointer list-none text-[12px] font-light tracking-[0.12em] text-neutral-700 [&::-webkit-details-marker]:hidden">
+        <summary className="cursor-pointer list-none text-[12px] font-normal tracking-[0.12em] text-neutral-700 [&::-webkit-details-marker]:hidden">
           {copy.title}
         </summary>
         <div className="mt-6 space-y-8">
@@ -57,7 +57,7 @@ export function ProductFiltersSidebar({
         aria-label="Product filters"
         className="hidden w-44 shrink-0 lg:block xl:w-48"
       >
-        <p className="mb-8 text-[11px] font-light tracking-[0.14em] text-neutral-600">
+        <p className="mb-8 text-[11px] font-normal tracking-[0.14em] text-neutral-600">
           {copy.title}
         </p>
         <FilterSections

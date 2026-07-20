@@ -12,14 +12,14 @@ export function ProductGrid({
 }: ProductGridProps) {
   if (products.length === 0) {
     return (
-      <p className="py-16 text-center text-[13px] font-light tracking-wide text-neutral-600">
+      <p className="py-16 text-center text-[14px] font-normal tracking-wide text-[var(--color-ink-soft)]">
         No pieces match these filters.
       </p>
     );
   }
 
   return (
-    <ul className="grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-5 sm:gap-y-12 lg:grid-cols-3 lg:gap-x-6 lg:gap-y-14">
+    <ul className="grid grid-cols-2 gap-x-6 gap-y-16 lg:grid-cols-3">
       {products.map((product) => (
         <li key={product.id}>
           <ProductCard

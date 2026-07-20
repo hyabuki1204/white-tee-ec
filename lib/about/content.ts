@@ -15,6 +15,10 @@ export const ABOUT_BODY_PARAGRAPHS = [
     "What you wear should disappear.",
     "What remains should feel true.",
   ],
+  [
+    "A white tee shows its quality after washing,",
+    "not at first touch — collar, hem, shoulder line.",
+  ],
 ] as const;
 
 export const ABOUT_BODY_PARAGRAPHS_JA = [
@@ -29,5 +33,9 @@ export const ABOUT_BODY_PARAGRAPHS_JA = [
   [
     "着ていることを忘れる服。",
     "残るのは、本当の白だけ。",
+  ],
+  [
+    "白Tは、着た瞬間より洗った後に差が出ます。",
+    "首元、裾、肩線——その残り方を見てください。",
   ],
 ] as const;

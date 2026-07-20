@@ -1,10 +1,10 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
-import { FIT_TYPE_LABELS } from "@/lib/products/silhouette";
-import { getGraphpaperDisplayName, STORE_BRAND_LINE } from "@/lib/products/display-name";
+import { SoftImage } from "@/components/motion/SoftImage";
+import { getGraphpaperDisplayName } from "@/lib/products/display-name";
 import { getProductWearImageUrl } from "@/lib/products/wear-image";
-import { getProductUsageHint } from "@/lib/store-ui/product-usage";
-import { STORE_TYPO } from "@/lib/store-ui/typography";
 import { formatPrice } from "@/lib/utils/format-price";
 import type { Product } from "@/types";
 import { cn } from "@/lib/utils";
@@ -17,7 +17,7 @@ type ProductCardProps = {
 };
 
 const IMAGE_TRANSITION =
-  "transition-opacity duration-700 ease-[cubic-bezier(0.25,0.1,0.25,1)]";
+  "transition-opacity duration-[var(--duration-reveal)] ease-[var(--ease-quiet)]";
 
 export function ProductCard({
   product,
@@ -27,28 +27,26 @@ export function ProductCard({
 }: ProductCardProps) {
   const wearImageUrl = getProductWearImageUrl(product);
   const displayName = getGraphpaperDisplayName(product, fabricName);
-  const fitLabel = FIT_TYPE_LABELS[product.fitType];
-  const usageHint = getProductUsageHint(product.fabricSlug);
-  const metaLine = [fabricName, fitLabel].filter(Boolean).join(" · ");
   const outOfStock =
     soldOut ||
     product.variants.every((variant) => variant.stockQuantity < 1);
 
   return (
-    <article className={cn("group", className)}>
+    <article className={cn("group", className)} data-reveal>
       <Link href={`/products/${product.slug}`} className="block">
-        <div className="relative aspect-[4/5] overflow-hidden bg-[#f4f4f2]">
-          <Image
+        <div className="relative aspect-[3/4] overflow-hidden bg-[var(--color-image-placeholder)]">
+          <SoftImage
             src={product.imageUrl}
             alt={displayName}
             fill
             quality={90}
-            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            sizes="(max-width: 1024px) 50vw, 33vw"
             className={cn(
               "object-cover",
               IMAGE_TRANSITION,
-              wearImageUrl &&
-                "[@media(hover:hover)]:group-hover:opacity-0",
+              wearImageUrl
+                ? "[@media(hover:hover)]:group-hover:opacity-0"
+                : "[@media(hover:hover)]:group-hover:opacity-[0.85]",
             )}
           />
           {wearImageUrl ? (
@@ -58,7 +56,7 @@ export function ProductCard({
               aria-hidden
               fill
               quality={90}
-              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+              sizes="(max-width: 1024px) 50vw, 33vw"
               className={cn(
                 "object-cover opacity-0",
                 IMAGE_TRANSITION,
@@ -68,31 +66,16 @@ export function ProductCard({
           ) : null}
 
           {outOfStock ? (
-            <span className="absolute left-3 top-3 bg-background/90 px-2 py-1 text-[10px] font-light tracking-[0.16em] text-neutral-600">
+            <span className="type-fine absolute left-3 top-3 bg-background/90 px-2 py-1 tracking-[0.16em] text-[var(--color-ink-soft)]">
               SOLD OUT
             </span>
           ) : null}
         </div>
 
-        <div className="mt-3 space-y-1.5 px-0.5">
-          <p className={STORE_TYPO.caption}>{STORE_BRAND_LINE}</p>
-          {metaLine ? (
-            <p className="text-[12px] font-light tracking-[0.08em] text-neutral-500">
-              {metaLine}
-            </p>
-          ) : null}
-          {usageHint ? (
-            <p className="text-[11px] font-light tracking-[0.06em] text-neutral-400">
-              {usageHint}
-            </p>
-          ) : null}
-          <p className="text-[13px] font-light leading-snug tracking-[0.02em] text-neutral-800 md:text-[14px]">
-            {displayName}
-          </p>
-          <p className="text-[13px] font-light tracking-[0.04em] text-neutral-700 md:text-[14px]">
-            {formatPrice(product.price)}
-          </p>
-        </div>
+        <p className="type-body mt-3 leading-snug text-[var(--color-ink)]">
+          {displayName}
+        </p>
+        <p className="type-caption mt-1">{formatPrice(product.price)}</p>
       </Link>
     </article>
   );

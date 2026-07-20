@@ -14,7 +14,7 @@ export function CheckoutOrderSummaryDisplay({
         {summary.lineItems.map((item, index) => (
           <li
             key={`${item.name}-${index}`}
-            className="flex justify-between gap-4 text-[12px] font-light tracking-[0.04em] text-neutral-600"
+            className="flex justify-between gap-4 text-[12px] font-normal tracking-[0.04em] text-neutral-600"
           >
             <span className="min-w-0 flex-1 leading-[1.7]">
               {item.name}
@@ -26,7 +26,7 @@ export function CheckoutOrderSummaryDisplay({
           </li>
         ))}
       </ul>
-      <dl className="space-y-1.5 border-t border-neutral-200/70 pt-4 text-[12px] font-light tracking-[0.04em] text-neutral-600">
+      <dl className="space-y-1.5 border-t border-neutral-200/70 pt-4 text-[12px] font-normal tracking-[0.04em] text-neutral-600">
         {summary.shipping > 0 ? (
           <div className="flex justify-between">
             <dt>Shipping</dt>

@@ -31,7 +31,7 @@ export function FabricCharacterMini({
           key={step}
           aria-hidden
           className={cn(
-            "h-1 w-1 rounded-full",
+            "h-1 w-1",
             step <= averageLevel ? "bg-neutral-400" : "bg-neutral-200/90",
           )}
         />

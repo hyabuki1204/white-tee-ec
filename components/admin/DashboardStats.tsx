@@ -26,7 +26,7 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
     <div className="mb-8 grid gap-6 lg:grid-cols-3">
       <section className={adminSection}>
         <h2 className={adminSectionTitle}>{copy.unshipped}</h2>
-        <p className="text-3xl font-semibold text-neutral-900">
+        <p className="text-3xl font-medium text-neutral-900">
           {stats.unshippedCount}
         </p>
         <p className={`${adminMuted} mt-2`}>{copy.unshippedHint}</p>

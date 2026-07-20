@@ -1,13 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { ProductMoreFromFabric } from "@/components/fabric/ProductMoreFromFabric";
+import { ProductAgingSection } from "@/components/product/ProductAgingSection";
 import { ProductPageLayout } from "@/components/product/ProductPageLayout";
-import { RecentlyViewed } from "@/components/product/RecentlyViewed";
 import { RecordProductView } from "@/components/product/RecordProductView";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { Container } from "@/components/layout/Container";
-import { SITE_UI_COPY } from "@/lib/copy/site-ui";
 import { getGraphpaperDisplayName } from "@/lib/products/display-name";
 import {
   getFabricForProduct,
@@ -66,56 +63,39 @@ export default async function ProductPage({ params }: ProductPageProps) {
   }
 
   const fabric = await getFabricForProduct(product);
-  const [relatedProducts, fabrics, allProducts] = await Promise.all([
+  const [relatedFromFabric, fabrics, allProducts] = await Promise.all([
     fabric !== null
-      ? getRelatedProductsForFabric(fabric.slug, product.slug)
+      ? getRelatedProductsForFabric(fabric.slug, product.slug, 3)
       : Promise.resolve([]),
     getFabrics(),
     getProducts(),
   ]);
+
+  const relatedProducts =
+    relatedFromFabric.length > 0
+      ? relatedFromFabric
+      : allProducts
+          .filter((entry) => entry.slug !== product.slug)
+          .slice(0, 3);
 
   const fabricNameBySlug = Object.fromEntries(
     fabrics.map((entry) => [entry.slug, entry.name]),
   );
   const displayName = getGraphpaperDisplayName(product, fabric?.name);
 
-  const breadcrumbItems = fabric
-    ? [
-        { name: "Home", path: "/" },
-        { name: fabric.name, path: `/fabric/${fabric.slug}` },
-        { name: displayName, path: `/products/${product.slug}` },
-      ]
-    : [
-        { name: "Home", path: "/" },
-        { name: displayName, path: `/products/${product.slug}` },
-      ];
+  const breadcrumbItems = [
+    { name: "Products", path: "/products" },
+    { name: displayName, path: `/products/${product.slug}` },
+  ];
 
   const structuredData = [
     buildProductSchema(product),
     buildBreadcrumbSchema(breadcrumbItems),
   ];
 
-  const { breadcrumbs: bc } = SITE_UI_COPY;
-  const uiBreadcrumbs = fabric
-    ? [
-        { label: bc.home, href: "/" },
-        { label: fabric.name, href: `/fabric/${fabric.slug}` },
-        { label: displayName },
-      ]
-    : [
-        { label: bc.home, href: "/" },
-        { label: displayName },
-      ];
-
   return (
     <>
       <JsonLd data={structuredData} />
-      <Container as="div" className="px-6 pt-6 lg:hidden">
-        <Breadcrumbs items={uiBreadcrumbs} />
-      </Container>
-      <Container as="div" className="hidden px-6 pt-6 lg:block xl:px-10">
-        <Breadcrumbs items={uiBreadcrumbs} />
-      </Container>
 
       <ProductPageLayout
         product={product}
@@ -126,16 +106,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
       <RecordProductView slug={product.slug} />
 
-      {fabric !== null ? (
-        <ProductMoreFromFabric
-          products={relatedProducts}
-          fabricNameBySlug={fabricNameBySlug}
-        />
-      ) : null}
+      <ProductAgingSection fabricName={fabric?.name} />
 
-      <RecentlyViewed
-        currentSlug={product.slug}
-        allProducts={allProducts}
+      <ProductMoreFromFabric
+        products={relatedProducts}
         fabricNameBySlug={fabricNameBySlug}
       />
     </>

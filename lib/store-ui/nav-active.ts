@@ -20,32 +20,10 @@ export function isNavActive(
   }
 
   if (href.startsWith("/products")) {
-    if (pathname !== "/products") {
-      return false;
-    }
-
-    const [, query = ""] = href.split("?");
-
-    if (!query) {
-      return search === "" || search === "?";
-    }
-
-    const normalizedSearch = search.startsWith("?") ? search.slice(1) : search;
-    return normalizedSearch === query;
+    return pathname === "/products" || pathname.startsWith("/products/");
   }
 
-  return pathname === href || pathname.startsWith(`${href}/`);
-}
+  const pathOnly = href.split("?")[0] ?? href;
 
-export function isNavDropdownActive(
-  pathname: string,
-  href: string,
-  search: string,
-  childHrefs?: { href: string }[],
-): boolean {
-  if (isNavActive(pathname, href, search)) {
-    return true;
-  }
-
-  return childHrefs?.some((child) => isNavActive(pathname, child.href, search)) ?? false;
+  return pathname === pathOnly || pathname.startsWith(`${pathOnly}/`);
 }

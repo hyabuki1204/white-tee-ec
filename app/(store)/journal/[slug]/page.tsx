@@ -67,7 +67,7 @@ export default async function JournalArticlePage({
           ]}
         />
 
-        <div className="relative mt-10 aspect-[16/9] overflow-hidden bg-[#f4f4f2] md:mt-14">
+        <div className="relative mt-10 aspect-[16/9] overflow-hidden bg-[var(--color-image-placeholder)] md:mt-14">
           <Image
             src={article.heroImageUrl}
             alt={article.heroImageAlt}
@@ -85,7 +85,7 @@ export default async function JournalArticlePage({
         <div className="mt-16 text-center md:mt-24">
           <Link
             href="/journal"
-            className="text-[12px] font-light tracking-[0.08em] text-neutral-600 transition-opacity duration-300 hover:opacity-60"
+            className="text-[12px] font-normal tracking-[0.08em] text-neutral-600 transition-opacity duration-[var(--duration-fast)] hover:opacity-60"
           >
             All journal entries
           </Link>

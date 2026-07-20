@@ -23,7 +23,7 @@ export function JournalCard({
       <Link href={`/journal/${article.slug}`} className="block">
         <div
           className={cn(
-            "relative overflow-hidden bg-[#f4f4f2]",
+            "relative overflow-hidden bg-[var(--color-image-placeholder)]",
             isEditorial ? "aspect-[4/3]" : "aspect-[16/10]",
           )}
         >
@@ -37,32 +37,32 @@ export function JournalCard({
                 ? "(max-width: 768px) 100vw, 50vw"
                 : "(max-width: 768px) 100vw, 33vw"
             }
-            className="object-cover brightness-[0.97] contrast-[0.98] transition-transform duration-700 ease-[cubic-bezier(0.25,0.1,0.25,1)] [@media(hover:hover)]:group-hover:scale-[1.015]"
+            className="object-cover brightness-[0.97] contrast-[0.98] transition-opacity duration-[var(--duration-reveal)] ease-[var(--ease-quiet)] [@media(hover:hover)]:group-hover:opacity-90"
           />
         </div>
 
         <div className={cn(isEditorial ? "mt-6 md:mt-8" : "mt-5 md:mt-6")}>
           <time
             dateTime={article.publishedAt}
-            className="text-[11px] font-light tracking-[0.1em] text-neutral-600"
+            className="text-[11px] font-normal tracking-[0.1em] text-neutral-600"
           >
             {formatJournalDate(article.publishedAt)}
           </time>
           <h3
             className={cn(
-              "mt-2 font-light tracking-[0.06em] text-neutral-800 transition-opacity duration-500 [@media(hover:hover)]:group-hover:opacity-60",
+              "mt-2 font-normal tracking-[0.06em] text-neutral-800 transition-opacity duration-[var(--duration-quiet)] [@media(hover:hover)]:group-hover:opacity-60",
               isEditorial
-                ? "text-[14px] leading-snug md:text-[15px]"
-                : "text-[13px] leading-snug",
+                ? "text-[14px] leading-snug md:text-[14px]"
+                : "text-[14px] leading-snug",
             )}
           >
             {article.title}
           </h3>
           <p
             className={cn(
-              "mt-3 font-light leading-[1.85] text-neutral-600",
+              "mt-3 font-normal leading-[1.85] text-neutral-600",
               isEditorial
-                ? "text-[13px] tracking-[0.02em] md:text-[13px]"
+                ? "text-[14px] tracking-[0.02em] md:text-[14px]"
                 : "text-[12px] tracking-[0.02em]",
             )}
           >

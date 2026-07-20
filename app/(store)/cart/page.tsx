@@ -51,7 +51,7 @@ export default async function CartPage() {
     <section aria-label="Shopping bag" className="py-12 sm:py-16 md:py-20 lg:py-24">
       <Container as="div">
         <header className="mb-10 border-b border-neutral-200/70 pb-6 sm:mb-12 md:mb-14">
-          <h1 className="text-[14px] font-light tracking-[0.28em] text-neutral-800">
+          <h1 className="text-[14px] font-normal tracking-[0.28em] text-neutral-800">
             {copy.title}
           </h1>
         </header>
@@ -65,7 +65,7 @@ export default async function CartPage() {
         <p className="mt-12 text-center md:mt-16">
           <Link
             href="/store-guide"
-            className="text-[12px] font-light tracking-[0.06em] text-neutral-600 transition-opacity duration-300 hover:opacity-60"
+            className="text-[12px] font-normal tracking-[0.06em] text-neutral-600 transition-opacity duration-[var(--duration-fast)] hover:opacity-60"
           >
             {GRAPHPAPER_STORE_COPY.footer.storeGuide}
           </Link>

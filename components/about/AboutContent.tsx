@@ -28,7 +28,7 @@ function ParagraphBlock({
       lang={lang}
       className={
         className ??
-        "text-[14px] font-light leading-[1.95] tracking-[0.02em] text-neutral-600 md:text-[14px] md:leading-[2.1] md:tracking-[0.03em]"
+        "type-body text-[var(--color-ink-soft)]"
       }
     >
       {lines.map((line, index) => (
@@ -52,7 +52,7 @@ export function AboutContent({
 
   return (
     <>
-      <section className="relative aspect-[16/10] overflow-hidden bg-[#f4f4f2] sm:aspect-[21/9]">
+      <section className="relative aspect-[16/10] overflow-hidden bg-[var(--color-image-placeholder)] sm:aspect-[21/9]">
         <Image
           src={ABOUT_HERO.src}
           alt={ABOUT_HERO.alt}
@@ -61,11 +61,10 @@ export function AboutContent({
           sizes="100vw"
           className="object-cover brightness-[0.97] contrast-[0.98]"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-neutral-900/35 via-transparent to-transparent" />
       </section>
 
-      <div className="mx-auto max-w-2xl px-6 py-16 text-center sm:py-20 md:py-28 lg:py-32">
-        <h1 className="text-[14px] font-light tracking-[0.28em] text-neutral-800 md:text-[15px]">
+      <div className="mx-auto max-w-2xl px-6 py-[var(--space-6)] text-center md:py-[var(--space-7)]">
+        <h1 className="text-[14px] font-normal tracking-[0.28em] text-neutral-800 md:text-[14px]">
           {headline}
         </h1>
         {headlineJa ? (
@@ -85,7 +84,7 @@ export function AboutContent({
                   <ParagraphBlock
                     lines={paragraphJa}
                     lang="ja"
-                    className="text-[13px] font-extralight leading-[2.05] tracking-[0.03em] text-neutral-600 md:text-[13px] md:leading-[2.15]"
+                    className="text-[14px] font-normal leading-[2.05] tracking-[0.03em] text-neutral-600 md:text-[14px] md:leading-[2.15]"
                   />
                 ) : null}
               </div>
@@ -102,13 +101,13 @@ export function AboutContent({
         <div className="mt-16 flex flex-col items-center gap-4 md:mt-20">
           <Link
             href="/fabric"
-            className="text-[12px] font-light tracking-[0.08em] text-neutral-600 transition-opacity duration-300 hover:opacity-60"
+            className="text-[12px] font-normal tracking-[0.08em] text-neutral-600 transition-opacity duration-[var(--duration-fast)] hover:opacity-60"
           >
             {copy.exploreFabric}
           </Link>
           <Link
             href="/stockist"
-            className="text-[12px] font-light tracking-[0.08em] text-neutral-600 transition-opacity duration-300 hover:opacity-60"
+            className="text-[12px] font-normal tracking-[0.08em] text-neutral-600 transition-opacity duration-[var(--duration-fast)] hover:opacity-60"
           >
             Stockist →
           </Link>

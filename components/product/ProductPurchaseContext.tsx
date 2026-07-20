@@ -10,17 +10,17 @@ import {
   type ReactNode,
   type RefObject,
 } from "react";
-import { useCartDrawer } from "@/components/cart/CartDrawerContext";
 import {
   getInCartQuantity,
   getVariantStock,
   validateAddToCart,
 } from "@/lib/cart/stock-validation";
-import { getCartItemKey } from "@/lib/cart/cart-utils";
 import { setLastViewedProductSlug } from "@/lib/navigation/last-product";
 import { useCartStore } from "@/lib/cart/store";
 import { SITE_UI_COPY } from "@/lib/copy/site-ui";
 import type { Product, ProductSize } from "@/types";
+
+const ADDED_LABEL_MS = 1500;
 
 type ProductPurchaseContextValue = {
   product: Product;
@@ -68,7 +68,6 @@ export function ProductPurchaseProvider({
 }: ProductPurchaseProviderProps) {
   const addItem = useCartStore((state) => state.addItem);
   const cartItems = useCartStore((state) => state.items);
-  const { openDrawer } = useCartDrawer();
   const { product: copy } = SITE_UI_COPY;
 
   const [selectedSize, setSelectedSizeState] = useState<ProductSize | null>(null);
@@ -79,6 +78,7 @@ export function ProductPurchaseProvider({
 
   const purchaseCtaRef = useRef<HTMLDivElement>(null);
   const openSizeTabRef = useRef<(() => void) | null>(null);
+  const addedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const inCartQuantity =
     selectedSize !== null
@@ -99,6 +99,14 @@ export function ProductPurchaseProvider({
       setQuantity(maxQuantity);
     }
   }, [maxQuantity, quantity]);
+
+  useEffect(() => {
+    return () => {
+      if (addedTimerRef.current) {
+        clearTimeout(addedTimerRef.current);
+      }
+    };
+  }, []);
 
   const setSelectedSize = useCallback((size: ProductSize) => {
     setSelectedSizeState(size);
@@ -143,12 +151,17 @@ export function ProductPurchaseProvider({
     });
 
     setIsAdded(true);
-    openDrawer();
+    if (addedTimerRef.current) {
+      clearTimeout(addedTimerRef.current);
+    }
+    addedTimerRef.current = setTimeout(() => {
+      setIsAdded(false);
+      addedTimerRef.current = null;
+    }, ADDED_LABEL_MS);
   }, [
     addItem,
     cartItems,
     copy.chooseSize,
-    openDrawer,
     product,
     quantity,
     selectedSize,
@@ -163,13 +176,15 @@ export function ProductPurchaseProvider({
     document.getElementById("size-guide")?.scrollIntoView({ behavior: "smooth" });
   }, []);
 
-  const buttonLabel = !selectedSize
-    ? copy.selectSizeButton
-    : isOutOfStock
-      ? copy.outOfStock
-      : maxQuantity < 1
-        ? copy.maxInBag
-        : copy.addToBag;
+  const buttonLabel = isAdded
+    ? copy.addedConfirm
+    : !selectedSize
+      ? copy.addToBag
+      : isOutOfStock
+        ? copy.outOfStock
+        : maxQuantity < 1
+          ? copy.maxInBag
+          : copy.addToBag;
 
   return (
     <ProductPurchaseContext.Provider

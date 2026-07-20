@@ -38,13 +38,14 @@ export const SITE_UI_COPY = {
     selectSize: "サイズを選択",
     selectSizeButton: "サイズを選ぶ",
     addToBag: "カートに入れる",
+    addedConfirm: "追加しました",
     outOfStock: "在庫切れ",
     maxInBag: "カート上限",
     cannotAddOutOfStock: "このサイズは在庫切れのため、カートに追加できません。",
     maxInBagError: "在庫分はすでにカートに入っています。",
     insufficientStock: (available: number) =>
       `追加できるのはあと${available}点までです。`,
-    chooseSize: "サイズを選んでください",
+    chooseSize: "サイズをお選びください",
     unavailable: "在庫なし",
     allInBag: "在庫分すべてカートに入っています",
     inBagMore: (inBag: number, more: number) =>

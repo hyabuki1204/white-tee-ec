@@ -1,5 +1,5 @@
 /**
- * Premium price ladder — ¥12,000–¥18,000 band, core at ¥15,000.
+ * Premium price ladder — ¥12,000 – ¥18,000 band, core at ¥15,000.
  * Keep in sync with product-catalog.ts and supabase migrations.
  */
 export const PRODUCT_PRICE_BY_SLUG: Record<string, number> = {
@@ -21,8 +21,8 @@ export const PRICE_LADDER = {
   min: 12_000,
   max: 18_000,
   core: 15_000,
-  label: "¥12,000–¥18,000",
-  coreLabel: "定番Tシャツ ¥15,000",
+  /** Catalog range only — never pair with a separate “core tee” line. */
+  label: "¥12,000 – ¥18,000",
 } as const;
 
 export function getCatalogPrice(slug: string, fallback: number): number {

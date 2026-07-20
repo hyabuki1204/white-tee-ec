@@ -1,46 +1,48 @@
-import {
-  getGraphpaperDisplayName,
-  STORE_BRAND_LINE,
-} from "@/lib/products/display-name";
-import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
+import Link from "next/link";
 import { formatPrice } from "@/lib/utils/format-price";
-import type { Product } from "@/types";
+import { cn } from "@/lib/utils";
 
 type ProductPurchaseHeaderProps = {
-  product: Product;
   displayName: string;
-  fabricName?: string | null;
+  price: number;
+  description: string;
   className?: string;
 };
 
-const pdpCopy = GRAPHPAPER_STORE_COPY.pdp;
-
-/** Server-rendered product title and price for SEO and no-JS access. */
+/** Server-rendered PDP title, price, and description. */
 export function ProductPurchaseHeader({
-  product,
   displayName,
-  fabricName,
+  price,
+  description,
   className,
 }: ProductPurchaseHeaderProps) {
-  const resolvedName =
-    displayName || getGraphpaperDisplayName(product, fabricName);
-
   return (
     <header className={className}>
-      <p className="text-[10px] font-light tracking-[0.2em] text-neutral-400">
-        {STORE_BRAND_LINE}
+      <nav aria-label="Breadcrumb" className="type-fine font-en">
+        <Link
+          href="/products"
+          className="transition-opacity duration-[var(--duration-quiet)] hover:opacity-60"
+        >
+          PRODUCTS
+        </Link>
+        <span aria-hidden className="mx-1.5">
+          /
+        </span>
+        <span>{displayName}</span>
+      </nav>
+
+      <h1 className={cn("type-h2", "mt-5")}>{displayName}</h1>
+
+      <p className="type-body mt-2 flex items-baseline gap-2 text-[var(--color-ink)]">
+        <span>{formatPrice(price)}</span>
+        <span className="type-fine">(税込)</span>
       </p>
-      <h1 className="mt-5 text-[13px] font-light leading-[1.65] tracking-[0.04em] text-neutral-800">
-        {resolvedName}
-      </h1>
-      <div className="mt-5">
-        <p className="text-[13px] font-light tracking-[0.05em] text-neutral-600">
-          {formatPrice(product.price)}
+
+      {description ? (
+        <p className="type-body mt-6 line-clamp-4 text-[var(--color-ink-soft)]">
+          {description}
         </p>
-        <p className="mt-2 text-[10px] font-light leading-[1.7] tracking-[0.04em] text-neutral-400">
-          {pdpCopy.dutiesNote}
-        </p>
-      </div>
+      ) : null}
     </header>
   );
 }

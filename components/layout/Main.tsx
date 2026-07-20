@@ -1,6 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import { RevealObserver } from "@/components/motion/RevealObserver";
 import { cn } from "@/lib/utils";
 
 type MainProps = {
@@ -20,6 +21,7 @@ export function Main({ children }: MainProps) {
       )}
     >
       {children}
+      {!isAdmin ? <RevealObserver /> : null}
     </main>
   );
 }

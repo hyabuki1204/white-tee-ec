@@ -27,7 +27,7 @@ export function FabricCard({
       <Link href={`/fabric/${fabric.slug}`} className="block">
         <div
           className={cn(
-            "relative overflow-hidden bg-background",
+            "relative overflow-hidden bg-[var(--color-image-placeholder)]",
             FABRIC_IMAGE_ASPECT,
           )}
         >
@@ -36,7 +36,7 @@ export function FabricCard({
             alt={fabric.imageAlt}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="object-cover object-center brightness-[0.97] contrast-[0.98] transition-transform duration-[850ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] group-hover:scale-[1.015]"
+            className="object-cover object-center brightness-[0.97] contrast-[0.98] transition-opacity duration-[var(--duration-reveal)] ease-[var(--ease-quiet)] group-hover:opacity-90"
           />
         </div>
 
@@ -50,22 +50,22 @@ export function FabricCard({
           <h2
             className={
               isEntry
-                ? "text-[13px] font-light tracking-[0.1em] text-neutral-800 transition-opacity duration-[850ms] ease-out delay-75 group-hover:opacity-45"
-                : "text-[12px] font-light tracking-[0.11em] text-neutral-800 transition-opacity duration-[850ms] ease-out delay-75 group-hover:opacity-45"
+                ? "text-[14px] font-normal tracking-[0.1em] text-neutral-800 transition-opacity duration-[var(--duration-reveal)] ease-out delay-75 group-hover:opacity-45"
+                : "text-[12px] font-normal tracking-[0.11em] text-neutral-800 transition-opacity duration-[var(--duration-reveal)] ease-out delay-75 group-hover:opacity-45"
             }
           >
             {fabric.name}
           </h2>
           <p
             className={cn(
-              "text-[13px] font-light leading-[1.9] text-neutral-600 transition-opacity duration-[850ms] ease-out delay-100 group-hover:opacity-60 md:text-[13px] md:text-neutral-600",
+              "text-[14px] font-normal leading-[1.9] text-neutral-600 transition-opacity duration-[var(--duration-reveal)] ease-out delay-100 group-hover:opacity-60 md:text-[14px] md:text-neutral-600",
               presentation.taglineTracking,
             )}
           >
             {fabric.tagline}
           </p>
           {productCount !== undefined ? (
-            <p className="text-[11px] font-light tracking-[0.08em] text-neutral-600">
+            <p className="text-[11px] font-normal tracking-[0.08em] text-neutral-600">
               {copy.pieceCount(productCount)}
             </p>
           ) : null}
