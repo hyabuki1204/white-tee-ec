@@ -1,0 +1,42 @@
+---
+alwaysApply: true
+---
+
+# white-tee-ec プロジェクトルール
+
+## セッション開始前の必須手順
+
+作業を始める前に必ず以下を実行してください：
+
+```bash
+git fetch origin
+git pull origin claude/cursor-prompt-creation-yp8r3q
+```
+
+Claude Code（Web）側でコミットが積まれている可能性があります。pull せずに編集すると競合が発生します。
+
+## ブランチ
+
+- 作業ブランチ: `claude/cursor-prompt-creation-yp8r3q`
+- mainへの直接pushは禁止
+
+## プロジェクト概要
+
+Next.js ベースのECサイト（white-tee-ec）。
+
+> **注意**: このプロジェクトのNext.jsはトレーニングデータと異なるバージョンの可能性があります。
+> コードを書く前に `node_modules/next/dist/docs/` 内のガイドを確認してください。
+
+## コーディング規約
+
+- コメントは「なぜ」が非自明な場合のみ書く（何をしているかは書かない）
+- 不要な抽象化・将来の拡張のための設計はしない
+- セキュリティ: XSS・SQLインジェクション等のOWASP Top 10に注意
+
+## コミット後
+
+編集が終わったら：
+
+```bash
+git push origin claude/cursor-prompt-creation-yp8r3q
+```
