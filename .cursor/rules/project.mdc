@@ -10,15 +10,16 @@ alwaysApply: true
 
 ```bash
 git fetch origin
-git pull origin claude/cursor-prompt-creation-yp8r3q
+git pull origin main
 ```
 
-Claude Code（Web）側でコミットが積まれている可能性があります。pull せずに編集すると競合が発生します。
+Cursor と Claude Code のどちらかが先に push している可能性があります。pull せずに編集すると競合が発生します。
 
 ## ブランチ
 
-- 作業ブランチ: `claude/cursor-prompt-creation-yp8r3q`
-- mainへの直接pushは禁止
+- 通常の作業ブランチ: `main`
+- 大きな変更は feature ブランチを切り、PR 経由で main にマージする
+- 同時に同じファイルを Cursor と Claude で編集しない
 
 ## プロジェクト概要
 
@@ -38,5 +39,11 @@ Next.js ベースのECサイト（white-tee-ec）。
 編集が終わったら：
 
 ```bash
-git push origin claude/cursor-prompt-creation-yp8r3q
+git push origin main
+```
+
+feature ブランチで作業している場合：
+
+```bash
+git push origin <branch-name>
 ```
