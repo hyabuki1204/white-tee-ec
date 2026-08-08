@@ -5,9 +5,17 @@ Instagram ティザー / EC ヒーロー / 商品 LP 用ビジュアルを **人
 
 **このドキュメントは設計のみ。実装コードは含まない。**
 
-- 対象リポジトリ: `white-tee-ec` (Next.js 16.2.9 / React 19 / Supabase / Stripe)
+- 対象リポジトリ: `white-tee-ec` (Next.js 16.2.9 / React 19 / Supabase / Stripe)。**public リポジトリ**
 - 前提: 初期実装では画像生成 API 呼び出しはモック
 - 前提: API キーはサーバー側のみ。`NEXT_PUBLIC_` 接頭辞は一切使わない
+
+**決定済みの方針**
+
+| 論点 | 決定 |
+|---|---|
+| **実運用に出す画像** | Instagram 投稿画像と EC ブランディングの **景色・雰囲気の画像**。商品そのもの・生地の描写は**公開前テスト専用**（第 2.1 / 7.7 節） |
+| **自動化の範囲** | `internal_test` はエージェントが全自動で回す。`production` の画像承認は**人間のみ、例外なし**（第 7.8 節） |
+| **スケジューラ** | webhook が主、**GitHub Actions** が安全網、テスト中はスクリプト。Vercel は Hobby のまま（第 10 章） |
 
 ---
 
@@ -25,6 +33,8 @@ Instagram ティザー / EC ヒーロー / 商品 LP 用ビジュアルを **人
 | **内部起動は Bearer シークレット** | `app/api/internal/apply-pricing/route.ts` の `MIGRATION_SECRET` パターンを踏襲 |
 | **マイグレーションは SQL ファイル** | `supabase/migrations/*.sql` に追加。`scripts/run-migrations.mjs` が `DATABASE_URL` 経由で流す |
 | **承認されるまで公開しない** | 未承認画像は非公開バケット + 短命 signed URL。公開バケットには置かない |
+| **用途の線引きを型で持つ** | 「景色・雰囲気」は実運用に出す。「商品・生地の描写」はテスト専用。運用ルールではなく enum + CHECK 制約で強制する（第 2.1 節） |
+| **リポジトリは public** | スキーマもルート名も公開される前提。防御を秘匿性に依存させない（HMAC / Bearer のみ） |
 
 > ⚠️ `AGENTS.md` は「実装前に `node_modules/next/dist/docs/` の該当ガイドを読むこと」を要求している。
 > 本設計時点では `node_modules` が未インストールで参照できなかった。
@@ -121,7 +131,8 @@ Instagram ティザー / EC ヒーロー / 商品 LP 用ビジュアルを **人
    │
    ├─ 却下 → 理由を記録して終了（Claude への学習材料として保存）
    ├─ 再指示 → 指摘を Stage 1 にフィードバックして revision を作る（ループ）
-   └─ 承認 → 公開バケットへコピー、image_assets を作成
+   └─ 承認 → release_policy = production のときだけ公開バケットへコピーして
+              image_assets を作成（internal_test はここで止まる）
                  │
                  ▼
         [人間] さらに別操作で product_images / site_content に紐付け
@@ -139,10 +150,10 @@ Vercel の Function 実行時間上限内に収まらないことがあり、収
 1. **Webhook（優先）** — プロバイダが対応していれば最短・最安
 2. **ポーリング（フォールバック）** — cron tick が `submitted` / `running` のジョブを突く
 
-> ⚠️ **Vercel Cron の頻度制限に注意。** Hobby プランは cron が 1 日 1 回。
-> ポーリング前提なら Pro 以上（分単位）にするか、外部スケジューラ
-> （Supabase `pg_cron` → `net.http_post`、GitHub Actions、n8n のいずれか）から
-> `/api/internal/images/tick` を叩く構成にする。**プラン確認は Phase 0 の必須項目。**
+> **スケジューラの結論（第 10 章）**: Vercel Cron は使わない（Hobby は頻度が足りず、
+> これだけのために Pro に上げる理由がない）。**webhook を主経路**とし、
+> 取りこぼしと stuck job の回収を **GitHub Actions（10 分間隔）** に任せる。
+> 開発・テスト中はスケジューラなしで `npm run images:drain` を叩けばよい。
 
 ---
 
@@ -160,6 +171,19 @@ create type public.image_purpose as enum (
   'product_lp',         -- 3:4 縦、ディテール寄り
   'journal',            -- ジャーナル記事のアイキャッチ
   'fabric'              -- 生地紹介ページ用
+);
+
+-- 何を写すか。実運用に出せるかどうかはこれで決まる
+create type public.image_subject_class as enum (
+  'scenery_mood',      -- 景色・光・空気・静物。商品が主題ではない
+  'styling_scene',     -- 着用シーン。商品は写り込むが主題は空気感
+  'product_depiction', -- 商品そのものを写す
+  'fabric_macro'       -- 生地の質感マクロ
+);
+
+create type public.image_release_policy as enum (
+  'production',    -- 承認後、公開バケットへ出せる
+  'internal_test'  -- 承認はできるが公開バケットへ出せない（検証専用）
 );
 
 create type public.image_job_status as enum (
@@ -189,6 +213,34 @@ create type public.image_concept_status as enum (
 );
 ```
 
+**subject_class → release_policy の写像**
+
+「Instagram 投稿画像と EC ブランディングの、景色・雰囲気の画像は実運用に回す。
+それ以外は公開前のテスト」という方針を、そのまま型に落とす。
+
+| subject_class | 既定 release_policy | 実運用 | Stage 1 に課す制約 |
+|---|---|---|---|
+| `scenery_mood` | `production` | ○ IG ティザー / EC ブランディング | 白 T を画面内に置かない、または遠景で質感が読み取れない距離に留める |
+| `styling_scene` | `production` | △ 雰囲気カットとしてのみ | 着用状態は可。ただし襟・縫製・編み目が読み取れる寄りにしない |
+| `product_depiction` | `internal_test`（固定） | × | テスト専用。実物と異なる商品を提示しうるため |
+| `fabric_macro` | `internal_test`（固定） | × | テスト専用。生地の質感は実物と一致しない |
+
+`product_depiction` / `fabric_macro` は **DB 制約で `internal_test` に固定**する。
+設定ミスやアプリのバグで実運用に出る経路を作らない。
+
+```sql
+alter table public.image_briefs
+  add constraint image_briefs_release_policy_guard
+  check (
+    subject_class not in ('product_depiction', 'fabric_macro')
+    or release_policy = 'internal_test'
+  );
+```
+
+`styling_scene` を `production` に含めるのは、IG ティザーの現実的な絵作りに
+着用カットが要るため。ただし **商品カット（PDP のメイン画像）としては使わない**。
+レビュー画面にその注意を常時表示し、`image_assets.is_ai_generated` で追跡できるようにする。
+
 ### 2.2 テーブル一覧
 
 | テーブル | 役割 | 1 行の意味 |
@@ -214,6 +266,9 @@ create table public.image_briefs (
   id uuid primary key default gen_random_uuid(),
   title text not null,
   purpose public.image_purpose not null,
+  -- 何を写すか。これが実運用可否を決める（第 2.1 節の写像表）
+  subject_class public.image_subject_class not null default 'scenery_mood',
+  release_policy public.image_release_policy not null default 'internal_test',
   -- 何を訴えたいか（人間の言葉。Claude への主入力）
   intent text not null default '',
   -- 参照する自社データ。Claude に商品/生地の実データを渡すため
@@ -412,6 +467,12 @@ create table public.image_assets (
   result_id uuid not null unique
     references public.image_generation_results(id) on delete restrict,
   purpose public.image_purpose not null,
+  subject_class public.image_subject_class not null,
+
+  -- image_assets の存在 = 公開バケットにコピー済み、という意味なので
+  -- internal_test の行は原理的に作れない。アプリのバグでも DB が拒否する
+  release_policy public.image_release_policy not null default 'production'
+    check (release_policy = 'production'),
 
   public_bucket text not null,     -- 'product-images' | 'site-images'
   public_path text not null,
@@ -812,6 +873,27 @@ WHITE TEE は、和歌山の自社工場（カネマサ）で編んだ生地で�
 | `journal` | 3:2 | 引きの画。人・場所・空気 |
 | `fabric` | 1:1 | 生地そのもののマクロ。手触りが想像できる |
 
+さらに **`subject_class` ごとの制約を system プロンプトに注入する**。
+実運用に出る `scenery_mood` / `styling_scene` では、商品の質感を「語らせない」ことが要点。
+
+```
+<subject_constraints class="scenery_mood">
+主題は光・空気・場所・時間帯。白い T シャツを画面の主役にしない。
+写り込む場合も、編み目・襟のリブ・縫製が読み取れない距離・ピントに留める。
+「この生地はこう見える」と受け手が判断できる情報を画面に置かない。
+</subject_constraints>
+
+<subject_constraints class="styling_scene">
+着用シーンは可。ただしディテールに寄らない。
+襟元・肩線・袖口のアップ、生地の拡大は禁止。
+シルエットと佇まいで語る。
+</subject_constraints>
+```
+
+`product_depiction` / `fabric_macro` は `internal_test` 専用なので、
+プロンプト側の制約は緩めてよい（実運用に出ないため）。ただし
+**生成物を商品ページに使わない**ことがレビュー画面と DB 制約の両方で担保されている。
+
 **user**: ブリーフの `intent` + `constraints` + 商品/生地の実データ
 
 **出力の強制**: tool use（`emit_concepts`）で JSON スキーマを縛る。
@@ -901,11 +983,13 @@ system プロンプトはコードにハードコードせず `image_prompt_temp
   他社ロゴ。ヒットしたらジョブを作らずエラーにする
 - **未公開情報を送らない** — ブリーフに発売前の価格・発売日を書かない運用ルールを
   UI のヘルプに明記する
-- **法務上の線引き（重要）** — AI 生成画像を **実際の商品写真の代替として使わない**。
+- **法務上の線引き（決定済み）** — AI 生成画像を **実際の商品写真の代替として使わない**。
   生地の質感や色が実物と異なるまま商品ページに出すのは景品表示法上の優良誤認リスクがある。
-  当面の用途は **ティザー・世界観・背景ビジュアルに限定**し、
-  `image_assets.is_ai_generated` で常に追跡できるようにする。
-  この線引きは Phase 0 で明文化して合意しておくこと（第 11 章の未決事項）
+  実運用に出すのは **Instagram 投稿画像と EC ブランディングの、景色・雰囲気の画像
+  （`scenery_mood` / `styling_scene`）に限定**する。商品・生地の描写
+  （`product_depiction` / `fabric_macro`）は公開前のテスト専用。
+  この線引きは運用ルールではなく **enum + CHECK 制約 + 承認時の検証**で強制する
+  （第 2.1 / 7.7 節）。`image_assets.is_ai_generated` で常に追跡できる
 
 ---
 
@@ -1170,6 +1254,40 @@ concept(rev2)  parent_concept_id = concept(rev1).id
 承認の監査ログが意味を持つのは個人が識別できてから。
 テーブル設計は最初から `actor text` を持たせておき、移行時に埋められるようにする。
 
+### 7.7 公開ポリシーの強制（3 重）
+
+`internal_test` の画像が実運用に出ないことを、3 箇所で独立に担保する。
+どれか 1 つが壊れても止まる。
+
+| 層 | 仕組み |
+|---|---|
+| **DB** | `image_assets.release_policy` に `check (release_policy = 'production')`。internal_test の資産行は物理的に作れない |
+| **アプリ** | 承認ハンドラが `brief.release_policy` を読み、`internal_test` なら公開バケットへのコピーを実行せず `approved` で止める |
+| **UI** | レビュー画面に `internal_test` バッジを常時表示。承認ボタンのラベルを「承認（テスト。公開されません）」に変える |
+
+`internal_test` の承認は「この生成結果は妥当だった」という記録に留まり、
+`ai-image-drafts` バケットから外へ出ない。
+
+### 7.8 エージェント（Claude Code）による自動承認の範囲
+
+「自動で回せるフロー」を作るうえで、承認ゲートが完全な人手依存だとループが閉じない。
+そこで **`internal_test` に限ってエージェントの承認を許す**。
+
+| 対象 | ゲート 1（コンセプト） | ゲート 2（画像） |
+|---|---|---|
+| `internal_test` | エージェント可 | **エージェント可** |
+| `production` | エージェント可（生成コストのみ） | **人間のみ。例外なし** |
+
+- 監査ログの `actor` は `agent:claude` と記録し、人間の承認と**必ず区別できる**ようにする
+- 制御は環境変数 `IMAGE_AGENT_AUTOPILOT`。取りうる値は **`off`（既定）と `internal_test_only` の 2 つだけ**
+
+**`production` を自動承認できる設定値を作らない**のが要点。
+「一時的に全自動にする」フラグは、いつか本番で入りっぱなしになる。
+値として存在しなければ、その事故は起きない。
+
+`production` のブリーフは、エージェントが生成してレビューキューに積むところまでやり、
+そこで止まって人間を待つ。これが本設計の唯一の停止点であり、意図的にそう設計している。
+
 ---
 
 ## 8. エラー時の扱い
@@ -1341,25 +1459,139 @@ n8n 用の分岐を書かず、「署名付き webhook を送受信できるツ�
 
 ---
 
-## 10. 実装ステップ
+## 10. 実行基盤とスケジューリング
+
+### 10.1 結論
+
+| 局面 | 何で回すか |
+|---|---|
+| **開発・テスト中** | `npm run images:tick` / `images:drain`。**スケジューラ不要** |
+| **本番の主経路** | プロバイダの **webhook**。遅延ゼロ、スケジューラ不要 |
+| **本番の安全網** | **GitHub Actions**（10 分間隔 + 手動実行） |
+| **分単位の確実性が要るなら** | Supabase `pg_cron` + `pg_net`（DB の隣で動く） |
+
+### 10.2 GitHub Actions を使う判断
+
+**使う。ただし「主」ではなく「安全網 + 手動トリガー」として。**
+
+このリポジトリは **public** なので、判断材料が private の場合と変わる。
+
+**利点**
+
+- **public リポジトリは標準ランナーの Actions が無料・無制限**。
+  10 分間隔（月 4,320 回）でもコストがかからない。private だと
+  1 実行 1 分課金で無料枠 2,000 分を大きく超えるため、この構成は成立しなかった
+- `workflow_dispatch` で手動および API から任意のタイミングで叩ける
+  → エージェントからも人間からも「今すぐ回す」ができる
+- Vercel のプランに依存しない（Hobby のままでよい）
+
+**制約（これがあるので「主」にしない）**
+
+- `schedule` の**最小間隔は 5 分**
+- **スケジュール実行は保証されない。** GitHub 全体が高負荷のとき遅延・スキップされる。
+  数十分ずれることがある。画像 1 枚に 30 秒〜3 分しかかからないのに、
+  結果が見えるまで 20 分待つのは体験として成立しない
+- public リポジトリの scheduled workflow は
+  **60 日間リポジトリに活動がないと自動停止**する（GitHub から通知が来る）
+
+→ **完了検知は webhook に任せ、GitHub Actions は「取りこぼしと stuck job の回収」に徹する。**
+これなら 10 分遅延しても実害がない。
+
+### 10.3 ワークフロー設計
+
+`.github/workflows/image-pipeline-tick.yml`（Phase 6 で追加）:
+
+```yaml
+name: image-pipeline-tick
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"   # 安全網。主経路は webhook
+  workflow_dispatch:          # 手動 / API から即時実行
+
+concurrency:
+  group: image-pipeline-tick
+  cancel-in-progress: false   # 重なったら直列化。ジョブ側のリースと二重防御
+
+jobs:
+  tick:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: POST /api/internal/images/tick
+        env:
+          TICK_URL: ${{ secrets.IMAGE_TICK_URL }}
+          TICK_SECRET: ${{ secrets.IMAGE_WORKER_SECRET }}
+        run: |
+          curl -fsS -X POST "$TICK_URL" \
+            -H "Authorization: Bearer $TICK_SECRET" \
+            -H "content-type: application/json" \
+            --max-time 120 \
+            -o /dev/null
+```
+
+- リポジトリのチェックアウトすらしない。**HTTP を 1 本叩くだけ**にして、
+  ロジックは Route Handler の 1 箇所に置く
+- `-o /dev/null` と `-fsS` で、レスポンス本文をログに出さない
+- `IMAGE_TICK_URL` も secret にする（本番 URL をワークフローファイルに書かない）
+
+### 10.4 public リポジトリでの注意点
+
+| 注意 | 理由 |
+|---|---|
+| **`pull_request_target` を使うワークフローを足さない** | fork からの PR に secrets を渡してしまう典型的な事故。public リポジトリでは特に危険 |
+| `schedule` / `workflow_dispatch` は安全 | base リポジトリの文脈で動くため、fork から secrets を盗めない |
+| **secrets を `echo` しない。`curl -v` を使わない** | Actions のログは公開される。マスキングは万能ではない |
+| **tick エンドポイントの防御は Bearer シークレットのみ** | パスは公開情報。レート制限を入れ、401 は本文を返さない |
+| 設計書・スキーマも公開される | 本設計は秘匿性に依存していない（HMAC + Bearer + service role）。このまま public で問題ない |
+
+### 10.5 エージェント（Claude Code）が回すためのスクリプト
+
+既存 `scripts/*.mjs` の流儀（dotenv + Node スクリプト）に合わせる。
+ただし **状態機械のロジックをスクリプトに再実装しない**。
+`.mjs` から TypeScript の `lib/` を直接 import できないので、
+スクリプトは **自分の Route Handler を HTTP で叩く薄いクライアント**にする。
+ロジックは常に 1 箇所（`/api/internal/images/tick`）に留まる。
+
+| コマンド | 役割 |
+|---|---|
+| `npm run images:tick` | tick を 1 回叩く |
+| `npm run images:drain -- --brief <id> --timeout 600` | 全ジョブが終端に達するまで tick をポーリングし続ける（エージェントの主力） |
+| `npm run images:status -- --brief <id>` | ブリーフ配下の状態を表で出す |
+| `npm run images:autopilot -- --brief <id>` | `internal_test` 限定。生成 → drain → 自動承認まで一気に回す |
+
+- 既定の宛先は `http://localhost:3000`（`npm run dev` 前提）。`--remote` で本番
+- `images:autopilot` は `IMAGE_AGENT_AUTOPILOT=internal_test_only` のときのみ動作し、
+  `production` のブリーフに対しては**明示的にエラーで止まる**（第 7.8 節）
+
+これにより、**テスト段階ではスケジューラを一切用意せずに**
+「ブリーフ投入 → コンセプト → 生成 → 取り込み → QA → 承認」の
+エンドツーエンドをエージェントが単独で回して検証できる。
+
+---
+
+## 11. 実装ステップ
 
 各フェーズは **それ単体で動作確認できる** 単位に切ってある。
 CLAUDE.md のルールどおり、フェーズ開始前に必ず `git fetch origin && git pull origin main`。
 
 ### Phase 0 — 合意と確認（コード変更なし）
 
-- [ ] `node_modules/next/dist/docs/` を読み、Route Handler / Cron / `params` の規約を確認（`AGENTS.md` の要求）
-- [ ] **AI 生成画像の用途の線引きを合意**（ティザーのみか、商品ページにも使うか）
-- [ ] サードパーティ画像 API 候補の **商用利用権と ToS を確認**
-- [ ] **Vercel のプラン確認** — cron の実行頻度制限。ポーリング可否が構成を左右する
+- [ ] `node_modules/next/dist/docs/` を読み、Route Handler / `params` の規約を確認（`AGENTS.md` の要求）
+- [x] **AI 生成画像の用途の線引き** → 決定。`scenery_mood` / `styling_scene` を実運用
+      （IG・EC ブランディング）、`product_depiction` / `fabric_macro` はテスト専用
+- [x] **スケジューラ構成** → 決定。webhook が主、GitHub Actions が安全網、
+      テスト中はスクリプト。Vercel は Hobby のままでよい
+- [ ] サードパーティ画像 API 候補の **商用利用権と ToS を確認**（唯一残った要確認事項）
 - [ ] 月次予算の上限額を決める
-- [ ] 環境変数の名前を確定（第 11 章）
+- [ ] 環境変数の名前を確定（第 12 章）
 
-**完了条件**: 用途の線引きと予算がドキュメントに書かれ、cron 構成が決まっている
+**完了条件**: 商用利用権の確認が取れ、予算が決まっている
 
 ### Phase 1 — DB とリポジトリ層
 
 - [ ] `supabase/migrations/add-image-generation.sql`（enum / テーブル / インデックス / トリガ）
+      — `image_subject_class` / `image_release_policy` と、公開ポリシーの CHECK 制約を含む
 - [ ] `supabase/migrations/add-ai-image-drafts-bucket.sql`（非公開バケット）
 - [ ] `supabase/migrations/add-claim-image-jobs-function.sql`（行ロック関数）
 - [ ] `types/database.ts` に行型追加、`types/admin-image.ts` 新設
@@ -1382,9 +1614,12 @@ CLAUDE.md のルールどおり、フェーズ開始前に必ず `git fetch orig
 - [ ] `lib/images/storage.ts`（`lib/admin/image-upload.ts` を拡張し非公開バケット対応）
 - [ ] `app/api/internal/images/tick/route.ts`（Bearer 認証）
 - [ ] reaper（リース解放 / `expired` 回収）
+- [ ] `scripts/images/{tick,drain,status}.mjs` + `package.json` の scripts 追加
+      — tick を HTTP で叩くだけの薄いクライアント（第 10.5 節）
 
-**完了条件**: mock でジョブを投入すると、tick を数回叩くだけで
-`ai-image-drafts` に画像が入り `stored` になる。失敗確率を上げるとリトライが実際に走る
+**完了条件**: mock でジョブを投入すると、`npm run images:drain` だけで
+`ai-image-drafts` に画像が入り `stored` になる。`IMAGE_MOCK_FAILURE_RATE` を上げると
+リトライ経路が実際に走る。**この時点でスケジューラはまだ不要**
 
 ### Phase 4 — Claude 連携（Stage 1 / 2）
 
@@ -1401,19 +1636,30 @@ CLAUDE.md のルールどおり、フェーズ開始前に必ず `git fetch orig
 - [ ] `/admin/images` — ブリーフ一覧・作成
 - [ ] `/admin/images/[briefId]` — コンセプト確認・★ゲート 1・ジョブ投入・進捗ポーリング
 - [ ] `/admin/images/review` — ★ゲート 2（承認 / 却下 / 再指示）
+- [ ] `internal_test` バッジと承認ボタンのラベル出し分け（第 7.7 節）
 - [ ] `components/admin/` に既存の流儀で追加（`StatusBadge` / `AdminConfirmDialog` 再利用）
 - [ ] `AdminShell` のナビに導線追加
+- [ ] `scripts/images/autopilot.mjs`（`internal_test` 限定の自動承認。第 7.8 節）
 
-**完了条件**: ブラウザだけで「ブリーフ → コンセプト → 生成(mock) → 承認 → 資産化」が完走する
+**完了条件**: ブラウザだけで「ブリーフ → コンセプト → 生成(mock) → 承認 → 資産化」が完走する。
+かつ `internal_test` のブリーフなら `npm run images:autopilot` で
+エージェントが単独で同じ経路を回せる。`production` のブリーフでは自動承認が拒否される
 
 ### Phase 6 — 実プロバイダ 1 本
+
+> ⚠️ **このフェーズに入る前に、商用利用権の確認（未決事項 4）を済ませること。**
+> `internal_test` だけで検証する範囲なら Phase 1〜5 は先に進めてよいが、
+> `production` の画像を実運用に出すには権利の確認が前提になる。
 
 - [ ] アダプタ実装（1 社のみ）
 - [ ] `app/api/webhooks/images/[provider]/route.ts`（HMAC 検証、生ボディで）
 - [ ] `image_cost_ledger` への記録とサーキットブレーカー
+- [ ] `.github/workflows/image-pipeline-tick.yml`（安全網。第 10.3 節）
+- [ ] Actions secrets に `IMAGE_TICK_URL` / `IMAGE_WORKER_SECRET` を登録
 - [ ] **ステージングで少額の実課金テスト**（1 ジョブ 4 枚から）
 
-**完了条件**: 実画像が承認フローに乗る。予算上限で正しく止まる
+**完了条件**: 実画像が承認フローに乗る。webhook が切れても Actions の tick が
+10 分以内に回収する。予算上限で正しく止まる
 
 ### Phase 7 — Claude QA（Stage 3）
 
@@ -1433,9 +1679,9 @@ CLAUDE.md のルールどおり、フェーズ開始前に必ず `git fetch orig
 
 ---
 
-## 11. 付録
+## 12. 付録
 
-### 11.1 環境変数
+### 12.1 環境変数
 
 すべてサーバー専用。**`NEXT_PUBLIC_` を付けたものは 1 つもない。**
 
@@ -1450,28 +1696,43 @@ CLAUDE.md のルールどおり、フェーズ開始前に必ず `git fetch orig
 | `IMAGE_MONTHLY_BUDGET_JPY` | 月次上限 | — |
 | `IMAGE_MOCK_LATENCY_MS` | mock の遅延（開発用） | `3000` |
 | `IMAGE_MOCK_FAILURE_RATE` | mock の失敗率（開発用） | `0` |
+| `IMAGE_AGENT_AUTOPILOT` | エージェント自動承認。**`off` / `internal_test_only` の 2 値のみ** | `off` |
+| `IMAGE_TICK_URL` | GitHub Actions から叩く tick の URL（Actions secret） | — |
 | `N8N_WEBHOOK_URL` | outbox の配信先 | 未設定なら配信スキップ |
 | `N8N_SIGNING_SECRET` | 入口・出口の HMAC 鍵 | — |
 
 既存（変更なし）: `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` /
 `SUPABASE_SERVICE_ROLE_KEY` / `ADMIN_SESSION_SECRET` / `ADMIN_PASSWORD` / `DATABASE_URL`
 
-### 11.2 この設計が明示的に「やらない」こと
+### 12.2 この設計が明示的に「やらない」こと
 
 - 完全自動投稿（Instagram / X への直接投稿）
 - Claude の判定による自動承認
+- **`production` ポリシー資産のエージェント自動承認**（設定値として存在させない）
 - クライアントサイドからの画像生成 API 呼び出し
 - 未承認画像の公開バケットへの保存
 - 外部 webhook からの課金発生（ジョブ投入）
-- 生成画像の商品写真としての利用（Phase 0 の合意まで）
+- 生成画像の商品写真・生地写真としての利用（`internal_test` に固定）
+- `pull_request_target` を使うワークフローの追加（public リポジトリでの secrets 漏洩経路）
 
-### 11.3 未決事項（Phase 0 で決める）
+### 12.3 未決事項
 
-1. **AI 生成画像の用途の線引き** — ティザー・世界観のみか、商品ページにも使うか。
-   景表法上の優良誤認リスクに直結する
-2. **サードパーティ API の商用利用権** — 経由して生成した画像の権利が自社に帰属するか
-3. **Vercel のプラン** — cron 頻度。Hobby ならポーリング構成が成立しない
-4. **管理者が複数人か** — 承認の監査ログを機能させるには個人識別が要る
-   （現状は共有パスワード）
+**決定済み**
+
+1. ~~AI 生成画像の用途の線引き~~ → `scenery_mood` / `styling_scene` を実運用
+   （Instagram 投稿・EC ブランディング）、`product_depiction` / `fabric_macro` は
+   公開前テスト専用。DB 制約で強制（第 2.1 / 7.7 節）
+2. ~~スケジューラ構成~~ → webhook 主 + GitHub Actions 安全網 + テスト中はスクリプト。
+   public リポジトリなので Actions は無料（第 10 章）
+3. ~~エージェント自動化の範囲~~ → `internal_test` に限り全自動、
+   `production` の画像承認は人間のみ（第 7.8 節）
+
+**未決（Phase 0 で決める）**
+
+4. **サードパーティ API の商用利用権** — 経由して生成した画像の権利が自社に帰属するか。
+   **実運用に出す `production` 画像に直接効くので、Phase 6 の前に必須**
+   （`internal_test` だけなら Phase 1〜5 は先に進められる）
 5. **月次予算の上限額**
-6. **プロバイダの第 1 候補と第 2 候補** — 2 系統目を最初から想定しておくかどうか
+6. **管理者が複数人か** — 承認の監査ログを機能させるには個人識別が要る（現状は共有パスワード）。
+   エージェント承認を入れるぶん、`actor` の区別は今より重要になる
+7. **プロバイダの第 1 候補と第 2 候補** — 2 系統目を最初から想定しておくかどうか
