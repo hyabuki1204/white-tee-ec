@@ -27,6 +27,7 @@ import type {
   NormalizedError,
   PollResult,
 } from "@/lib/images/providers/types";
+import { runImageQaTick } from "@/lib/images/jobs/qa-runner";
 import { getImageProvider } from "@/lib/images/providers/registry";
 import {
   downloadProviderImage,
@@ -60,6 +61,7 @@ export type TickCounts = {
   submitted: number;
   polled: number;
   ingested: number;
+  qaEvaluated: number;
   failed: number;
   retried: number;
 };
@@ -79,6 +81,7 @@ function emptyCounts(): TickCounts {
     submitted: 0,
     polled: 0,
     ingested: 0,
+    qaEvaluated: 0,
     failed: 0,
     retried: 0,
   };
@@ -420,6 +423,15 @@ export async function runImageTick(
   const pollReason = await pollActiveJobs(provider, workerId, batchSize, counts);
 
   await ingestSucceededJobs(provider, workerId, batchSize, counts);
+
+  // Runs last and never throws: an image without an AI verdict still
+  // reaches the reviewer, just without the hint.
+  try {
+    const qa = await runImageQaTick();
+    counts.qaEvaluated = qa.evaluated;
+  } catch {
+    // Intentionally ignored — see runImageQaTick.
+  }
 
   return {
     workerId,
