@@ -16,14 +16,6 @@ import type { ImagePurpose, ImageSubjectClass } from "@/types/database";
  * admin UI, not for cost (design doc §12.4).
  */
 
-const CHARACTER_LABELS: Record<keyof FabricCharacter, string> = {
-  thickness: "thickness",
-  softness: "softness",
-  structure: "body / structure",
-  sheerness: "sheerness",
-  surface: "surface texture",
-};
-
 /**
  * Translate the 1-5 fabric axes into photographic direction.
  *

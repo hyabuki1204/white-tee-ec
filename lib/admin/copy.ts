@@ -6,6 +6,7 @@ export const ADMIN_COPY = {
     orders: "注文",
     products: "商品",
     fabrics: "生地",
+    images: "画像生成",
     content: "ホームページ設定",
     journal: "Journal",
     pages: "固定ページ",
