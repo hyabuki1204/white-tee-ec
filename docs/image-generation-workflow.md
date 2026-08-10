@@ -16,6 +16,7 @@ Instagram ティザー / EC ヒーロー / 商品 LP 用ビジュアルを **人
 | **実運用に出す画像** | Instagram 投稿画像と EC ブランディングの **景色・雰囲気の画像**。商品そのもの・生地の描写は**公開前テスト専用**（第 2.1 / 7.7 節） |
 | **自動化の範囲** | `internal_test` はエージェントが全自動で回す。`production` の画像承認は**人間のみ、例外なし**（第 7.8 節） |
 | **スケジューラ** | webhook が主、**GitHub Actions** が安全網、テスト中はスクリプト。Vercel は Hobby のまま（第 10 章） |
+| **生成画像の権利** | 自社に帰属しなくてよい（受容）。反復使用するキービジュアルには使わない運用に留め、出所は `license_note` に残す（第 7.9 節） |
 
 ---
 
@@ -1008,7 +1009,7 @@ system プロンプトはコードにハードコードせず `image_prompt_temp
 |---|---|---|
 | **規約違反 / BAN** | 非公式プロキシは MJ の ToS 違反の可能性。アカウント凍結で予告なく停止 | アダプタを差し替え可能に。公式 API を持つ代替（Flux / Replicate / OpenAI Images）を最初から 2 系統目として想定 |
 | **サービス消滅** | 小規模事業者が多く、廃業・値上げ・仕様変更が突然 | RenderSpec（プロバイダ非依存）を DB に保存 → 別プロバイダで**再生成できる**状態を常に保つ |
-| **商用利用権が不明** | MJ の商用ライセンスは MJ の契約者に付与される。プロキシ経由だと権利が自社に帰属しない可能性 | **Phase 0 で法務確認を必須にする**。確認が取れるまで EC の商品ページには使わない |
+| **権利が自社に帰属しない**（受容済み） | MJ の商用ライセンスは MJ の契約者に付与される。プロキシ経由だと権利が自社に帰属しない可能性 | **受容する**（決定済み）。ただし帰属しない = 他社が同じ絵を使っても止められない。**反復使用するキービジュアルには使わない**（第 7.9 節） |
 | **画像 URL の失効** | プロバイダの CDN URL は数時間〜数日で切れる | **受領後すぐ Supabase Storage へ再ホスト。外部 URL を DB の正としない**（`source_url` は参考情報） |
 | **レイテンシ非決定** | 30 秒〜数分。混雑時はさらに | 非同期ジョブ前提。UI は待たせない。`expires_at` で打ち切る |
 | **価格変動 / クレジット制** | 残高切れで全ジョブが失敗 | `image_cost_ledger` + 月次上限 + サーキットブレーカー |
@@ -1093,6 +1094,8 @@ export type ProviderCapabilities = {
   supportsReferenceImage: boolean;
   typicalLatencySeconds: number;
   estimatedCostPerImageJpy: number;
+  /** 商用利用が明示的に許諾されているか。判断には使わず license_note に焼き込むだけ */
+  commercialUseGranted: boolean;
 };
 
 export interface ImageProvider {
@@ -1287,6 +1290,38 @@ concept(rev2)  parent_concept_id = concept(rev1).id
 
 `production` のブリーフは、エージェントが生成してレビューキューに積むところまでやり、
 そこで止まって人間を待つ。これが本設計の唯一の停止点であり、意図的にそう設計している。
+
+### 7.9 権利が自社に帰属しない前提での運用
+
+生成画像の権利が自社に帰属しないことは **受容する**（決定済み）。
+そのうえで、設計に落とすべき実務上の帰結が 1 つだけある。
+
+> **帰属しない = 他社が同じ／似た画像を使っても止められない。**
+
+したがって **反復して使う中核ビジュアルには AI 生成画像を使わない**。
+
+| 使ってよい | 使わない |
+|---|---|
+| 単発の IG 投稿・ティザー | ブランドのキービジュアル（繰り返し露出するもの） |
+| ジャーナル記事のアイキャッチ | ロゴ・アイコン的な扱いをする画像 |
+| EC ブランディングの背景・季節ビジュアル | 広告出稿の主要クリエイティブ |
+
+これは法的な制約ではなく **ブランド運用上の判断**なので、DB 制約では縛らない。
+レビュー画面の注意書きと本節の記載に留める。
+
+**追跡だけはできるようにする。** `image_assets` に出所を残し、
+後から「どのプロバイダ由来の資産がどこで使われているか」を引けるようにしておく。
+
+```sql
+alter table public.image_assets
+  add column license_note text not null default '';
+  -- 例: 'midjourney_proxy / commercial rights not assigned to us'
+  --     'replicate_flux / commercial use granted'
+```
+
+`ImageProvider.capabilities` にも `commercialUseGranted: boolean` を持たせ、
+承認時に自動で `license_note` へ焼き込む。**判断には使わない（ブロックしない）**。
+将来プロバイダを乗り換えたときや、権利関係の整理が必要になったときの材料として残すだけ。
 
 ---
 
@@ -1582,16 +1617,18 @@ CLAUDE.md のルールどおり、フェーズ開始前に必ず `git fetch orig
       （IG・EC ブランディング）、`product_depiction` / `fabric_macro` はテスト専用
 - [x] **スケジューラ構成** → 決定。webhook が主、GitHub Actions が安全網、
       テスト中はスクリプト。Vercel は Hobby のままでよい
-- [ ] サードパーティ画像 API 候補の **商用利用権と ToS を確認**（唯一残った要確認事項）
+- [x] **生成画像の権利の扱い** → 自社に帰属しなくてよい（受容）。
+      反復使用するキービジュアルには使わない運用に留める（第 7.9 節）
 - [ ] 月次予算の上限額を決める
 - [ ] 環境変数の名前を確定（第 12 章）
 
-**完了条件**: 商用利用権の確認が取れ、予算が決まっている
+**完了条件**: 予算が決まっている。**これ以外に Phase 1 開始を止める要因はない**
 
 ### Phase 1 — DB とリポジトリ層
 
 - [ ] `supabase/migrations/add-image-generation.sql`（enum / テーブル / インデックス / トリガ）
-      — `image_subject_class` / `image_release_policy` と、公開ポリシーの CHECK 制約を含む
+      — `image_subject_class` / `image_release_policy`、公開ポリシーの CHECK 制約、
+      `image_assets.license_note` を含む
 - [ ] `supabase/migrations/add-ai-image-drafts-bucket.sql`（非公開バケット）
 - [ ] `supabase/migrations/add-claim-image-jobs-function.sql`（行ロック関数）
 - [ ] `types/database.ts` に行型追加、`types/admin-image.ts` 新設
@@ -1646,10 +1683,6 @@ CLAUDE.md のルールどおり、フェーズ開始前に必ず `git fetch orig
 エージェントが単独で同じ経路を回せる。`production` のブリーフでは自動承認が拒否される
 
 ### Phase 6 — 実プロバイダ 1 本
-
-> ⚠️ **このフェーズに入る前に、商用利用権の確認（未決事項 4）を済ませること。**
-> `internal_test` だけで検証する範囲なら Phase 1〜5 は先に進めてよいが、
-> `production` の画像を実運用に出すには権利の確認が前提になる。
 
 - [ ] アダプタ実装（1 社のみ）
 - [ ] `app/api/webhooks/images/[provider]/route.ts`（HMAC 検証、生ボディで）
@@ -1727,12 +1760,17 @@ CLAUDE.md のルールどおり、フェーズ開始前に必ず `git fetch orig
 3. ~~エージェント自動化の範囲~~ → `internal_test` に限り全自動、
    `production` の画像承認は人間のみ（第 7.8 節）
 
+4. ~~生成画像の商用利用権~~ → **自社に帰属しなくてよい**（受容）。
+   帰属しないことの実務上の帰結（反復使用するキービジュアルに使わない）は
+   第 7.9 節に運用注意として記載。DB では縛らず、`license_note` に出所だけ残す
+
 **未決（Phase 0 で決める）**
 
-4. **サードパーティ API の商用利用権** — 経由して生成した画像の権利が自社に帰属するか。
-   **実運用に出す `production` 画像に直接効くので、Phase 6 の前に必須**
-   （`internal_test` だけなら Phase 1〜5 は先に進められる）
-5. **月次予算の上限額**
+5. **月次予算の上限額** — 残っている唯一の Phase 0 ブロッカー
 6. **管理者が複数人か** — 承認の監査ログを機能させるには個人識別が要る（現状は共有パスワード）。
    エージェント承認を入れるぶん、`actor` の区別は今より重要になる
 7. **プロバイダの第 1 候補と第 2 候補** — 2 系統目を最初から想定しておくかどうか
+
+> なお **権利の帰属とは別に、非公式プロキシの ToS 違反リスクは残る**。
+> これは法務の論点ではなく **運用リスク**（アカウント凍結でサービスが突然止まる）で、
+> 第 6.1 節のリスク表とアダプタ差し替え可能な設計で既に手当てしてある。
