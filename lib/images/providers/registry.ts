@@ -1,4 +1,5 @@
 import { getImageProviderId } from "@/lib/images/env";
+import { fluxImageProvider } from "@/lib/images/providers/flux";
 import { mockImageProvider } from "@/lib/images/providers/mock";
 import type {
   ImageProvider,
@@ -18,6 +19,7 @@ import type {
 
 const PROVIDERS: Partial<Record<ImageProviderId, ImageProvider>> = {
   mock: mockImageProvider,
+  replicate_flux: fluxImageProvider,
 };
 
 export function getImageProvider(

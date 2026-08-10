@@ -1878,18 +1878,41 @@ submit → running → succeeded、PNG バイト列の妥当性とアスペク�
 
 ### Phase 6 — 実プロバイダ 1 本
 
-- [ ] アダプタ実装（1 社のみ。推奨は FLUX 2 Pro。第 6.1.1 節）
-- [ ] **`image_reference_sets` テーブル追加** — ブランド共通の参照画像セット。
-      production のジョブに常に添付し、シリーズとしての一貫性を作る（第 6.1.1 節）
-- [ ] `app/api/webhooks/images/[provider]/route.ts`（HMAC 検証、生ボディで）
-- [ ] **mock の `data:` URL では通らなかった実 HTTPS 取得経路の確認**（Phase 2 の既知の制約）
-- [ ] `image_cost_ledger` への記録とサーキットブレーカー
-- [ ] `.github/workflows/image-pipeline-tick.yml`（安全網。第 10.3 節）
-- [ ] Actions secrets に `IMAGE_TICK_URL` / `IMAGE_WORKER_SECRET` を登録
-- [ ] **ステージングで少額の実課金テスト**（1 ジョブ 4 枚から）
+- [x] FLUX 2 Pro アダプタ実装（`lib/images/providers/flux.ts`）
+- [x] `image_reference_sets` / `image_reference_images` テーブル追加
+- [x] `.github/workflows/image-pipeline-tick.yml`（安全網）
+- [x] `image_cost_ledger` への記録とサーキットブレーカー（Phase 3 で実装済み）
+- [ ] Actions secrets に `IMAGE_TICK_URL` / `IMAGE_WORKER_SECRET` を登録（**要人手**）
+- [ ] **ステージングで少額の実課金テスト**（**要 API キー**）
+- [ ] 参照セットを管理画面から編集する UI と、production ジョブへの自動添付
+- [ ] webhook 対応（下記の制約を解消するために必要）
 
-**完了条件**: 実画像が承認フローに乗る。webhook が切れても Actions の tick が
-10 分以内に回収する。予算上限で正しく止まる
+**実装して判明した重大な制約 — 運用前に必ず読むこと**
+
+1. **FLUX は 1 リクエストにつき 1 枚しか返さない。**
+   Midjourney の 4 枚グリッドと違い、4 バリアント = 4 リクエスト。
+   ジョブ表の `provider_job_id` は 1 本なので、アダプタが内部で
+   サブリクエスト ID を base64url で 1 本に詰めている。
+   **上位層はこれを一切知らない** — 粒度がまったく違うプロバイダが
+   スキーマ変更なしで載ったので、抽象化は意図どおり機能している。
+
+2. **⚠️ 結果 URL は Ready から 10 分で失効する。**
+   一方 **GitHub Actions の schedule は最短5分間隔で、しかも遅延・スキップされる**。
+   つまり **Actions だけで無人運用すると、課金済みの画像を取り逃す**。
+
+   | 状況 | 対応 |
+   |---|---|
+   | 人が見ている | 管理画面と `npm run images:drain` が数秒間隔で tick するので問題ない |
+   | 無人運用 | **webhook 実装が前提条件**。Actions だけでは不十分 |
+
+   → **無人での production 生成を始める前に webhook を実装すること。**
+   FLUX は `webhook_url` に対応しているが、1ジョブ = 複数サブリクエストなので
+   コールバックの再集約が必要（`supportsWebhook: false` にしてある理由）。
+
+3. **FLUX に negative prompt フィールドはない。**
+   除外指定はプロンプト本文に畳み込んでいる。黙って捨てない。
+
+**完了条件**: 未達（実課金テストと webhook が残る）
 
 ### Phase 7 — Claude QA（Stage 3）
 

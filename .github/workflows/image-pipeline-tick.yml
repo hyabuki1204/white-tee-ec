@@ -1,0 +1,61 @@
+name: image-pipeline-tick
+
+# Safety net for the image job runner, not the primary path.
+#
+# It exists to catch work the interactive path missed: a browser closed
+# mid-run, a tick that errored, a job left leased by a worker that died.
+#
+# ⚠️ Interval note. GitHub's minimum schedule granularity is 5 minutes and
+# scheduled runs are not guaranteed on time — under load they are delayed or
+# dropped. FLUX result URLs expire ten minutes after a variant is ready, so
+# this schedule alone is NOT a safe way to run unattended production
+# generation: a delayed run can arrive after the images it was meant to
+# fetch have expired, and they are billed either way.
+#
+# While someone is watching, the admin UI and `npm run images:drain` tick
+# far more often than this. For unattended production, implement provider
+# webhooks first (see docs/image-generation-workflow.md §6.1.1).
+#
+# Free on standard runners because this repository is public.
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: "Why this run was triggered manually"
+        required: false
+
+concurrency:
+  # Serialize overlapping runs. The job lease makes double-processing safe
+  # anyway; this just avoids paying for work that would be skipped.
+  group: image-pipeline-tick
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  tick:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: POST /api/internal/images/tick
+        env:
+          TICK_URL: ${{ secrets.IMAGE_TICK_URL }}
+          TICK_SECRET: ${{ secrets.IMAGE_WORKER_SECRET }}
+        run: |
+          if [ -z "$TICK_URL" ] || [ -z "$TICK_SECRET" ]; then
+            echo "IMAGE_TICK_URL or IMAGE_WORKER_SECRET is not set; nothing to do."
+            exit 0
+          fi
+
+          # -f fails on HTTP errors, -sS keeps it quiet but still reports
+          # them, and the response body is discarded: Actions logs on a
+          # public repository are public.
+          curl -fsS -X POST "$TICK_URL" \
+            -H "Authorization: Bearer $TICK_SECRET" \
+            -H "content-type: application/json" \
+            --max-time 120 \
+            -o /dev/null
