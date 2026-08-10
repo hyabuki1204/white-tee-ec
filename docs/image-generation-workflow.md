@@ -1940,11 +1940,23 @@ verdict は**並び順とハイライトにのみ使い、自動承認には使�
 
 ### Phase 8 — 外部連携
 
-- [ ] `integration_outbox` + `/api/internal/outbox/dispatch`
-- [ ] `/api/webhooks/automation`（`create_brief` のみ）
-- [ ] n8n 側で Slack 通知フローを 1 本
+- [x] `integration_outbox` テーブル + `lib/images/outbox.ts`（HMAC 署名・指数バックオフ）
+- [x] `/api/internal/outbox/dispatch`（Bearer 認証）
+- [x] イベント発火の組み込み — `image.review_pending` / `image.approved` /
+      `image.rejected` / `image.job_failed`
+- [ ] `/api/webhooks/automation`（`create_brief` のみ）— 入口側は未実装
+- [ ] n8n 側で Slack 通知フローを 1 本（**要 n8n 環境**）
 
-**完了条件**: レビュー待ちが Slack に飛ぶ
+**設計どおり守った点**
+
+- **payload に signed URL を入れない。** n8n の実行ログに残ると、
+  アクセスできる人が未承認画像を開けてしまう。ID と管理画面 URL だけ送る
+- **at-least-once。** 消費側がイベント ID で重複排除する前提
+- **outbox の dispatch は tick と別ルート。** n8n が詰まっても
+  画像生成が止まらないようにするため
+
+**完了条件**: 出口側は達成。入口（`/api/webhooks/automation`）と
+n8n 側のフローが残る。
 
 ---
 

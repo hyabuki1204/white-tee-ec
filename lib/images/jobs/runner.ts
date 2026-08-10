@@ -28,6 +28,7 @@ import type {
   PollResult,
 } from "@/lib/images/providers/types";
 import { runImageQaTick } from "@/lib/images/jobs/qa-runner";
+import { enqueueOutboxEvent } from "@/lib/images/outbox";
 import { getImageProvider } from "@/lib/images/providers/registry";
 import {
   downloadProviderImage,
@@ -143,6 +144,14 @@ async function handleFailure(
     lease_expires_at: null,
   });
   counts.failed += 1;
+
+  await enqueueOutboxEvent("image.job_failed", {
+    jobId: job.id,
+    category: error.category,
+    code: error.code,
+    message: error.message,
+    circuitOpened: disposition.kind === "fail_and_open_circuit",
+  });
 
   return disposition.kind === "fail_and_open_circuit"
     ? `${error.category}: ${error.message}`
@@ -385,6 +394,16 @@ async function ingestSucceededJobs(
     }
 
     await insertImageResults(rows);
+
+    // Deliberately no signed URL in the payload: it would land in an n8n
+    // execution log where anyone with access could open an unapproved
+    // image. Send the id and let the reviewer open the admin screen.
+    await enqueueOutboxEvent("image.review_pending", {
+      jobId: job.id,
+      conceptId: job.conceptId,
+      storedCount: rows.filter((row) => !row.download_error).length,
+      failedCount: rows.filter((row) => row.download_error).length,
+    });
 
     await transitionJob(job.id, "stored", {
       completed_at: new Date().toISOString(),

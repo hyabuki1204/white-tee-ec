@@ -548,6 +548,34 @@ export type ImageCostLedgerInsert = {
   occurred_at?: string;
 };
 
+export type IntegrationOutboxStatus = "pending" | "delivered" | "failed";
+
+export type IntegrationOutboxRow = {
+  id: string;
+  event_type: string;
+  payload: Json;
+  status: IntegrationOutboxStatus;
+  attempt_count: number;
+  max_attempts: number;
+  next_attempt_at: string;
+  last_error: string | null;
+  delivered_at: string | null;
+  created_at: string;
+};
+
+export type IntegrationOutboxInsert = {
+  id?: string;
+  event_type: string;
+  payload?: Json;
+  status?: IntegrationOutboxStatus;
+  attempt_count?: number;
+  max_attempts?: number;
+  next_attempt_at?: string;
+  last_error?: string | null;
+  delivered_at?: string | null;
+  created_at?: string;
+};
+
 export type Database = {
   public: {
     Tables: {
@@ -655,6 +683,12 @@ export type Database = {
         Row: ImageCostLedgerRow;
         Insert: ImageCostLedgerInsert;
         Update: Partial<ImageCostLedgerInsert>;
+        Relationships: [];
+      };
+      integration_outbox: {
+        Row: IntegrationOutboxRow;
+        Insert: IntegrationOutboxInsert;
+        Update: Partial<IntegrationOutboxInsert>;
         Relationships: [];
       };
     };

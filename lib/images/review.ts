@@ -1,5 +1,6 @@
 import "server-only";
 
+import { enqueueOutboxEvent } from "@/lib/images/outbox";
 import { getImageProvider } from "@/lib/images/providers/registry";
 import { publishApprovedImage } from "@/lib/images/storage";
 import { canPublish } from "@/lib/images/release-policy";
@@ -209,6 +210,12 @@ export async function reviewResult(params: {
       note: decision.note,
     });
 
+    await enqueueOutboxEvent("image.rejected", {
+      resultId: context.resultId,
+      state: toState,
+      note: decision.note,
+    });
+
     return {
       reviewState: toState,
       assetId: null,
@@ -310,6 +317,13 @@ export async function reviewResult(params: {
   if (assetError) {
     throw new ReviewError(`Failed to create asset: ${assetError.message}`, 500);
   }
+
+  await enqueueOutboxEvent("image.approved", {
+    resultId: context.resultId,
+    assetId: asset.id,
+    publicUrl,
+    purpose: context.purpose,
+  });
 
   return {
     reviewState: "approved",
