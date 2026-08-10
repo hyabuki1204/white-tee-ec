@@ -1803,13 +1803,64 @@ submit → running → succeeded、PNG バイト列の妥当性とアスペク�
 
 ### Phase 4 — Claude 連携（Stage 1 / 2）
 
-- [ ] `@anthropic-ai/sdk` 追加、`ANTHROPIC_API_KEY` はサーバー専用
-- [ ] `lib/images/director/context.ts`（ブランドコンテキスト組み立て + prompt caching）
-- [ ] `lib/images/director/{concepts,render-spec}.ts`（tool use による構造化出力）
-- [ ] `image_prompt_templates` の初期データ投入
-- [ ] 禁止語チェック
+- [x] `@anthropic-ai/sdk` 追加、`ANTHROPIC_API_KEY` はサーバー専用
+- [x] `lib/images/director/client.ts`（モデル設定・refusal 処理・fallback）
+- [x] `lib/images/director/context.ts`（ブランドコンテキスト + prompt caching）
+- [x] `lib/images/director/schemas.ts`（構造化出力の JSON Schema）
+- [x] `lib/images/director/concepts.ts`（Stage 1）
+- [x] `lib/images/director/render-spec.ts`（Stage 2 + GenerationRequest への変換）
+- [x] `lib/images/director/guardrails.ts`（禁止語チェック + 未公開情報の警告）
 
-**完了条件**: ブリーフを渡すとコンセプト N 件が返り、RenderSpec まで生成される
+**設計からの変更点（実装で判明）**
+
+1. **構造化出力は tool use ではなく `output_config.format`（JSON Schema）。**
+   現在の API ではこちらが構造化出力の正式な方法。スキーマ準拠が API 側で
+   保証されるため、「JSON で返して」と頼んでパースを祈る必要がない。
+2. **`fallbacks: "default"` を既定で入れた。**
+   Opus 5 の安全分類器はリクエストを拒否することがあり（HTTP 200 +
+   `stop_reason: "refusal"`）、良性の依頼でも稀に踏む。拒否時に推奨モデルへ
+   自動で回すことで、失敗ではなく結果が返る。モデルを固定しないので
+   推奨が変わっても移行作業が発生しない。
+3. **`stop_reason` を `content` より先に見る。**
+   拒否時は `content` が空か部分的なので、先に読むと無関係な箇所で
+   分かりにくいクラッシュになる。
+4. **禁止語チェックは入口と出口の両方でかける。**
+   人間が書いたブリーフだけでなく、**Claude の出力自体**も検査する。
+   どちらからでも「送ってはいけない名前」が混入しうるため。
+5. **価格・日付・未発売の言及は警告のみ（ブロックしない）。**
+   ブリーフに「秋の立ち上げ用」と書くのは正当なので、
+   硬いブロックは運用者に回避策を学習させるだけになる。管理画面に警告を出す。
+6. **⚠️ system プロンプトはコードに置いた（`image_prompt_templates` は未使用）。**
+   設計では DB 化してデプロイなしで差し替える想定だったが、
+   プロンプトはコードに置いたほうが **PR で差分レビューできる**ぶん追跡性が高い。
+   DB 化の主な利点（再デプロイ不要）が効くのは、運用チームが頻繁に
+   プロンプトを回し始めてから。テーブルは残してあるので、
+   管理画面から編集させたくなった時点で Phase 5/6 で繋ぐ。
+   それまで `director_template_id` は null のまま。
+
+**完了条件**: コード・型・ビルドは達成。検証29項目通過。
+
+**検証済み項目（29項目・注入したフェイククライアントで実施）**
+
+| 分類 | 内容 |
+|---|---|
+| ブランド文脈 | 生地の5軸を「光と落ち感の指示」に翻訳している（`structure 2 → falls softly`） |
+| ブランド文脈 | 画像内テキストと架空ロゴを明示的に禁止している |
+| 公開ポリシー | `scenery_mood` では「編み目・襟リブ・縫製が読み取れないこと」を要求 |
+| 公開ポリシー | `fabric_macro` は「公開されない」と明示 |
+| リクエスト形 | Opus 5 / fallback beta / `fallbacks: "default"` |
+| リクエスト形 | **キャッシュ境界の内側が不変・可変分はユーザーターン**（実際に検証） |
+| リクエスト形 | `temperature` / `top_p` / `top_k` を送らない（Opus 5 では 400） |
+| リクエスト形 | `thinking` ではなく `effort` を使う |
+| ガードレール | ブリーフの禁止語は**課金前に**ブロック |
+| ガードレール | **Claude 自身の出力**の禁止語もブロック |
+| エラー処理 | refusal を `content` より先に検出 / `max_tokens` を JSON 破損と区別 |
+| Stage 2 | Sonnet 5・低め effort・プロバイダ能力を明示・出力にフラグ記法なし |
+| 変換 | 非対応アスペクト比のフォールバック / 強度クランプ / 枚数上限 |
+
+> ⚠️ **未検証**: 実 API 呼び出し。この環境に `ANTHROPIC_API_KEY` がないため、
+> リクエストの**形**は検証したが、**Claude の実際の出力品質**は未確認。
+> 鍵を設定して 1 ブリーフ流すのが最初の実地確認になる（推定コスト ¥14）。
 
 ### Phase 5 — 管理 UI
 
