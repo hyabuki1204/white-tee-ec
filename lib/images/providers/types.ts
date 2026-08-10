@@ -14,7 +14,7 @@
 export type ImageProviderId =
   | "mock"
   | "midjourney_proxy"
-  | "replicate_flux"
+  | "flux_bfl"
   | "openai_images";
 
 export type AspectRatio = "1:1" | "4:5" | "3:2" | "3:4" | "16:9";

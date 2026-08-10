@@ -11,7 +11,7 @@ import type { ImageProviderId } from "@/lib/images/providers/types";
 const KNOWN_PROVIDER_IDS: readonly ImageProviderId[] = [
   "mock",
   "midjourney_proxy",
-  "replicate_flux",
+  "flux_bfl",
   "openai_images",
 ];
 

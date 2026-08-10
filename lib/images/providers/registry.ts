@@ -19,7 +19,7 @@ import type {
 
 const PROVIDERS: Partial<Record<ImageProviderId, ImageProvider>> = {
   mock: mockImageProvider,
-  replicate_flux: fluxImageProvider,
+  flux_bfl: fluxImageProvider,
 };
 
 export function getImageProvider(

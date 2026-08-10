@@ -139,7 +139,7 @@ function decodeJobId(
 }
 
 export class FluxImageProvider implements ImageProvider {
-  readonly id = "replicate_flux" as const;
+  readonly id = "flux_bfl" as const;
   readonly capabilities = FLUX_CAPABILITIES;
 
   buildPrompt(request: GenerationRequest): BuiltPrompt {
