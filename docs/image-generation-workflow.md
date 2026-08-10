@@ -1629,15 +1629,49 @@ CLAUDE.md のルールどおり、フェーズ開始前に必ず `git fetch orig
 
 ### Phase 1 — DB とリポジトリ層
 
-- [ ] `supabase/migrations/add-image-generation.sql`（enum / テーブル / インデックス / トリガ）
-      — `image_subject_class` / `image_release_policy`、公開ポリシーの CHECK 制約、
-      `image_assets.license_note` を含む
-- [ ] `supabase/migrations/add-ai-image-drafts-bucket.sql`（非公開バケット）
-- [ ] `supabase/migrations/add-claim-image-jobs-function.sql`（行ロック関数）
-- [ ] `types/database.ts` に行型追加、`types/admin-image.ts` 新設
-- [ ] `lib/db/images/{repository,admin-repository,mapper}.ts`（`lib/db/products/` と同型）
+- [x] `supabase/migrations/add-image-generation.sql`（enum / テーブル / インデックス /
+      トリガ / `claim_image_jobs()`）
+- [x] `supabase/migrations/add-ai-image-drafts-bucket.sql`（非公開バケット）
+- [x] `types/database.ts` に行型追加、`types/admin-image.ts` 新設
+- [x] `lib/images/release-policy.ts`（`subject_class` → `release_policy` の写像）
+- [x] `lib/db/images/{mapper,repository,admin-repository}.ts`（`lib/db/products/` と同型）
 
-**完了条件**: `npm run db:migrate` が通り、リポジトリ層経由でブリーフの CRUD ができる
+**設計からの変更点（実装で判明）**
+
+1. **マイグレーションは 3 ファイルではなく 2 ファイル。**
+   `scripts/run-migrations.mjs` は**ファイル名のアルファベット順**に適用する。
+   `add-claim-image-jobs-function.sql` は `add-image-generation.sql` より先に走るため、
+   テーブル未作成で失敗する。関数はテーブルと同じファイルに入れた。
+2. **`revoke ... from anon, authenticated` はロール存在チェックで囲んだ。**
+   これらは Supabase が作るロールで、素の Postgres には無い。
+   囲まないとマイグレーション全体がロールバックする。
+3. **`release_policy` はクライアント入力を受け取らない。**
+   `resolveReleasePolicy(subjectClass)` で常に導出する。
+   リクエストが `product_depiction` を production に昇格させる経路を作らない。
+
+> ⚠️ **既存の不具合（本設計とは無関係）**: `supabase/schema.sql` は新規 DB に
+> そのまま適用できない。42 行目のトリガーが `set_updated_at()` を使うが、
+> 定義は 143 行目付近にある。過去に Supabase の SQL エディタで
+> 部分適用されてきたため露見していない。別途修正を推奨。
+
+**完了条件**: 達成。ローカル Postgres 16 に schema + seed + 全マイグレーションを
+適用して確認済み（下記）。`tsc --noEmit` と `eslint` も新規ファイルは指摘ゼロ。
+
+**検証済み項目**
+
+| # | 内容 | 結果 |
+|---|---|---|
+| 1 | `product_depiction` + `production` は拒否される | ✅ |
+| 2 | `scenery_mood` + `production` は通る | ✅ |
+| 3 | `product_depiction` + `internal_test` は通る | ✅ |
+| 4 | `idempotency_key` の重複は拒否される | ✅ |
+| 5 | `claim_image_jobs()` がジョブをリースする | ✅ |
+| 6 | リース中のジョブは2人目のワーカーが取れない | ✅ |
+| 7 | `image_assets` に `internal_test` は insert できない | ✅ |
+| 8 | `image_assets` の `production` は通る | ✅ |
+| 9 | `updated_at` トリガーが発火する | ✅ |
+| 10 | `ai-image-drafts` が非公開バケットとして登録される | ✅ |
+| 11 | TS の `resolveReleasePolicy` と DB の CHECK が全 subject_class で一致 | ✅ |
 
 ### Phase 2 — プロバイダ抽象 + Mock
 
