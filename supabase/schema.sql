@@ -7,6 +7,20 @@
 create extension if not exists "pgcrypto";
 
 -- ---------------------------------------------------------------------------
+-- Shared trigger functions
+--
+-- Declared before any table so the triggers below can reference it. The
+-- fabrics trigger is the first user, a few lines down.
+-- ---------------------------------------------------------------------------
+create or replace function public.set_updated_at()
+returns trigger as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$ language plpgsql;
+
+-- ---------------------------------------------------------------------------
 -- Enums
 -- ---------------------------------------------------------------------------
 create type public.order_status as enum (
@@ -139,16 +153,9 @@ create table public.order_items (
 create index order_items_order_id_idx on public.order_items (order_id);
 
 -- ---------------------------------------------------------------------------
--- updated_at trigger (orders)
+-- updated_at triggers (orders, products)
+-- set_updated_at() is defined at the top of this file.
 -- ---------------------------------------------------------------------------
-create or replace function public.set_updated_at()
-returns trigger as $$
-begin
-  new.updated_at = now();
-  return new;
-end;
-$$ language plpgsql;
-
 create trigger orders_set_updated_at
   before update on public.orders
   for each row execute function public.set_updated_at();

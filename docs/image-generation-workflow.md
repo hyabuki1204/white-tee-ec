@@ -1649,10 +1649,12 @@ CLAUDE.md のルールどおり、フェーズ開始前に必ず `git fetch orig
    `resolveReleasePolicy(subjectClass)` で常に導出する。
    リクエストが `product_depiction` を production に昇格させる経路を作らない。
 
-> ⚠️ **既存の不具合（本設計とは無関係）**: `supabase/schema.sql` は新規 DB に
-> そのまま適用できない。42 行目のトリガーが `set_updated_at()` を使うが、
-> 定義は 143 行目付近にある。過去に Supabase の SQL エディタで
-> 部分適用されてきたため露見していない。別途修正を推奨。
+> **付随して修正した既存の不具合**: `supabase/schema.sql` は新規 DB に
+> そのまま適用できなかった。冒頭のトリガーが `set_updated_at()` を使うのに、
+> 定義がファイル末尾にあったため。過去に Supabase の SQL エディタで
+> 部分適用されてきたため露見していなかった。
+> 関数定義を先頭（extensions の直後）へ移動して修正済み。
+> **新規 DB に schema → seed → 全マイグレーションを通しで適用できることを確認済み。**
 
 **完了条件**: 達成。ローカル Postgres 16 に schema + seed + 全マイグレーションを
 適用して確認済み（下記）。`tsc --noEmit` と `eslint` も新規ファイルは指摘ゼロ。
