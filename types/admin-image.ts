@@ -72,6 +72,17 @@ export type AdminImageJob = {
   status: ImageJobStatus;
   provider: string;
   providerJobId: string | null;
+  /** The prompt string the provider actually received. Audit and UI. */
+  submittedPrompt: string;
+  /**
+   * The provider-neutral GenerationRequest as submitted.
+   *
+   * Stored rather than re-derived from the concept so a retry re-sends
+   * exactly what was sent before, even if the concept has since been
+   * edited — and so the same work can be replayed on a different provider
+   * if this one goes away.
+   */
+  submittedParams: Record<string, unknown>;
   requestedVariantCount: number;
   attemptCount: number;
   maxAttempts: number;

@@ -1748,17 +1748,58 @@ submit → running → succeeded、PNG バイト列の妥当性とアスペク�
 
 ### Phase 3 — ジョブランナー（ここが心臓部）
 
-- [ ] `lib/images/jobs/state-machine.ts`（遷移表とガード）
-- [ ] `lib/images/jobs/runner.ts`（claim → submit → poll → download → store）
-- [ ] `lib/images/storage.ts`（`lib/admin/image-upload.ts` を拡張し非公開バケット対応）
-- [ ] `app/api/internal/images/tick/route.ts`（Bearer 認証）
-- [ ] reaper（リース解放 / `expired` 回収）
-- [ ] `scripts/images/{tick,drain,status}.mjs` + `package.json` の scripts 追加
-      — tick を HTTP で叩くだけの薄いクライアント（第 10.5 節）
+- [x] `lib/images/jobs/state-machine.ts`（遷移表・ガード・バックオフ・失敗処理の判定）
+- [x] `lib/images/jobs/generation-request.ts`（送信内容の永続化と復元）
+- [x] `lib/images/jobs/enqueue.ts`（ジョブ投入 + 予算チェック）
+- [x] `lib/images/jobs/runner.ts`（claim → submit → poll → download → store）
+- [x] `lib/images/storage.ts`（非公開バケット、署名URL、公開バケットへのコピー）
+- [x] `lib/db/images/job-repository.ts`（ガード付き遷移・reaper・イベント記録）
+- [x] `app/api/internal/images/tick/route.ts`（Bearer 認証）
+- [x] `scripts/images/{tick,drain,status}.mjs` + `package.json` の scripts 追加
 
-**完了条件**: mock でジョブを投入すると、`npm run images:drain` だけで
-`ai-image-drafts` に画像が入り `stored` になる。`IMAGE_MOCK_FAILURE_RATE` を上げると
-リトライ経路が実際に走る。**この時点でスケジューラはまだ不要**
+**設計からの変更点（実装で判明）**
+
+1. **ジョブは `submitted_params` に「プロバイダ非依存の GenerationRequest」を保存する。**
+   当初「プロバイダ固有に変換済みのパラメータ」と書いていたが、それでは
+   別プロバイダへの再生成ができない。`submitted_prompt` に実際に送った文字列
+   （監査用）、`submitted_params` に中間表現（再現・移植用）を入れる。
+   固有パラメータは `buildPrompt()` が純粋関数なのでいつでも再計算できる。
+2. **リトライは `idempotency_key` を維持し、attempt を進めるときだけ更新する。**
+   同一 attempt 内の再送で二重課金しないため。attempt を進めるのは
+   「もう一度課金してよい」という判断なので、そこで新しいキーになる。
+3. **予算チェックは submit 時ではなく enqueue 時。**
+   上限超過時にジョブを作らせない。作ってから止めると、queued のまま
+   溜まったジョブが翌月に一斉に走る。
+4. **見積もりコストを enqueue 時点で ledger に記録する。**
+   予算が「完了済み」ではなく「確定済みの作業」を反映するようにするため。
+
+**完了条件**: コード・型・ビルドは達成。`next build` で
+`/api/internal/images/tick` が動的ルートとして登録されることを確認済み。
+
+**検証済み項目（38項目）**
+
+| 分類 | 内容 | 結果 |
+|---|---|---|
+| 状態機械 | 終端状態（stored/failed/cancelled/expired）から一切遷移できない | ✅ |
+| 状態機械 | 遅延到着した `running` が `stored` を復活させない | ✅ |
+| 状態機械 | 遅延到着した `succeeded` が `failed` を復活させない | ✅ |
+| 状態機械 | 正常経路が端まで歩ける／リトライは `queued` に戻る | ✅ |
+| バックオフ | 30s → 60s → 120s、15分で頭打ち、jitter 加算 | ✅ |
+| バックオフ | プロバイダの `Retry-After` が計算値より優先される | ✅ |
+| 失敗判定 | transient/integrity のみリトライ、permanent/policy は即失敗 | ✅ |
+| 失敗判定 | auth / budget はサーキットブレーカーを開く | ✅ |
+| 送信内容 | serialize → parse が可逆、不正値は明示的に拒否 | ✅ |
+| **SQL ガード** | 終端ジョブへの UPDATE が 0 行になる（遅延 webhook 対策） | ✅ |
+| **SQL 並行性** | 2ワーカーが同時に同じジョブを遷移させても勝者は1つ | ✅ |
+| **SQL reaper** | 期限切れでも終端ジョブは触らない | ✅ |
+| 取り込み | mock の data URL から PNG を取得・チェックサム安定 | ✅ |
+| 取り込み | Content-Type を信用せずマジックバイトで判定 | ✅ |
+| 取り込み | 到達不能URLは integrity エラー（他のバリアントは生き残る） | ✅ |
+
+> ⚠️ **未検証**: ランナー全体の実走（claim → submit → poll → ingest → stored）は
+> Supabase の PostgREST と Storage が必要なため、この環境では実行していない。
+> 各構成要素は個別に検証済みだが、**実 Supabase プロジェクトに繋いだ通しの実行は
+> Phase 5 完了時に必要**。`npm run images:drain` がそのための入口。
 
 ### Phase 4 — Claude 連携（Stage 1 / 2）
 

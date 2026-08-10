@@ -9,6 +9,9 @@
     "lint": "eslint",
     "db:migrate": "node scripts/run-migrations.mjs",
     "db:apply-pricing": "node scripts/apply-premium-pricing.mjs",
+    "images:tick": "node scripts/images/tick.mjs",
+    "images:drain": "node scripts/images/drain.mjs",
+    "images:status": "node scripts/images/status.mjs",
     "postbuild": "node scripts/run-sql-migrations.mjs && node scripts/apply-premium-pricing.mjs"
   },
   "dependencies": {

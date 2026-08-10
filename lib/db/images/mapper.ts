@@ -98,6 +98,8 @@ export function mapImageJobRow(row: ImageGenerationJobRow): AdminImageJob {
     status: row.status,
     provider: row.provider,
     providerJobId: row.provider_job_id,
+    submittedPrompt: row.submitted_prompt,
+    submittedParams: toRecord(row.submitted_params),
     requestedVariantCount: row.requested_variant_count,
     attemptCount: row.attempt_count,
     maxAttempts: row.max_attempts,
