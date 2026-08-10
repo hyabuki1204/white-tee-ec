@@ -1677,11 +1677,37 @@ CLAUDE.md のルールどおり、フェーズ開始前に必ず `git fetch orig
 
 ### Phase 2 — プロバイダ抽象 + Mock
 
-- [ ] `lib/images/providers/types.ts`（第 6.2 節のインターフェース）
-- [ ] `lib/images/providers/mock.ts`（遅延・確率的失敗・部分失敗を再現）
-- [ ] `lib/images/providers/registry.ts`（`getDataSource()` と同じ形）
+- [x] `lib/images/providers/types.ts`（第 6.2 節のインターフェース）
+- [x] `lib/images/env.ts`（環境変数アクセサ。すべてサーバー専用）
+- [x] `lib/images/providers/mock-image.ts`（PNG エンコーダ）
+- [x] `lib/images/providers/mock.ts`（遅延・失敗注入・部分失敗を再現）
+- [x] `lib/images/providers/registry.ts`（`getDataSource()` と同じ形）
 
-**完了条件**: 実 API キーなしで mock が画像 URL を返す
+**設計からの変更点（実装で判明）**
+
+1. **mock は SVG ではなく PNG を返す。**
+   `ai-image-drafts` バケットの `allowed_mime_types` は jpeg/png/webp なので、
+   SVG はアップロードが拒否される。依存パッケージを足さず `node:zlib` で
+   PNG を書き出す（`mock-image.ts`）。実プロバイダと同じくラスタ画像を返すので、
+   取り込み・MIME 判定・寸法保存が本番と同じ経路で動く。
+2. **失敗注入は `Math.random()` ではなく `idempotencyKey` のハッシュ。**
+   同じジョブは何度リプレイしても同じ失敗をする。
+   再現できないフレーキーな不具合を作らないため。
+3. **`providerJobId` にジョブ状態を base64url で埋め込む。**
+   サーバーレスではプロセス間でメモリを共有できないため、mock がジョブ表を
+   持てない。ID に状態を入れることで、実プロバイダ同様どのプロセスからでも
+   `poll()` が機能する。
+4. **未実装プロバイダを指定したら例外を投げる**（mock に黙って落とさない）。
+   本番の設定漏れが、プレースホルダ画像の量産ではなく即座のエラーになる。
+
+> **既知の制約**: mock は `data:` URL を返すため、実際の HTTPS 取得経路は
+> 通らない。Phase 6 で最初の実プロバイダに繋ぐときに取り込み処理を
+> 再確認すること（`mock-image.ts` にも同じ注記あり）。
+
+**完了条件**: 達成。API キー・ネットワークなしで mock が画像を返す。
+検証26項目すべて通過（レジストリのフォールバック、`buildPrompt` のパラメータ写像、
+submit → running → succeeded、PNG バイト列の妥当性とアスペクト比、
+決定性、transient 失敗の分類、部分失敗、不明ジョブID の permanent 分類）。
 
 ### Phase 3 — ジョブランナー（ここが心臓部）
 
