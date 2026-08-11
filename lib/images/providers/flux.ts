@@ -63,7 +63,11 @@ export const FLUX_CAPABILITIES: ProviderCapabilities = {
   commercialUseGranted: true,
 };
 
-type FluxSubmitResponse = { id: string; polling_url: string };
+type FluxSubmitResponse = {
+  id: string;
+  polling_url?: string;
+  pollingUrl?: string;
+};
 
 type FluxPollResponse = {
   status: "Pending" | "Ready" | "Error" | "Failed" | string;
@@ -73,8 +77,9 @@ type FluxPollResponse = {
 
 type FluxJobEntry = {
   index: number;
-  id?: string;
-  pollingUrl: string;
+  id: string;
+  /** Omitted from older encoded ids; reconstructed via resolvePollingUrl. */
+  pollingUrl?: string;
 };
 
 type FluxWebhookBody = {
@@ -118,6 +123,14 @@ function classifyHttpError(status: number, body: string): NormalizedError {
   return { category: "permanent", code: `http_${status}`, message: body };
 }
 
+function resolvePollingUrl(entry: Pick<FluxJobEntry, "id" | "pollingUrl">): string {
+  if (entry.pollingUrl) {
+    return entry.pollingUrl;
+  }
+
+  return `${baseUrl()}/get_result?id=${encodeURIComponent(entry.id)}`;
+}
+
 function encodeJobId(entries: FluxJobEntry[]): string {
   return `${PROVIDER_PREFIX}_${Buffer.from(JSON.stringify(entries)).toString(
     "base64url",
@@ -137,7 +150,23 @@ function decodeJobId(providerJobId: string): FluxJobEntry[] | null {
       ).toString("utf8"),
     );
 
-    return Array.isArray(parsed) ? (parsed as FluxJobEntry[]) : null;
+    if (!Array.isArray(parsed)) {
+      return null;
+    }
+
+    const entries = parsed.filter((entry): entry is FluxJobEntry => {
+      if (entry === null || typeof entry !== "object") {
+        return false;
+      }
+
+      const candidate = entry as Partial<FluxJobEntry>;
+      return (
+        typeof candidate.id === "string" &&
+        typeof candidate.index === "number"
+      );
+    });
+
+    return entries.length > 0 ? entries : null;
   } catch {
     return null;
   }
@@ -157,7 +186,7 @@ export function fluxJobContainsSubId(
   return entries.some(
     (entry) =>
       entry.id === subId ||
-      entry.pollingUrl.includes(subId) ||
+      entry.pollingUrl?.includes(subId) ||
       providerJobId.includes(subId),
   );
 }
@@ -295,10 +324,20 @@ export class FluxImageProvider implements ImageProvider {
 
       const parsed = (await response.json()) as FluxSubmitResponse;
       raw.push(parsed);
+
+      if (!parsed.id) {
+        throw new Error("FLUX submit response missing id.");
+      }
+
+      const pollingUrl =
+        parsed.polling_url ??
+        parsed.pollingUrl ??
+        `${baseUrl()}/get_result?id=${encodeURIComponent(parsed.id)}`;
+
       entries.push({
         index,
         id: parsed.id,
-        pollingUrl: parsed.polling_url,
+        pollingUrl,
       });
     }
 
@@ -331,7 +370,7 @@ export class FluxImageProvider implements ImageProvider {
     let firstError: NormalizedError | undefined;
 
     for (const entry of entries) {
-      const response = await fetch(entry.pollingUrl, {
+      const response = await fetch(resolvePollingUrl(entry), {
         headers: { "x-key": apiKey() },
       });
 
