@@ -42,6 +42,28 @@ export async function listImageConcepts(
   return (data ?? []).map(mapImageConceptRow);
 }
 
+export async function getImageConcept(
+  id: string,
+): Promise<AdminImageConcept | null> {
+  if (!isSupabaseConfigured()) {
+    return null;
+  }
+
+  const supabase = createSupabaseAdminClient();
+
+  const { data, error } = await supabase
+    .from("image_concepts")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(`Failed to fetch image concept: ${error.message}`);
+  }
+
+  return data ? mapImageConceptRow(data) : null;
+}
+
 export async function listImageJobs(
   conceptId: string,
 ): Promise<AdminImageJob[]> {

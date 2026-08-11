@@ -1,6 +1,10 @@
 import "server-only";
 
-import { mapImageBriefRow } from "@/lib/db/images/mapper";
+import {
+  mapImageBriefRow,
+  mapImageConceptRow,
+} from "@/lib/db/images/mapper";
+import type { ConceptDraft } from "@/lib/images/director/schemas";
 import { resolveReleasePolicy } from "@/lib/images/release-policy";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
@@ -8,6 +12,7 @@ import type {
   AdminImageBriefDetail,
   AdminImageBriefInput,
   AdminImageBriefListItem,
+  AdminImageConcept,
 } from "@/types/admin-image";
 import type { ImageBriefRow, Json } from "@/types/database";
 
@@ -261,6 +266,108 @@ export async function updateAdminImageBrief(
   }
 
   return mapImageBriefRow(data);
+}
+
+/**
+ * Persist a round of concepts produced by the director.
+ *
+ * Written as one insert so a partially saved round cannot exist: the
+ * reviewer either sees the whole set Claude proposed or none of it, and a
+ * failed call can simply be retried without leaving orphans behind.
+ *
+ * The revision number is per brief, not per concept. Regenerating after a
+ * rejection produces revision N+1 alongside the earlier round rather than
+ * replacing it, so what was rejected stays visible next to what replaced it.
+ */
+export async function createImageConcepts(
+  briefId: string,
+  drafts: readonly ConceptDraft[],
+  revision: number,
+): Promise<AdminImageConcept[]> {
+  if (!isSupabaseConfigured()) {
+    throw new Error("Cannot create concepts: Supabase is not configured.");
+  }
+
+  if (drafts.length === 0) {
+    return [];
+  }
+
+  const supabase = createSupabaseAdminClient();
+
+  const { data, error } = await supabase
+    .from("image_concepts")
+    .insert(
+      drafts.map((draft) => ({
+        brief_id: briefId,
+        revision,
+        title: draft.title,
+        concept: draft as unknown as Json,
+      })),
+    )
+    .select("*");
+
+  if (error) {
+    throw new Error(`Failed to create concepts: ${error.message}`);
+  }
+
+  return (data ?? []).map(mapImageConceptRow);
+}
+
+/** Highest revision already stored for a brief; 0 when there are none. */
+export async function getLatestConceptRevision(
+  briefId: string,
+): Promise<number> {
+  if (!isSupabaseConfigured()) {
+    return 0;
+  }
+
+  const supabase = createSupabaseAdminClient();
+
+  const { data, error } = await supabase
+    .from("image_concepts")
+    .select("revision")
+    .eq("brief_id", briefId)
+    .order("revision", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(`Failed to read concept revision: ${error.message}`);
+  }
+
+  return data?.revision ?? 0;
+}
+
+/**
+ * Attach the render spec Claude derived for a concept.
+ *
+ * Kept separate from the concept itself because the two are produced by
+ * different calls: a concept can exist without ever being rendered, and a
+ * re-render must be able to replace the spec without touching the creative
+ * direction it came from.
+ */
+export async function saveConceptRenderSpec(
+  conceptId: string,
+  spec: Record<string, unknown>,
+): Promise<AdminImageConcept> {
+  if (!isSupabaseConfigured()) {
+    throw new Error("Cannot save render spec: Supabase is not configured.");
+  }
+
+  const supabase = createSupabaseAdminClient();
+
+  const { data, error } = await supabase
+    .from("image_concepts")
+    .update({ render_spec: spec as Json })
+    .eq("id", conceptId)
+    .select("*")
+    .single();
+
+  if (error) {
+    throw new Error(`Failed to save render spec: ${error.message}`);
+  }
+
+  return mapImageConceptRow(data);
 }
 
 export async function deleteAdminImageBrief(id: string): Promise<void> {

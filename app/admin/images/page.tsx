@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { AdminBackLink } from "@/components/admin/AdminBackLink";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { BriefForm } from "@/components/admin/images/BriefForm";
 import { Container } from "@/components/layout/Container";
 import { ADMIN_COPY } from "@/lib/admin/copy";
 import {
@@ -86,6 +87,8 @@ export default async function AdminImagesPage() {
         ) : null}
       </div>
 
+      <BriefForm />
+
       {briefs.length === 0 ? (
         <p className={adminEmpty}>{copy.empty}</p>
       ) : (
@@ -104,7 +107,12 @@ export default async function AdminImagesPage() {
               {briefs.map((brief) => (
                 <tr key={brief.id} className="hover:bg-neutral-50">
                   <td className={adminTd}>
-                    <span className="font-medium">{brief.title}</span>
+                    <Link
+                      href={`/admin/images/${brief.id}`}
+                      className="font-medium underline underline-offset-4"
+                    >
+                      {brief.title}
+                    </Link>
                     <p className={`${adminMuted} mt-1 text-xs`}>
                       {brief.conceptCount} コンセプト
                     </p>
