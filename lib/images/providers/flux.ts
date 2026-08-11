@@ -154,7 +154,6 @@ function candidatePollingUrls(
 
   for (const host of [
     "https://api.us3.bfl.ai/v1",
-    "https://api.us1.bfl.ai/v1",
     "https://api.us.bfl.ai/v1",
     "https://api.eu.bfl.ai/v1",
     baseUrl(),
@@ -175,16 +174,36 @@ function isTaskNotFound(status: number, body: string, parsedStatus?: string): bo
 
 async function pollFluxEntry(
   entry: FluxJobEntry,
-): Promise<{ parsed: FluxPollResponse | null; raw: unknown; missing: boolean; error?: NormalizedError }> {
+): Promise<{
+  parsed: FluxPollResponse | null;
+  raw: unknown;
+  missing: boolean;
+  error?: NormalizedError;
+}> {
   let lastError: NormalizedError | undefined;
   let lastRaw: unknown = null;
   let sawOnlyNotFound = true;
 
   for (const url of candidatePollingUrls(entry)) {
-    const response = await fetch(url, {
-      headers: { "x-key": apiKey() },
-    });
-    const body = await response.text();
+    let response: Response;
+    let body: string;
+
+    try {
+      response = await fetch(url, {
+        headers: { "x-key": apiKey() },
+      });
+      body = await response.text();
+    } catch (error) {
+      sawOnlyNotFound = false;
+      lastError = {
+        category: "transient",
+        code: "poll_network",
+        message:
+          error instanceof Error ? error.message : "FLUX poll network error.",
+      };
+      continue;
+    }
+
     let parsed: FluxPollResponse | null = null;
 
     try {
@@ -219,7 +238,6 @@ async function pollFluxEntry(
   }
 
   if (sawOnlyNotFound) {
-    // Webhook-mode submits often omit polling_url; keep waiting.
     return { parsed: null, raw: lastRaw, missing: true };
   }
 
@@ -388,6 +406,12 @@ export class FluxImageProvider implements ImageProvider {
     const entries: FluxJobEntry[] = [];
     const callbackUrl = request.webhookUrl ?? webhookCallbackUrl();
     const webhookSecret = getImageProviderWebhookSecret();
+    // BFL omits polling_url when webhook_url is set, and synthesized
+    // get_result URLs then 404 across clusters. Prefer polling until the
+    // webhook intake path is proven end-to-end in production.
+    const useWebhook = Boolean(
+      request.webhookUrl && webhookSecret,
+    );
 
     for (let index = 0; index < request.variantCount; index += 1) {
       const response = await fetch(`${baseUrl()}/${MODEL_PATH}`, {
@@ -402,7 +426,7 @@ export class FluxImageProvider implements ImageProvider {
           ...(request.seed !== undefined
             ? { seed: request.seed + index }
             : {}),
-          ...(callbackUrl && webhookSecret
+          ...(useWebhook
             ? {
                 webhook_url: callbackUrl,
                 webhook_secret: webhookSecret,
