@@ -131,6 +131,106 @@ function resolvePollingUrl(entry: Pick<FluxJobEntry, "id" | "pollingUrl">): stri
   return `${baseUrl()}/get_result?id=${encodeURIComponent(entry.id)}`;
 }
 
+/**
+ * BFL's global submit endpoint often omits polling_url when webhook_url is
+ * set, and a synthesized api.bfl.ai get_result then 404s with "Task not
+ * found". Probe the URL BFL returned first, then known regional hosts.
+ */
+function candidatePollingUrls(
+  entry: Pick<FluxJobEntry, "id" | "pollingUrl">,
+): string[] {
+  const id = encodeURIComponent(entry.id);
+  const urls: string[] = [];
+
+  const push = (url: string) => {
+    if (!urls.includes(url)) {
+      urls.push(url);
+    }
+  };
+
+  if (entry.pollingUrl) {
+    push(entry.pollingUrl);
+  }
+
+  for (const host of [
+    "https://api.us3.bfl.ai/v1",
+    "https://api.us1.bfl.ai/v1",
+    "https://api.us.bfl.ai/v1",
+    "https://api.eu.bfl.ai/v1",
+    baseUrl(),
+  ]) {
+    push(`${host}/get_result?id=${id}`);
+  }
+
+  return urls;
+}
+
+function isTaskNotFound(status: number, body: string, parsedStatus?: string): boolean {
+  if (parsedStatus === "Task not found") {
+    return true;
+  }
+
+  return status === 404 || /Task not found/i.test(body);
+}
+
+async function pollFluxEntry(
+  entry: FluxJobEntry,
+): Promise<{ parsed: FluxPollResponse | null; raw: unknown; missing: boolean; error?: NormalizedError }> {
+  let lastError: NormalizedError | undefined;
+  let lastRaw: unknown = null;
+  let sawOnlyNotFound = true;
+
+  for (const url of candidatePollingUrls(entry)) {
+    const response = await fetch(url, {
+      headers: { "x-key": apiKey() },
+    });
+    const body = await response.text();
+    let parsed: FluxPollResponse | null = null;
+
+    try {
+      parsed = JSON.parse(body) as FluxPollResponse;
+    } catch {
+      parsed = null;
+    }
+
+    lastRaw = parsed ?? body;
+
+    if (isTaskNotFound(response.status, body, parsed?.status)) {
+      continue;
+    }
+
+    sawOnlyNotFound = false;
+
+    if (!response.ok) {
+      lastError = classifyHttpError(response.status, body);
+      continue;
+    }
+
+    if (!parsed) {
+      lastError = {
+        category: "transient",
+        code: "invalid_poll_json",
+        message: "FLUX poll returned non-JSON.",
+      };
+      continue;
+    }
+
+    return { parsed, raw: parsed, missing: false };
+  }
+
+  if (sawOnlyNotFound) {
+    // Webhook-mode submits often omit polling_url; keep waiting.
+    return { parsed: null, raw: lastRaw, missing: true };
+  }
+
+  return {
+    parsed: null,
+    raw: lastRaw,
+    missing: false,
+    error: lastError,
+  };
+}
+
 function encodeJobId(entries: FluxJobEntry[]): string {
   return `${PROVIDER_PREFIX}_${Buffer.from(JSON.stringify(entries)).toString(
     "base64url",
@@ -370,18 +470,24 @@ export class FluxImageProvider implements ImageProvider {
     let firstError: NormalizedError | undefined;
 
     for (const entry of entries) {
-      const response = await fetch(resolvePollingUrl(entry), {
-        headers: { "x-key": apiKey() },
-      });
+      const { parsed, raw: entryRaw, missing, error } = await pollFluxEntry(entry);
+      raw.push(entryRaw);
 
-      if (!response.ok) {
-        const error = classifyHttpError(response.status, await response.text());
-        firstError ??= error;
+      if (missing) {
+        // Webhook-mode submits often omit polling_url; keep waiting rather
+        // than permanently failing on the first tick.
+        pending += 1;
         continue;
       }
 
-      const parsed = (await response.json()) as FluxPollResponse;
-      raw.push(parsed);
+      if (!parsed) {
+        firstError ??= error ?? {
+          category: "transient",
+          code: "poll_failed",
+          message: `FLUX variant ${entry.index} poll failed.`,
+        };
+        continue;
+      }
 
       if (parsed.status === "Ready" && parsed.result?.sample) {
         images.push({
