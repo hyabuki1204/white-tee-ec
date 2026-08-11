@@ -186,9 +186,17 @@ async function submitQueuedJobs(
         payload: result.raw,
       });
 
+      // Release the lease with the status write. claim_image_jobs only
+      // picks rows whose lease is null or expired, so holding it here
+      // would hide the job from this tick's poll (and from other ticks
+      // for LEASE_SECONDS). Submit is done; the next stage must be free
+      // to claim.
       await transitionJob(job.id, jobStatusFromProviderStatus(result.status), {
         provider_job_id: result.providerJobId,
         submitted_at: new Date().toISOString(),
+        claimed_by: null,
+        claimed_at: null,
+        lease_expires_at: null,
       });
       counts.submitted += 1;
     } catch (error) {
@@ -333,6 +341,9 @@ async function ingestSucceededJobs(
         error_code: "missing_provider_job_id",
         error_message: "Job reached ingest without a provider job id.",
         completed_at: new Date().toISOString(),
+        claimed_by: null,
+        claimed_at: null,
+        lease_expires_at: null,
       });
       counts.failed += 1;
       continue;
