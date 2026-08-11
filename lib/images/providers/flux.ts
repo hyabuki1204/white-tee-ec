@@ -535,7 +535,7 @@ export class FluxImageProvider implements ImageProvider {
 
     if (pending > 0) {
       return {
-        status: images.length > 0 ? "running" : "submitted",
+        status: "running",
         progress: Math.floor((images.length / entries.length) * 100),
         images: [],
         raw,

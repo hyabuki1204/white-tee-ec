@@ -284,14 +284,25 @@ async function pollActiveJobs(
 
     const next = jobStatusFromProviderStatus(result.status);
 
-    await transitionJob(job.id, next, {
-      claimed_by: null,
-      claimed_at: null,
-      lease_expires_at: null,
-      ...(result.actualCostJpy !== undefined
-        ? { actual_cost_jpy: result.actualCostJpy }
-        : {}),
-    });
+    if (next === job.status) {
+      // e.g. still Pending → submitted. Self-transitions are not in the
+      // state machine, but the lease must still be released or later ticks
+      // cannot reclaim the job until it expires.
+      await releaseJobLease(job.id);
+    } else {
+      const moved = await transitionJob(job.id, next, {
+        claimed_by: null,
+        claimed_at: null,
+        lease_expires_at: null,
+        ...(result.actualCostJpy !== undefined
+          ? { actual_cost_jpy: result.actualCostJpy }
+          : {}),
+      });
+
+      if (!moved.applied) {
+        await releaseJobLease(job.id);
+      }
+    }
 
     if (result.actualCostJpy) {
       await recordCost({
