@@ -1985,6 +1985,30 @@ n8n 側のフローが残る。
 既存（変更なし）: `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` /
 `SUPABASE_SERVICE_ROLE_KEY` / `ADMIN_SESSION_SECRET` / `ADMIN_PASSWORD` / `DATABASE_URL`
 
+#### 12.1.1 本番へのマイグレーション適用（注意点）
+
+`package.json` の `postbuild` は `run-sql-migrations.mjs` を呼ぶが、これは
+`DATABASE_URL` が未設定だと `run-sql-migrations: skip (DATABASE_URL not set)` と
+出して **exit 0 で終わる**。ビルドは成功するのにテーブルは作られない、という
+静かな失敗になる。本番 Vercel にはこの変数が入っていないので、画像パイプラインの
+テーブルは自動では作られない。
+
+ここで単純に `DATABASE_URL` を足すのは危険で、`run-migrations.mjs` は
+`public.schema_migrations` 台帳を見て未記録のものを全部流す。本番にこの台帳が
+無ければ既存 23 本すべてが「未適用」と判定され、`update-site-copy-tone.sql` や
+`update-premium-pricing.sql` のようなデータ上書き系が再実行されて、管理画面で
+編集した内容を巻き戻す。
+
+そのため初回は `supabase/manual/apply-image-pipeline.sql` を Supabase の
+SQL Editor で一度だけ流す。このファイルは
+
+1. `schema_migrations` を作り、既存 23 本を「適用済み」として記録（実行はしない）
+2. 画像パイプラインの 4 本だけを実際に流す
+3. その 4 本も適用済みとして記録
+
+の順に並べてあるので、実行後は `DATABASE_URL` を Vercel に入れても安全になり、
+以降のマイグレーションはデプロイ時に自動で流れる。二度流しても壊れない。
+
 ### 12.2 この設計が明示的に「やらない」こと
 
 - 完全自動投稿（Instagram / X への直接投稿）
