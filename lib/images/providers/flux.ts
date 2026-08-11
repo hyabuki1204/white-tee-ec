@@ -1,6 +1,9 @@
+import { createHmac, timingSafeEqual } from "node:crypto";
+
 import {
   getImageProviderApiKey,
   getImageProviderBaseUrl,
+  getImageProviderWebhookSecret,
 } from "@/lib/images/env";
 import {
   ASPECT_RATIOS,
@@ -48,11 +51,10 @@ const COST_PER_IMAGE_JPY = 4.5;
 export const FLUX_CAPABILITIES: ProviderCapabilities = {
   maxVariants: 8,
   supportedAspectRatios: ASPECT_RATIOS,
-  // Deliberately false. FLUX does support webhook_url, but a job here is
-  // several sub-requests, so a webhook arrives once per variant and the
-  // handler has to reassemble them. Polling is correct first; see the
-  // design doc before enabling this.
-  supportsWebhook: false,
+  // Webhooks are supported once IMAGE_PROVIDER_WEBHOOK_SECRET and a public
+  // app URL are set. Each delivery is one variant; the route reassembles
+  // by polling the composite job id.
+  supportsWebhook: true,
   supportsSeed: true,
   supportsNegativePrompt: false,
   supportsReferenceImage: true,
@@ -69,6 +71,19 @@ type FluxPollResponse = {
   details?: unknown;
 };
 
+type FluxJobEntry = {
+  index: number;
+  id?: string;
+  pollingUrl: string;
+};
+
+type FluxWebhookBody = {
+  id?: string;
+  status?: string;
+  result?: { sample?: string; seed?: number } | null;
+  webhook_secret?: string;
+};
+
 function baseUrl(): string {
   return (getImageProviderBaseUrl() ?? DEFAULT_BASE_URL).replace(/\/$/, "");
 }
@@ -83,13 +98,6 @@ function apiKey(): string {
   return key;
 }
 
-/**
- * Map an HTTP status onto a retry decision.
- *
- * Getting this wrong is expensive in both directions: retrying a 402
- * wastes the remaining attempts on a job that cannot succeed, and failing
- * a 429 permanently throws away work that would have gone through.
- */
 function classifyHttpError(status: number, body: string): NormalizedError {
   if (status === 401 || status === 403) {
     return { category: "auth", code: `http_${status}`, message: body };
@@ -110,16 +118,13 @@ function classifyHttpError(status: number, body: string): NormalizedError {
   return { category: "permanent", code: `http_${status}`, message: body };
 }
 
-/** Pack the per-variant sub-request ids into one opaque provider job id. */
-function encodeJobId(entries: { index: number; pollingUrl: string }[]): string {
+function encodeJobId(entries: FluxJobEntry[]): string {
   return `${PROVIDER_PREFIX}_${Buffer.from(JSON.stringify(entries)).toString(
     "base64url",
   )}`;
 }
 
-function decodeJobId(
-  providerJobId: string,
-): { index: number; pollingUrl: string }[] | null {
+function decodeJobId(providerJobId: string): FluxJobEntry[] | null {
   if (!providerJobId.startsWith(`${PROVIDER_PREFIX}_`)) {
     return null;
   }
@@ -132,10 +137,93 @@ function decodeJobId(
       ).toString("utf8"),
     );
 
-    return Array.isArray(parsed) ? parsed : null;
+    return Array.isArray(parsed) ? (parsed as FluxJobEntry[]) : null;
   } catch {
     return null;
   }
+}
+
+/** True when this composite provider job id contains the given FLUX sub-id. */
+export function fluxJobContainsSubId(
+  providerJobId: string,
+  subId: string,
+): boolean {
+  const entries = decodeJobId(providerJobId);
+
+  if (!entries) {
+    return false;
+  }
+
+  return entries.some(
+    (entry) =>
+      entry.id === subId ||
+      entry.pollingUrl.includes(subId) ||
+      providerJobId.includes(subId),
+  );
+}
+
+function webhookCallbackUrl(): string | undefined {
+  const base = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "");
+  const secret = getImageProviderWebhookSecret();
+
+  if (!base || !secret) {
+    return undefined;
+  }
+
+  return `${base}/api/webhooks/images/flux_bfl`;
+}
+
+function verifyFluxWebhook(headers: Headers, rawBody: string): void {
+  const expected = getImageProviderWebhookSecret();
+
+  if (!expected) {
+    throw new Error("IMAGE_PROVIDER_WEBHOOK_SECRET is not configured.");
+  }
+
+  const headerSecret =
+    headers.get("x-webhook-secret") ?? headers.get("x-bfl-webhook-secret");
+
+  if (headerSecret) {
+    const a = Buffer.from(headerSecret);
+    const b = Buffer.from(expected);
+
+    if (a.length === b.length && timingSafeEqual(a, b)) {
+      return;
+    }
+  }
+
+  try {
+    const parsed = JSON.parse(rawBody) as FluxWebhookBody;
+
+    if (typeof parsed.webhook_secret === "string") {
+      const a = Buffer.from(parsed.webhook_secret);
+      const b = Buffer.from(expected);
+
+      if (a.length === b.length && timingSafeEqual(a, b)) {
+        return;
+      }
+    }
+  } catch {
+    // Fall through to HMAC check.
+  }
+
+  const signature =
+    headers.get("x-signature") ?? headers.get("x-bfl-signature");
+
+  if (signature) {
+    const digest = createHmac("sha256", expected).update(rawBody).digest("hex");
+    const expectedSig = Buffer.from(digest);
+    const received = Buffer.from(signature.replace(/^sha256=/, ""));
+
+    if (
+      expectedSig.length === received.length &&
+      timingSafeEqual(expectedSig, received)
+    ) {
+      return;
+    }
+  }
+
+  throw new Error("Invalid FLUX webhook signature.");
 }
 
 export class FluxImageProvider implements ImageProvider {
@@ -143,8 +231,6 @@ export class FluxImageProvider implements ImageProvider {
   readonly capabilities = FLUX_CAPABILITIES;
 
   buildPrompt(request: GenerationRequest): BuiltPrompt {
-    // FLUX has no negative-prompt field, so exclusions are folded into the
-    // prompt rather than silently dropped.
     const exclusions =
       request.negative.length > 0
         ? ` Do not include: ${request.negative.join(", ")}.`
@@ -153,8 +239,6 @@ export class FluxImageProvider implements ImageProvider {
     const params: Record<string, unknown> = {
       aspect_ratio: request.aspectRatio,
       output_format: "png",
-      // Normalized 0-1 mapped onto this provider's own scale, here and
-      // nowhere else.
       prompt_upsampling: request.stylization > 0.6,
     };
 
@@ -163,8 +247,6 @@ export class FluxImageProvider implements ImageProvider {
     }
 
     if (request.referenceImageUrls?.length) {
-      // The consistency mechanism: the brand reference set is attached to
-      // every production job so a series holds one look.
       params.image_prompt = request.referenceImageUrls.slice(0, 9);
     }
 
@@ -174,10 +256,10 @@ export class FluxImageProvider implements ImageProvider {
   async submit(request: GenerationRequest): Promise<SubmitResult> {
     const { prompt, params } = this.buildPrompt(request);
     const raw: unknown[] = [];
-    const entries: { index: number; pollingUrl: string }[] = [];
+    const entries: FluxJobEntry[] = [];
+    const callbackUrl = request.webhookUrl ?? webhookCallbackUrl();
+    const webhookSecret = getImageProviderWebhookSecret();
 
-    // One request per variant. Sequential rather than parallel so a rate
-    // limit surfaces on variant 2 instead of all N at once.
     for (let index = 0; index < request.variantCount; index += 1) {
       const response = await fetch(`${baseUrl()}/${MODEL_PATH}`, {
         method: "POST",
@@ -188,9 +270,14 @@ export class FluxImageProvider implements ImageProvider {
         body: JSON.stringify({
           prompt,
           ...params,
-          // Vary the seed per variant so the four are not identical.
           ...(request.seed !== undefined
             ? { seed: request.seed + index }
+            : {}),
+          ...(callbackUrl && webhookSecret
+            ? {
+                webhook_url: callbackUrl,
+                webhook_secret: webhookSecret,
+              }
             : {}),
         }),
       });
@@ -199,8 +286,6 @@ export class FluxImageProvider implements ImageProvider {
         const body = await response.text();
         const error = classifyHttpError(response.status, body);
 
-        // Any variants already accepted are kept: they will still be
-        // billed, so discarding them wastes money as well as work.
         if (entries.length === 0) {
           throw Object.assign(new Error(error.message), { normalized: error });
         }
@@ -210,7 +295,11 @@ export class FluxImageProvider implements ImageProvider {
 
       const parsed = (await response.json()) as FluxSubmitResponse;
       raw.push(parsed);
-      entries.push({ index, pollingUrl: parsed.polling_url });
+      entries.push({
+        index,
+        id: parsed.id,
+        pollingUrl: parsed.polling_url,
+      });
     }
 
     return {
@@ -220,16 +309,6 @@ export class FluxImageProvider implements ImageProvider {
     };
   }
 
-  /**
-   * Poll every sub-request and aggregate.
-   *
-   * ⚠️ Result URLs expire ten minutes after a variant reports Ready. The
-   * job is only reported succeeded once every variant is done, and the
-   * runner ingests on the following tick — so the gap between ticks has to
-   * stay well under ten minutes while jobs are in flight, or images are
-   * paid for and lost. The GitHub Actions safety net alone is not frequent
-   * enough for that; see the design doc.
-   */
   async poll(providerJobId: string): Promise<PollResult> {
     const entries = decodeJobId(providerJobId);
 
@@ -269,7 +348,6 @@ export class FluxImageProvider implements ImageProvider {
         images.push({
           index: entry.index,
           url: parsed.result.sample,
-          urlExpiresAt: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
         });
         continue;
       }
@@ -277,8 +355,8 @@ export class FluxImageProvider implements ImageProvider {
       if (parsed.status === "Error" || parsed.status === "Failed") {
         firstError ??= {
           category: "permanent",
-          code: parsed.status.toLowerCase(),
-          message: JSON.stringify(parsed.details ?? parsed.status),
+          code: "flux_failed",
+          message: `FLUX variant ${entry.index} failed.`,
         };
         continue;
       }
@@ -288,22 +366,20 @@ export class FluxImageProvider implements ImageProvider {
 
     if (pending > 0) {
       return {
-        status: "running",
+        status: images.length > 0 ? "running" : "submitted",
         progress: Math.floor((images.length / entries.length) * 100),
         images: [],
         raw,
       };
     }
 
-    // Every variant failing is a job failure; some failing is partial
-    // success, which the ingest step already handles per variant.
     if (images.length === 0) {
       return {
         status: "failed",
         images: [],
         error: firstError ?? {
-          category: "transient",
-          code: "no_images",
+          category: "permanent",
+          code: "flux_empty",
           message: "FLUX returned no images.",
         },
         raw,
@@ -319,10 +395,54 @@ export class FluxImageProvider implements ImageProvider {
     };
   }
 
-  async parseWebhook(): Promise<null> {
-    // See supportsWebhook above: one job is several sub-requests, so
-    // webhook handling needs reassembly that polling does not.
-    return null;
+  async parseWebhook(
+    headers: Headers,
+    rawBody: string,
+  ): Promise<{ providerJobId: string; event: PollResult } | null> {
+    verifyFluxWebhook(headers, rawBody);
+
+    let body: FluxWebhookBody;
+
+    try {
+      body = JSON.parse(rawBody) as FluxWebhookBody;
+    } catch {
+      return null;
+    }
+
+    if (typeof body.id !== "string" || !body.id) {
+      return null;
+    }
+
+    // A single delivery is one variant. The route looks up the composite
+    // job by this sub-id and then polls to reassemble the full result.
+    const status =
+      body.status === "Ready"
+        ? "running"
+        : body.status === "Error" || body.status === "Failed"
+          ? "failed"
+          : "running";
+
+    return {
+      providerJobId: body.id,
+      event: {
+        status,
+        images: [],
+        raw: body,
+        ...(status === "failed"
+          ? {
+              error: {
+                category: "permanent" as const,
+                code: "flux_webhook_failed",
+                message: `FLUX webhook reported failure for ${body.id}.`,
+              },
+            }
+          : {}),
+      },
+    };
+  }
+
+  async cancel(): Promise<void> {
+    // BFL has no cancel endpoint we rely on; expiry handles abandoned work.
   }
 
   estimateCostJpy(request: GenerationRequest): number {

@@ -171,3 +171,31 @@ export type AdminImageBudgetStatus = {
   ratio: number;
   state: "ok" | "warning" | "exceeded";
 };
+
+export type AdminImageReferenceImage = {
+  id: string;
+  setId: string;
+  url: string;
+  assetId: string | null;
+  note: string;
+  sortOrder: number;
+  createdAt: string;
+};
+
+export type AdminImageReferenceSet = {
+  id: string;
+  name: string;
+  description: string;
+  isDefault: boolean;
+  purposes: ImagePurpose[];
+  images: AdminImageReferenceImage[];
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type AdminImageReferenceSetInput = {
+  name: string;
+  description: string;
+  isDefault: boolean;
+  purposes: ImagePurpose[];
+};

@@ -7,6 +7,7 @@ import {
   getAdminImageBrief,
   saveConceptRenderSpec,
 } from "@/lib/db/images/admin-repository";
+import { resolveReferenceImageUrls } from "@/lib/db/images/reference-repository";
 import { getImageConcept } from "@/lib/db/images/repository";
 import { buildBriefContext } from "@/lib/images/director/brief-context";
 import { isClaudeConfigured } from "@/lib/images/director/client";
@@ -95,7 +96,7 @@ export async function POST(
       await saveConceptRenderSpec(concept.id, spec);
     }
 
-    const generationRequest = toGenerationRequest({
+    const baseRequest = toGenerationRequest({
       spec: spec as unknown as Parameters<
         typeof toGenerationRequest
       >[0]["spec"],
@@ -104,6 +105,19 @@ export async function POST(
       idempotencyKey: attemptIdempotencyKey(randomUUID(), 0),
       seed: body.seed,
     });
+
+    // Brand consistency: production work inherits the default reference
+    // set. Internal-test work stays clean so mock / product-depiction
+    // runs do not spend tokens on references that will never ship.
+    const referenceImageUrls =
+      brief.releasePolicy === "production"
+        ? await resolveReferenceImageUrls(brief.purpose)
+        : [];
+
+    const generationRequest = {
+      ...baseRequest,
+      ...(referenceImageUrls.length > 0 ? { referenceImageUrls } : {}),
+    };
 
     const job = await enqueueGenerationJob({
       conceptId: concept.id,

@@ -79,6 +79,9 @@ export default async function AdminImagesPage() {
           {IMAGE_ADMIN_COPY.review.title}
           {pendingCount > 0 ? `（${pendingCount}）` : ""}
         </Link>
+        <Link href="/admin/images/references" className={adminLink}>
+          {IMAGE_ADMIN_COPY.references.nav}
+        </Link>
         {budget ? (
           <span className={`${adminMuted} text-xs`}>
             {IMAGE_ADMIN_COPY.budget.label}: {Math.round(budget.spentJpy)} /{" "}

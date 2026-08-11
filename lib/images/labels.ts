@@ -124,4 +124,19 @@ export const IMAGE_ADMIN_COPY = {
     warning: "月次予算の 80% を超えています。",
     exceeded: "月次予算を使い切りました。新規ジョブは投入できません。",
   },
+  references: {
+    title: "参照画像セット",
+    empty: "参照セットがまだありません。",
+    nav: "参照セット",
+    defaultBadge: "デフォルト",
+    allPurposes: "全用途",
+    create: "セットを作成",
+    addImage: "参照画像を追加",
+    removeImage: "削除",
+    deleteSet: "セットを削除",
+    urlHint:
+      "プロバイダが取得できる公開 URL のみ。下書きバケットの署名 URL は使えません。",
+    defaultHint:
+      "デフォルトにすると、実運用ジョブへ自動添付されます（テスト専用ジョブには付きません）。",
+  },
 } as const;

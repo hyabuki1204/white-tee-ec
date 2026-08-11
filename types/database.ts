@@ -526,6 +526,46 @@ export type ImageProviderEventInsert = {
   received_at?: string;
 };
 
+export type ImageReferenceSetRow = {
+  id: string;
+  name: string;
+  description: string;
+  is_default: boolean;
+  purposes: ImagePurpose[];
+  created_at: string;
+  updated_at: string;
+};
+
+export type ImageReferenceSetInsert = {
+  id?: string;
+  name: string;
+  description?: string;
+  is_default?: boolean;
+  purposes?: ImagePurpose[];
+  created_at?: string;
+  updated_at?: string;
+};
+
+export type ImageReferenceImageRow = {
+  id: string;
+  set_id: string;
+  url: string;
+  asset_id: string | null;
+  note: string;
+  sort_order: number;
+  created_at: string;
+};
+
+export type ImageReferenceImageInsert = {
+  id?: string;
+  set_id: string;
+  url: string;
+  asset_id?: string | null;
+  note?: string;
+  sort_order?: number;
+  created_at?: string;
+};
+
 export type ImageCostKind = "claude" | "image_provider";
 
 export type ImageCostLedgerRow = {
@@ -666,6 +706,26 @@ export type Database = {
         Insert: ImageAssetInsert;
         Update: Partial<ImageAssetInsert>;
         Relationships: [];
+      };
+      image_reference_sets: {
+        Row: ImageReferenceSetRow;
+        Insert: ImageReferenceSetInsert;
+        Update: Partial<ImageReferenceSetInsert>;
+        Relationships: [];
+      };
+      image_reference_images: {
+        Row: ImageReferenceImageRow;
+        Insert: ImageReferenceImageInsert;
+        Update: Partial<ImageReferenceImageInsert>;
+        Relationships: [
+          {
+            foreignKeyName: "image_reference_images_set_id_fkey";
+            columns: ["set_id"];
+            isOneToOne: false;
+            referencedRelation: "image_reference_sets";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       image_review_events: {
         Row: ImageReviewEventRow;
