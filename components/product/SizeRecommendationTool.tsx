@@ -220,7 +220,7 @@ export function SizeRecommendationTool({
     return (
       <>
         <div className="lg:hidden">
-          <details className="group border-0 pt-2">
+          <details className="group border-0 pt-3">
             <summary className="cursor-pointer list-none type-label text-[var(--color-ink-soft)] [&::-webkit-details-marker]:hidden">
               <span className="group-open:opacity-60">{copy.heading}</span>
             </summary>
@@ -242,7 +242,7 @@ export function SizeRecommendationTool({
 
   if (collapsible) {
     return (
-      <details className="group border-0 pt-2">
+      <details className="group border-0 pt-3">
         <summary className="cursor-pointer list-none type-label text-[var(--color-ink-soft)] [&::-webkit-details-marker]:hidden">
           <span className="group-open:opacity-60">{copy.heading}</span>
         </summary>
