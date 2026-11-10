@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { CartCheckoutButton } from "@/components/cart/CartCheckoutButton";
 import { useCartDrawer } from "@/components/cart/CartDrawerContext";
 import { CartItem } from "@/components/cart/CartItem";
@@ -26,6 +26,8 @@ export function CartDrawer() {
   const { isOpen, closeDrawer, products, fabricNameBySlug } = useCartDrawer();
   const items = useCartStore((state) => state.items);
   const [orderNotes, setOrderNotes] = useState("");
+  const panelRef = useRef<HTMLElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -38,17 +40,44 @@ export function CartDrawer() {
     };
   }, [isOpen]);
 
+  // Modal behaviour: move focus in, trap Tab, close on Escape, and return
+  // focus to whatever opened the drawer.
   useEffect(() => {
     if (!isOpen) return;
+
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    closeButtonRef.current?.focus({ preventScroll: true });
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         closeDrawer();
+        return;
+      }
+      if (event.key !== "Tab" || !panelRef.current) return;
+
+      const focusable = panelRef.current.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      );
+      if (focusable.length === 0) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement;
+
+      if (event.shiftKey && (active === first || !panelRef.current.contains(active))) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault();
+        first.focus();
       }
     };
 
     document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      previouslyFocused?.focus?.({ preventScroll: true });
+    };
   }, [closeDrawer, isOpen]);
 
   const productLookup = useMemo<CartProductLookup>(() => {
@@ -97,18 +126,23 @@ export function CartDrawer() {
     products,
   );
 
-  let hasUnavailableItems = false;
+  const getMaxQuantity = (productId: string, variant: string) =>
+    Math.max(
+      productLookup[productId]?.variants[variant as ProductSize]
+        ?.stockQuantity ?? 0,
+      0,
+    );
+
+  const hasUnavailableItems = items.some(
+    (item) =>
+      !productLookup[item.productId] ||
+      getMaxQuantity(item.productId, item.variant) < 1,
+  );
 
   const itemElements = items.map((item) => {
     const product = productLookup[item.productId];
-    const variantStock =
-      product?.variants[item.variant as ProductSize]?.stockQuantity ?? 0;
-    const maxQuantity = Math.max(variantStock, 0);
+    const maxQuantity = getMaxQuantity(item.productId, item.variant);
     const isUnavailable = !product || maxQuantity < 1;
-
-    if (isUnavailable) {
-      hasUnavailableItems = true;
-    }
 
     return (
       <li key={`${item.productId}-${item.variant}`}>
@@ -129,20 +163,20 @@ export function CartDrawer() {
 
   return (
     <>
-      <button
-        type="button"
-        aria-label="Close bag"
-        tabIndex={isOpen ? 0 : -1}
-        aria-hidden={!isOpen}
+      <div
+        aria-hidden
         className={cn(
-          "fixed inset-0 z-[60] bg-neutral-900/25 transition-opacity duration-[var(--duration-fast)] ease-[var(--ease-quiet)]",
+          "fixed inset-0 z-[60] bg-[var(--color-ink)]/20 transition-opacity duration-[var(--duration-fast)] ease-[var(--ease-quiet)]",
           isOpen ? "opacity-100" : "pointer-events-none opacity-0",
         )}
         onClick={closeDrawer}
       />
 
       <aside
-        aria-label={copy.title}
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="cart-drawer-title"
         aria-hidden={!isOpen}
         inert={!isOpen ? true : undefined}
         className={cn(
@@ -150,37 +184,41 @@ export function CartDrawer() {
           isOpen ? "translate-x-0" : "translate-x-full",
         )}
       >
-        <div className="flex shrink-0 items-center justify-between border-b border-neutral-200/70 px-6 py-5">
+        <div className="flex shrink-0 items-center justify-between border-b border-[var(--color-hairline)] px-6 py-5">
           <div>
-            <p className="text-[14px] font-normal tracking-[0.2em] text-neutral-900">
+            <h2
+              id="cart-drawer-title"
+              className="text-[14px] font-normal tracking-[0.2em] text-[var(--color-ink)]"
+            >
               {copy.title}
-            </p>
+            </h2>
             {items.length > 0 ? (
-              <p className="mt-1 text-[12px] font-normal tracking-[0.06em] text-neutral-600">
+              <p className="mt-1 text-[12px] font-normal tracking-[0.06em] text-[var(--color-ink-soft)]">
                 {copy.items} · {items.length}
               </p>
             ) : null}
           </div>
           <button
+            ref={closeButtonRef}
             type="button"
             onClick={closeDrawer}
             aria-label="Close"
-            className="flex h-10 w-10 items-center justify-center text-neutral-600 transition-opacity hover:opacity-60"
+            className="flex h-10 w-10 items-center justify-center text-[var(--color-ink-soft)] transition-opacity hover:opacity-60"
           >
-            <span className="text-lg leading-none">&times;</span>
+            <span aria-hidden className="text-lg leading-none">&times;</span>
           </button>
         </div>
 
         <div className="min-h-0 flex-1 overflow-y-auto overscroll-y-contain px-6 py-4">
           {items.length === 0 ? (
             <div className="py-12 text-center">
-              <p className="text-[14px] font-normal tracking-wide text-neutral-600">
+              <p className="text-[14px] font-normal tracking-wide text-[var(--color-ink-soft)]">
                 {copy.empty}
               </p>
               <Link
                 href="/products"
                 onClick={closeDrawer}
-                className="mt-8 inline-flex min-h-11 items-center text-[14px] font-normal tracking-[0.12em] text-neutral-800 transition-opacity hover:opacity-60"
+                className="mt-8 inline-flex min-h-11 items-center text-[14px] font-normal tracking-[0.12em] text-[var(--color-ink)] transition-opacity hover:opacity-60"
               >
                 {copy.viewAll}
               </Link>
@@ -196,11 +234,11 @@ export function CartDrawer() {
                 </p>
               ) : null}
 
-              <ul className="divide-y divide-neutral-200/70">{itemElements}</ul>
+              <ul className="divide-y divide-[var(--color-hairline)]">{itemElements}</ul>
 
               {crossSellProducts.length > 0 ? (
-                <section className="mt-8 border-t border-neutral-200/60 pt-8">
-                  <p className="mb-6 text-[11px] font-normal tracking-[0.14em] text-neutral-600">
+                <section className="mt-8 border-t border-[var(--color-hairline)] pt-8">
+                  <p className="mb-6 text-[11px] font-normal tracking-[0.14em] text-[var(--color-ink-soft)]">
                     {copy.pairWith}
                   </p>
                   <ul className="space-y-6">
@@ -220,7 +258,7 @@ export function CartDrawer() {
                             onClick={closeDrawer}
                             className="group flex gap-4"
                           >
-                            <div className="relative h-24 w-20 shrink-0 overflow-hidden bg-neutral-100">
+                            <div className="relative h-24 w-20 shrink-0 overflow-hidden bg-[var(--color-image-placeholder)]">
                               <Image
                                 src={product.imageUrl}
                                 alt={displayName}
@@ -230,16 +268,16 @@ export function CartDrawer() {
                               />
                             </div>
                             <div className="min-w-0 pt-1">
-                              <p className="text-[11px] tracking-[0.08em] text-neutral-600">
+                              <p className="text-[11px] tracking-[0.08em] text-[var(--color-ink-soft)]">
                                 {GRAPHPAPER_STORE_COPY.brandLine}
                               </p>
-                              <p className="mt-1 text-[12px] font-normal tracking-[0.04em] text-neutral-800">
+                              <p className="mt-1 text-[12px] font-normal tracking-[0.04em] text-[var(--color-ink)]">
                                 {displayName}
                               </p>
-                              <p className="mt-1 text-[11px] font-normal tracking-[0.06em] text-neutral-600">
+                              <p className="mt-1 text-[11px] font-normal tracking-[0.06em] text-[var(--color-ink-soft)]">
                                 {FIT_TYPE_LABELS[product.fitType]}
                               </p>
-                              <p className="mt-2 text-[12px] text-neutral-600">
+                              <p className="mt-2 text-[12px] text-[var(--color-ink-soft)]">
                                 {formatPrice(product.price)}
                               </p>
                             </div>
@@ -252,7 +290,7 @@ export function CartDrawer() {
               ) : null}
 
               <label className="mt-8 block">
-                <span className="text-[11px] font-normal tracking-[0.12em] text-neutral-600">
+                <span className="text-[11px] font-normal tracking-[0.12em] text-[var(--color-ink-soft)]">
                   {copy.orderNotes}
                 </span>
                 <textarea
@@ -260,7 +298,7 @@ export function CartDrawer() {
                   onChange={(event) => setOrderNotes(event.target.value)}
                   placeholder={copy.orderNotesPlaceholder}
                   rows={3}
-                  className="mt-3 w-full resize-none border border-neutral-200/80 bg-transparent px-3 py-3 text-[14px] font-normal text-neutral-700 outline-none transition-colors focus:border-neutral-400"
+                  className="mt-3 w-full resize-none border border-[var(--color-hairline)] bg-transparent px-3 py-3 text-[14px] font-normal text-[var(--color-ink)] outline-none transition-colors focus:border-[var(--color-ink-soft)]"
                 />
               </label>
 
@@ -277,16 +315,16 @@ export function CartDrawer() {
         </div>
 
         {items.length > 0 ? (
-          <div className="shrink-0 border-t border-neutral-200/70 bg-background px-6 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+          <div className="shrink-0 border-t border-[var(--color-hairline)] bg-background px-6 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
             <div className="mb-4 flex items-baseline justify-between">
-              <p className="text-[14px] tracking-wide text-neutral-600">
+              <p className="text-[14px] tracking-wide text-[var(--color-ink-soft)]">
                 {copy.total}
               </p>
-              <p className="text-[14px] font-normal text-neutral-900">
+              <p className="text-[14px] font-normal text-[var(--color-ink)]">
                 {checkout.formatPrice(checkout.total)}
               </p>
             </div>
-            <p className="mb-4 text-[11px] font-normal text-neutral-500">
+            <p className="mb-4 text-[11px] font-normal text-[var(--color-ink-soft)]">
               {copy.taxIncluded}
             </p>
             {checkout.error ? (
@@ -305,7 +343,7 @@ export function CartDrawer() {
             <button
               type="button"
               onClick={closeDrawer}
-              className="mt-3 w-full py-2 text-[12px] font-normal tracking-[0.1em] text-neutral-600 transition-opacity hover:opacity-60"
+              className="mt-3 w-full py-2 text-[12px] font-normal tracking-[0.1em] text-[var(--color-ink-soft)] transition-opacity hover:opacity-60"
             >
               {copy.continueShopping}
             </button>

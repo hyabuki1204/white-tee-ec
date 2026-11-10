@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useProductPurchase } from "@/components/product/ProductPurchaseContext";
+import { SizeRecommendationTool } from "@/components/product/SizeRecommendationTool";
 import { PRODUCT_SIZES } from "@/lib/products/defaults";
 import { SITE_UI_COPY } from "@/lib/copy/site-ui";
 import { cn } from "@/lib/utils";
@@ -34,6 +35,11 @@ export function ProductPurchaseControls() {
       : [...PRODUCT_SIZES];
 
   const noSizeSelected = selectedSize === null;
+  const selectedMeasurement = selectedSize
+    ? product.sizeGuide.find((row) => row.size === selectedSize)
+    : undefined;
+  const [, lengthLabel, shoulderLabel, chestLabel, sleeveLabel] =
+    copy.sizeTableHeaders;
   const trulyDisabled =
     Boolean(selectedSize) && (isOutOfStock || maxQuantity < 1);
 
@@ -75,10 +81,10 @@ export function ProductPurchaseControls() {
                       "cursor-not-allowed border-[var(--color-hairline)] text-[var(--color-ink-faint)] line-through",
                     inStock &&
                       isSelected &&
-                      "bg-[var(--color-ink)] text-white",
+                      "bg-[var(--color-ink)] text-[var(--color-bg)]",
                     inStock &&
                       !isSelected &&
-                      "bg-transparent text-[var(--color-ink)] hover:bg-[var(--color-ink)] hover:text-white",
+                      "bg-transparent text-[var(--color-ink)] hover:bg-[var(--color-ink)] hover:text-[var(--color-bg)]",
                   )}
                 >
                   {size}
@@ -88,9 +94,46 @@ export function ProductPurchaseControls() {
           })}
         </ul>
 
+        {/* Selected size measurements — answers "how big is it?" in place */}
+        <p
+          aria-live="polite"
+          className="type-caption mt-3 min-h-[1.8em] tabular-nums"
+        >
+          {selectedMeasurement ? (
+            <>
+              <span className="text-[var(--color-ink)]">
+                {selectedMeasurement.size}
+              </span>
+              <span aria-hidden className="mx-2 text-[var(--color-ink-faint)]">
+                —
+              </span>
+              {lengthLabel} {selectedMeasurement.length}
+              <span aria-hidden className="mx-1.5 text-[var(--color-ink-faint)]">
+                /
+              </span>
+              {shoulderLabel} {selectedMeasurement.shoulder}
+              <span aria-hidden className="mx-1.5 text-[var(--color-ink-faint)]">
+                /
+              </span>
+              {chestLabel} {selectedMeasurement.chest}
+              <span aria-hidden className="mx-1.5 text-[var(--color-ink-faint)]">
+                /
+              </span>
+              {sleeveLabel} {selectedMeasurement.sleeve}
+              <span className="ml-1 text-[var(--color-ink-faint)]">cm</span>
+            </>
+          ) : null}
+        </p>
+
+        <SizeRecommendationTool
+          fitProfile={product.fitProfile}
+          availableSizes={sizes}
+          collapsible
+        />
+
         <Link
           href="#size-guide"
-          className="mt-4 inline-flex min-h-11 items-center text-[12px] font-normal tracking-[0.04em] text-[var(--color-ink-soft)] underline underline-offset-4 transition-opacity duration-[var(--duration-quiet)] ease-[var(--ease-quiet)] hover:opacity-60"
+          className="mt-2 inline-flex min-h-11 items-center text-[12px] font-normal tracking-[0.04em] text-[var(--color-ink-soft)] underline underline-offset-4 transition-opacity duration-[var(--duration-quiet)] ease-[var(--ease-quiet)] hover:opacity-60"
         >
           {copy.sizeGuide}
         </Link>
@@ -103,15 +146,13 @@ export function ProductPurchaseControls() {
           disabled={trulyDisabled}
           aria-disabled={noSizeSelected || trulyDisabled}
           className={cn(
-            "flex h-14 w-full items-center justify-center text-[14px] font-normal tracking-[0.1em] text-white transition-opacity duration-[var(--duration-quiet)] ease-[var(--ease-quiet)]",
+            "flex h-14 w-full items-center justify-center text-[14px] font-normal tracking-[0.1em] text-[var(--color-bg)] transition-opacity duration-[var(--duration-quiet)] ease-[var(--ease-quiet)]",
             trulyDisabled
               ? "cursor-not-allowed bg-[var(--color-ink-faint)]"
-              : noSizeSelected
-                ? "cursor-pointer bg-[var(--color-ink)] opacity-50"
-                : "bg-[var(--color-ink)] hover:opacity-80",
+              : "bg-[var(--color-ink)] hover:opacity-80",
           )}
         >
-          {buttonLabel}
+          {noSizeSelected ? copy.selectSize : buttonLabel}
         </button>
 
         <div aria-live="polite" className="min-h-[1.25rem]">
