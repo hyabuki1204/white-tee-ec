@@ -616,6 +616,24 @@ export type IntegrationOutboxInsert = {
   created_at?: string;
 };
 
+export type NewsletterSource = "home" | "footer";
+
+export type NewsletterSubscriberRow = {
+  id: string;
+  email: string;
+  source: NewsletterSource;
+  created_at: string;
+  unsubscribed_at: string | null;
+};
+
+export type NewsletterSubscriberInsert = {
+  id?: string;
+  email: string;
+  source?: NewsletterSource;
+  created_at?: string;
+  unsubscribed_at?: string | null;
+};
+
 export type Database = {
   public: {
     Tables: {
@@ -749,6 +767,12 @@ export type Database = {
         Row: IntegrationOutboxRow;
         Insert: IntegrationOutboxInsert;
         Update: Partial<IntegrationOutboxInsert>;
+        Relationships: [];
+      };
+      newsletter_subscribers: {
+        Row: NewsletterSubscriberRow;
+        Insert: NewsletterSubscriberInsert;
+        Update: Partial<NewsletterSubscriberInsert>;
         Relationships: [];
       };
     };
