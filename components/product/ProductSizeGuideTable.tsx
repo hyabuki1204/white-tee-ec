@@ -1,5 +1,9 @@
-import type { SizeGuideMeasurement } from "@/types";
+"use client";
+
+import { useProductPurchase } from "@/components/product/ProductPurchaseContext";
 import { SITE_UI_COPY } from "@/lib/copy/site-ui";
+import { cn } from "@/lib/utils";
+import type { SizeGuideMeasurement } from "@/types";
 
 type ProductSizeGuideTableProps = {
   rows: SizeGuideMeasurement[];
@@ -8,6 +12,7 @@ type ProductSizeGuideTableProps = {
 /** Measurement table anchored by #size-guide. */
 export function ProductSizeGuideTable({ rows }: ProductSizeGuideTableProps) {
   const { product: copy } = SITE_UI_COPY;
+  const { selectedSize } = useProductPurchase();
 
   if (rows.length === 0) return null;
 
@@ -17,7 +22,7 @@ export function ProductSizeGuideTable({ rows }: ProductSizeGuideTableProps) {
         {copy.sizeGuide}
       </h2>
       <div className="mt-4 overflow-x-auto">
-        <table className="min-w-[18rem] w-full border-collapse text-left">
+        <table className="min-w-[18rem] w-full border-collapse text-left tabular-nums">
           <caption className="sr-only">{copy.sizeTableCaption}</caption>
           <thead>
             <tr className="border-b border-[var(--color-hairline)]">
@@ -36,7 +41,14 @@ export function ProductSizeGuideTable({ rows }: ProductSizeGuideTableProps) {
             {rows.map((row) => (
               <tr
                 key={row.size}
-                className="border-b border-[var(--color-hairline)]"
+                aria-current={row.size === selectedSize ? "true" : undefined}
+                className={cn(
+                  "border-b border-[var(--color-hairline)] transition-colors duration-[var(--duration-quiet)] ease-[var(--ease-quiet)]",
+                  // Once a size is chosen, quiet the other rows.
+                  selectedSize !== null &&
+                    row.size !== selectedSize &&
+                    "[&>*]:text-[var(--color-ink-faint)]",
+                )}
               >
                 <th
                   scope="row"

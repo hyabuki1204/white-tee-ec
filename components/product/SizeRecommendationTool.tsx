@@ -93,7 +93,7 @@ function SizeRecommendationContent({
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-2 gap-3">
           <label className="block space-y-1.5">
-            <span className="text-[12px] font-normal tracking-[0.06em] text-neutral-600 md:text-[12px]">
+            <span className="text-[12px] font-normal tracking-[0.06em] text-[var(--color-ink-soft)] md:text-[12px]">
               {copy.height}
             </span>
             <input
@@ -107,12 +107,12 @@ function SizeRecommendationContent({
                 setHeightCm(event.target.value);
                 setSubmitted(false);
               }}
-              className="w-full border-0 border-b border-neutral-200 bg-transparent py-1.5 text-[12px] font-normal tracking-[0.04em] text-neutral-700 outline-none placeholder:text-neutral-400 focus:border-neutral-400"
+              className="w-full border-0 border-b border-[var(--color-hairline)] bg-transparent py-1.5 text-[12px] font-normal tracking-[0.04em] text-[var(--color-ink)] outline-none placeholder:text-[var(--color-ink-faint)] focus:border-[var(--color-ink-soft)]"
             />
           </label>
 
           <label className="block space-y-1.5">
-            <span className="text-[12px] font-normal tracking-[0.06em] text-neutral-600 md:text-[12px]">
+            <span className="text-[12px] font-normal tracking-[0.06em] text-[var(--color-ink-soft)] md:text-[12px]">
               {copy.weight}
             </span>
             <input
@@ -126,20 +126,20 @@ function SizeRecommendationContent({
                 setWeightKg(event.target.value);
                 setSubmitted(false);
               }}
-              className="w-full border-0 border-b border-neutral-200 bg-transparent py-1.5 text-[12px] font-normal tracking-[0.04em] text-neutral-700 outline-none placeholder:text-neutral-400 focus:border-neutral-400"
+              className="w-full border-0 border-b border-[var(--color-hairline)] bg-transparent py-1.5 text-[12px] font-normal tracking-[0.04em] text-[var(--color-ink)] outline-none placeholder:text-[var(--color-ink-faint)] focus:border-[var(--color-ink-soft)]"
             />
           </label>
         </div>
 
         <fieldset className="space-y-2 border-0 p-0">
-          <legend className="text-[12px] font-normal tracking-[0.06em] text-neutral-600 md:text-[12px]">
+          <legend className="text-[12px] font-normal tracking-[0.06em] text-[var(--color-ink-soft)] md:text-[12px]">
             {copy.preference}
           </legend>
           <div className="flex flex-wrap gap-x-4 gap-y-2">
             {PREFERENCES.map((option) => (
               <label
                 key={option.value}
-                className="flex cursor-pointer items-center gap-2 text-[12px] font-normal tracking-[0.04em] text-neutral-600"
+                className="flex cursor-pointer items-center gap-2 text-[12px] font-normal tracking-[0.04em] text-[var(--color-ink-soft)]"
               >
                 <input
                   type="radio"
@@ -150,7 +150,7 @@ function SizeRecommendationContent({
                     setPreference(option.value);
                     setSubmitted(false);
                   }}
-                  className="h-3 w-3 border-neutral-300 text-neutral-600 focus:ring-0 focus:ring-offset-0"
+                  className="h-3 w-3 accent-[var(--color-ink)] border-[var(--color-hairline)] text-[var(--color-ink-soft)] focus:ring-0 focus:ring-offset-0"
                 />
                 {option.label}
               </label>
@@ -160,7 +160,7 @@ function SizeRecommendationContent({
 
         <button
           type="submit"
-          className="text-[12px] font-normal uppercase tracking-[0.12em] text-neutral-600 underline-offset-4 hover:text-neutral-700 hover:underline md:text-[12px]"
+          className="text-[12px] font-normal uppercase tracking-[0.12em] text-[var(--color-ink-soft)] underline-offset-4 hover:text-[var(--color-ink)] hover:underline md:text-[12px]"
         >
           {copy.submit}
         </button>
@@ -168,23 +168,23 @@ function SizeRecommendationContent({
 
       {result ? (
         <div className="space-y-1.5 pt-1">
-          <p className="text-[12px] font-normal tracking-[0.04em] text-neutral-700">
+          <p className="text-[12px] font-normal tracking-[0.04em] text-[var(--color-ink)]">
             {result.primaryLine}
           </p>
           {result.secondaryLine ? (
-            <p className="text-[12px] font-normal leading-[1.75] tracking-[0.03em] text-neutral-600">
+            <p className="text-[12px] font-normal leading-[1.75] tracking-[0.03em] text-[var(--color-ink-soft)]">
               {result.secondaryLine}
             </p>
           ) : null}
           {result.helperJa ? (
             <JaHelperText spacing="tight">{result.helperJa}</JaHelperText>
           ) : null}
-          <p className="pt-2 text-[12px] font-normal leading-[1.7] tracking-[0.04em] text-neutral-600 md:text-[12px]">
+          <p className="pt-2 text-[12px] font-normal leading-[1.7] tracking-[0.04em] text-[var(--color-ink-soft)] md:text-[12px]">
             {copy.disclaimer}{" "}
             <button
               type="button"
               onClick={openSizeTab}
-              className="text-neutral-600 underline-offset-4 hover:text-neutral-700 hover:underline"
+              className="text-[var(--color-ink-soft)] underline-offset-4 hover:text-[var(--color-ink)] hover:underline"
             >
               {productCopy.sizeGuide}
             </button>
@@ -193,7 +193,7 @@ function SizeRecommendationContent({
       ) : null}
 
       {showInvalid ? (
-        <p className="text-[12px] font-normal tracking-[0.04em] text-neutral-600 md:text-[12px]">
+        <p className="text-[12px] font-normal tracking-[0.04em] text-[var(--color-ink-soft)] md:text-[12px]">
           {copy.invalidInput}
         </p>
       ) : null}
@@ -220,8 +220,8 @@ export function SizeRecommendationTool({
     return (
       <>
         <div className="lg:hidden">
-          <details className="group border-0 pt-6">
-            <summary className="cursor-pointer list-none type-label text-neutral-600 [&::-webkit-details-marker]:hidden">
+          <details className="group border-0 pt-2">
+            <summary className="cursor-pointer list-none type-label text-[var(--color-ink-soft)] [&::-webkit-details-marker]:hidden">
               <span className="group-open:opacity-60">{copy.heading}</span>
             </summary>
             <div className="space-y-5 pt-5">{inner}</div>
@@ -231,7 +231,7 @@ export function SizeRecommendationTool({
           aria-label={copy.sectionLabel}
           className="hidden space-y-5 border-0 pt-10 sm:pt-12 md:pt-14 lg:block"
         >
-          <h2 className="text-[12px] font-normal uppercase tracking-[0.14em] text-neutral-600 md:text-[12px]">
+          <h2 className="text-[12px] font-normal uppercase tracking-[0.14em] text-[var(--color-ink-soft)] md:text-[12px]">
             {copy.heading}
           </h2>
           {inner}
@@ -242,8 +242,8 @@ export function SizeRecommendationTool({
 
   if (collapsible) {
     return (
-      <details className="group border-0 pt-6">
-        <summary className="cursor-pointer list-none type-label text-neutral-600 [&::-webkit-details-marker]:hidden">
+      <details className="group border-0 pt-2">
+        <summary className="cursor-pointer list-none type-label text-[var(--color-ink-soft)] [&::-webkit-details-marker]:hidden">
           <span className="group-open:opacity-60">{copy.heading}</span>
         </summary>
         <div className="space-y-5 pt-5">{inner}</div>
@@ -256,7 +256,7 @@ export function SizeRecommendationTool({
       aria-label={copy.sectionLabel}
       className="space-y-5 border-0 pt-10 sm:pt-12 md:pt-14"
     >
-      <h2 className="text-[12px] font-normal uppercase tracking-[0.14em] text-neutral-600 md:text-[12px]">
+      <h2 className="text-[12px] font-normal uppercase tracking-[0.14em] text-[var(--color-ink-soft)] md:text-[12px]">
         {copy.heading}
       </h2>
       {inner}
