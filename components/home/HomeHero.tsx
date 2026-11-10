@@ -25,6 +25,11 @@ function getReducedMotionServerSnapshot() {
   return false;
 }
 
+/** Split after "、" so each phrase stays whole (copy text is unchanged). */
+function splitPhrases(text: string) {
+  return text.split(/(?<=、)/);
+}
+
 type HomeHeroProps = {
   priceRange: string;
 };
@@ -64,21 +69,25 @@ export function HomeHero({ priceRange }: HomeHeroProps) {
   return (
     <section
       aria-label="Introduction"
-      className="flex w-full flex-col bg-[var(--color-bg)] md:min-h-[min(72vh,760px)] md:flex-row"
+      className="flex w-full flex-col bg-[var(--color-surface)] md:min-h-[min(84svh,820px)] md:flex-row"
     >
       {/* Text panel — desktop left / mobile below photo */}
-      <div className="order-2 flex w-full flex-col justify-center px-[var(--space-4)] py-[var(--space-5)] md:order-1 md:w-[38%] md:px-[var(--space-5)] md:py-[var(--space-6)] lg:px-[var(--space-6)]">
+      <div className="order-2 flex w-full flex-col justify-center px-[var(--space-4)] py-[var(--space-5)] md:order-1 md:w-[38%] md:px-[var(--space-5)] md:py-[var(--space-6)] xl:px-[var(--space-6)]">
         <p className="type-label">{copy.label}</p>
 
-        <h1 className="type-display mt-[var(--space-3)] max-w-[16em]">
-          {copy.headline}
+        <h1 className="type-display mt-[var(--space-3)] max-w-[12em]">
+          {splitPhrases(copy.headline).map((phrase) => (
+            <span key={phrase} className="inline-block">
+              {phrase}
+            </span>
+          ))}
         </h1>
 
         <p className="type-body mt-[var(--space-2)] max-w-[22em] text-[var(--color-ink-soft)]">
           {copy.subline}
         </p>
 
-        <p className="type-caption mt-[var(--space-3)] font-en tracking-[0.04em]">
+        <p className="type-caption mt-[var(--space-3)] font-en tabular-nums tracking-[0.04em]">
           {priceRange}
         </p>
 
@@ -91,7 +100,7 @@ export function HomeHero({ priceRange }: HomeHeroProps) {
       </div>
 
       {/* Image panel — desktop right / mobile top */}
-      <div className="relative order-1 aspect-[4/5] w-full overflow-hidden bg-[var(--color-bg-warm)] md:order-2 md:aspect-auto md:min-h-[min(72vh,760px)] md:w-[62%]">
+      <div className="relative order-1 aspect-[4/5] w-full overflow-hidden bg-[var(--color-image-placeholder)] md:order-2 md:aspect-auto md:min-h-[min(84svh,820px)] md:w-[62%]">
         {HOME_HERO_IMAGES.slice(0, mountedCount).map((src, index) => (
           <Image
             key={src}

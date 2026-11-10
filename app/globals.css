@@ -9,14 +9,18 @@
   --color-bg-warm: #fafaf8;
   --color-hairline: #e8e6e2;
 
+  /* Surfaces — two whites, no new colors.
+     ground = the page itself / surface = panels that sit on it (hero, bands) */
+  --color-ground: var(--color-bg-warm);
+  --color-surface: var(--color-bg);
+
   /* Font families (overridden by next/font CSS vars on body) */
   --font-sans-jp: "Zen Kaku Gothic New", "Noto Sans JP", sans-serif;
   --font-sans-en: "Inter", "Helvetica Neue", Helvetica, sans-serif;
 
-  /* Type scale — only these sizes */
-  --text-display: 24px;
-  --text-display-sm: 22px;
-  --text-display-lg: 26px;
+  /* Type scale — only these sizes.
+     Display is fluid (hero only) so it can carry the page above the H2s. */
+  --text-display: clamp(28px, calc(18px + 1.4vw), 36px);
   --text-h2: 20px;
   --text-body: 14px;
   --text-caption: 12px;
@@ -88,23 +92,14 @@ body {
 
 .type-display {
   font-family: var(--font-sans-jp);
-  font-size: var(--text-display-sm);
+  font-size: var(--text-display);
   font-weight: var(--font-weight-regular);
-  line-height: 1.65;
-  letter-spacing: var(--tracking-body);
+  line-height: 1.6;
+  letter-spacing: 0.04em;
   color: var(--color-ink);
-}
-
-@media (min-width: 768px) {
-  .type-display {
-    font-size: var(--text-display);
-  }
-}
-
-@media (min-width: 1024px) {
-  .type-display {
-    font-size: var(--text-display-lg);
-  }
+  /* Break Japanese at phrase boundaries; keep lines even */
+  word-break: auto-phrase;
+  text-wrap: balance;
 }
 
 .type-h2 {
@@ -114,6 +109,8 @@ body {
   line-height: 1.6;
   letter-spacing: var(--tracking-body);
   color: var(--color-ink);
+  word-break: auto-phrase;
+  text-wrap: balance;
 }
 
 .type-label {
