@@ -1,4 +1,5 @@
 import { ProductFabricSpecs } from "@/components/product/ProductFabricSpecs";
+import { MobilePurchaseBar } from "@/components/product/MobilePurchaseBar";
 import { ProductGallery } from "@/components/product/ProductGallery";
 import { ProductPdpAccordion } from "@/components/product/ProductPdpAccordion";
 import { ProductPurchaseControls } from "@/components/product/ProductPurchaseControls";
@@ -71,6 +72,8 @@ export function ProductPageLayout({
           {infoPanel}
         </aside>
       </section>
+
+      <MobilePurchaseBar displayName={displayName} />
     </ProductPurchaseProvider>
   );
 }

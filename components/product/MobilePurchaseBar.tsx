@@ -1,79 +1,116 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AddToCartButton } from "@/components/product/AddToCartButton";
 import { useProductPurchase } from "@/components/product/ProductPurchaseContext";
-import {
-  getGraphpaperDisplayName,
-  STORE_BRAND_LINE,
-} from "@/lib/products/display-name";
+import { SITE_UI_COPY } from "@/lib/copy/site-ui";
 import { formatPrice } from "@/lib/utils/format-price";
+import { cn } from "@/lib/utils";
 
 type MobilePurchaseBarProps = {
-  fabricName?: string | null;
+  displayName: string;
 };
 
-export function MobilePurchaseBar({ fabricName }: MobilePurchaseBarProps) {
+const { product: copy } = SITE_UI_COPY;
+
+/**
+ * Quiet fixed purchase bar for mobile PDP.
+ * Appears only while the inline add-to-cart button and the footer are off-screen.
+ */
+export function MobilePurchaseBar({ displayName }: MobilePurchaseBarProps) {
   const {
     product,
     selectedSize,
     buttonLabel,
+    canAdd,
     handleAddToCart,
     purchaseCtaRef,
   } = useProductPurchase();
-  const [inlineCtaVisible, setInlineCtaVisible] = useState(true);
-
-  const displayName = getGraphpaperDisplayName(product, fabricName);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const target = purchaseCtaRef.current;
+    const cta = purchaseCtaRef.current;
+    if (!cta) return;
 
-    if (!target) {
-      return;
-    }
+    const footer = document.querySelector("footer");
+    let ctaInView = true;
+    let footerInView = false;
 
+    // Hide while the inline CTA is on screen, and near the footer so the
+    // bar never covers the last links.
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        setInlineCtaVisible(entry?.isIntersecting ?? false);
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.target === cta) ctaInView = entry.isIntersecting;
+          else footerInView = entry.isIntersecting;
+        }
+        setVisible(!ctaInView && !footerInView);
       },
-      { threshold: 0.15, rootMargin: "0px 0px -48px 0px" },
+      { threshold: 0.15 },
     );
 
-    observer.observe(target);
-
-    return () => {
-      observer.disconnect();
-    };
+    observer.observe(cta);
+    if (footer) observer.observe(footer);
+    return () => observer.disconnect();
   }, [purchaseCtaRef]);
 
-  if (inlineCtaVisible) {
-    return null;
-  }
+  const noSizeSelected = selectedSize === null;
+
+  const onClick = () => {
+    if (noSizeSelected) {
+      // Bring the size selector into view; inline error explains why.
+      handleAddToCart();
+      purchaseCtaRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+      return;
+    }
+    if (!canAdd) return;
+    handleAddToCart();
+  };
 
   return (
     <div
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-neutral-200/70 bg-background/95 px-6 py-3 backdrop-blur-sm lg:hidden"
+      role="region"
       aria-label="Quick purchase"
+      inert={!visible ? true : undefined}
+      className={cn(
+        "fixed inset-x-0 bottom-0 z-40 border-t border-[var(--color-hairline)] bg-[var(--color-bg)] px-6 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] transition-[opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-quiet)] lg:hidden",
+        visible
+          ? "translate-y-0 opacity-100"
+          : "pointer-events-none translate-y-full opacity-0",
+      )}
     >
       <div className="mx-auto flex max-w-lg items-center gap-4">
         <div className="min-w-0 flex-1">
-          <p className="truncate text-[11px] font-normal tracking-[0.12em] text-neutral-600">
-            {STORE_BRAND_LINE}
-          </p>
-          <p className="truncate text-[14px] font-normal tracking-[0.03em] text-neutral-900">
+          <p className="type-body truncate text-[var(--color-ink)]">
             {displayName}
           </p>
-          <p className="text-[14px] font-normal tracking-[0.04em] text-neutral-700">
+          <p className="type-caption font-en tabular-nums tracking-[0.04em]">
             {formatPrice(product.price)}
-            {selectedSize ? ` · ${selectedSize}` : null}
+            {selectedSize ? (
+              <span className="text-[var(--color-ink-soft)]">
+                <span aria-hidden className="mx-2 text-[var(--color-ink-faint)]">
+                  /
+                </span>
+                {selectedSize}
+              </span>
+            ) : null}
           </p>
         </div>
-        <AddToCartButton
-          disabled={!selectedSize}
-          onAdd={handleAddToCart}
-          label={buttonLabel}
-          compact
-        />
+        <button
+          type="button"
+          onClick={onClick}
+          disabled={!noSizeSelected && !canAdd}
+          className={cn(
+            "flex h-11 shrink-0 items-center justify-center px-5 text-[12px] font-normal tracking-[0.1em] text-[var(--color-bg)] transition-opacity duration-[var(--duration-quiet)] ease-[var(--ease-quiet)]",
+            !noSizeSelected && !canAdd
+              ? "cursor-not-allowed bg-[var(--color-ink-faint)]"
+              : "bg-[var(--color-ink)] hover:opacity-80",
+          )}
+        >
+          {noSizeSelected ? copy.selectSizeButton : buttonLabel}
+        </button>
       </div>
     </div>
   );

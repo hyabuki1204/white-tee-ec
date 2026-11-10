@@ -44,7 +44,6 @@ export function HomeFeaturedProduct({
                 src={product.imageUrl}
                 alt={displayName}
                 fill
-                priority
                 sizes="(max-width: 768px) 100vw, 55vw"
                 className="object-cover transition-opacity duration-[var(--duration-quiet)] ease-[var(--ease-quiet)] group-hover:opacity-95"
               />

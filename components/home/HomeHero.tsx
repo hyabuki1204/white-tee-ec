@@ -30,7 +30,9 @@ type HomeHeroProps = {
 };
 
 export function HomeHero({ priceRange }: HomeHeroProps) {
-  const [activeIndex, setActiveIndex] = useState(0);
+  /** `reached` = highest slide shown so far; later slides mount only when needed. */
+  const [slide, setSlide] = useState({ active: 0, reached: 0 });
+  const activeIndex = slide.active;
   const prefersReducedMotion = useSyncExternalStore(
     subscribeReducedMotion,
     getReducedMotionSnapshot,
@@ -44,11 +46,20 @@ export function HomeHero({ priceRange }: HomeHeroProps) {
     if (prefersReducedMotion || imageCount <= 1) return;
 
     const timer = window.setInterval(() => {
-      setActiveIndex((current) => (current + 1) % imageCount);
+      setSlide(({ active, reached }) => {
+        const next = (active + 1) % imageCount;
+        return { active: next, reached: Math.max(reached, next) };
+      });
     }, HOME_HERO_INTERVAL_MS);
 
     return () => window.clearInterval(timer);
   }, [imageCount, prefersReducedMotion]);
+
+  // Mount the slides already shown plus the next one (preloaded off-screen),
+  // so only the first image competes for LCP.
+  const mountedCount = prefersReducedMotion
+    ? 1
+    : Math.min(imageCount, slide.reached + 2);
 
   return (
     <section
@@ -81,13 +92,13 @@ export function HomeHero({ priceRange }: HomeHeroProps) {
 
       {/* Image panel — desktop right / mobile top */}
       <div className="relative order-1 aspect-[4/5] w-full overflow-hidden bg-[var(--color-bg-warm)] md:order-2 md:aspect-auto md:min-h-[min(72vh,760px)] md:w-[62%]">
-        {HOME_HERO_IMAGES.map((src, index) => (
+        {HOME_HERO_IMAGES.slice(0, mountedCount).map((src, index) => (
           <Image
             key={src}
             src={src}
             alt=""
             fill
-            priority={index === 0}
+            preload={index === 0}
             sizes="(max-width: 768px) 100vw, 62vw"
             className={cn(
               "object-cover object-[center_18%]",
