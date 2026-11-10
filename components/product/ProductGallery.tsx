@@ -2,7 +2,6 @@
 
 import { SoftImage } from "@/components/motion/SoftImage";
 import { useCallback, useRef, useState } from "react";
-import { cn } from "@/lib/utils";
 import type { Product, ProductImage } from "@/types";
 
 type ProductGalleryProps = {
@@ -36,11 +35,10 @@ export function ProductGallery({ product, displayName }: ProductGalleryProps) {
 
   const [activeIndex, setActiveIndex] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const syncingRef = useRef(false);
 
   const handleScroll = useCallback(() => {
     const container = scrollRef.current;
-    if (!container || syncingRef.current || !hasMultiple) return;
+    if (!container || !hasMultiple) return;
 
     const width = container.clientWidth;
     if (width <= 0) return;
@@ -54,22 +52,6 @@ export function ProductGallery({ product, displayName }: ProductGalleryProps) {
       setActiveIndex(next);
     }
   }, [activeIndex, hasMultiple, images.length]);
-
-  const goTo = useCallback((index: number) => {
-    const container = scrollRef.current;
-    if (!container) return;
-
-    syncingRef.current = true;
-    setActiveIndex(index);
-    container.scrollTo({
-      left: index * container.clientWidth,
-      behavior: "smooth",
-    });
-
-    window.setTimeout(() => {
-      syncingRef.current = false;
-    }, 350);
-  }, []);
 
   if (images.length === 0) {
     return (
@@ -105,6 +87,9 @@ export function ProductGallery({ product, displayName }: ProductGalleryProps) {
         <div
           ref={scrollRef}
           onScroll={handleScroll}
+          role={hasMultiple ? "region" : undefined}
+          tabIndex={hasMultiple ? 0 : undefined}
+          aria-label={hasMultiple ? `${imageAlt} gallery` : undefined}
           className="flex snap-x snap-mandatory overflow-x-auto scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           {images.map((image, index) => (
@@ -126,28 +111,18 @@ export function ProductGallery({ product, displayName }: ProductGalleryProps) {
         </div>
 
         {hasMultiple ? (
-          <div
-            className="flex items-center justify-center gap-1.5 py-4"
-            role="tablist"
-            aria-label="Gallery pagination"
+          <p
+            aria-live="polite"
+            className="type-caption py-4 text-center font-en tabular-nums tracking-[0.08em]"
           >
-            {images.map((image, index) => (
-              <button
-                key={image.id}
-                type="button"
-                role="tab"
-                aria-selected={index === activeIndex}
-                aria-label={`Image ${index + 1}`}
-                onClick={() => goTo(index)}
-                className={cn(
-                  "h-1 w-1 transition-opacity duration-[var(--duration-fast)] ease-[var(--ease-quiet)]",
-                  index === activeIndex
-                    ? "bg-[var(--color-ink-soft)] opacity-100"
-                    : "bg-[var(--color-ink-faint)] opacity-50",
-                )}
-              />
-            ))}
-          </div>
+            <span className="sr-only">Image </span>
+            <span className="text-[var(--color-ink)]">{activeIndex + 1}</span>
+            <span aria-hidden className="mx-2 text-[var(--color-ink-faint)]">
+              /
+            </span>
+            <span className="sr-only"> of </span>
+            {images.length}
+          </p>
         ) : null}
       </div>
     </div>
