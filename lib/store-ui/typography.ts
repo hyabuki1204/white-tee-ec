@@ -1,6 +1,6 @@
 /**
  * Storefront typography — maps 1:1 to design tokens in globals.css.
- * Allowed sizes only: Display 22–26 / H2 20 / Label 11 / Body 14 / Caption 12 / Fine 11.
+ * Allowed sizes only: Display 28–36 (fluid, hero only) / H2 20 / Label 11 / Body 14 / Caption 12 / Fine 11.
  * Weights: 400 (regular) or 500 (medium). Never bold (700+).
  */
 export const STORE_TYPO = {
@@ -32,6 +32,8 @@ export const STORE_TYPO = {
   pdpPrice: "type-body text-[var(--color-ink)]",
   /** @deprecated Prefer `caption` */
   pdpBrand: "type-caption",
+  /** Prices and measurements — Inter with even-width numerals */
+  figure: "font-en tabular-nums tracking-[0.04em]",
 } as const;
 
 /** Purchase column width — readable on mobile and desktop. */

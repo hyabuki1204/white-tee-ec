@@ -2,6 +2,8 @@
 
 import { useState, type FormEvent } from "react";
 import { HomeSectionHeading } from "@/components/home/HomeSectionHeading";
+import { STORE_TYPO } from "@/lib/store-ui/typography";
+import { cn } from "@/lib/utils";
 
 export function HomeNewsletter() {
   const [email, setEmail] = useState("");
@@ -16,16 +18,17 @@ export function HomeNewsletter() {
   return (
     <section
       aria-label="Newsletter"
-      className="border-t border-[var(--color-hairline)] py-[var(--space-6)] md:py-[var(--space-7)]"
+      className="pb-[var(--space-6)] md:pb-[var(--space-7)]"
     >
       <div className="mx-auto w-full max-w-7xl px-6 md:px-8 lg:px-12">
+        <div className="border-t border-[var(--color-hairline)] pt-[var(--space-6)] md:pt-[var(--space-7)]" />
         <HomeSectionHeading
           label="NEWSLETTER"
           title="新しい白の知らせを。"
         />
 
         {submitted ? (
-          <p className="mt-[var(--space-4)] text-[14px] font-normal leading-[var(--leading-body)] tracking-[var(--tracking-body)] text-[var(--color-ink-soft)]">
+          <p className={cn(STORE_TYPO.body, "mt-[var(--space-4)]")}>
             登録を受け付けました。
           </p>
         ) : (
@@ -43,7 +46,7 @@ export function HomeNewsletter() {
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 placeholder="Email address"
-                className="w-full bg-transparent text-[14px] font-normal tracking-[0.02em] text-[var(--color-ink)] outline-none placeholder:text-[var(--color-ink-faint)]"
+                className="type-body w-full bg-transparent text-[var(--color-ink)] outline-none placeholder:text-[var(--color-ink-faint)]"
               />
             </label>
             <button

@@ -25,9 +25,10 @@ export function HomeProductGrid({
     <section
       id="products"
       aria-label="Product catalog"
-      className="border-t border-[var(--color-hairline)] py-[var(--space-6)] md:py-[var(--space-7)]"
+      className="pb-[var(--space-6)] md:pb-[var(--space-7)]"
     >
       <div className="mx-auto w-full max-w-7xl px-6 md:px-8 lg:px-12">
+        <div className="border-t border-[var(--color-hairline)] pt-[var(--space-6)] md:pt-[var(--space-7)]" />
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <HomeSectionHeading
             label="PRODUCTS"
