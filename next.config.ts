@@ -8,6 +8,11 @@ const nextConfig: NextConfig = {
         destination: "/journal",
         permanent: true,
       },
+      {
+        source: "/en/stories",
+        destination: "/en/journal",
+        permanent: true,
+      },
     ];
   },
   images: {

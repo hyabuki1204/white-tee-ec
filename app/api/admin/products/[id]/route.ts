@@ -1,4 +1,5 @@
 import { revalidatePath } from "next/cache";
+import { revalidateStorePath } from "@/lib/i18n/revalidate";
 import { after, NextResponse } from "next/server";
 import { AdminAuthError, requireAdminSession } from "@/lib/admin/auth";
 import { parseAdminProductInput } from "@/lib/admin/product-input";
@@ -23,8 +24,8 @@ export async function PATCH(request: Request, context: RouteContext) {
 
     const product = await updateProduct(id, parsed.data);
 
-    revalidatePath("/products");
-    revalidatePath(`/products/${product.slug}`);
+    revalidateStorePath("/products");
+    revalidateStorePath(`/products/${product.slug}`);
     revalidatePath("/admin/products");
     revalidatePath(`/admin/products/${id}/edit`);
     revalidatePath("/admin/restock");
@@ -54,7 +55,7 @@ export async function DELETE(_request: Request, context: RouteContext) {
     const { id } = await context.params;
     const result = await deleteProduct(id);
 
-    revalidatePath("/products");
+    revalidateStorePath("/products");
     revalidatePath("/admin/products");
 
     return NextResponse.json(result);

@@ -1,4 +1,5 @@
 import { revalidatePath } from "next/cache";
+import { revalidateStorePath } from "@/lib/i18n/revalidate";
 import { NextResponse } from "next/server";
 import { AdminAuthError, requireAdminSession } from "@/lib/admin/auth";
 import { parseAdminProductInput } from "@/lib/admin/product-input";
@@ -17,8 +18,8 @@ export async function POST(request: Request) {
 
     const product = await createProduct(parsed.data);
 
-    revalidatePath("/products");
-    revalidatePath(`/products/${product.slug}`);
+    revalidateStorePath("/products");
+    revalidateStorePath(`/products/${product.slug}`);
     revalidatePath("/admin/products");
 
     return NextResponse.json({ product });
