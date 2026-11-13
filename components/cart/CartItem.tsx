@@ -16,6 +16,8 @@ type CartItemProps = {
   currentPrice: number;
   maxQuantity: number;
   isUnavailable: boolean;
+  /** Called after following the product link (the drawer closes itself). */
+  onNavigate?: () => void;
 };
 
 function QtyButton({
@@ -35,12 +37,15 @@ function QtyButton({
       onClick={onClick}
       disabled={disabled}
       aria-label={label}
-      className="flex h-10 w-10 items-center justify-center text-[14px] font-normal text-[var(--color-ink-soft)] transition-opacity active:opacity-70 disabled:cursor-not-allowed disabled:opacity-30 md:h-auto md:w-auto md:text-[14px] md:text-[var(--color-ink-soft)] md:hover:text-[var(--color-ink)]"
+      className="flex h-10 w-10 items-center justify-center font-en text-[16px] text-[var(--color-ink)] transition-colors duration-[var(--duration-quiet)] hover:bg-[var(--color-ink)] hover:text-white disabled:cursor-not-allowed disabled:text-[var(--color-ink-faint)] disabled:hover:bg-transparent disabled:hover:text-[var(--color-ink-faint)]"
     >
       {children}
     </button>
   );
 }
+
+const nameClass =
+  "font-en text-[17px] leading-snug tracking-[0.02em] text-[var(--color-ink)]";
 
 export function CartItem({
   item,
@@ -50,6 +55,7 @@ export function CartItem({
   currentPrice,
   maxQuantity,
   isUnavailable,
+  onNavigate,
 }: CartItemProps) {
   const removeItem = useCartStore((state) => state.removeItem);
   const updateQuantity = useCartStore((state) => state.updateQuantity);
@@ -60,53 +66,60 @@ export function CartItem({
   const atMax = item.quantity >= maxQuantity && maxQuantity > 0;
 
   return (
-    <article className="flex items-start gap-5 py-7 sm:gap-6 sm:py-8">
-      <div className="relative h-24 w-[4.5rem] shrink-0 overflow-hidden bg-[var(--color-image-placeholder)] sm:h-20 sm:w-16">
+    <article className="flex gap-5 py-6">
+      <div className="relative aspect-[3/4] w-20 shrink-0 self-start overflow-hidden bg-[var(--color-image-placeholder)] sm:w-24">
         {imageUrl ? (
           <Image
             src={imageUrl}
             alt=""
             fill
-            sizes="72px"
+            sizes="96px"
             className="object-cover object-center"
           />
         ) : null}
       </div>
 
-      <div className="flex min-w-0 flex-1 items-start justify-between gap-4 sm:gap-6">
-        <div className="min-w-0 space-y-2">
+      <div className="flex min-w-0 flex-1 flex-col">
+        <div className="flex items-baseline justify-between gap-4">
           {productSlug ? (
             <Link
               href={`/products/${productSlug}`}
-              className="block py-0.5 text-[14px] font-normal tracking-wide text-[var(--color-ink)] transition-opacity active:opacity-60 md:text-[14px] md:text-[var(--color-ink)] md:hover:opacity-60"
+              onClick={onNavigate}
+              className={`${nameClass} transition-colors duration-[var(--duration-quiet)] hover:text-[var(--color-navy)]`}
             >
               {productName}
             </Link>
           ) : (
-            <h2 className="text-[14px] font-normal tracking-wide text-[var(--color-ink)] md:text-[14px] md:text-[var(--color-ink)]">
-              {productName}
-            </h2>
+            <h3 className={nameClass}>{productName}</h3>
           )}
-          <p className="text-[14px] font-normal text-[var(--color-ink-soft)] md:text-[14px] md:text-[var(--color-ink-soft)]">
-            {copy.size} {item.variant} · {copy.qty} {item.quantity}
-          </p>
-          <p className="text-[14px] font-normal text-[var(--color-ink-soft)] md:text-[14px] md:text-[var(--color-ink-soft)]">
+          <p className="shrink-0 font-en text-[16px] tracking-[0.02em] tabular-nums text-[var(--color-ink)]">
             {formatPrice(lineTotal)}
           </p>
-          {priceChanged ? (
-            <p className="text-[12px] font-normal text-[var(--color-ink-soft)]">
-              {copy.priceUpdated(formatPrice(currentPrice))}
-            </p>
-          ) : null}
-          {isUnavailable ? (
-            <p className="text-[12px] font-normal text-red-600/80">
-              {copy.unavailable}
-            </p>
-          ) : null}
         </div>
 
-        <div className="flex flex-col items-end gap-2 sm:gap-3">
-          <div className="flex items-center gap-1 sm:gap-3">
+        <p className="type-caption mt-1">
+          {copy.size} <span className="font-en text-[13px]">{item.variant}</span>
+          <span className="mx-2 text-[var(--color-ink-faint)]">/</span>
+          <span className="font-en text-[13px] tabular-nums">
+            {formatPrice(currentPrice)}
+          </span>
+        </p>
+
+        {priceChanged ? (
+          <p className="type-caption mt-1">
+            {copy.priceUpdated(formatPrice(currentPrice))}
+          </p>
+        ) : null}
+        {isUnavailable ? (
+          <p className="type-caption mt-1 !text-red-700">{copy.unavailable}</p>
+        ) : null}
+
+        <div className="mt-auto flex items-end justify-between gap-4 pt-4">
+          <div
+            role="group"
+            aria-label={copy.qty}
+            className="flex items-center border border-[var(--color-hairline)] bg-[var(--color-surface)]"
+          >
             <QtyButton
               label={copy.decreaseQty}
               onClick={() =>
@@ -115,7 +128,7 @@ export function CartItem({
             >
               −
             </QtyButton>
-            <span className="min-w-6 text-center text-[14px] font-normal tabular-nums text-[var(--color-ink)] md:min-w-4 md:text-[14px]">
+            <span className="min-w-8 text-center font-en text-[15px] tabular-nums text-[var(--color-ink)]">
               {item.quantity}
             </span>
             <QtyButton
@@ -136,7 +149,7 @@ export function CartItem({
           <button
             type="button"
             onClick={() => removeItem(item.productId, item.variant)}
-            className="min-h-10 px-1 text-[14px] font-normal text-[var(--color-ink-soft)] transition-opacity active:opacity-60 md:min-h-0 md:text-[14px] md:text-[var(--color-ink-soft)] md:hover:opacity-60"
+            className="type-caption min-h-10 underline decoration-[var(--color-hairline)] underline-offset-4 transition-colors duration-[var(--duration-quiet)] hover:text-[var(--color-ink)] hover:decoration-[var(--color-ink)]"
           >
             {copy.remove}
           </button>

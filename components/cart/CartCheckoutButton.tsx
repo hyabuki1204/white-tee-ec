@@ -1,17 +1,18 @@
 "use client";
 
+import { buttonPrimaryClass } from "@/lib/store-ui/ui-classes";
 import { cn } from "@/lib/utils";
 
 type CartCheckoutButtonProps = {
-  label: string;
+  label: React.ReactNode;
   disabled: boolean;
   isLoading: boolean;
   loadingLabel: string;
   onClick: () => void;
   className?: string;
-  prominent?: boolean;
 };
 
+/** The one primary action of the cart: navy fill, full width. */
 export function CartCheckoutButton({
   label,
   disabled,
@@ -19,20 +20,13 @@ export function CartCheckoutButton({
   loadingLabel,
   onClick,
   className,
-  prominent = false,
 }: CartCheckoutButtonProps) {
   return (
     <button
       type="button"
       disabled={disabled}
       onClick={onClick}
-      className={cn(
-        "min-h-12 w-full py-4 text-[14px] tracking-[0.16em] transition-opacity active:opacity-60 disabled:cursor-not-allowed disabled:text-neutral-400 md:min-h-0 md:text-[14px] md:tracking-[0.2em]",
-        prominent
-          ? "border border-neutral-300 bg-neutral-900 text-white disabled:border-neutral-200 disabled:bg-neutral-100 disabled:text-neutral-400"
-          : "text-neutral-800 md:text-neutral-900 md:hover:opacity-60",
-        className,
-      )}
+      className={cn(buttonPrimaryClass, "min-h-14 w-full px-6", className)}
     >
       {isLoading ? loadingLabel : label}
     </button>

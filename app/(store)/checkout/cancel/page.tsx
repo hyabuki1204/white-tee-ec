@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import Image from "next/image";
-import { Container } from "@/components/layout/Container";
 import { CheckoutCancelRecovery } from "@/components/checkout/CheckoutCancelRecovery";
+import { PageHeader } from "@/components/layout/PageHeader";
 import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
 import { buildPageMetadata } from "@/lib/seo/metadata";
+import { pageGutterClass } from "@/lib/store-ui/ui-classes";
 
 const { checkout: copy } = GRAPHPAPER_STORE_COPY;
 
@@ -15,37 +15,25 @@ export const metadata: Metadata = buildPageMetadata({
 
 export default function CheckoutCancelPage() {
   return (
-    <Container as="section" className="py-16 md:py-24">
-      <div className="mx-auto max-w-md text-center">
-        <div className="relative mx-auto aspect-[4/3] max-w-xs overflow-hidden bg-[var(--color-image-placeholder)]">
-          <Image
-            src="/store/store-empty-state.jpg"
-            alt=""
-            fill
-            sizes="(max-width: 768px) 80vw, 320px"
-            className="object-cover opacity-80"
-          />
+    <>
+      <PageHeader
+        label="Checkout"
+        title={copy.cancelled}
+        lead={copy.paymentIncomplete}
+      />
+      <section
+        className={`${pageGutterClass} grid gap-10 py-[var(--space-5)] md:grid-cols-12 md:gap-0 md:py-[var(--space-6)]`}
+      >
+        <div className="md:col-span-7">
+          <h2 className="type-h2">{copy.cancelRecovery}</h2>
+          <p className="type-body mt-4 text-[var(--color-ink-soft)]">
+            {copy.cancelNext}
+          </p>
+          <div className="mt-8">
+            <CheckoutCancelRecovery />
+          </div>
         </div>
-
-        <p className="mt-10 text-[12px] font-normal tracking-[0.28em] text-neutral-600">
-          {copy.cancelled}
-        </p>
-        <p className="mt-4 text-[14px] font-normal leading-[1.8] tracking-[0.03em] text-neutral-700">
-          {copy.paymentIncomplete}
-        </p>
-        <p className="mt-4 text-[12px] font-normal leading-[1.7] tracking-[0.04em] text-neutral-600">
-          {copy.cancelRecovery}
-        </p>
-        <CheckoutCancelRecovery />
-        <p className="mt-8">
-          <a
-            href="/store-guide"
-            className="text-[12px] font-normal tracking-[0.08em] text-neutral-600 transition-opacity hover:opacity-60"
-          >
-            {GRAPHPAPER_STORE_COPY.footer.storeGuide}
-          </a>
-        </p>
-      </div>
-    </Container>
+      </section>
+    </>
   );
 }

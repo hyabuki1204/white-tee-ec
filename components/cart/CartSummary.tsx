@@ -2,111 +2,115 @@
 
 import { CartCheckoutTrust } from "@/components/cart/CartCheckoutTrust";
 import { CartCheckoutButton } from "@/components/cart/CartCheckoutButton";
+import { FREE_SHIPPING_THRESHOLD } from "@/lib/cart/shipping";
 import { useCheckout } from "@/lib/cart/use-checkout";
 
 type CartSummaryProps = {
   hasUnavailableItems?: boolean;
   orderNotes?: string;
   hideCheckoutOnMobile?: boolean;
-  prominentCheckout?: boolean;
-  showContinueShopping?: boolean;
-  onContinueShopping?: () => void;
   /** When false, omit checkout button (e.g. drawer uses a sticky footer). */
   showCheckout?: boolean;
-  /** When false, omit top border (nested inside drawer scroll). */
-  showTopBorder?: boolean;
+  /** When false, omit the terms block (shipping, returns, payment). */
+  showTrust?: boolean;
 };
+
+const rowClass = "flex items-baseline justify-between gap-4";
+const valueClass =
+  "font-en text-[15px] tracking-[0.02em] tabular-nums text-[var(--color-ink)]";
 
 export function CartSummary({
   hasUnavailableItems = false,
   orderNotes = "",
   hideCheckoutOnMobile = false,
-  prominentCheckout = false,
-  showContinueShopping = false,
-  onContinueShopping,
   showCheckout = true,
-  showTopBorder = true,
+  showTrust = true,
 }: CartSummaryProps) {
   const checkout = useCheckout({ hasUnavailableItems, orderNotes });
   const { copy } = checkout;
+  const belowThreshold =
+    checkout.subtotal > 0 && checkout.subtotal < FREE_SHIPPING_THRESHOLD;
+  const progress = Math.min(
+    100,
+    Math.round((checkout.subtotal / FREE_SHIPPING_THRESHOLD) * 100),
+  );
 
   return (
-    <div
-      className={
-        showTopBorder
-          ? "space-y-6 border-t border-neutral-200/70 pt-8 sm:space-y-8 sm:pt-10"
-          : "space-y-6 sm:space-y-8"
-      }
-    >
-      <div className="space-y-4">
-        <div className="flex items-baseline justify-between">
-          <p className="text-[14px] tracking-wide text-neutral-600 md:text-[14px] md:text-neutral-600">
+    <div className="space-y-6">
+      <dl className="space-y-3">
+        <div className={rowClass}>
+          <dt className="type-body text-[var(--color-ink-soft)]">
             {copy.subtotal}
-          </p>
-          <p className="text-[14px] font-normal text-neutral-800 md:text-[14px]">
+          </dt>
+          <dd className={valueClass}>
             {checkout.formatPrice(checkout.subtotal)}
-          </p>
+          </dd>
         </div>
 
-        <div className="flex items-baseline justify-between">
-          <p className="text-[14px] tracking-wide text-neutral-600 md:text-[14px] md:text-neutral-600">
+        <div className={rowClass}>
+          <dt className="type-body text-[var(--color-ink-soft)]">
             {copy.shipping}
-          </p>
-          <p className="text-[14px] font-normal text-neutral-800 md:text-[14px]">
-            {checkout.shipping === 0 && checkout.subtotal > 0
-              ? copy.shippingFree
-              : checkout.shipping === 0
-                ? checkout.formatPrice(0)
-                : copy.shippingFlat}
-          </p>
-        </div>
-
-        {checkout.subtotal > 0 &&
-        checkout.subtotal < checkout.freeShippingThreshold ? (
-          <p className="text-[12px] font-normal tracking-[0.04em] text-neutral-600 md:text-[12px]">
-            {copy.freeShippingProgress(
-              checkout.formatPrice(checkout.freeShippingRemaining),
+          </dt>
+          <dd className={valueClass}>
+            {checkout.shipping === 0 && checkout.subtotal > 0 ? (
+              <span className="font-[family-name:var(--font-sans-jp)] text-[14px]">
+                {copy.shippingFree}
+              </span>
+            ) : (
+              checkout.formatPrice(checkout.shipping)
             )}
-          </p>
-        ) : null}
-
-        {checkout.subtotal >= checkout.freeShippingThreshold ? (
-          <p className="text-[12px] font-normal tracking-[0.04em] text-neutral-600 md:text-[12px]">
-            {copy.freeShippingReached}
-          </p>
-        ) : null}
-
-        <div className="flex items-baseline justify-between pt-2">
-          <p className="text-[14px] tracking-wide text-neutral-600 md:text-[14px] md:text-neutral-600">
-            {copy.total}
-          </p>
-          <p className="text-[14px] font-normal text-neutral-800 md:text-[14px] md:text-neutral-900">
-            {checkout.formatPrice(checkout.total)}
-          </p>
+          </dd>
         </div>
 
-        <p className="text-[12px] font-normal tracking-[0.04em] text-neutral-600 md:text-[12px]">
-          {copy.taxIncluded}
-        </p>
-      </div>
+        {checkout.subtotal > 0 && !belowThreshold ? (
+          <p className="type-caption">{copy.freeShippingReached}</p>
+        ) : null}
 
-      <p className="text-[12px] font-normal leading-[1.8] tracking-[0.04em] text-neutral-600 md:text-[12px]">
-        {copy.shippingNote}
-      </p>
+        {belowThreshold ? (
+          <div>
+            <div
+              aria-hidden
+              className="h-px w-full bg-[var(--color-hairline)]"
+            >
+              <div
+                className="h-px bg-[var(--color-navy)] transition-[width] duration-[var(--duration-reveal)] ease-[var(--ease-quiet)]"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+            <p className="type-caption mt-2">
+              {copy.freeShippingProgress(
+                checkout.formatPrice(checkout.freeShippingRemaining),
+              )}
+            </p>
+          </div>
+        ) : null}
+
+        <div
+          className={`${rowClass} border-t border-[var(--color-ink)] pt-4`}
+        >
+          <dt className="text-[14px] font-bold tracking-[0.08em] text-[var(--color-ink)]">
+            {copy.total}
+            <span className="type-caption ml-2 font-normal">
+              {copy.taxIncluded}
+            </span>
+          </dt>
+          <dd className="font-en text-[26px] leading-none tracking-[0.01em] tabular-nums text-[var(--color-ink)]">
+            {checkout.formatPrice(checkout.total)}
+          </dd>
+        </div>
+      </dl>
 
       {checkout.hasUnavailableItems ? (
-        <p className="text-[12px] font-normal text-neutral-600 md:text-[12px]">
+        <p role="alert" className="type-caption !text-red-700">
           {copy.checkoutBlocked}
         </p>
       ) : null}
 
-      {checkout.error ? (
-        <p className="text-[14px] font-normal text-red-600 md:text-[14px]">
+      {showCheckout && checkout.error ? (
+        <p role="alert" className="type-body text-red-700">
           {checkout.error}
         </p>
       ) : null}
-
-      <CartCheckoutTrust />
 
       {showCheckout ? (
         <div className={hideCheckoutOnMobile ? "hidden lg:block" : undefined}>
@@ -116,20 +120,11 @@ export function CartSummary({
             disabled={checkout.checkoutDisabled}
             isLoading={checkout.isLoading}
             onClick={checkout.handleCheckout}
-            prominent={prominentCheckout}
           />
         </div>
       ) : null}
 
-      {showContinueShopping && onContinueShopping ? (
-        <button
-          type="button"
-          onClick={onContinueShopping}
-          className="w-full py-2 text-[12px] font-normal tracking-[0.1em] text-neutral-600 transition-opacity hover:opacity-60"
-        >
-          {copy.continueShopping}
-        </button>
-      ) : null}
+      {showTrust ? <CartCheckoutTrust /> : null}
     </div>
   );
 }

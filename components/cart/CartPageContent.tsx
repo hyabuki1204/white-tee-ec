@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { CartFabricCrossSell } from "@/components/cart/CartFabricCrossSell";
@@ -10,7 +9,14 @@ import { CartStickyCheckout } from "@/components/cart/CartStickyCheckout";
 import { CartSummary } from "@/components/cart/CartSummary";
 import { useCartReconcile } from "@/lib/cart/use-cart-reconcile";
 import type { CartStockLookup } from "@/lib/cart/stock-validation";
+import { GAUGE_LADDER } from "@/lib/fabric/gauge";
+import { useHydrated } from "@/lib/hooks/use-hydrated";
 import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
+import {
+  buttonPrimaryClass,
+  buttonSecondaryClass,
+  textLinkClass,
+} from "@/lib/store-ui/ui-classes";
 import { getFabricCrossSellProducts } from "@/lib/products/cross-sell";
 import { useCartStore } from "@/lib/cart/store";
 import type { Product } from "@/types";
@@ -39,11 +45,72 @@ type CartPageContentProps = {
   fabricNameBySlug: Record<string, string>;
 };
 
+function CartEmpty() {
+  const { cart: copy } = GRAPHPAPER_STORE_COPY;
+
+  return (
+    <div className="grid gap-12 md:grid-cols-12 md:gap-0">
+      <div className="md:col-span-6">
+        <h2 className="type-h2">{copy.empty}</h2>
+        <p className="type-body mt-4 text-[var(--color-ink-soft)]">
+          {copy.emptyLead}
+        </p>
+        <div className="mt-8 flex flex-wrap gap-3">
+          <Link href="/products" className={buttonPrimaryClass}>
+            {copy.viewAll}
+          </Link>
+          <Link href="/fabric" className={buttonSecondaryClass}>
+            {copy.exploreFabric}
+          </Link>
+        </div>
+      </div>
+
+      <ul className="grid grid-cols-3 gap-4 md:col-span-5 md:col-start-8">
+        {GAUGE_LADDER.map((spec) => (
+          <li key={spec.fabricSlug}>
+            <Link
+              href={`/fabric/${spec.fabricSlug}`}
+              className="group block border-t border-[var(--color-ink)] pt-4"
+            >
+              <span className="block font-en text-[clamp(32px,5vw,56px)] font-light leading-none tracking-[-0.03em] tabular-nums text-[var(--color-ink)] transition-colors duration-[var(--duration-quiet)] group-hover:text-[var(--color-navy)]">
+                {spec.gauge}
+                <span className="ml-0.5 text-[0.4em] tracking-normal">G</span>
+              </span>
+              <span className="type-caption mt-3 block">{spec.headlineJa}</span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function CartSkeleton() {
+  return (
+    <div aria-busy="true" className="grid gap-10 lg:grid-cols-12 lg:gap-0">
+      <div className="space-y-6 lg:col-span-7">
+        {[0, 1].map((row) => (
+          <div key={row} className="flex gap-5">
+            <div className="skeleton-block aspect-[3/4] w-20 sm:w-24" />
+            <div className="flex-1 space-y-3 pt-1">
+              <div className="skeleton-block h-4 w-1/2" />
+              <div className="skeleton-block h-3 w-1/4" />
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="skeleton-block h-64 lg:col-span-4 lg:col-start-9" />
+      <span className="sr-only">{GRAPHPAPER_STORE_COPY.states.loading}</span>
+    </div>
+  );
+}
+
 export function CartPageContent({
   productLookup,
   allProducts,
   fabricNameBySlug,
 }: CartPageContentProps) {
+  const hydrated = useHydrated();
   const items = useCartStore((state) => state.items);
   const [orderNotes, setOrderNotes] = useState("");
   const { cart: copy } = GRAPHPAPER_STORE_COPY;
@@ -68,92 +135,104 @@ export function CartPageContent({
     allProducts,
   );
 
+  // The cart lives in localStorage; until it has been read, show neither
+  // the empty state nor a stale list.
+  if (!hydrated) {
+    return <CartSkeleton />;
+  }
+
   if (items.length === 0) {
     return (
-      <div className="py-16 text-center sm:py-20">
-        <p className="text-[14px] tracking-[0.24em] text-neutral-600 md:text-[14px] md:tracking-[0.3em] md:text-neutral-600">
-          {copy.empty}
-        </p>
-        <div className="mt-8 flex flex-col items-center gap-4">
-          <Link
-            href="/products"
-            className="inline-flex min-h-11 items-center justify-center px-2 text-[14px] font-normal tracking-wide text-neutral-800 transition-opacity active:opacity-60 md:text-[14px] md:text-neutral-900 md:hover:opacity-60"
-          >
-            {copy.viewAll}
-          </Link>
-          <Link
-            href="/fabric"
-            className="text-[12px] font-normal tracking-[0.06em] text-neutral-600 transition-opacity duration-[var(--duration-fast)] hover:opacity-60"
-          >
-            {copy.exploreFabric}
-          </Link>
-        </div>
-      </div>
+      <>
+        {reconcileNotice ? (
+          <p role="status" className="type-body mb-8 text-red-700">
+            {reconcileNotice}
+          </p>
+        ) : null}
+        <CartEmpty />
+      </>
     );
   }
 
-  let hasUnavailableItems = false;
-
-  const itemElements = items.map((item) => {
-    const product = productLookup[item.productId];
-    const variantStock =
-      product?.variants[item.variant]?.stockQuantity ?? 0;
-    const maxQuantity = Math.max(variantStock, 0);
-    const isUnavailable = !product || maxQuantity < 1;
-
-    if (isUnavailable) {
-      hasUnavailableItems = true;
-    }
-
-    return (
-      <li key={`${item.productId}-${item.variant}`}>
-        <CartItem
-          item={item}
-          productName={product?.name ?? "Unknown Product"}
-          productSlug={product?.slug}
-          imageUrl={product?.imageUrl}
-          currentPrice={product?.price ?? item.price}
-          maxQuantity={maxQuantity}
-          isUnavailable={isUnavailable}
-        />
-      </li>
-    );
+  const hasUnavailableItems = items.some((item) => {
+    const stock =
+      productLookup[item.productId]?.variants[item.variant]?.stockQuantity ?? 0;
+    return !productLookup[item.productId] || stock < 1;
   });
+  const pieceCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
-    <div className="max-w-xl pb-28 lg:pb-0">
-      <div className="relative mb-10 aspect-[21/9] overflow-hidden bg-[var(--color-image-placeholder)]">
-        <Image
-          src="/store/checkout-trust.png"
-          alt=""
-          fill
-          sizes="(max-width: 768px) 100vw, 576px"
-          className="object-cover"
-        />
-      </div>
+    <div className="pb-24 lg:pb-0">
+      <div className="grid gap-12 lg:grid-cols-12 lg:items-start lg:gap-0">
+        <div className="lg:col-span-7">
+          <div className="flex items-baseline justify-between border-b border-[var(--color-ink)] pb-3">
+            <p className="type-label tabular-nums">
+              {pieceCount} {pieceCount === 1 ? "piece" : "pieces"}
+            </p>
+            <Link href="/products" className={`${textLinkClass} !text-[12px]`}>
+              {copy.continueShopping}
+            </Link>
+          </div>
 
-      {reconcileNotice ? (
-        <p
-          role="status"
-          className="mb-6 text-[12px] font-normal leading-[1.8] tracking-[0.04em] text-red-600/90"
+          {reconcileNotice ? (
+            <p role="status" className="type-body mt-5 text-red-700">
+              {reconcileNotice}
+            </p>
+          ) : null}
+
+          <ul className="divide-y divide-[var(--color-hairline)] border-b border-[var(--color-hairline)]">
+            {items.map((item) => {
+              const product = productLookup[item.productId];
+              const maxQuantity = Math.max(
+                product?.variants[item.variant]?.stockQuantity ?? 0,
+                0,
+              );
+
+              return (
+                <li key={`${item.productId}-${item.variant}`}>
+                  <CartItem
+                    item={item}
+                    productName={product?.name ?? "Unknown Product"}
+                    productSlug={product?.slug}
+                    imageUrl={product?.imageUrl}
+                    currentPrice={product?.price ?? item.price}
+                    maxQuantity={maxQuantity}
+                    isUnavailable={!product || maxQuantity < 1}
+                  />
+                </li>
+              );
+            })}
+          </ul>
+
+          <CartOrderNotes
+            value={orderNotes}
+            onChange={setOrderNotes}
+            className="mt-8 max-w-xl"
+          />
+        </div>
+
+        <aside
+          aria-label={copy.summaryTitle}
+          className="border border-[var(--color-hairline)] bg-[var(--color-surface)] p-6 sm:p-8 lg:sticky lg:top-[calc(var(--header-height)+var(--space-3))] lg:col-span-4 lg:col-start-9"
         >
-          {reconcileNotice}
-        </p>
-      ) : null}
-
-      <ul className="divide-y divide-neutral-200/70">{itemElements}</ul>
-
-      <CartOrderNotes value={orderNotes} onChange={setOrderNotes} />
-
-      <CartSummary
-        hasUnavailableItems={hasUnavailableItems}
-        orderNotes={orderNotes}
-        hideCheckoutOnMobile
-      />
+          <p className="type-label !text-[var(--color-navy)]">Summary</p>
+          <h2 className="mt-2 text-[16px] font-bold tracking-[0.08em] text-[var(--color-ink)]">
+            {copy.summaryTitle}
+          </h2>
+          <div className="mt-6">
+            <CartSummary
+              hasUnavailableItems={hasUnavailableItems}
+              orderNotes={orderNotes}
+              hideCheckoutOnMobile
+            />
+          </div>
+        </aside>
+      </div>
 
       <CartFabricCrossSell
         products={crossSellProducts}
         fabricNameBySlug={fabricNameBySlug}
+        className="mt-[var(--space-6)] border-t border-[var(--color-hairline)] pt-[var(--space-5)]"
       />
 
       <CartStickyCheckout

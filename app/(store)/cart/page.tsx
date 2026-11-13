@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { Container } from "@/components/layout/Container";
+import { PageHeader } from "@/components/layout/PageHeader";
 import { CartPageContent } from "@/components/cart/CartPageContent";
 import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
 import { getFabrics } from "@/lib/fabric/queries";
 import { getGraphpaperDisplayName } from "@/lib/products/display-name";
 import { getProducts } from "@/lib/products/queries";
 import { buildPageMetadata } from "@/lib/seo/metadata";
+import { pageGutterClass } from "@/lib/store-ui/ui-classes";
 
 const { cart: copy } = GRAPHPAPER_STORE_COPY;
 
@@ -48,29 +48,18 @@ export default async function CartPage() {
   );
 
   return (
-    <section aria-label="Shopping bag" className="py-12 sm:py-16 md:py-20 lg:py-24">
-      <Container as="div">
-        <header className="mb-10 border-b border-neutral-200/70 pb-6 sm:mb-12 md:mb-14">
-          <h1 className="text-[14px] font-normal tracking-[0.28em] text-neutral-800">
-            {copy.title}
-          </h1>
-        </header>
-
+    <>
+      <PageHeader label="Cart" title={copy.title} lead={copy.lead} />
+      <section
+        aria-label={copy.title}
+        className={`${pageGutterClass} py-[var(--space-4)] md:py-[var(--space-5)]`}
+      >
         <CartPageContent
           productLookup={productLookup}
           allProducts={products}
           fabricNameBySlug={fabricNameBySlug}
         />
-
-        <p className="mt-12 text-center md:mt-16">
-          <Link
-            href="/store-guide"
-            className="text-[12px] font-normal tracking-[0.06em] text-neutral-600 transition-opacity duration-[var(--duration-fast)] hover:opacity-60"
-          >
-            {GRAPHPAPER_STORE_COPY.footer.storeGuide}
-          </Link>
-        </p>
-      </Container>
-    </section>
+      </section>
+    </>
   );
 }

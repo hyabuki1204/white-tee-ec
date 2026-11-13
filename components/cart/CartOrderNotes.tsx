@@ -1,32 +1,33 @@
 "use client";
 
+import { useId } from "react";
 import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
 
 type CartOrderNotesProps = {
   value: string;
   onChange: (value: string) => void;
+  className?: string;
 };
 
 const copy = GRAPHPAPER_STORE_COPY.cart;
 const MAX_LENGTH = 500;
 
-export function CartOrderNotes({ value, onChange }: CartOrderNotesProps) {
+export function CartOrderNotes({ value, onChange, className }: CartOrderNotesProps) {
+  const id = useId();
+
   return (
-    <div className="mt-10 border-t border-neutral-200/70 pt-8">
-      <label
-        htmlFor="cart-order-notes"
-        className="text-[11px] font-normal tracking-[0.14em] text-neutral-600"
-      >
+    <div className={className}>
+      <label htmlFor={id} className="type-caption !text-[var(--color-ink)]">
         {copy.orderNotes}
       </label>
       <textarea
-        id="cart-order-notes"
+        id={id}
         value={value}
         maxLength={MAX_LENGTH}
         rows={3}
         placeholder={copy.orderNotesPlaceholder}
         onChange={(event) => onChange(event.target.value)}
-        className="mt-3 w-full resize-none border border-neutral-200/80 bg-transparent px-3 py-3 text-[14px] font-normal leading-[1.7] tracking-[0.02em] text-neutral-700 outline-none transition-colors placeholder:text-neutral-400 focus:border-neutral-400"
+        className="type-body mt-2 block w-full resize-none border border-[var(--color-hairline)] bg-[var(--color-surface)] px-4 py-3 text-[var(--color-ink)] outline-none transition-colors duration-[var(--duration-quiet)] placeholder:text-[var(--color-ink-faint)] focus:border-[var(--color-navy)]"
       />
     </div>
   );
