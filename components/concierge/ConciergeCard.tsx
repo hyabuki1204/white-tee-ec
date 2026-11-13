@@ -1,12 +1,15 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/components/i18n/Link";
 import { useEffect, useRef, useState } from "react";
 import { getInCartQuantity } from "@/lib/cart/stock-validation";
 import { useCartStore } from "@/lib/cart/store";
 import type { ConciergeCard as ConciergeCardData } from "@/lib/concierge/types";
-import { SITE_UI_COPY } from "@/lib/copy/site-ui";
+import { ApproxPrice } from "@/components/currency/ApproxPrice";
+import { useLocale } from "@/components/i18n/LocaleProvider";
+import { getConciergeCopy } from "@/lib/concierge/ui-copy";
+import { getProductCopy, type SiteUiCopy } from "@/lib/copy/site-ui";
 import { formatPrice } from "@/lib/utils/format-price";
 import { cn } from "@/lib/utils";
 
@@ -16,7 +19,6 @@ type ConciergeCardProps = {
 };
 
 const ADDED_LABEL_MS = 1500;
-const { product: productCopy } = SITE_UI_COPY;
 
 const buttonBase =
   "flex min-h-12 flex-1 items-center justify-center gap-3 border px-5 text-[13px] tracking-[0.06em] transition-colors duration-[var(--duration-quiet)] ease-[var(--ease-quiet)]";
@@ -25,21 +27,30 @@ const navyFilled =
 const navyOutline =
   "border-[var(--color-navy)] text-[var(--color-navy)] hover:bg-[var(--color-navy)] hover:text-white";
 
-function stockLabel(card: ConciergeCardData): string {
+type CardCopy = ReturnType<typeof getConciergeCopy>["card"];
+
+function stockLabel(
+  card: ConciergeCardData,
+  copy: CardCopy,
+  productCopy: SiteUiCopy["product"],
+): string {
   switch (card.stock) {
     case "in_stock":
-      return "在庫あり";
+      return copy.inStock;
     case "low":
-      return `残り${card.available}点`;
+      return copy.low(card.available);
     case "out":
       return productCopy.outOfStock;
     default:
-      return "サイズ未定";
+      return copy.sizeUndecided;
   }
 }
 
 /** One recommendation: gauge numeral, piece, size, price, stock, reason. */
 export function ConciergeCard({ card, kind }: ConciergeCardProps) {
+  const locale = useLocale();
+  const copy = getConciergeCopy(locale).card;
+  const productCopy = getProductCopy(locale);
   const addItem = useCartStore((state) => state.addItem);
   const cartItems = useCartStore((state) => state.items);
   const [justAdded, setJustAdded] = useState(false);
@@ -73,7 +84,7 @@ export function ConciergeCard({ card, kind }: ConciergeCardProps) {
 
   return (
     <article
-      aria-label={`${isPrimary ? "おすすめ" : "もう一つの候補"}: ${title}`}
+      aria-label={`${isPrimary ? copy.primary : copy.alternative}: ${title}`}
       className={cn(
         "border bg-[var(--color-surface)]",
         isPrimary
@@ -89,7 +100,7 @@ export function ConciergeCard({ card, kind }: ConciergeCardProps) {
             : "border-[var(--color-hairline)]",
         )}
       >
-        {isPrimary ? "おすすめの一枚" : "もう一つの候補"}
+        {isPrimary ? copy.primaryHeading : copy.alternative}
       </p>
 
       <div className="flex gap-5 px-5 pt-5">
@@ -134,25 +145,26 @@ export function ConciergeCard({ card, kind }: ConciergeCardProps) {
 
           <dl className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-[13px] text-[var(--color-ink-soft)]">
             <div className="flex gap-2">
-              <dt>サイズ</dt>
+              <dt>{copy.size}</dt>
               <dd className="font-en text-[var(--color-ink)]">
                 {card.size ?? "—"}
               </dd>
             </div>
             <div className="flex gap-2">
-              <dt className="sr-only">価格</dt>
+              <dt className="sr-only">{copy.price}</dt>
               <dd className="font-en text-[var(--color-ink)] tabular-nums">
                 {formatPrice(card.price)}
+                <ApproxPrice amount={card.price} className="ml-1.5 text-[12px]" />
               </dd>
             </div>
             <div className="flex gap-2">
-              <dt className="sr-only">在庫</dt>
+              <dt className="sr-only">{copy.stock}</dt>
               <dd
                 className={cn(
                   card.stock === "out" && "text-[var(--color-ink-faint)]",
                 )}
               >
-                {stockLabel(card)}
+                {stockLabel(card, copy, productCopy)}
               </dd>
             </div>
           </dl>
@@ -166,7 +178,7 @@ export function ConciergeCard({ card, kind }: ConciergeCardProps) {
           href={card.href}
           className={cn(buttonBase, isPrimary ? navyFilled : navyOutline)}
         >
-          {card.size ? `${card.size} で商品を見る` : "商品を見る"}
+          {card.size ? copy.viewInSize(card.size) : copy.view}
           <span aria-hidden className="font-en">
             →
           </span>
@@ -188,13 +200,13 @@ export function ConciergeCard({ card, kind }: ConciergeCardProps) {
               ? productCopy.addedConfirm
               : atLimit
                 ? productCopy.maxInBag
-                : `${card.size} を${productCopy.addToBag}`}
+                : copy.addSize(card.size ?? "")}
           </button>
         ) : null}
       </div>
 
       <p aria-live="polite" className="sr-only">
-        {justAdded ? `${title} をカートに追加しました。` : ""}
+        {justAdded ? copy.addedAnnouncement(title) : ""}
       </p>
     </article>
   );

@@ -1,8 +1,9 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { SAVED_COPY } from "@/lib/saved/copy";
+import { Link } from "@/components/i18n/Link";
+import { useLocale } from "@/components/i18n/LocaleProvider";
+import { useStorePathname } from "@/components/i18n/use-store-pathname";
+import { getSavedCopy } from "@/lib/saved/copy";
 import { useSavedStore } from "@/lib/saved/store";
 import { useHydrated } from "@/lib/saved/use-hydrated";
 import { cn } from "@/lib/utils";
@@ -14,7 +15,8 @@ type SavedNavLinkProps = {
 
 /** "Saved (n)" — always rendered, including at zero, so the header never shifts. */
 export function SavedNavLink({ onNavigate, className }: SavedNavLinkProps) {
-  const pathname = usePathname();
+  const SAVED_COPY = getSavedCopy(useLocale());
+  const pathname = useStorePathname();
   const hydrated = useHydrated();
   const count = useSavedStore((state) => state.items.length);
   const displayCount = hydrated ? count : 0;
@@ -24,7 +26,7 @@ export function SavedNavLink({ onNavigate, className }: SavedNavLinkProps) {
     <Link
       href="/saved"
       onClick={onNavigate}
-      aria-label={`${SAVED_COPY.nav}, ${displayCount} items`}
+      aria-label={SAVED_COPY.navAria(displayCount)}
       aria-current={active ? "page" : undefined}
       className={cn(
         "type-label inline-flex min-h-11 items-center tabular-nums text-[var(--color-ink)] transition-opacity duration-[var(--duration-quiet)] ease-[var(--ease-quiet)] hover:opacity-60",

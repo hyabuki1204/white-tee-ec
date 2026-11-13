@@ -9,7 +9,11 @@ import {
   buildOutputSchema,
   buildStaticSystemPrompt,
 } from "@/lib/concierge/prompt";
-import type { ConciergeTurn, RawConciergeResult } from "@/lib/concierge/types";
+import type {
+  ConciergeLanguage,
+  ConciergeTurn,
+  RawConciergeResult,
+} from "@/lib/concierge/types";
 import { getAnthropicApiKey } from "@/lib/images/director/client";
 
 /**
@@ -79,8 +83,10 @@ export async function askModel(input: {
   catalog: ConciergeCatalog;
   messages: ConciergeTurn[];
   contextSlug: string | null;
+  /** Storefront language the customer is browsing in. */
+  locale?: ConciergeLanguage;
 }): Promise<ModelOutcome> {
-  const { client, catalog, messages, contextSlug } = input;
+  const { client, catalog, messages, contextSlug, locale = "ja" } = input;
 
   try {
     const response = await client.messages.create(
@@ -99,7 +105,8 @@ export async function askModel(input: {
             text: buildStaticSystemPrompt(catalog),
             cache_control: { type: "ephemeral" },
           },
-          { type: "text", text: buildDynamicSystemPrompt(catalog, contextSlug) },
+          { type: "text", text: buildDynamicSystemPrompt(catalog, contextSlug, locale),
+          },
         ],
         messages: messages.map((turn) => ({
           role: turn.role,

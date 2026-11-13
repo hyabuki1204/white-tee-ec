@@ -1,6 +1,8 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import { Suspense } from "react";
+import { LocaleSuggestionBar } from "@/components/i18n/LocaleSuggestionBar";
 import { RevealObserver } from "@/components/motion/RevealObserver";
 import { cn } from "@/lib/utils";
 
@@ -20,6 +22,11 @@ export function Main({ children }: MainProps) {
         !isAdmin && "pt-[var(--header-height)]",
       )}
     >
+      {!isAdmin ? (
+        <Suspense fallback={null}>
+          <LocaleSuggestionBar />
+        </Suspense>
+      ) : null}
       {children}
       {!isAdmin ? <RevealObserver /> : null}
     </main>

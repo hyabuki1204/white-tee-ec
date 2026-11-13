@@ -1,3 +1,6 @@
+import type { Locale } from "@/lib/i18n/config";
+import { defineCopy, type Localized } from "@/lib/i18n/define-copy";
+
 export type EditorialVoice = {
   source: string;
   line: string;
@@ -29,39 +32,79 @@ export const EDITORIAL_VOICES: EditorialVoice[] = [
 ];
 
 /** One note per gauge. `fabric` must start with the gauge label (see getWearingNoteForFabric). */
-export const WEARING_NOTES: WearingNote[] = [
-  {
-    fabric: "28G Jersey",
-    months: 8,
-    lines: [
-      "双糸の度詰。洗濯を重ねても、首元と肩線が崩れにくい。",
-      "表面は少しやわらかくなるが、厚みとハリは残る。",
-    ],
-  },
-  {
-    fabric: "36G Jersey",
-    months: 6,
-    lines: [
-      "コンパクト糸は毛羽が少ない。洗っても表面が荒れにくい。",
-      "厚みは変わらず、手触りだけが少しなじむ。",
-    ],
-  },
-  {
-    fabric: "46G Jersey",
-    months: 6,
-    lines: [
-      "薄手でも目が詰まっているため、裾と袖口が伸びにくい。",
-      "落ち感と控えめな光沢は、洗った後も残る。",
-    ],
-  },
-];
+const WEARING_NOTES: Localized<WearingNote[]> = {
+  ja: [
+    {
+      fabric: "28G Jersey",
+      months: 8,
+      lines: [
+        "双糸の度詰。洗濯を重ねても、首元と肩線が崩れにくい。",
+        "表面は少しやわらかくなるが、厚みとハリは残る。",
+      ],
+    },
+    {
+      fabric: "36G Jersey",
+      months: 6,
+      lines: [
+        "コンパクト糸は毛羽が少ない。洗っても表面が荒れにくい。",
+        "厚みは変わらず、手触りだけが少しなじむ。",
+      ],
+    },
+    {
+      fabric: "46G Jersey",
+      months: 6,
+      lines: [
+        "薄手でも目が詰まっているため、裾と袖口が伸びにくい。",
+        "落ち感と控えめな光沢は、洗った後も残る。",
+      ],
+    },
+  ],
+  en: [
+    {
+      fabric: "28G Jersey",
+      months: 8,
+      lines: [
+        "Tight-knit two-ply. The collar and shoulder line hold through repeated washing.",
+        "The surface softens a little. The thickness and body stay.",
+      ],
+    },
+    {
+      fabric: "36G Jersey",
+      months: 6,
+      lines: [
+        "Compact yarn has little fuzz. The surface does not roughen in the wash.",
+        "The thickness does not change. Only the hand settles in a little.",
+      ],
+    },
+    {
+      fabric: "46G Jersey",
+      months: 6,
+      lines: [
+        "Thin, but tightly knitted, so the hem and cuffs resist stretching.",
+        "The drape and restrained lustre are still there after washing.",
+      ],
+    },
+  ],
+};
 
-export const FACTS = [
-  { label: "工場", value: "和歌山・カネマサ莫大小（1964年創業）" },
-  { label: "生地", value: "3つのゲージ — 28G / 36G / 46G" },
-  { label: "形", value: "2つのシルエット — Regular / Box" },
-  { label: "サイズ", value: "S / M / L" },
-] as const;
+export function getWearingNotes(locale: Locale): WearingNote[] {
+  return WEARING_NOTES[locale];
+}
+
+export const getFacts = defineCopy(
+  [
+    { label: "工場", value: "和歌山・カネマサ莫大小（1964年創業）" },
+    { label: "生地", value: "3つのゲージ — 28G / 36G / 46G" },
+    { label: "形", value: "2つのシルエット — Regular / Box" },
+    { label: "サイズ", value: "S / M / L" },
+  ],
+  [
+    { label: "Mill", value: "Kanemasa Knitting, Wakayama (founded 1964)" },
+    { label: "Cloth", value: "Three gauges — 28G / 36G / 46G" },
+    { label: "Shape", value: "Two silhouettes — Regular / Box" },
+    { label: "Sizes", value: "S / M / L" },
+  ],
+);
 
 export const PRICE_POSITIONING = {
   headline: "価格に含まれるもの",
@@ -93,17 +136,20 @@ export const PDP_CREDIBILITY = {
 
 export function getWearingNoteForFabric(
   fabricName: string | null | undefined,
+  locale: Locale,
 ): WearingNote | null {
-  if (!fabricName) return WEARING_NOTES[0] ?? null;
+  const notes = getWearingNotes(locale);
+
+  if (!fabricName) return notes[0] ?? null;
 
   return (
-    WEARING_NOTES.find(
+    notes.find(
       (note) => note.fabric.toLowerCase() === fabricName.toLowerCase(),
     ) ??
-    WEARING_NOTES.find((note) =>
+    notes.find((note) =>
       fabricName.toLowerCase().includes(note.fabric.split(" ")[0]!.toLowerCase()),
     ) ??
-    WEARING_NOTES[0] ??
+    notes[0] ??
     null
   );
 }

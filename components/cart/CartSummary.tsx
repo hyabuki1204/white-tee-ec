@@ -1,9 +1,14 @@
 "use client";
 
+import { ApproxPrice } from "@/components/currency/ApproxPrice";
+import { CurrencySwitch } from "@/components/currency/CurrencySwitch";
+import { useLocale } from "@/components/i18n/LocaleProvider";
 import { CartCheckoutTrust } from "@/components/cart/CartCheckoutTrust";
 import { CartCheckoutButton } from "@/components/cart/CartCheckoutButton";
 import { FREE_SHIPPING_THRESHOLD } from "@/lib/cart/shipping";
 import { useCheckout } from "@/lib/cart/use-checkout";
+import { getCurrencyCopy } from "@/lib/currency/copy";
+import { SHIPS_WITHIN_JAPAN_ONLY } from "@/lib/store-ui/returns-policy";
 
 type CartSummaryProps = {
   hasUnavailableItems?: boolean;
@@ -26,6 +31,8 @@ export function CartSummary({
   showCheckout = true,
   showTrust = true,
 }: CartSummaryProps) {
+  const locale = useLocale();
+  const currencyCopy = getCurrencyCopy(locale);
   const checkout = useCheckout({ hasUnavailableItems, orderNotes });
   const { copy } = checkout;
   const belowThreshold =
@@ -98,7 +105,25 @@ export function CartSummary({
             {checkout.formatPrice(checkout.total)}
           </dd>
         </div>
+        {locale === "en" && checkout.total > 0 ? (
+          <p className="text-right">
+            <ApproxPrice amount={checkout.total} className="text-[14px]" />
+          </p>
+        ) : null}
       </dl>
+
+      {locale === "en" ? (
+        <div className="space-y-1 border-t border-[var(--color-hairline)] pt-4">
+          <p className="type-caption text-[var(--color-ink)]">
+            {SHIPS_WITHIN_JAPAN_ONLY}
+          </p>
+          <p className="type-caption">{currencyCopy.chargedInYen}</p>
+          <p className="type-caption flex items-center gap-3">
+            <span>{currencyCopy.estimatesIn}</span>
+            <CurrencySwitch />
+          </p>
+        </div>
+      ) : null}
 
       {checkout.hasUnavailableItems ? (
         <p role="alert" className="type-caption !text-red-700">

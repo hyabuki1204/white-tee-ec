@@ -255,12 +255,15 @@ function readGaugeMentions(text: string): {
  * Latin letters with no kana or kanji is answered in English. Everything
  * else (kanji-only notes, numbers only) stays with the store default.
  */
-export function detectLanguage(text: string): ConciergeLanguage {
+export function detectLanguage(
+  text: string,
+  fallback: ConciergeLanguage = "ja",
+): ConciergeLanguage {
   if (/[぀-ヿ]/.test(text)) return "ja";
   if (/[一-鿿]/.test(text)) return "ja";
 
   const letters = text.match(/[A-Za-z]/g)?.length ?? 0;
-  return letters >= 3 ? "en" : "ja";
+  return letters >= 3 ? "en" : fallback;
 }
 
 export function readMessage(raw: string): MessageReading {

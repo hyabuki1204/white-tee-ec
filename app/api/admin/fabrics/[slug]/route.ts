@@ -1,4 +1,5 @@
 import { revalidatePath } from "next/cache";
+import { revalidateStorePath } from "@/lib/i18n/revalidate";
 import { NextResponse } from "next/server";
 import { AdminAuthError, requireAdminSession } from "@/lib/admin/auth";
 import { parseAdminFabricInput } from "@/lib/admin/fabric-input";
@@ -47,9 +48,9 @@ export async function PATCH(request: Request, context: RouteContext) {
 
     const fabric = await updateAdminFabric(slug, parsed.data);
 
-    revalidatePath("/fabric");
-    revalidatePath(`/fabric/${slug}`);
-    revalidatePath("/");
+    revalidateStorePath("/fabric");
+    revalidateStorePath(`/fabric/${slug}`);
+    revalidateStorePath("/");
     revalidatePath("/admin/fabrics");
 
     return NextResponse.json({ fabric });

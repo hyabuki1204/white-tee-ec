@@ -1,20 +1,22 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/components/i18n/Link";
 import { useProductPurchase } from "@/components/product/ProductPurchaseContext";
 import { SizeRecommendationTool } from "@/components/product/SizeRecommendationTool";
 import { RestockForm } from "@/components/restock/RestockForm";
 import { SaveInlineButton } from "@/components/saved/SaveButton";
 import { getGraphpaperDisplayName } from "@/lib/products/display-name";
 import { PRODUCT_SIZES } from "@/lib/products/defaults";
-import { SITE_UI_COPY } from "@/lib/copy/site-ui";
+import { useLocale } from "@/components/i18n/LocaleProvider";
+import { getProductCopy } from "@/lib/copy/site-ui";
+import { cmToInches } from "@/lib/i18n/format";
 import { cn } from "@/lib/utils";
 import type { ProductSize } from "@/types";
 
-const { product: copy } = SITE_UI_COPY;
-
 /** Size buttons + add-to-cart — client-only purchase UI. */
 export function ProductPurchaseControls() {
+  const locale = useLocale();
+  const copy = getProductCopy(locale);
   const {
     product,
     selectedSize,
@@ -75,7 +77,7 @@ export function ProductPurchaseControls() {
                   type="button"
                   onClick={() => setSelectedSize(size)}
                   aria-pressed={isSelected}
-                  aria-label={`Size ${size}${!inStock ? ", out of stock" : ""}`}
+                  aria-label={copy.sizeAria(size, inStock)}
                   className={cn(
                     "flex h-11 min-w-11 items-center justify-center border border-[var(--color-ink)] px-3 text-[14px] font-normal tracking-[0.04em] transition-colors duration-[var(--duration-quiet)] ease-[var(--ease-quiet)]",
                     // Still selectable: choosing it offers the restock notice.
@@ -127,6 +129,14 @@ export function ProductPurchaseControls() {
               </span>
               {sleeveLabel} {selectedMeasurement.sleeve}
               <span className="ml-1 text-[var(--color-ink-faint)]">cm</span>
+              {locale === "en" ? (
+                <span className="block text-[var(--color-ink-faint)]">
+                  {cmToInches(selectedMeasurement.length)} /{" "}
+                  {cmToInches(selectedMeasurement.shoulder)} /{" "}
+                  {cmToInches(selectedMeasurement.chest)} /{" "}
+                  {cmToInches(selectedMeasurement.sleeve)} in
+                </span>
+              ) : null}
             </>
           ) : null}
         </p>
@@ -141,7 +151,7 @@ export function ProductPurchaseControls() {
           href={`/concierge?from=${product.slug}`}
           className="mt-4 flex min-h-11 items-center justify-between gap-4 border border-[var(--color-navy)] px-4 text-[13px] tracking-[0.04em] text-[var(--color-navy)] transition-colors duration-[var(--duration-quiet)] ease-[var(--ease-quiet)] hover:bg-[var(--color-navy)] hover:text-white"
         >
-          サイズとゲージを相談する
+          {copy.askConcierge}
           <span aria-hidden className="font-en">
             →
           </span>

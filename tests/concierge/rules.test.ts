@@ -2,7 +2,9 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { chooseGauge } from "@/lib/concierge/rules";
 import { detectLanguage, readMessage } from "@/lib/concierge/signals";
-import { RETURNS_POLICY } from "@/lib/store-ui/returns-policy";
+import { getReturnsPolicy } from "@/lib/store-ui/returns-policy";
+
+const RETURNS_POLICY = getReturnsPolicy("ja");
 import { allText, ask, catalogWithStock } from "@/tests/concierge/helpers";
 
 describe("signals", () => {

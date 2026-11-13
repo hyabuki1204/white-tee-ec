@@ -1,7 +1,9 @@
 "use client";
 
 import { useProductPurchase } from "@/components/product/ProductPurchaseContext";
-import { SITE_UI_COPY } from "@/lib/copy/site-ui";
+import { useLocale } from "@/components/i18n/LocaleProvider";
+import { getProductCopy } from "@/lib/copy/site-ui";
+import { cmToInches } from "@/lib/i18n/format";
 import { cn } from "@/lib/utils";
 import type { SizeGuideMeasurement } from "@/types";
 
@@ -9,9 +11,20 @@ type ProductSizeGuideTableProps = {
   rows: SizeGuideMeasurement[];
 };
 
+/** Inches under the centimetre figure — English pages only. */
+function Inches({ cm }: { cm: number }) {
+  return (
+    <span className="block text-[12px] text-[var(--color-ink-soft)]">
+      {cmToInches(cm)}
+    </span>
+  );
+}
+
 /** Measurement table anchored by #size-guide. */
 export function ProductSizeGuideTable({ rows }: ProductSizeGuideTableProps) {
-  const { product: copy } = SITE_UI_COPY;
+  const locale = useLocale();
+  const copy = getProductCopy(locale);
+  const showInches = locale === "en";
   const { selectedSize } = useProductPurchase();
 
   if (rows.length === 0) return null;
@@ -20,6 +33,11 @@ export function ProductSizeGuideTable({ rows }: ProductSizeGuideTableProps) {
     <section id="size-guide" aria-label={copy.sizeGuide} className="mt-10">
       <h2 className="text-[11px] font-normal tracking-[0.12em] text-[var(--color-ink-soft)]">
         {copy.sizeGuide}
+        {showInches ? (
+          <span className="ml-2 tracking-[0.04em] text-[var(--color-ink-faint)]">
+            cm / in
+          </span>
+        ) : null}
       </h2>
       <div className="mt-4 overflow-x-auto">
         <table className="min-w-[18rem] w-full border-collapse text-left tabular-nums">
@@ -58,15 +76,19 @@ export function ProductSizeGuideTable({ rows }: ProductSizeGuideTableProps) {
                 </th>
                 <td className="py-2.5 pr-3 text-[14px] text-[var(--color-ink)]">
                   {row.length}
+                  {showInches ? <Inches cm={row.length} /> : null}
                 </td>
                 <td className="py-2.5 pr-3 text-[14px] text-[var(--color-ink)]">
                   {row.shoulder}
+                  {showInches ? <Inches cm={row.shoulder} /> : null}
                 </td>
                 <td className="py-2.5 pr-3 text-[14px] text-[var(--color-ink)]">
                   {row.chest}
+                  {showInches ? <Inches cm={row.chest} /> : null}
                 </td>
                 <td className="py-2.5 text-[14px] text-[var(--color-ink)]">
                   {row.sleeve}
+                  {showInches ? <Inches cm={row.sleeve} /> : null}
                 </td>
               </tr>
             ))}

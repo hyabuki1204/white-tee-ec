@@ -3,15 +3,15 @@
 import { useEffect, useState } from "react";
 import { useProductPurchase } from "@/components/product/ProductPurchaseContext";
 import { RestockForm } from "@/components/restock/RestockForm";
-import { SITE_UI_COPY } from "@/lib/copy/site-ui";
+import { ApproxPrice } from "@/components/currency/ApproxPrice";
+import { useLocale } from "@/components/i18n/LocaleProvider";
+import { getProductCopy } from "@/lib/copy/site-ui";
 import { formatPrice } from "@/lib/utils/format-price";
 import { cn } from "@/lib/utils";
 
 type MobilePurchaseBarProps = {
   displayName: string;
 };
-
-const { product: copy } = SITE_UI_COPY;
 
 /**
  * Quiet fixed purchase bar for mobile PDP.
@@ -27,6 +27,7 @@ export function MobilePurchaseBar({ displayName }: MobilePurchaseBarProps) {
     handleAddToCart,
     purchaseCtaRef,
   } = useProductPurchase();
+  const copy = getProductCopy(useLocale());
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -99,6 +100,7 @@ export function MobilePurchaseBar({ displayName }: MobilePurchaseBarProps) {
             </p>
             <p className="type-caption font-en tabular-nums tracking-[0.04em]">
               {formatPrice(product.price)}
+              <ApproxPrice amount={product.price} className="ml-1.5" />
               {selectedSize ? (
                 <span className="text-[var(--color-ink-soft)]">
                   <span aria-hidden className="mx-2 text-[var(--color-ink-faint)]">

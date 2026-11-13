@@ -1,4 +1,5 @@
 import { revalidatePath } from "next/cache";
+import { revalidateStorePath } from "@/lib/i18n/revalidate";
 import { NextResponse } from "next/server";
 import { AdminAuthError, requireAdminSession } from "@/lib/admin/auth";
 import { parseSiteContentInput } from "@/lib/admin/content-input";
@@ -30,11 +31,11 @@ function revalidateContentPaths(key: SiteContentKey) {
   switch (key) {
     case "home":
       revalidatePath("/", "layout");
-      revalidatePath("/");
+      revalidateStorePath("/");
       revalidatePath("/admin/content");
       break;
     case "about":
-      revalidatePath("/about");
+      revalidateStorePath("/about");
       revalidatePath("/admin/content");
       break;
     case "stories":
@@ -42,33 +43,33 @@ function revalidateContentPaths(key: SiteContentKey) {
       break;
     case "journal":
       revalidatePath("/", "layout");
-      revalidatePath("/journal");
-      revalidatePath("/");
-      revalidatePath("/stockist");
+      revalidateStorePath("/journal");
+      revalidateStorePath("/");
+      revalidateStorePath("/stockist");
       revalidatePath("/admin/journal");
       break;
     case "legal":
-      revalidatePath("/legal");
+      revalidateStorePath("/legal");
       revalidatePath("/admin/pages");
       break;
     case "contact":
-      revalidatePath("/contact");
+      revalidateStorePath("/contact");
       revalidatePath("/admin/pages");
       break;
     case "shipping":
-      revalidatePath("/shipping");
+      revalidateStorePath("/shipping");
       revalidatePath("/admin/pages");
       break;
     case "privacy":
-      revalidatePath("/privacy");
+      revalidateStorePath("/privacy");
       revalidatePath("/admin/pages");
       break;
     case "terms":
-      revalidatePath("/terms");
+      revalidateStorePath("/terms");
       revalidatePath("/admin/pages");
       break;
     case "seo":
-      revalidatePath("/");
+      revalidateStorePath("/");
       revalidatePath("/admin/seo");
       break;
     default:

@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/components/i18n/Link";
 import { textLinkClass } from "@/lib/store-ui/ui-classes";
 import { cn } from "@/lib/utils";
 

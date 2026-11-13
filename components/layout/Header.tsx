@@ -1,16 +1,19 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { Link } from "@/components/i18n/Link";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { CartNavLink } from "@/components/layout/CartNavLink";
 import { Container } from "@/components/layout/Container";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { SearchNavControl } from "@/components/layout/SearchNavControl";
 import { SavedNavLink } from "@/components/saved/SavedNavLink";
-import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
+import { useLocale } from "@/components/i18n/LocaleProvider";
+import { LocaleSwitch } from "@/components/i18n/LocaleSwitch";
+import { useStorePathname } from "@/components/i18n/use-store-pathname";
+import { getStoreCopy } from "@/lib/store-ui/graphpaper-copy";
 import { isNavActive } from "@/lib/store-ui/nav-active";
-import { STORE_PRIMARY_NAV } from "@/lib/store-ui/nav-links";
+import { getStorePrimaryNav } from "@/lib/store-ui/nav-links";
 import type { Product } from "@/types";
 import { cn } from "@/lib/utils";
 
@@ -27,7 +30,10 @@ function navLinkClass(active: boolean) {
 }
 
 export function Header({ products, fabricNameBySlug }: HeaderProps) {
-  const pathname = usePathname();
+  const locale = useLocale();
+  const copy = getStoreCopy(locale);
+  const primaryNav = getStorePrimaryNav(locale);
+  const pathname = useStorePathname();
   const searchParams = useSearchParams();
   const search = searchParams.toString();
   const isAdmin = pathname.startsWith("/admin");
@@ -115,7 +121,7 @@ export function Header({ products, fabricNameBySlug }: HeaderProps) {
           <div className="hidden h-full w-full grid-cols-[1fr_auto_1fr] items-center gap-x-8 md:grid">
             <nav aria-label="Main navigation" className="justify-self-start">
               <ul className="flex items-center gap-x-8 lg:gap-x-10">
-                {STORE_PRIMARY_NAV.map((item) => {
+                {primaryNav.map((item) => {
                   const active = isNavActive(pathname, item.href, search);
 
                   return (
@@ -137,7 +143,7 @@ export function Header({ products, fabricNameBySlug }: HeaderProps) {
               href="/"
               className="justify-self-center font-en text-[15px] font-medium tracking-[0.3em] text-[var(--color-ink)] transition-opacity duration-[var(--duration-quiet)] ease-[var(--ease-quiet)] hover:opacity-60 lg:text-[17px]"
             >
-              {GRAPHPAPER_STORE_COPY.brandLine}
+              {copy.brandLine}
             </Link>
 
             <nav
@@ -157,6 +163,9 @@ export function Header({ products, fabricNameBySlug }: HeaderProps) {
                 <li>
                   <CartNavLink />
                 </li>
+                <li>
+                  <LocaleSwitch />
+                </li>
               </ul>
             </nav>
           </div>
@@ -166,7 +175,7 @@ export function Header({ products, fabricNameBySlug }: HeaderProps) {
               href="/"
               className="font-en text-[15px] font-medium tracking-[0.3em] text-[var(--color-ink)] transition-opacity hover:opacity-60"
             >
-              {GRAPHPAPER_STORE_COPY.brandLine}
+              {copy.brandLine}
             </Link>
 
             <div className="flex items-center gap-5">
@@ -175,7 +184,7 @@ export function Header({ products, fabricNameBySlug }: HeaderProps) {
                 type="button"
                 aria-expanded={menuOpen}
                 aria-controls="mobile-navigation"
-                aria-label={menuOpen ? "Close menu" : "Open menu"}
+                aria-label={menuOpen ? copy.nav.closeMenu : copy.nav.openMenu}
                 onClick={() => setMenuOpenPath(menuOpen ? null : pathname)}
                 className="flex h-11 w-11 items-center justify-center text-[var(--color-ink)]"
               >

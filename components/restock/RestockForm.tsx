@@ -1,9 +1,10 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/components/i18n/Link";
 import { useId } from "react";
 import { NewsletterHoneypot } from "@/components/newsletter/NewsletterFormParts";
-import { RESTOCK_COPY } from "@/lib/restock/copy";
+import { useLocale } from "@/components/i18n/LocaleProvider";
+import { getRestockCopy } from "@/lib/restock/copy";
 import { useRestockRequest } from "@/lib/restock/use-restock-request";
 import { cn } from "@/lib/utils";
 import type { ProductSize } from "@/types";
@@ -30,6 +31,8 @@ export function RestockForm({
   hideHeading = false,
   className,
 }: RestockFormProps) {
+  const locale = useLocale();
+  const RESTOCK_COPY = getRestockCopy(locale);
   const inputId = useId();
   const {
     email,
@@ -40,7 +43,7 @@ export function RestockForm({
     isSubmitting,
     isSuccess,
     handleSubmit,
-  } = useRestockRequest(productId, size);
+  } = useRestockRequest(productId, size, locale);
 
   if (isSuccess) {
     return (

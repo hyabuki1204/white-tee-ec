@@ -1,6 +1,7 @@
-import Link from "next/link";
+import { Link } from "@/components/i18n/Link";
 import { FabricCharacterDots } from "@/components/fabric/FabricCharacterDots";
-import { SITE_UI_COPY } from "@/lib/copy/site-ui";
+import { getSiteUiCopy } from "@/lib/copy/site-ui";
+import type { Locale } from "@/lib/i18n/config";
 import {
   FABRIC_CHARACTER_KEYS,
   type FabricCharacterKey,
@@ -10,6 +11,7 @@ import { cn } from "@/lib/utils";
 import type { Fabric } from "@/lib/fabric/content";
 
 type FabricCompareOverviewProps = {
+  locale: Locale;
   fabrics: Fabric[];
   /** full = all traits on /fabric; compact = thickness only */
   variant?: "full" | "compact";
@@ -24,30 +26,43 @@ const TRAIT_ABBREV: Record<FabricCharacterKey, string> = {
   surface: "Surf",
 };
 
-function traitTitle(key: FabricCharacterKey): string {
-  const label = SITE_UI_COPY.fabric.character[key];
-  const labelJa = FABRIC_CHARACTER_JA[key];
-  return `${label} · ${labelJa}`;
+/** English page: short words that fit the narrow columns. */
+const TRAIT_SHORT_EN: Record<FabricCharacterKey, string> = {
+  thickness: "Thick",
+  softness: "Soft",
+  structure: "Body",
+  sheerness: "Sheer",
+  surface: "Surface",
+};
+
+function traitTitle(key: FabricCharacterKey, locale: Locale): string {
+  const label = getSiteUiCopy(locale).fabric.character[key];
+
+  if (locale === "en") return label;
+
+  return `${label} · ${FABRIC_CHARACTER_JA[key]}`;
 }
 
 const FULL_GRID =
   "grid grid-cols-[minmax(0,7.5rem)_repeat(5,minmax(2.5rem,1fr))] gap-x-2 sm:grid-cols-[minmax(0,9rem)_repeat(5,minmax(2.75rem,1fr))] sm:gap-x-3";
 
-function FullCompareHeader() {
+function FullCompareHeader({ locale }: { locale: Locale }) {
   return (
     <div className={cn(FULL_GRID, "mb-4 items-end sm:mb-5")}>
       <span aria-hidden className="block" />
       {FABRIC_CHARACTER_KEYS.map((key) => (
         <div key={key} className="text-center">
           <span className="block text-[11px] font-normal tracking-[0.06em] text-neutral-600 sm:text-[11px]">
-            {TRAIT_ABBREV[key]}
+            {locale === "en" ? TRAIT_SHORT_EN[key] : TRAIT_ABBREV[key]}
           </span>
-          <span
-            lang="ja"
-            className="mt-0.5 block text-[11px] font-normal tracking-[0.02em] text-neutral-600/75"
-          >
-            {FABRIC_CHARACTER_JA[key]}
-          </span>
+          {locale === "en" ? null : (
+            <span
+              lang="ja"
+              className="mt-0.5 block text-[11px] font-normal tracking-[0.02em] text-neutral-600/75"
+            >
+              {FABRIC_CHARACTER_JA[key]}
+            </span>
+          )}
         </div>
       ))}
     </div>
@@ -55,6 +70,7 @@ function FullCompareHeader() {
 }
 
 export function FabricCompareOverview({
+  locale,
   fabrics,
   variant = "full",
   className,
@@ -73,7 +89,7 @@ export function FabricCompareOverview({
     >
       <div className="overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         <div className={variant === "full" ? "min-w-[20rem] sm:min-w-0" : ""}>
-          {variant === "full" ? <FullCompareHeader /> : null}
+          {variant === "full" ? <FullCompareHeader locale={locale} /> : null}
 
           <ul
             className={cn(
@@ -102,14 +118,14 @@ export function FabricCompareOverview({
                       level={fabric.character.thickness}
                       size="xs"
                       tone="quiet"
-                      title={traitTitle("thickness")}
+                      title={traitTitle("thickness", locale)}
                     />
                   ) : (
                     FABRIC_CHARACTER_KEYS.map((key) => (
                       <div
                         key={key}
                         className="flex justify-center"
-                        title={traitTitle(key)}
+                        title={traitTitle(key, locale)}
                       >
                         <FabricCharacterDots
                           level={fabric.character[key]}

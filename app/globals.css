@@ -196,6 +196,75 @@ body {
   color: #ffffff;
 }
 
+/* —— English storefront (/en) ——
+   The roles above are tuned for Japanese: bold 700, wide tracking, tall
+   leading. Latin text set that way reads heavy and loose, so English pages
+   re-tune the same roles in League Spartan. Nothing here matches a Japanese
+   page (html[lang="ja"]), and blocks marked lang="ja" inside an English page
+   (the governing legal text, the mill's registered name) keep the Japanese
+   settings. */
+html:lang(en) body {
+  font-family: var(--font-sans-en);
+  font-size: 15px;
+  line-height: 1.7;
+  letter-spacing: 0.01em;
+  font-feature-settings: normal;
+}
+
+.type-display:lang(en) {
+  font-family: var(--font-sans-en);
+  font-weight: 300;
+  font-size: clamp(34px, calc(20px + 2.6vw), 60px);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  word-break: normal;
+}
+
+.type-h2:lang(en) {
+  font-family: var(--font-sans-en);
+  font-weight: 400;
+  font-size: clamp(22px, calc(17px + 0.8vw), 31px);
+  line-height: 1.22;
+  letter-spacing: -0.008em;
+  word-break: normal;
+}
+
+.type-body:lang(en) {
+  font-family: var(--font-sans-en);
+  font-size: 15px;
+  line-height: 1.7;
+  letter-spacing: 0.01em;
+  font-feature-settings: normal;
+}
+
+.type-caption:lang(en) {
+  font-family: var(--font-sans-en);
+  font-size: 13px;
+  line-height: 1.55;
+  letter-spacing: 0.015em;
+}
+
+.type-fine:lang(en) {
+  font-family: var(--font-sans-en);
+  font-size: 12px;
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+}
+
+/* Spartan is loaded at 300 / 400 / 500 only: a 700 would be synthesised. */
+.font-bold:lang(en),
+:lang(en) > b,
+:lang(en) > strong {
+  font-weight: 500;
+}
+
+/* Japanese inside an English page keeps the Japanese face and rhythm. */
+html:lang(en) [lang="ja"] {
+  font-family: var(--font-sans-jp);
+  letter-spacing: var(--tracking-body);
+  font-feature-settings: "palt" 1;
+}
+
 /* —— Focus (keyboard only) —— */
 :focus {
   outline: none;

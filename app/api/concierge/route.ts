@@ -123,6 +123,7 @@ export async function POST(request: Request) {
     const answer = await answerConcierge({
       messages: input.messages,
       contextSlug: input.contextSlug,
+      locale: input.locale,
       products,
     });
 

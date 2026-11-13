@@ -1,7 +1,15 @@
-import Link from "next/link";
+import { ApproxPrice } from "@/components/currency/ApproxPrice";
+import { CurrencySwitch } from "@/components/currency/CurrencySwitch";
+import { Link } from "@/components/i18n/Link";
+import { getProductCopy } from "@/lib/copy/site-ui";
+import { getCurrencyCopy } from "@/lib/currency/copy";
+import type { Locale } from "@/lib/i18n/config";
+import { getStoreCopy } from "@/lib/store-ui/graphpaper-copy";
+import { SHIPS_WITHIN_JAPAN_ONLY } from "@/lib/store-ui/returns-policy";
 import { formatPrice } from "@/lib/utils/format-price";
 
 type ProductPurchaseHeaderProps = {
+  locale: Locale;
   displayName: string;
   price: number;
   description: string;
@@ -14,6 +22,7 @@ type ProductPurchaseHeaderProps = {
 
 /** Server-rendered PDP title, price, and description. */
 export function ProductPurchaseHeader({
+  locale,
   displayName,
   price,
   description,
@@ -21,6 +30,7 @@ export function ProductPurchaseHeader({
   character,
   className,
 }: ProductPurchaseHeaderProps) {
+  const copy = getProductCopy(locale);
   const rest = gauge
     ? displayName.replace(new RegExp(`^${gauge}G\\s*`), "")
     : displayName;
@@ -32,7 +42,7 @@ export function ProductPurchaseHeader({
           href="/products"
           className="transition-opacity duration-[var(--duration-quiet)] hover:opacity-60"
         >
-          Collection
+          {getStoreCopy(locale).nav.products}
         </Link>
         <span aria-hidden className="mx-1.5">
           /
@@ -63,12 +73,28 @@ export function ProductPurchaseHeader({
         )}
       </h1>
 
-      <p className="mt-4 flex items-baseline gap-2 text-[var(--color-ink)]">
+      <p className="mt-4 flex flex-wrap items-baseline gap-x-2 gap-y-1 text-[var(--color-ink)]">
         <span className="font-en text-[18px] tracking-[0.04em] tabular-nums">
           {formatPrice(price)}
         </span>
-        <span className="type-fine">(税込)</span>
+        <ApproxPrice amount={price} className="text-[15px] tracking-[0.02em]" />
+        <span className="type-fine">{copy.taxIncluded}</span>
       </p>
+
+      {locale === "en" ? (
+        <div className="mt-3 space-y-1">
+          <p className="type-caption">
+            {getCurrencyCopy(locale).chargedInYen}
+          </p>
+          <p className="type-caption text-[var(--color-ink)]">
+            {SHIPS_WITHIN_JAPAN_ONLY}
+          </p>
+          <p className="type-caption flex items-center gap-3">
+            <span>{getCurrencyCopy(locale).estimatesIn}</span>
+            <CurrencySwitch />
+          </p>
+        </div>
+      ) : null}
 
       {description ? (
         <p className="type-body mt-6 line-clamp-4 text-[var(--color-ink-soft)]">

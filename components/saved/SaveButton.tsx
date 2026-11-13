@@ -1,7 +1,8 @@
 "use client";
 
-import Link from "next/link";
-import { SAVED_COPY } from "@/lib/saved/copy";
+import { Link } from "@/components/i18n/Link";
+import { useLocale } from "@/components/i18n/LocaleProvider";
+import { getSavedCopy } from "@/lib/saved/copy";
 import { isSaved, useSavedStore } from "@/lib/saved/store";
 import { useHydrated } from "@/lib/saved/use-hydrated";
 import { cn } from "@/lib/utils";
@@ -38,6 +39,7 @@ export function SaveCardButton({
   productName,
   className,
 }: SaveButtonProps) {
+  const SAVED_COPY = getSavedCopy(useLocale());
   const { saved, onToggle } = useSavedToggle(productId);
 
   return (
@@ -74,6 +76,7 @@ export function SaveInlineButton({
   size,
   className,
 }: SaveButtonProps) {
+  const SAVED_COPY = getSavedCopy(useLocale());
   const { saved, onToggle } = useSavedToggle(productId, size);
 
   return (

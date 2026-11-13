@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { RESTOCK_COPY } from "@/lib/restock/copy";
+import type { Locale } from "@/lib/i18n/config";
+import { getRestockCopy, type RestockCopy } from "@/lib/restock/copy";
 import type { ProductSize } from "@/types";
 
 type Status = "idle" | "submitting" | "success" | "error";
 
-function messageFor(code: string | undefined): string {
+function messageFor(code: string | undefined, RESTOCK_COPY: RestockCopy): string {
   switch (code) {
     case "invalid_email":
       return RESTOCK_COPY.invalidEmail;
@@ -23,7 +24,12 @@ function messageFor(code: string | undefined): string {
  * Submit state for one product + size. Mount it with a `key` of
  * `${productId}-${size}` so switching size starts from a clean form.
  */
-export function useRestockRequest(productId: string, size: ProductSize) {
+export function useRestockRequest(
+  productId: string,
+  size: ProductSize,
+  locale: Locale,
+) {
+  const RESTOCK_COPY = getRestockCopy(locale);
   const [email, setEmail] = useState("");
   const [company, setCompany] = useState("");
   const [status, setStatus] = useState<Status>("idle");
@@ -40,7 +46,8 @@ export function useRestockRequest(productId: string, size: ProductSize) {
       const response = await fetch("/api/restock", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, productId, size, company }),
+        // The stored locale decides the language of the notification email.
+        body: JSON.stringify({ email, productId, size, company, locale }),
       });
       const data = (await response.json().catch(() => null)) as {
         ok?: boolean;
@@ -53,7 +60,7 @@ export function useRestockRequest(productId: string, size: ProductSize) {
       }
 
       setStatus("error");
-      setError(messageFor(data?.error));
+      setError(messageFor(data?.error, RESTOCK_COPY));
     } catch {
       setStatus("error");
       setError(RESTOCK_COPY.unavailable);

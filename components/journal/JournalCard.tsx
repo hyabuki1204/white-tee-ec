@@ -1,12 +1,14 @@
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/components/i18n/Link";
 import {
   formatJournalDate,
   type JournalArticle,
 } from "@/lib/content/journal-static";
+import type { Locale } from "@/lib/i18n/config";
 import { cn } from "@/lib/utils";
 
 type JournalCardProps = {
+  locale: Locale;
   article: JournalArticle;
   /**
    * lead — the large first entry of the journal list (image beside text).
@@ -41,6 +43,7 @@ const imageHover =
   "object-cover transition-transform duration-[var(--duration-reveal)] ease-[var(--ease-quiet)] [@media(hover:hover)]:group-hover:scale-[1.02]";
 
 export function JournalCard({
+  locale,
   article,
   variant = "editorial",
   index,
@@ -75,7 +78,7 @@ export function JournalCard({
             </p>
             <p className="mt-8 inline-flex items-center gap-3 text-[13px] tracking-[0.12em] text-[var(--color-navy)]">
               <span className="border-b border-[var(--color-navy)] pb-1">
-                読む
+                {locale === "en" ? "Read" : "読む"}
               </span>
               <span aria-hidden className="font-en">
                 →

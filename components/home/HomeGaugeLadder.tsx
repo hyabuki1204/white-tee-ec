@@ -1,7 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/components/i18n/Link";
+import { useLocale } from "@/components/i18n/LocaleProvider";
+import { defineCopy } from "@/lib/i18n/define-copy";
 import { useId, useState, type CSSProperties } from "react";
 import { formatWeight, type GaugeSpec } from "@/lib/fabric/gauge";
 import { formatPrice } from "@/lib/utils/format-price";
@@ -12,6 +14,35 @@ export type GaugeLadderItem = GaugeSpec & {
   imageUrl: string;
   pieces: Array<{ slug: string; label: string; price: number }>;
 };
+
+const getCopy = defineCopy(
+  {
+    label: "Gauge",
+    title: "1インチに、針が何本あるか。",
+    lead: "ゲージは編機の針の密度です。数字が大きいほど編目は細かく、生地は薄く、密になります。同じ綿100%の白でも、ゲージが変われば別の服です。",
+    tablist: "ゲージを選ぶ",
+    imageAlt: (gauge: number) => `${gauge}ゲージの編地の拡大`,
+    needlesBefore: "針",
+    needlesAfter: "本",
+    yarn: "糸",
+    structure: "組織",
+    weight: "目付",
+    about: (gauge: number) => `${gauge}G について`,
+  },
+  {
+    label: "Gauge",
+    title: "How many needles in one inch.",
+    lead: "Gauge is the density of needles on the knitting machine: needles per inch. The higher the number, the smaller the stitches, and the thinner and denser the cloth. The cotton is the same and the white is the same, but change the gauge and it is a different garment.",
+    tablist: "Choose a gauge",
+    imageAlt: (gauge: number) => `Close-up of ${gauge}-gauge knitted cloth`,
+    needlesBefore: "",
+    needlesAfter: "needles",
+    yarn: "Yarn",
+    structure: "Knit",
+    weight: "Weight",
+    about: (gauge: number) => `About ${gauge}G`,
+  },
+);
 
 type HomeGaugeLadderProps = {
   items: GaugeLadderItem[];
@@ -24,6 +55,7 @@ type HomeGaugeLadderProps = {
  */
 export function HomeGaugeLadder({ items, initialGauge }: HomeGaugeLadderProps) {
   const baseId = useId();
+  const copy = getCopy(useLocale());
   const initialIndex = Math.max(
     0,
     items.findIndex((item) => item.gauge === initialGauge),
@@ -45,19 +77,19 @@ export function HomeGaugeLadder({ items, initialGauge }: HomeGaugeLadderProps) {
   return (
     <section
       id="gauge"
-      aria-label="Gauge"
+      aria-label={copy.label}
       className="scroll-mt-[var(--header-height)] bg-[var(--color-ground)] pb-[var(--space-5)] pt-[var(--space-6)] md:pb-[var(--space-6)] md:pt-[var(--space-7)]"
     >
       <div className="mx-auto w-full max-w-7xl px-6 md:px-8 lg:px-12">
-        <p className="type-label !text-[var(--color-navy)]">Gauge</p>
-        <h2 className="type-h2 mt-3">1インチに、針が何本あるか。</h2>
+        <p className="type-label !text-[var(--color-navy)]">{copy.label}</p>
+        <h2 className="type-h2 mt-3">{copy.title}</h2>
         <p className="type-body mt-4 max-w-[34em] text-[var(--color-ink-soft)]">
-          ゲージは編機の針の密度です。数字が大きいほど編目は細かく、生地は薄く、密になります。同じ綿100%の白でも、ゲージが変われば別の服です。
+          {copy.lead}
         </p>
 
         <div
           role="tablist"
-          aria-label="ゲージを選ぶ"
+          aria-label={copy.tablist}
           onKeyDown={onKeyDown}
           className="mt-[var(--space-4)] flex items-end gap-2 border-b border-[var(--color-ink)] md:mt-[var(--space-5)] md:gap-6"
         >
@@ -107,7 +139,7 @@ export function HomeGaugeLadder({ items, initialGauge }: HomeGaugeLadderProps) {
                 <Image
                   key={item.fabricSlug}
                   src={item.imageUrl}
-                  alt={itemIndex === index ? `${item.gauge}ゲージの編地の拡大` : ""}
+                  alt={itemIndex === index ? copy.imageAlt(item.gauge) : ""}
                   aria-hidden={itemIndex !== index}
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
@@ -128,20 +160,20 @@ export function HomeGaugeLadder({ items, initialGauge }: HomeGaugeLadderProps) {
               <p className="type-caption mt-2 flex justify-between">
                 <span className="font-en">1 inch</span>
                 <span>
-                  針
+                  {copy.needlesBefore}
                   <span className="font-en mx-1 text-[var(--color-ink)] tabular-nums">
                     {active.gauge}
                   </span>
-                  本
+                  {copy.needlesAfter}
                 </span>
               </p>
             </div>
           </div>
 
           <div className="md:col-span-5 md:col-start-8">
-            <h3 className="type-h2">{active.headlineJa}</h3>
+            <h3 className="type-h2">{active.headline}</h3>
             <div className="mt-4 space-y-1">
-              {active.linesJa.map((line) => (
+              {active.lines.map((line) => (
                 <p key={line} className="type-body text-[var(--color-ink-soft)]">
                   {line}
                 </p>
@@ -150,9 +182,9 @@ export function HomeGaugeLadder({ items, initialGauge }: HomeGaugeLadderProps) {
 
             <dl className="mt-8 border-t border-[var(--color-hairline)]">
               {[
-                ["糸", active.yarn],
-                ["組織", active.structure],
-                ["目付", formatWeight(active)],
+                [copy.yarn, active.yarn],
+                [copy.structure, active.structure],
+                [copy.weight, formatWeight(active)],
               ].map(([label, value]) => (
                 <div
                   key={label}
@@ -192,7 +224,7 @@ export function HomeGaugeLadder({ items, initialGauge }: HomeGaugeLadderProps) {
               href={`/fabric/${active.fabricSlug}`}
               className="type-label mt-6 inline-flex border-b border-[var(--color-ink)] pb-1 !text-[var(--color-ink)] transition-opacity duration-[var(--duration-quiet)] hover:opacity-60"
             >
-              {active.gauge}G について
+              {copy.about(active.gauge)}
             </Link>
           </div>
         </div>

@@ -1,10 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/components/i18n/Link";
 import type { ReactNode } from "react";
 import { formatPrice } from "@/lib/utils/format-price";
-import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
+import { ApproxPrice } from "@/components/currency/ApproxPrice";
+import { useLocale } from "@/components/i18n/LocaleProvider";
+import { getStoreCopy } from "@/lib/store-ui/graphpaper-copy";
 import { useCartStore } from "@/lib/cart/store";
 import type { CartLineItem } from "@/types/cart";
 
@@ -59,7 +61,7 @@ export function CartItem({
 }: CartItemProps) {
   const removeItem = useCartStore((state) => state.removeItem);
   const updateQuantity = useCartStore((state) => state.updateQuantity);
-  const { cart: copy } = GRAPHPAPER_STORE_COPY;
+  const { cart: copy } = getStoreCopy(useLocale());
 
   const lineTotal = currentPrice * item.quantity;
   const priceChanged = currentPrice !== item.price;
@@ -92,8 +94,9 @@ export function CartItem({
           ) : (
             <h3 className={nameClass}>{productName}</h3>
           )}
-          <p className="shrink-0 font-en text-[16px] tracking-[0.02em] tabular-nums text-[var(--color-ink)]">
+          <p className="shrink-0 text-right font-en text-[16px] tracking-[0.02em] tabular-nums text-[var(--color-ink)]">
             {formatPrice(lineTotal)}
+            <ApproxPrice amount={lineTotal} className="block text-[12px]" />
           </p>
         </div>
 

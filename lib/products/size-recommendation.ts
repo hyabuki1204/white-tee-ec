@@ -1,3 +1,5 @@
+import { getSiteUiCopy } from "@/lib/copy/site-ui";
+import type { Locale } from "@/lib/i18n/config";
 import { shiftSize, SIZE_ORDER } from "@/lib/products/fit-profiles";
 import type {
   ProductFitProfile,
@@ -81,7 +83,9 @@ export function recommendSize(
   input: SizeRecommendationInput,
   profile: ProductFitProfile,
   availableSizes: ProductSize[],
+  locale: Locale,
 ): SizeRecommendationResult | null {
+  const copy = getSiteUiCopy(locale).sizeRecommendation;
   const available = SIZE_ORDER.filter((size) => availableSizes.includes(size));
 
   if (available.length === 0) {
@@ -98,19 +102,21 @@ export function recommendSize(
   const smaller = shiftSize(recommended, -1, available);
   const larger = shiftSize(recommended, 1, available);
 
-  const primaryLine = `おすすめサイズ：${recommended}`;
+  const primaryLine = copy.recommended(recommended);
 
   const secondaryParts: string[] = [];
 
   if (larger !== recommended) {
-    secondaryParts.push(`ゆったり着たい方は ${larger} を。`);
+    secondaryParts.push(copy.preferLooser(larger));
   }
 
   if (smaller !== recommended) {
-    secondaryParts.push(`よりフィットさせたい方は ${smaller} を。`);
+    secondaryParts.push(copy.preferCloser(smaller));
   }
 
-  const helperJa = buildHelperJa(recommended, smaller, larger);
+  // One-line Japanese summary: Japanese pages only.
+  const helperJa =
+    locale === "ja" ? buildHelperJa(recommended, smaller, larger) : undefined;
 
   return {
     recommended,

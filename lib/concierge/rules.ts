@@ -24,7 +24,12 @@ import type {
 } from "@/lib/concierge/types";
 import { shiftSize } from "@/lib/products/fit-profiles";
 import { recommendSize } from "@/lib/products/size-recommendation";
-import { RETURNS_POLICY } from "@/lib/store-ui/returns-policy";
+import {
+  getReturnsPolicy,
+  SHIPS_WITHIN_JAPAN_ONLY,
+} from "@/lib/store-ui/returns-policy";
+
+const RETURNS_POLICY = getReturnsPolicy("ja");
 import type { ProductSize } from "@/types";
 
 /**
@@ -360,6 +365,7 @@ export function chooseSize(
       },
       entry.product.fitProfile,
       sizes,
+      language,
     );
 
     size = result?.recommended ?? null;
@@ -446,7 +452,7 @@ function shippingReply(language: ConciergeLanguage): string {
     ? `Orders ship within ${days[1]}–${days[2]} business days of confirmation. `
     : "";
 
-  return `${dispatch}Shipping within Japan is a flat ${yen(SHIPPING_FEE)} (tax included), and free on orders of ${yen(FREE_SHIPPING_THRESHOLD)} or more.`;
+  return `${SHIPS_WITHIN_JAPAN_ONLY} ${dispatch}Shipping within Japan is a flat ${yen(SHIPPING_FEE)} (tax included), and free on orders of ${yen(FREE_SHIPPING_THRESHOLD)} or more.`;
 }
 
 function returnsReply(language: ConciergeLanguage): string {
@@ -480,7 +486,7 @@ function compareReply(
       );
     } else {
       lines.push(
-        `${spec.gauge}G：${spec.yarn}、目付${spec.weightGsm}g/m²。${spec.headlineJa}`,
+        `${spec.gauge}G：${spec.yarn}、目付${spec.weightGsm}g/m²。${spec.headline}`,
       );
     }
   }
@@ -513,13 +519,15 @@ export function recommendByRules(input: {
   messages: ConciergeTurn[];
   catalog: ConciergeCatalog;
   contextSlug?: string | null;
+  /** Used when the message itself does not show a language (e.g. "175"). */
+  defaultLanguage?: ConciergeLanguage;
 }): RulesOutcome {
   const { catalog } = input;
   const userTexts = input.messages
     .filter((turn) => turn.role === "user")
     .map((turn) => turn.content);
   const lastText = userTexts[userTexts.length - 1] ?? "";
-  const language = detectLanguage(lastText);
+  const language = detectLanguage(lastText, input.defaultLanguage ?? "ja");
   const readings = userTexts.map(readMessage);
   const last = readings[readings.length - 1];
   const context = input.contextSlug

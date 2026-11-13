@@ -1,10 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/components/i18n/Link";
+import { ApproxPrice } from "@/components/currency/ApproxPrice";
+import { useLocale } from "@/components/i18n/LocaleProvider";
 import { SoftImage } from "@/components/motion/SoftImage";
 import { SaveCardButton } from "@/components/saved/SaveButton";
 import { formatWeight, getGaugeSpec } from "@/lib/fabric/gauge";
+import { joinSpec } from "@/lib/i18n/format";
 import { getGraphpaperDisplayName } from "@/lib/products/display-name";
 import { getProductWearImageUrl } from "@/lib/products/wear-image";
 import { formatPrice } from "@/lib/utils/format-price";
@@ -27,9 +30,10 @@ export function ProductCard({
   soldOut = false,
   className,
 }: ProductCardProps) {
+  const locale = useLocale();
   const wearImageUrl = getProductWearImageUrl(product);
   const displayName = getGraphpaperDisplayName(product, fabricName);
-  const spec = getGaugeSpec(product.fabricSlug);
+  const spec = getGaugeSpec(product.fabricSlug, locale);
   const outOfStock =
     soldOut ||
     product.variants.every((variant) => variant.stockQuantity < 1);
@@ -79,15 +83,22 @@ export function ProductCard({
           <p className="font-en text-[17px] leading-snug tracking-[0.02em] text-[var(--color-ink)]">
             {displayName}
           </p>
-          <p className="font-en shrink-0 text-[14px] tabular-nums tracking-[0.04em] text-[var(--color-ink)]">
+          <p className="font-en shrink-0 text-right text-[14px] tabular-nums tracking-[0.04em] text-[var(--color-ink)]">
             {formatPrice(product.price)}
           </p>
         </div>
         {spec ? (
           <p className="type-caption mt-1">
-            {spec.yarn}・{formatWeight(spec)}
+            {joinSpec(locale, spec.yarn, formatWeight(spec))}
           </p>
         ) : null}
+        {/* English only: the estimate sits on its own line so the name keeps
+            its width on narrow cards. */}
+        <ApproxPrice
+          amount={product.price}
+          bracketed={false}
+          className="mt-0.5 block text-[12px] tracking-[0.02em]"
+        />
       </Link>
       <SaveCardButton productId={product.id} productName={displayName} />
     </article>

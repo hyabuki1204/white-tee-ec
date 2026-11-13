@@ -1,5 +1,8 @@
-import Link from "next/link";
-import { NEWSLETTER_COPY } from "@/lib/newsletter/use-newsletter-subscribe";
+"use client";
+
+import { Link } from "@/components/i18n/Link";
+import { useLocale } from "@/components/i18n/LocaleProvider";
+import { getNewsletterCopy } from "@/lib/newsletter/use-newsletter-subscribe";
 import { cn } from "@/lib/utils";
 
 /** Off-screen field for bots; hidden from people and assistive tech. */
@@ -38,6 +41,9 @@ export function NewsletterFormFooter({
   error: string | null;
   className?: string;
 }) {
+  const locale = useLocale();
+  const copy = getNewsletterCopy(locale);
+
   return (
     <div className={cn("space-y-2", className)}>
       <p
@@ -47,12 +53,16 @@ export function NewsletterFormFooter({
         {error}
       </p>
       <p className="type-fine">
-        {NEWSLETTER_COPY.notice}
+        {copy.notice}
         <Link
           href="/privacy"
-          className="ml-1 underline underline-offset-4 transition-opacity duration-[var(--duration-quiet)] ease-[var(--ease-quiet)] hover:opacity-60"
+          className={cn(
+            "ml-1 underline underline-offset-4 transition-opacity duration-[var(--duration-quiet)] ease-[var(--ease-quiet)] hover:opacity-60",
+            // Keep the two English words together; Japanese wraps as before.
+            locale === "en" && "whitespace-nowrap",
+          )}
         >
-          {NEWSLETTER_COPY.privacyLink}
+          {copy.privacyLink}
         </Link>
       </p>
     </div>

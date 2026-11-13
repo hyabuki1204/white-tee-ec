@@ -1,8 +1,12 @@
+"use client";
+
 import Image from "next/image";
-import Link from "next/link";
+import { CurrencySwitch } from "@/components/currency/CurrencySwitch";
+import { useLocale } from "@/components/i18n/LocaleProvider";
+import { Link } from "@/components/i18n/Link";
 import { Container } from "@/components/layout/Container";
 import { FooterNewsletter } from "@/components/layout/FooterNewsletter";
-import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
+import { getStoreCopy } from "@/lib/store-ui/graphpaper-copy";
 
 const linkClass =
   "inline-flex min-h-11 items-center text-[12px] font-normal tracking-[0.02em] text-[var(--color-ink)] no-underline transition-[text-decoration-color] duration-[var(--duration-quiet)] ease-[var(--ease-quiet)] hover:underline";
@@ -17,22 +21,23 @@ const SHOP_LINKS = [
   { href: "/journal", label: "Journal" },
 ] as const;
 
-const INFORMATION_LINKS = [
-  { href: "/store-guide", label: GRAPHPAPER_STORE_COPY.footer.storeGuide },
-  { href: "/shipping", label: GRAPHPAPER_STORE_COPY.footer.shipping },
-  { href: "/contact", label: GRAPHPAPER_STORE_COPY.footer.contact },
-  { href: "/stockist", label: GRAPHPAPER_STORE_COPY.footer.stockist },
-] as const;
-
-const LEGAL_LINKS = [
-  { href: "/privacy", label: GRAPHPAPER_STORE_COPY.footer.privacy },
-  { href: "/terms", label: GRAPHPAPER_STORE_COPY.footer.terms },
-  { href: "/legal", label: GRAPHPAPER_STORE_COPY.footer.legal },
-] as const;
-
 const INSTAGRAM_HREF = "https://www.instagram.com/";
 
 export function Footer() {
+  const locale = useLocale();
+  const copy = getStoreCopy(locale);
+  const informationLinks = [
+    { href: "/store-guide", label: copy.footer.storeGuide },
+    { href: "/shipping", label: copy.footer.shipping },
+    { href: "/contact", label: copy.footer.contact },
+    { href: "/stockist", label: copy.footer.stockist },
+  ];
+  const legalLinks = [
+    { href: "/privacy", label: copy.footer.privacy },
+    { href: "/terms", label: copy.footer.terms },
+    { href: "/legal", label: copy.footer.legal },
+  ];
+
   return (
     <footer className="border-t border-[var(--color-hairline)] bg-[var(--color-bg-warm)]">
       <Container as="div" className="py-[var(--space-5)] md:py-[var(--space-6)]">
@@ -62,11 +67,11 @@ export function Footer() {
 
           <div>
             <p className="mb-4 text-[12px] font-normal leading-[1.7] tracking-[0.02em] text-[var(--color-ink-soft)]">
-              {GRAPHPAPER_STORE_COPY.shipping.freeNote}
+              {copy.shipping.freeNote}
             </p>
             <p className={columnTitleClass}>Information</p>
             <ul className="space-y-3">
-              {INFORMATION_LINKS.map((link) => (
+              {informationLinks.map((link) => (
                 <li key={link.href}>
                   <Link href={link.href} className={linkClass}>
                     {link.label}
@@ -79,7 +84,7 @@ export function Footer() {
           <div>
             <p className={columnTitleClass}>Legal</p>
             <ul className="space-y-3">
-              {LEGAL_LINKS.map((link) => (
+              {legalLinks.map((link) => (
                 <li key={link.href}>
                   <Link href={link.href} className={linkClass}>
                     {link.label}
@@ -108,17 +113,25 @@ export function Footer() {
                 height={50}
                 className="h-7 w-auto opacity-70"
               />
-              <span>和歌山</span>
+              <span>{copy.footer.knittedIn}</span>
             </Link>
           </div>
-          <Link
-            href={INSTAGRAM_HREF}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={linkClass}
-          >
-            Instagram
-          </Link>
+          <div className="flex flex-wrap items-center gap-x-8 gap-y-2">
+            {locale === "en" ? (
+              <p className="flex items-center gap-3 text-[12px] tracking-[0.02em] text-[var(--color-ink-soft)]">
+                <span className="font-en">{copy.footer.currencyLabel}</span>
+                <CurrencySwitch />
+              </p>
+            ) : null}
+            <Link
+              href={INSTAGRAM_HREF}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={linkClass}
+            >
+              Instagram
+            </Link>
+          </div>
         </div>
       </Container>
     </footer>

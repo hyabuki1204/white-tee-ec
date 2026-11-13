@@ -1,6 +1,9 @@
-import Link from "next/link";
-import { GAUGE_LADDER } from "@/lib/fabric/gauge";
-import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
+"use client";
+
+import { Link } from "@/components/i18n/Link";
+import { useLocale } from "@/components/i18n/LocaleProvider";
+import { getGaugeLadder } from "@/lib/fabric/gauge";
+import { getStoreCopy } from "@/lib/store-ui/graphpaper-copy";
 import {
   buttonPrimaryClass,
   buttonSecondaryClass,
@@ -8,24 +11,30 @@ import {
 } from "@/lib/store-ui/ui-classes";
 
 type NotFoundContentProps = {
-  title: string;
-  message: string;
+  /** `product` for an unknown product slug, `page` for everything else. */
+  variant?: "page" | "product";
 };
-
-const { notFound: copy } = GRAPHPAPER_STORE_COPY.states;
 
 /**
  * 404 screen. The one oversized numeral on the page is the status code;
  * below it, the three gauges give a way back into the store.
+ *
+ * `not-found.tsx` receives no route params, so the locale comes from the
+ * provider in the root layout (which is why this is a client component).
  */
-export function NotFoundContent({ title, message }: NotFoundContentProps) {
+export function NotFoundContent({ variant = "page" }: NotFoundContentProps) {
+  const locale = useLocale();
+  const copy = getStoreCopy(locale).states.notFound;
+  const title = variant === "product" ? copy.productTitle : copy.title;
+  const message = variant === "product" ? copy.productMessage : copy.message;
+
   return (
     <section className="bg-[var(--color-surface)]">
       <div
         className={`${pageGutterClass} grid gap-12 py-[var(--space-5)] md:grid-cols-12 md:items-end md:gap-0 md:py-[var(--space-6)]`}
       >
         <div className="md:col-span-7">
-          <p className="type-label !text-[var(--color-navy)]">Not found</p>
+          <p className="type-label !text-[var(--color-navy)]">{copy.eyebrow}</p>
           <p
             aria-hidden
             className="type-numeral mt-6 text-[var(--color-ink)]"
@@ -38,7 +47,7 @@ export function NotFoundContent({ title, message }: NotFoundContentProps) {
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link href="/products" className={buttonPrimaryClass}>
-              コレクションを見る
+              {copy.viewCollection}
             </Link>
             <Link href="/" className={buttonSecondaryClass}>
               {copy.back}
@@ -47,9 +56,9 @@ export function NotFoundContent({ title, message }: NotFoundContentProps) {
         </div>
 
         <div className="md:col-span-4 md:col-start-9">
-          <p className="type-caption">ゲージから探す</p>
+          <p className="type-caption">{copy.findByGauge}</p>
           <ul className="mt-3 border-t border-[var(--color-ink)]">
-            {GAUGE_LADDER.map((spec) => (
+            {getGaugeLadder(locale).map((spec) => (
               <li
                 key={spec.fabricSlug}
                 className="border-b border-[var(--color-hairline)]"
@@ -63,7 +72,7 @@ export function NotFoundContent({ title, message }: NotFoundContentProps) {
                     <span className="ml-0.5 text-[0.5em] tracking-normal">G</span>
                   </span>
                   <span className="type-caption text-right">
-                    {spec.headlineJa}
+                    {spec.headline}
                   </span>
                 </Link>
               </li>

@@ -1,9 +1,15 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/components/i18n/Link";
 import { useEffect, useId, useRef, useState } from "react";
 import { ConciergeCard } from "@/components/concierge/ConciergeCard";
+import { useLocale } from "@/components/i18n/LocaleProvider";
 import { CONCIERGE_LIMITS } from "@/lib/concierge/limits";
+import {
+  getConciergeCopy,
+  type ConciergeChipGroup,
+  type ConciergeUiCopy,
+} from "@/lib/concierge/ui-copy";
 import type {
   ConciergeReply,
   ConciergeResponse,
@@ -22,60 +28,16 @@ type Entry =
   | { id: number; role: "user"; text: string }
   | { id: number; role: "assistant"; reply: ConciergeReply };
 
-type ChipGroup = {
-  label: string;
-  /** Only one chip of the group can be on at a time. */
-  exclusive: boolean;
-  chips: string[];
-};
+type ChipGroup = ConciergeChipGroup;
 
-const CHIP_GROUPS: ChipGroup[] = [
-  {
-    label: "着方",
-    exclusive: false,
-    chips: ["一枚で着る", "ジャケットの下に着る", "毎日着る", "暑い時期に着る"],
-  },
-  {
-    label: "フィット",
-    exclusive: true,
-    chips: ["ジャストで着たい", "ゆったり着たい"],
-  },
-  {
-    label: "普段のサイズ",
-    exclusive: true,
-    chips: ["普段はS", "普段はM", "普段はL"],
-  },
-  {
-    label: "そのほか",
-    exclusive: false,
-    chips: ["透けが気になる", "はじめての一枚", "2枚目を買い足す"],
-  },
-];
-
-const COPY = {
-  intro:
-    "身長か普段のサイズと、どう着たいかを教えてください。ゲージ・シルエット・サイズを一つご提案します。",
-  disclaimer: "自動応答です。サイズは目安としてご利用ください。",
-  heightLabel: "身長",
-  messageLabel: "ご相談内容",
-  placeholder: "例：体重65kg。白シャツの代わりに着たい。",
-  submit: "相談する",
-  pending: "確認しています",
-  reset: "はじめから",
-  empty: "身長、当てはまる項目、またはご相談内容のいずれかをご入力ください。",
-  tooLong: `${CONCIERGE_LIMITS.maxMessageChars}文字以内でご入力ください。`,
-  rateLimited: (seconds: number) =>
-    `続けてのご相談が多くなっています。${seconds}秒ほどおいて、もう一度お試しください。`,
-  unavailable:
-    "ただいまお答えできません。時間をおいてお試しいただくか、お問い合わせください。",
-} as const;
-
-function toTurn(entry: Entry): ConciergeTurn {
+function toTurn(entry: Entry, COPY: ConciergeUiCopy): ConciergeTurn {
   if (entry.role === "user") return { role: "user", content: entry.text };
 
   const { reply } = entry;
   const picked = reply.primary
-    ? `（${reply.primary.name}${reply.primary.size ? ` ${reply.primary.size}` : ""}）`
+    ? COPY.picked(
+        `${reply.primary.name}${reply.primary.size ? ` ${reply.primary.size}` : ""}`,
+      )
     : "";
 
   return {
@@ -95,6 +57,9 @@ function toTurn(entry: Entry): ConciergeTurn {
  */
 export function Concierge({ contextSlug, contextName, className }: ConciergeProps) {
   const baseId = useId();
+  const locale = useLocale();
+  const COPY = getConciergeCopy(locale);
+  const CHIP_GROUPS = COPY.chipGroups;
   const [entries, setEntries] = useState<Entry[]>([]);
   const [selected, setSelected] = useState<string[]>([]);
   const [height, setHeight] = useState("");
@@ -131,14 +96,14 @@ export function Concierge({ contextSlug, contextName, className }: ConciergeProp
     height !== "" && Number.isFinite(heightNumber) && heightNumber >= 130 && heightNumber <= 220;
 
   const composed = [
-    heightValid ? `身長${Math.round(heightNumber)}cm` : "",
+    heightValid ? COPY.heightMessage(Math.round(heightNumber)) : "",
     ...CHIP_GROUPS.flatMap((group) =>
       group.chips.filter((chip) => selected.includes(chip)),
     ),
     draft.trim(),
   ]
     .filter(Boolean)
-    .join("。");
+    .join(COPY.separator);
 
   const overLimit = composed.length > CONCIERGE_LIMITS.maxMessageChars;
 
@@ -194,8 +159,10 @@ export function Concierge({ contextSlug, contextName, className }: ConciergeProp
         headers: { "Content-Type": "application/json" },
         signal: controller.signal,
         body: JSON.stringify({
-          messages: history.slice(-CONCIERGE_LIMITS.maxTurnsKept).map(toTurn),
+          messages: history.slice(-CONCIERGE_LIMITS.maxTurnsKept).map((entry) => toTurn(entry, COPY)),
           contextSlug: contextSlug ?? null,
+          // The reply defaults to the language of the storefront.
+          locale,
         }),
       });
 
@@ -262,15 +229,15 @@ export function Concierge({ contextSlug, contextName, className }: ConciergeProp
         role="log"
         aria-live="polite"
         aria-relevant="additions"
-        aria-label="コンシェルジュとの会話"
+        aria-label={COPY.conversation}
         aria-busy={pending}
         className="space-y-6"
       >
         <li>
-          <p className="type-label !text-[var(--color-navy)]">Concierge</p>
+          <p className="type-label !text-[var(--color-navy)]">{COPY.label}</p>
           <p className="type-body mt-2 max-w-[36em] text-[var(--color-ink)]">
             {contextName
-              ? `${contextName} をご覧いただいています。${COPY.intro}`
+              ? `${COPY.viewing(contextName)}${COPY.intro}`
               : COPY.intro}
           </p>
           <p className="type-caption mt-2">{COPY.disclaimer}</p>
@@ -283,7 +250,7 @@ export function Concierge({ contextSlug, contextName, className }: ConciergeProp
             return (
               <li key={entry.id} className="flex justify-end">
                 <p className="type-body max-w-[85%] whitespace-pre-line break-words border border-[var(--color-hairline)] bg-[var(--color-surface)] px-4 py-3 text-[var(--color-ink)]">
-                  <span className="sr-only">お客様：</span>
+                  <span className="sr-only">{COPY.customer}</span>
                   {entry.text}
                 </p>
               </li>
@@ -299,7 +266,7 @@ export function Concierge({ contextSlug, contextName, className }: ConciergeProp
               className="scroll-mt-[calc(var(--header-height)+16px)] space-y-4"
             >
               <div>
-                <p className="type-label !text-[var(--color-navy)]">Concierge</p>
+                <p className="type-label !text-[var(--color-navy)]">{COPY.label}</p>
                 <p className="type-body mt-2 max-w-[36em] whitespace-pre-line break-words text-[var(--color-ink)]">
                   {reply.reply}
                 </p>
@@ -338,7 +305,7 @@ export function Concierge({ contextSlug, contextName, className }: ConciergeProp
 
         {pending ? (
           <li>
-            <p className="type-label !text-[var(--color-navy)]">Concierge</p>
+            <p className="type-label !text-[var(--color-navy)]">{COPY.label}</p>
             <p className="type-body mt-2 flex items-center gap-3 text-[var(--color-ink-soft)]">
               {COPY.pending}
               <span aria-hidden className="skeleton-block h-px w-16" />
@@ -471,7 +438,7 @@ export function Concierge({ contextSlug, contextName, className }: ConciergeProp
               overLimit && "!text-[var(--color-ink)]",
             )}
           >
-            <span className="sr-only">文字数 </span>
+            <span className="sr-only">{COPY.charCount}</span>
             {composed.length} / {CONCIERGE_LIMITS.maxMessageChars}
           </p>
 
@@ -506,7 +473,7 @@ export function Concierge({ contextSlug, contextName, className }: ConciergeProp
               href="/contact"
               className="ml-2 underline underline-offset-4 hover:opacity-60"
             >
-              お問い合わせ
+              {COPY.contact}
             </Link>
           ) : null}
         </p>

@@ -1,4 +1,4 @@
-import { SITE_UI_COPY } from "@/lib/copy/site-ui";
+import type { SiteUiCopy } from "@/lib/copy/site-ui";
 import { getCartItemKey } from "@/lib/cart/cart-utils";
 import type { CartLineItem } from "@/types/cart";
 import type { Product, ProductSize } from "@/types";
@@ -36,13 +36,15 @@ export function validateAddToCart({
   variant,
   quantity,
   cartItems,
+  copy,
 }: {
+  /** Product copy in the visitor's locale (error messages). */
+  copy: SiteUiCopy["product"];
   product: Product;
   variant: ProductSize;
   quantity: number;
   cartItems: CartLineItem[];
 }): AddToCartValidationResult {
-  const { product: copy } = SITE_UI_COPY;
   const stock = getVariantStock(product, variant);
 
   if (stock < 1) {

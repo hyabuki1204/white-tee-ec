@@ -17,7 +17,8 @@ import {
 } from "@/lib/cart/stock-validation";
 import { setLastViewedProductSlug } from "@/lib/navigation/last-product";
 import { useCartStore } from "@/lib/cart/store";
-import { SITE_UI_COPY } from "@/lib/copy/site-ui";
+import { useLocale } from "@/components/i18n/LocaleProvider";
+import { getProductCopy } from "@/lib/copy/site-ui";
 import type { Product, ProductSize } from "@/types";
 
 const ADDED_LABEL_MS = 1500;
@@ -71,7 +72,7 @@ export function ProductPurchaseProvider({
 }: ProductPurchaseProviderProps) {
   const addItem = useCartStore((state) => state.addItem);
   const cartItems = useCartStore((state) => state.items);
-  const { product: copy } = SITE_UI_COPY;
+  const copy = getProductCopy(useLocale());
 
   const [selectedSize, setSelectedSizeState] = useState<ProductSize | null>(
     initialSize,
@@ -138,6 +139,7 @@ export function ProductPurchaseProvider({
       variant: selectedSize,
       quantity,
       cartItems,
+      copy,
     });
 
     if (!validation.ok) {
@@ -166,7 +168,7 @@ export function ProductPurchaseProvider({
   }, [
     addItem,
     cartItems,
-    copy.chooseSize,
+    copy,
     product,
     quantity,
     selectedSize,

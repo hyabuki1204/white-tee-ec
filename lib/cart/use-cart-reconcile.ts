@@ -5,7 +5,8 @@ import {
   reconcileCartAgainstStock,
   type CartStockLookup,
 } from "@/lib/cart/stock-validation";
-import { SITE_UI_COPY } from "@/lib/copy/site-ui";
+import { useLocale } from "@/components/i18n/LocaleProvider";
+import { getSiteUiCopy } from "@/lib/copy/site-ui";
 import { useCartStore } from "@/lib/cart/store";
 
 type CartItems = ReturnType<typeof useCartStore.getState>["items"];
@@ -38,6 +39,7 @@ export function useCartReconcile(
   productLookup: CartStockLookup,
   enabled: boolean,
 ): string | null {
+  const copy = getSiteUiCopy(useLocale()).cart;
   const items = useCartStore((state) => state.items);
   const [sticky, setSticky] = useState<StickyNotice | null>(null);
 
@@ -52,9 +54,9 @@ export function useCartReconcile(
   const message = !result
     ? null
     : result.removedCount > 0
-      ? SITE_UI_COPY.cart.removedUnavailable(result.removedCount)
+      ? copy.removedUnavailable(result.removedCount)
       : result.trimmedCount > 0
-        ? SITE_UI_COPY.cart.trimmedUnavailable
+        ? copy.trimmedUnavailable
         : null;
 
   // Adjust remembered state during render (no effect needed).
