@@ -44,7 +44,7 @@ export async function generateMetadata({
       title: "Products",
       description: PLP_DESCRIPTION,
       path: "/products",
-      image: "/store/plp-banner.jpg",
+      image: "/home/hero-46g.jpg",
     });
   }
 

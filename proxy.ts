@@ -18,7 +18,7 @@ function isPublicAdminApiPath(pathname: string): boolean {
   return PUBLIC_ADMIN_API_PATHS.some((path) => pathname === path);
 }
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const isAdminPage = pathname.startsWith("/admin");
