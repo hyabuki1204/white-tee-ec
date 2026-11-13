@@ -10,5 +10,6 @@ export {
   getProductBySlug,
   getProductLookupMap,
   getProducts,
+  getProductsWithStock,
   getProductsByIds,
 } from "@/lib/db/products/repository";

@@ -59,18 +59,23 @@ export function useProductPurchase(): ProductPurchaseContextValue {
 
 type ProductPurchaseProviderProps = {
   product: Product;
+  /** Preselected size, e.g. from `?size=M` in a restock email. */
+  initialSize?: ProductSize | null;
   children: ReactNode;
 };
 
 export function ProductPurchaseProvider({
   product,
+  initialSize = null,
   children,
 }: ProductPurchaseProviderProps) {
   const addItem = useCartStore((state) => state.addItem);
   const cartItems = useCartStore((state) => state.items);
   const { product: copy } = SITE_UI_COPY;
 
-  const [selectedSize, setSelectedSizeState] = useState<ProductSize | null>(null);
+  const [selectedSize, setSelectedSizeState] = useState<ProductSize | null>(
+    initialSize,
+  );
   const [recommendedSize, setRecommendedSize] = useState<ProductSize | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);

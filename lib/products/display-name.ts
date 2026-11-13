@@ -3,7 +3,7 @@ import type { Product } from "@/types";
 
 /** Catalog title: gauge first, then silhouette — "46G Regular Tee". */
 export function getGraphpaperDisplayName(
-  product: Product,
+  product: Pick<Product, "name" | "fabricSlug" | "fitType" | "sleeveType">,
   fabricName?: string | null,
 ): string {
   const spec = getGaugeSpec(product.fabricSlug);

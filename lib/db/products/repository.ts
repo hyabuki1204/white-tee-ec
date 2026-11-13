@@ -102,6 +102,36 @@ async function getProductsFromSupabase(): Promise<Product[]> {
   });
 }
 
+async function getProductsWithStockFromSupabase(): Promise<Product[]> {
+  const supabase = createSupabaseStaticClient();
+
+  const { data, error } = await supabase
+    .from("products")
+    .select(
+      `
+      *,
+      product_images(*),
+      product_variants(*)
+    `,
+    )
+    .eq("is_published", true)
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    throw new Error(`Failed to fetch products with stock: ${error.message}`);
+  }
+
+  return (data ?? []).map((entry) => {
+    const row = entry as unknown as ProductDetailQueryRow;
+
+    return mapFullProductRow(
+      row,
+      row.product_variants ?? [],
+      row.product_images ?? [],
+    );
+  });
+}
+
 async function getProductBySlugFromSupabase(
   slug: string,
 ): Promise<Product | null> {
@@ -187,6 +217,19 @@ function getProductsByIdsFromMock(ids: string[]): Product[] {
 export async function getProducts(): Promise<Product[]> {
   if (getDataSource() === "supabase") {
     return getProductsFromSupabase();
+  }
+
+  return getProductsFromMock();
+}
+
+/**
+ * Published products including variants (size + live stock).
+ * getProducts() leaves `variants` empty on Supabase; use this where stock
+ * per size matters across the whole catalog (e.g. /saved).
+ */
+export async function getProductsWithStock(): Promise<Product[]> {
+  if (getDataSource() === "supabase") {
+    return getProductsWithStockFromSupabase();
   }
 
   return getProductsFromMock();

@@ -11,19 +11,21 @@ import { getGaugeSpec } from "@/lib/fabric/gauge";
 import { getFabricSpecRows } from "@/lib/fabric/specs";
 import { RETURNS_POLICY } from "@/lib/store-ui/returns-policy";
 import type { Fabric } from "@/lib/fabric/content";
-import type { Product } from "@/types";
+import type { Product, ProductSize } from "@/types";
 
 type ProductPageLayoutProps = {
   product: Product;
   fabric?: Fabric | null;
   fabricName?: string | null;
   displayName: string;
+  initialSize?: ProductSize | null;
 };
 
 export function ProductPageLayout({
   product,
   fabric,
   displayName,
+  initialSize = null,
 }: ProductPageLayoutProps) {
   const specRows = getFabricSpecRows(product, fabric);
   const gaugeSpec = getGaugeSpec(product.fabricSlug);
@@ -68,7 +70,7 @@ export function ProductPageLayout({
   );
 
   return (
-    <ProductPurchaseProvider product={product}>
+    <ProductPurchaseProvider product={product} initialSize={initialSize}>
       <section className="lg:grid lg:grid-cols-[minmax(0,55fr)_minmax(0,45fr)] lg:items-start">
         <div className="min-w-0">
           <ProductGallery product={product} displayName={displayName} />

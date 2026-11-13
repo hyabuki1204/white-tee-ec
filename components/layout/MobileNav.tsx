@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { CartNavLink } from "@/components/layout/CartNavLink";
 import { SearchNavControl } from "@/components/layout/SearchNavControl";
+import { SavedNavLink } from "@/components/saved/SavedNavLink";
 import { GAUGE_LADDER } from "@/lib/fabric/gauge";
 import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
 import { isNavActive } from "@/lib/store-ui/nav-active";
@@ -129,6 +130,7 @@ export function MobileNav({
               fabricNameBySlug={fabricNameBySlug}
               className={utilityClass}
             />
+            <SavedNavLink onNavigate={onClose} className={utilityClass} />
             <CartNavLink onNavigate={onClose} className={utilityClass} />
           </div>
 

@@ -3,6 +3,9 @@
 import Link from "next/link";
 import { useProductPurchase } from "@/components/product/ProductPurchaseContext";
 import { SizeRecommendationTool } from "@/components/product/SizeRecommendationTool";
+import { RestockForm } from "@/components/restock/RestockForm";
+import { SaveInlineButton } from "@/components/saved/SaveButton";
+import { getGraphpaperDisplayName } from "@/lib/products/display-name";
 import { PRODUCT_SIZES } from "@/lib/products/defaults";
 import { SITE_UI_COPY } from "@/lib/copy/site-ui";
 import { cn } from "@/lib/utils";
@@ -40,8 +43,10 @@ export function ProductPurchaseControls() {
     : undefined;
   const [, lengthLabel, shoulderLabel, chestLabel, sleeveLabel] =
     copy.sizeTableHeaders;
-  const trulyDisabled =
-    Boolean(selectedSize) && (isOutOfStock || maxQuantity < 1);
+  // Out of stock is handled by the restock form, so "disabled" here only
+  // means every unit in stock is already in the bag.
+  const showRestock = selectedSize !== null && isOutOfStock;
+  const trulyDisabled = Boolean(selectedSize) && maxQuantity < 1;
 
   const onCartClick = () => {
     if (noSizeSelected) {
@@ -68,17 +73,18 @@ export function ProductPurchaseControls() {
               <li key={size}>
                 <button
                   type="button"
-                  onClick={() => {
-                    if (!inStock) return;
-                    setSelectedSize(size);
-                  }}
-                  disabled={!inStock}
+                  onClick={() => setSelectedSize(size)}
                   aria-pressed={isSelected}
                   aria-label={`Size ${size}${!inStock ? ", out of stock" : ""}`}
                   className={cn(
                     "flex h-11 min-w-11 items-center justify-center border border-[var(--color-ink)] px-3 text-[14px] font-normal tracking-[0.04em] transition-colors duration-[var(--duration-quiet)] ease-[var(--ease-quiet)]",
+                    // Still selectable: choosing it offers the restock notice.
                     !inStock &&
-                      "cursor-not-allowed border-[var(--color-hairline)] text-[var(--color-ink-faint)] line-through",
+                      !isSelected &&
+                      "border-[var(--color-hairline)] text-[var(--color-ink-faint)] line-through hover:border-[var(--color-ink)]",
+                    !inStock &&
+                      isSelected &&
+                      "bg-[var(--color-ink)] text-[var(--color-bg)] line-through",
                     inStock &&
                       isSelected &&
                       "bg-[var(--color-ink)] text-[var(--color-bg)]",
@@ -132,6 +138,16 @@ export function ProductPurchaseControls() {
         />
 
         <Link
+          href={`/concierge?from=${product.slug}`}
+          className="mt-4 flex min-h-11 items-center justify-between gap-4 border border-[var(--color-navy)] px-4 text-[13px] tracking-[0.04em] text-[var(--color-navy)] transition-colors duration-[var(--duration-quiet)] ease-[var(--ease-quiet)] hover:bg-[var(--color-navy)] hover:text-white"
+        >
+          サイズとゲージを相談する
+          <span aria-hidden className="font-en">
+            →
+          </span>
+        </Link>
+
+        <Link
           href="#size-guide"
           className="mt-2 inline-flex min-h-11 items-center text-[12px] font-normal tracking-[0.04em] text-[var(--color-ink-soft)] underline underline-offset-4 transition-opacity duration-[var(--duration-quiet)] ease-[var(--ease-quiet)] hover:opacity-60"
         >
@@ -140,20 +156,34 @@ export function ProductPurchaseControls() {
       </div>
 
       <div ref={purchaseCtaRef} className="space-y-3">
-        <button
-          type="button"
-          onClick={onCartClick}
-          disabled={trulyDisabled}
-          aria-disabled={noSizeSelected || trulyDisabled}
-          className={cn(
-            "flex h-14 w-full items-center justify-center text-[14px] font-normal tracking-[0.1em] text-[var(--color-bg)] transition-opacity duration-[var(--duration-quiet)] ease-[var(--ease-quiet)]",
-            trulyDisabled
-              ? "cursor-not-allowed bg-[var(--color-ink-faint)]"
-              : "bg-[var(--color-ink)] hover:opacity-80",
-          )}
-        >
-          {noSizeSelected ? copy.selectSize : buttonLabel}
-        </button>
+        {showRestock ? (
+          <RestockForm
+            key={`${product.id}-${selectedSize}`}
+            productId={product.id}
+            size={selectedSize}
+          />
+        ) : (
+          <button
+            type="button"
+            onClick={onCartClick}
+            disabled={trulyDisabled}
+            aria-disabled={noSizeSelected || trulyDisabled}
+            className={cn(
+              "flex h-14 w-full items-center justify-center text-[14px] font-normal tracking-[0.1em] text-[var(--color-bg)] transition-opacity duration-[var(--duration-quiet)] ease-[var(--ease-quiet)]",
+              trulyDisabled
+                ? "cursor-not-allowed bg-[var(--color-ink-faint)]"
+                : "bg-[var(--color-ink)] hover:opacity-80",
+            )}
+          >
+            {noSizeSelected ? copy.selectSize : buttonLabel}
+          </button>
+        )}
+
+        <SaveInlineButton
+          productId={product.id}
+          productName={getGraphpaperDisplayName(product)}
+          size={selectedSize}
+        />
 
         <div aria-live="polite" className="min-h-[1.25rem]">
           {addError ? (

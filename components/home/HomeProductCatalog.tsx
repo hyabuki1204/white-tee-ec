@@ -1,4 +1,5 @@
 import { HomeAging } from "@/components/home/HomeAging";
+import { HomeConcierge } from "@/components/home/HomeConcierge";
 import {
   HomeGaugeLadder,
   type GaugeLadderItem,
@@ -56,6 +57,7 @@ export function HomeProductCatalog({
     <>
       <HomeHero priceRange={heroPriceRange} />
       <HomeGaugeLadder items={ladder} initialGauge={FEATURED_GAUGE} />
+      <HomeConcierge />
       <HomeProductGrid
         products={products}
         fabricNameBySlug={fabricNameBySlug}

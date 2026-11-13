@@ -23,6 +23,8 @@ export const dynamic = "force-dynamic";
 
 type ProductPageProps = {
   params: Promise<{ slug: string }>;
+  /** `size` preselects a size (used by the restock email link). */
+  searchParams: Promise<{ size?: string | string[] }>;
 };
 
 export async function generateStaticParams() {
@@ -51,8 +53,12 @@ export async function generateMetadata({
   });
 }
 
-export default async function ProductPage({ params }: ProductPageProps) {
+export default async function ProductPage({
+  params,
+  searchParams,
+}: ProductPageProps) {
   const { slug } = await params;
+  const { size: sizeParam } = await searchParams;
   const product = await getProductBySlugCached(slug);
 
   if (!product) {
@@ -85,6 +91,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
     { name: displayName, path: `/products/${product.slug}` },
   ];
 
+  const requestedSize = (
+    Array.isArray(sizeParam) ? sizeParam[0] : sizeParam
+  )?.toUpperCase();
+  const initialSize =
+    product.variants.find((variant) => variant.size === requestedSize)?.size ??
+    null;
+
   const structuredData = [
     buildProductSchema(product),
     buildBreadcrumbSchema(breadcrumbItems),
@@ -99,6 +112,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         fabric={fabric}
         fabricName={fabric?.name}
         displayName={displayName}
+        initialSize={initialSize}
       />
 
       <RecordProductView slug={product.slug} />

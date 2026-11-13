@@ -7,6 +7,7 @@ import { CartNavLink } from "@/components/layout/CartNavLink";
 import { Container } from "@/components/layout/Container";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { SearchNavControl } from "@/components/layout/SearchNavControl";
+import { SavedNavLink } from "@/components/saved/SavedNavLink";
 import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
 import { isNavActive } from "@/lib/store-ui/nav-active";
 import { STORE_PRIMARY_NAV } from "@/lib/store-ui/nav-links";
@@ -149,6 +150,9 @@ export function Header({ products, fabricNameBySlug }: HeaderProps) {
                     products={products}
                     fabricNameBySlug={fabricNameBySlug}
                   />
+                </li>
+                <li>
+                  <SavedNavLink />
                 </li>
                 <li>
                   <CartNavLink />
