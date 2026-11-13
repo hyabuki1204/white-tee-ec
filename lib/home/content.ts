@@ -1,5 +1,5 @@
 /** Static copy and assets for the home page. */
-export const HOME_HERO_IMAGE = "/home/hero.jpg";
+export const HOME_HERO_IMAGE = "/home/hero-46g.jpg";
 
 export const HOME_HERO_COPY = "White, only.";
 

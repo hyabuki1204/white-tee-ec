@@ -1186,7 +1186,7 @@ export function getImageProvider(id = getImageProviderId()): ImageProvider { /* 
   （`IMAGE_MOCK_LATENCY_MS` で調整）
 - `IMAGE_MOCK_FAILURE_RATE` で確率的に `transient` エラーを返す → リトライ経路を実際に踏む
 - 返す画像は `public/` 配下のプレースホルダ画像、または
-  アスペクト比を焼き込んだ SVG（`scripts/generate-model-wear-svgs.js` に前例あり）
+  アスペクト比を焼き込んだ SVG
 - 4 枚要求すれば 4 枚返す。**うち 1 枚だけ壊れた URL を返すモード**も持たせ、
   部分失敗の処理を確認する
 

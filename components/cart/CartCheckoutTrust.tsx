@@ -1,63 +1,35 @@
 import Link from "next/link";
 import { CHECKOUT_TRUST_COPY } from "@/lib/store-ui/checkout-trust";
+import { textLinkClass } from "@/lib/store-ui/ui-classes";
 
-type CartCheckoutTrustProps = {
-  compact?: boolean;
-};
+const SUMMARY_ITEM_IDS: readonly string[] = ["shipping", "returns", "payment"];
 
-const COMPACT_ITEM_IDS = ["production", "returns"] as const;
-
-export function CartCheckoutTrust({ compact = false }: CartCheckoutTrustProps) {
-  const items = compact
-    ? CHECKOUT_TRUST_COPY.items.filter((item) =>
-        COMPACT_ITEM_IDS.includes(item.id as (typeof COMPACT_ITEM_IDS)[number]),
-      )
-    : CHECKOUT_TRUST_COPY.items;
+/** Shipping, returns and payment terms, stated once beside the total. */
+export function CartCheckoutTrust() {
+  const items = CHECKOUT_TRUST_COPY.items.filter((item) =>
+    SUMMARY_ITEM_IDS.includes(item.id),
+  );
 
   return (
-    <div
-      className={
-        compact
-          ? "space-y-2 border-t border-neutral-200/50 pt-3"
-          : "space-y-4 border-t border-neutral-200/50 pt-6"
-      }
-    >
-      {!compact ? (
-        <p className="text-[11px] font-normal tracking-[0.14em] text-neutral-600">
-          {CHECKOUT_TRUST_COPY.title}
-        </p>
-      ) : null}
+    <div className="border-t border-[var(--color-hairline)] pt-6">
+      <p className="type-caption !text-[var(--color-ink)]">
+        {CHECKOUT_TRUST_COPY.title}
+      </p>
 
-      <ul className={compact ? "space-y-2" : "space-y-4"}>
+      <dl className="mt-4 space-y-3">
         {items.map((item) => (
-          <li key={item.id} className="space-y-1">
-            {!compact ? (
-              <p className="text-[11px] font-normal tracking-[0.1em] text-neutral-600">
-                {item.label}
-              </p>
-            ) : null}
-            <p className="text-[11px] font-normal leading-[1.85] tracking-[0.04em] text-neutral-600">
-              {compact ? (
-                <>
-                  <span className="text-neutral-600">{item.label}。 </span>
-                  {item.line}
-                </>
-              ) : (
-                item.line
-              )}
-            </p>
-          </li>
+          <div key={item.id} className="grid grid-cols-[3.5em_1fr] gap-x-3">
+            <dt className="type-caption !text-[var(--color-ink)]">
+              {item.label}
+            </dt>
+            <dd className="type-caption">{item.line}</dd>
+          </div>
         ))}
-      </ul>
+      </dl>
 
-      {!compact ? (
-        <Link
-          href="/shipping"
-          className="inline-block text-[11px] font-normal tracking-[0.08em] text-neutral-600 transition-opacity hover:opacity-60"
-        >
-          {CHECKOUT_TRUST_COPY.shippingLink}
-        </Link>
-      ) : null}
+      <Link href="/shipping" className={`${textLinkClass} mt-5 inline-block !text-[12px]`}>
+        {CHECKOUT_TRUST_COPY.shippingLink}
+      </Link>
     </div>
   );
 }

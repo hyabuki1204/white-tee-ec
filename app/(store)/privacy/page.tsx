@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { InfoRows } from "@/components/layout/InfoRows";
 import { LegalPageLayout } from "@/components/layout/LegalPageLayout";
 import { getPolicyContent } from "@/lib/legal/queries";
 import { buildPageMetadata } from "@/lib/seo/metadata";
@@ -17,13 +18,13 @@ export default async function PrivacyPage() {
   const privacy = await getPolicyContent("privacy");
 
   return (
-    <LegalPageLayout title={privacy.pageTitle}>
-      {privacy.sections.map((section) => (
-        <section key={section.title} className="space-y-4">
-          <h2 className="text-neutral-800">{section.title}</h2>
-          <p>{section.body}</p>
-        </section>
-      ))}
+    <LegalPageLayout label={privacy.pageTitle} title="プライバシーポリシー" lead="お客様の個人情報の取り扱いについて。">
+      <InfoRows
+        rows={privacy.sections.map((section) => ({
+          title: section.title,
+          body: section.body,
+        }))}
+      />
     </LegalPageLayout>
   );
 }

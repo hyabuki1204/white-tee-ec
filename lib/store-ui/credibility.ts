@@ -1,10 +1,3 @@
-export const CREDIBILITY_IMAGES = {
-  factory: "/store/credibility-factory.png",
-  wear: "/store/credibility-wear.png",
-  packaging: "/store/credibility-packaging.png",
-  craft: "/store/price-craft.png",
-} as const;
-
 export type EditorialVoice = {
   source: string;
   line: string;

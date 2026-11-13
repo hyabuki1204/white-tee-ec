@@ -4,69 +4,62 @@ import type { JournalArticle } from "@/lib/content/journal-static";
 export type StockistImage = {
   src: string;
   alt: string;
-  caption?: string;
+  caption: string;
 };
 
 export const STOCKIST_PAGE = {
-  title: "Stockist",
+  label: "Stockist",
+  title: ["買える場所と、", "編んでいる場所。"],
+  lead: "WHITE TEEは、このオンラインストアで販売しています。生地を編んでいるのは、和歌山市の工場です。",
   heroImage: {
-    src: "/stockist/stockist-hero.jpg",
-    alt: "Kanemasa textile factory exterior in Wakayama",
+    src: "/mill/floor.jpg",
+    alt: "丸編機が並ぶ工場の編み場",
   },
-  intro: [
-    "Our factory in Wakayama — where WHITE TEE jersey is knit, finished, and prepared for the atelier.",
-    "Kanemasa has worked with circular knitting for decades. The machines are ours; the pace is set by the cloth.",
-  ],
-  helperJa: "和歌山・カネマサ莫大小の工場。WHITE TEEの生地はここから。",
 } as const;
 
-export const STOCKIST_STORY = {
-  title: "The factory",
-  paragraphs: [
-    "Kanemasa sits in Wakayama Prefecture, south of Osaka — a region long associated with textile work and the patience it requires.",
-    "We knit our own jersey here on circular machines tuned for cotton. Each run is checked for weight, surface, and recovery before it leaves the floor.",
-    "The factory is not a showroom. It is a working room: yarn, machines, light, and the quiet rhythm of loops forming cloth.",
+export const STOCKIST_STORE = {
+  label: "Store",
+  title: "オンラインストア",
+  lines: [
+    "3つのゲージ、2つのシルエット、S・M・Lの3サイズ。全6型をこのストアで販売しています。",
+    "店頭での取り扱いが始まったら、このページでお知らせします。",
   ],
+} as const;
+
+/** Only facts confirmed for the mill. No phone, email or opening hours. */
+export const STOCKIST_MILL = {
+  label: "Mill",
+  title: "編立工場",
+  rows: [
+    { label: "社名", value: "カネマサ莫大小株式会社" },
+    { label: "所在地", value: "〒641-0007 和歌山県和歌山市小雑賀129" },
+    { label: "創業", value: "1964年" },
+  ],
+  note: "取り扱いやご注文についてのご連絡は、お問い合わせページからお願いします。",
 } as const;
 
 export const STOCKIST_IMAGES: StockistImage[] = [
   {
-    src: "/stockist/stockist-factory.jpg",
-    alt: "Knitting floor with circular machines producing white jersey",
-    caption: "Knitting floor",
+    src: "/mill/cones.jpg",
+    alt: "クリールに掛かった糸のコーン",
+    caption: "糸",
   },
   {
-    src: "/stockist/stockist-machines.jpg",
-    alt: "Close view of circular knitting machine needles and yarn",
-    caption: "Our machines",
+    src: "/mill/crown.jpg",
+    alt: "丸編機の上部に並ぶ給糸装置",
+    caption: "編機",
   },
   {
-    src: "/stockist/stockist-atelier.jpg",
-    alt: "Yarn and cotton in the Wakayama atelier",
-    caption: "Yarn room",
+    src: "/mill/takedown.jpg",
+    alt: "編機の下で巻き取られていく編み上がった生地",
+    caption: "生地",
   },
 ];
 
-export const STOCKIST_CONTACT = {
-  title: "Visit & contact",
-  name: "Kanemasa Knitting Co., Ltd.",
-  addressLines: [
-    "2-14-3 Higashi-Wada",
-    "Wakayama City, Wakayama 640-8342",
-    "Japan",
-  ],
-  helperJa: "工場見学は事前のご連絡をお願いしています。",
-  email: "hello@white-tee.jp",
-  phone: "+81-73-000-0000",
-  hours: "Mon–Fri, 9:00–17:00 JST (by appointment)",
-  mapNote:
-    "The factory is not open for walk-in visits. Please contact us to arrange a tour or wholesale inquiry.",
-} as const;
-
-/** Journal entries related to the factory and atelier. */
+/** Journal entries about the mill floor and its yarn. */
 export const STOCKIST_JOURNAL_SLUGS = [
   "circular-knitting-wakayama",
-  "the-atelier-morning",
+  "reading-jersey-by-hand",
   "from-cotton-to-yarn",
 ] as const;
 

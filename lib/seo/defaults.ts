@@ -4,6 +4,6 @@ export const DEFAULT_SEO_CONTENT: SeoSettingsContent = {
   siteName: "WHITE TEE",
   siteDescription:
     "A minimal brand devoted to white T-shirts — quietly refined.",
-  defaultOgpImage: "/home/hero.svg",
+  defaultOgpImage: "/home/hero-46g.jpg",
   twitterHandle: null,
 };

@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { JournalGrid } from "@/components/journal/JournalGrid";
-import { JournalIntro } from "@/components/journal/JournalIntro";
-import { Container } from "@/components/layout/Container";
-import { SITE_UI_COPY } from "@/lib/copy/site-ui";
+import { JournalCard } from "@/components/journal/JournalCard";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { JOURNAL_PAGE_HEADLINE_JA } from "@/lib/content/journal-static";
 import { getJournalArticles, getJournalPageContent } from "@/lib/content/journal";
 import { buildPageMetadata } from "@/lib/seo/metadata";
+import {
+  buttonPrimaryClass,
+  buttonSecondaryClass,
+  pageGutterClass,
+} from "@/lib/store-ui/ui-classes";
 
 export async function generateMetadata(): Promise<Metadata> {
   const content = await getJournalPageContent();
@@ -23,41 +26,67 @@ export default async function JournalPage() {
     getJournalPageContent(),
     getJournalArticles(),
   ]);
-  const sortedArticles = [...articles].sort(
-    (a, b) =>
-      new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
-  );
-  const { breadcrumbs: bc } = SITE_UI_COPY;
-  const { fabric: copy } = SITE_UI_COPY;
+  const [lead, ...rest] = articles;
 
   return (
-    <Container as="section" className="py-16 sm:py-20 md:py-28 lg:py-36">
-      <div className="mx-auto max-w-6xl">
-        <Breadcrumbs
-          items={[
-            { label: bc.home, href: "/" },
-            { label: content.pageTitle },
-          ]}
-        />
-        <div className="mt-12 md:mt-16">
-          <JournalIntro
-            pageTitle={content.pageTitle}
-            introLines={content.introLines}
-          />
-        </div>
-        <div className="mt-16 md:mt-24">
-          <JournalGrid articles={sortedArticles} />
-        </div>
+    <>
+      <PageHeader
+        label={content.pageTitle}
+        title={JOURNAL_PAGE_HEADLINE_JA}
+        lead={content.introLines.map((line) => (
+          <span key={line} className="block">
+            {line}
+          </span>
+        ))}
+        aside={
+          <p className="type-label tabular-nums">
+            {String(articles.length).padStart(2, "0")} entries
+          </p>
+        }
+      />
 
-        <div className="mt-20 text-center md:mt-28">
-          <Link
-            href="/fabric"
-            className="text-[12px] font-normal tracking-[0.08em] text-neutral-600 transition-opacity duration-[var(--duration-fast)] hover:opacity-60"
-          >
-            {copy.exploreFabric}
-          </Link>
-        </div>
+      <div className={`${pageGutterClass} py-[var(--space-5)] md:py-[var(--space-6)]`}>
+        {lead ? <JournalCard article={lead} variant="lead" index={0} /> : null}
+
+        {rest.length > 0 ? (
+          <ul className="mt-[var(--space-5)] grid gap-x-6 gap-y-14 border-t border-[var(--color-hairline)] pt-[var(--space-5)] sm:grid-cols-2 md:mt-[var(--space-6)] md:pt-[var(--space-6)] lg:grid-cols-3">
+            {rest.map((article, index) => (
+              <li key={article.slug}>
+                <JournalCard
+                  article={article}
+                  variant="editorial"
+                  index={index + 1}
+                />
+              </li>
+            ))}
+          </ul>
+        ) : null}
       </div>
-    </Container>
+
+      <section
+        aria-label="Gauge"
+        className="border-t border-[var(--color-hairline)] bg-[var(--color-surface)]"
+      >
+        <div
+          className={`${pageGutterClass} grid gap-8 py-[var(--space-5)] md:grid-cols-12 md:items-end md:gap-0 md:py-[var(--space-6)]`}
+        >
+          <div className="md:col-span-6">
+            <p className="type-label !text-[var(--color-navy)]">Gauge</p>
+            <h2 className="type-h2 mt-3">読んだら、生地を選ぶ。</h2>
+            <p className="type-body mt-4 text-[var(--color-ink-soft)]">
+              28、36、46。3つのゲージの違いを、数字と生地の写真で見比べられます。
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-3 md:col-span-5 md:col-start-8 md:justify-end">
+            <Link href="/fabric" className={buttonPrimaryClass}>
+              ゲージを見る
+            </Link>
+            <Link href="/products" className={buttonSecondaryClass}>
+              コレクション
+            </Link>
+          </div>
+        </div>
+      </section>
+    </>
   );
 }

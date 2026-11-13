@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { LegalPageLayout } from "@/components/layout/LegalPageLayout";
 import { getLegalBusiness } from "@/lib/legal/queries";
 import { buildPageMetadata } from "@/lib/seo/metadata";
+import { textLinkClass } from "@/lib/store-ui/ui-classes";
 
 export async function generateMetadata(): Promise<Metadata> {
   return buildPageMetadata({
@@ -11,33 +13,51 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
+const shippingLink = (
+  <Link href="/shipping" className={textLinkClass}>
+    配送・返品
+  </Link>
+);
+
 export default async function LegalPage() {
   const legal = await getLegalBusiness();
 
-  const rows = [
+  const rows: { label: string; value: React.ReactNode }[] = [
     { label: "販売業者", value: legal.operator },
     { label: "所在地", value: legal.address },
     { label: "連絡先", value: legal.email },
     { label: "電話番号", value: legal.phone },
-    { label: "販売価格", value: "各商品ページに税込価格を表示" },
-    { label: "商品代金以外の必要料金", value: "送料（Shipping ページ参照）" },
+    { label: "販売価格", value: "各商品ページに税込価格を表示しています。" },
+    {
+      label: "商品代金以外の必要料金",
+      value: <>送料。金額は{shippingLink}のページをご覧ください。</>,
+    },
     { label: "支払方法", value: "クレジットカード（Stripe）" },
     { label: "支払時期", value: "注文確定時" },
-    { label: "商品の引渡時期", value: "決済確認後 3〜7 営業日以内に発送" },
-    { label: "返品・交換", value: "Shipping & Returns ページ参照" },
-  ] as const;
+    { label: "商品の引渡時期", value: "決済確認後、3〜7営業日以内に発送" },
+    {
+      label: "返品・交換",
+      value: <>条件は{shippingLink}のページをご覧ください。</>,
+    },
+  ];
 
   return (
-    <LegalPageLayout title="Legal Notice">
-      <p className="text-center text-neutral-600">
-        特定商取引法に基づく表記
-      </p>
-
-      <dl className="divide-y divide-neutral-200/70 border-t border-neutral-200/70">
+    <LegalPageLayout
+      label="Legal Notice"
+      title="特定商取引法に基づく表記"
+    >
+      <dl className="border-t border-[var(--color-ink)]">
         {rows.map((row) => (
-          <div key={row.label} className="grid gap-2 py-6 md:grid-cols-[10rem_1fr]">
-            <dt className="text-neutral-600">{row.label}</dt>
-            <dd className="text-neutral-600">{row.value}</dd>
+          <div
+            key={row.label}
+            className="grid gap-1 border-b border-[var(--color-hairline)] py-5 md:grid-cols-12 md:gap-0 md:py-6"
+          >
+            <dt className="text-[14px] font-bold tracking-[0.06em] text-[var(--color-ink)] md:col-span-4">
+              {row.label}
+            </dt>
+            <dd className="type-body break-words text-[var(--color-ink)] md:col-span-7 md:col-start-6">
+              {row.value}
+            </dd>
           </div>
         ))}
       </dl>

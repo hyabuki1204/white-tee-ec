@@ -8,7 +8,7 @@ export const CHECKOUT_TRUST_COPY = {
     {
       id: "production",
       label: "製造",
-      line: "和歌山の自社工場で編み立て・仕上げ。外注ではなく一貫製造です。",
+      line: "生地は和歌山市の工場で編んでいます。",
     },
     {
       id: "shipping",

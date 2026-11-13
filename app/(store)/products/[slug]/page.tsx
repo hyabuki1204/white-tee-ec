@@ -11,11 +11,8 @@ import {
   getFabrics,
   getRelatedProductsForFabric,
 } from "@/lib/fabric/queries";
-import {
-  getAllProductSlugs,
-  getProductBySlug,
-  getProducts,
-} from "@/lib/products/queries";
+import { getProductBySlugCached } from "@/lib/products/cached-product";
+import { getAllProductSlugs, getProducts } from "@/lib/products/queries";
 import {
   buildBreadcrumbSchema,
   buildProductSchema,
@@ -37,7 +34,7 @@ export async function generateMetadata({
   params,
 }: ProductPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const product = await getProductBySlug(slug);
+  const product = await getProductBySlugCached(slug);
 
   if (!product) {
     return { title: "Not Found" };
@@ -56,7 +53,7 @@ export async function generateMetadata({
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params;
-  const product = await getProductBySlug(slug);
+  const product = await getProductBySlugCached(slug);
 
   if (!product) {
     notFound();

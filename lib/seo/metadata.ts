@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { SITE_DESCRIPTION, SITE_NAME, getSiteUrl } from "@/lib/seo/site";
 
-export const DEFAULT_OGP_IMAGE_PATH = "/home/hero.svg";
+export const DEFAULT_OGP_IMAGE_PATH = "/home/hero-46g.jpg";
 
 export function absoluteUrl(path: string): string {
   const base = getSiteUrl();

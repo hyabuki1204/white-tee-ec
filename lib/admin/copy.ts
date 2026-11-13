@@ -383,7 +383,7 @@ export const ADMIN_COPY = {
     siteName: "サイト名",
     siteDescription: "サイト説明",
     defaultOgpImage: "デフォルト OGP 画像",
-    defaultOgpImageHint: "パス（例 /home/hero.svg）または URL",
+    defaultOgpImageHint: "パス（例 /home/hero-46g.jpg）または URL",
     twitterHandle: "Twitter @handle（任意）",
     save: "SEO設定を保存",
   },

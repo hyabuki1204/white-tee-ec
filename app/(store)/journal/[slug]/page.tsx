@@ -2,16 +2,20 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { JournalArticleBody } from "@/components/journal/JournalArticleBody";
-import { Container } from "@/components/layout/Container";
-import { SITE_UI_COPY } from "@/lib/copy/site-ui";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { formatJournalDate } from "@/lib/content/journal-static";
 import {
-  getJournalArticleBySlug,
+  getJournalArticles,
   getJournalPageContent,
   getJournalSlugs,
 } from "@/lib/content/journal";
 import { buildPageMetadata } from "@/lib/seo/metadata";
+import {
+  buttonOnDarkClass,
+  pageGutterClass,
+  textLinkClass,
+} from "@/lib/store-ui/ui-classes";
 
 type JournalArticlePageProps = {
   params: Promise<{ slug: string }>;
@@ -26,7 +30,8 @@ export async function generateMetadata({
   params,
 }: JournalArticlePageProps): Promise<Metadata> {
   const { slug } = await params;
-  const article = await getJournalArticleBySlug(slug);
+  const articles = await getJournalArticles();
+  const article = articles.find((entry) => entry.slug === slug);
 
   if (!article) {
     return { title: "Not Found" };
@@ -45,52 +50,117 @@ export default async function JournalArticlePage({
   params,
 }: JournalArticlePageProps) {
   const { slug } = await params;
-  const [article, content] = await Promise.all([
-    getJournalArticleBySlug(slug),
+  const [articles, content] = await Promise.all([
+    getJournalArticles(),
     getJournalPageContent(),
   ]);
+  const index = articles.findIndex((entry) => entry.slug === slug);
 
-  if (!article) {
+  if (index === -1) {
     notFound();
   }
 
-  const { breadcrumbs: bc } = SITE_UI_COPY;
+  const article = articles[index];
+  // Newest first, so "next" walks back in time and wraps to the newest.
+  const next =
+    articles.length > 1 ? articles[(index + 1) % articles.length] : null;
 
   return (
-    <Container as="section" className="py-16 sm:py-20 md:py-28 lg:py-36">
-      <div className="mx-auto max-w-4xl">
-        <Breadcrumbs
-          items={[
-            { label: bc.home, href: "/" },
-            { label: content.pageTitle, href: "/journal" },
-            { label: article.title },
-          ]}
-        />
+    <article>
+      <PageHeader
+        label={
+          <>
+            <Link href="/journal" className="hover:underline">
+              {content.pageTitle}
+            </Link>
+            <span className="mx-2 text-[var(--color-ink-faint)]">/</span>
+            <time dateTime={article.publishedAt} className="tabular-nums">
+              {formatJournalDate(article.publishedAt)}
+            </time>
+          </>
+        }
+        title={article.title}
+        lead={article.excerpt}
+      />
 
-        <div className="relative mt-10 aspect-[16/9] overflow-hidden bg-[var(--color-image-placeholder)] md:mt-14">
-          <Image
-            src={article.heroImageUrl}
-            alt={article.heroImageAlt}
-            fill
-            priority
-            sizes="(max-width: 768px) 100vw, 896px"
-            className="object-cover brightness-[0.97] contrast-[0.98]"
-          />
-        </div>
+      <div className={`${pageGutterClass} pt-[var(--space-4)] md:pt-[var(--space-5)]`}>
+        <figure>
+          <div className="relative aspect-[4/3] overflow-hidden bg-[var(--color-image-placeholder)] md:aspect-[21/9]">
+            <Image
+              src={article.heroImageUrl}
+              alt={article.heroImageAlt}
+              fill
+              preload
+              sizes="(max-width: 1280px) 100vw, 1184px"
+              className="object-cover"
+            />
+          </div>
+          <figcaption className="type-caption mt-3">
+            {article.heroImageAlt}
+          </figcaption>
+        </figure>
+      </div>
 
-        <div className="mt-12 md:mt-16">
-          <JournalArticleBody article={article} />
-        </div>
+      <div className={`${pageGutterClass} py-[var(--space-5)] md:py-[var(--space-6)]`}>
+        <JournalArticleBody article={article} />
 
-        <div className="mt-16 text-center md:mt-24">
-          <Link
-            href="/journal"
-            className="text-[12px] font-normal tracking-[0.08em] text-neutral-600 transition-opacity duration-[var(--duration-fast)] hover:opacity-60"
-          >
-            All journal entries
-          </Link>
+        <div className="mt-[var(--space-5)] grid md:mt-[var(--space-6)] md:grid-cols-12">
+          <div className="flex flex-wrap gap-x-8 gap-y-3 border-t border-[var(--color-hairline)] pt-6 md:col-span-7 md:col-start-5">
+            <Link href="/fabric" className={textLinkClass}>
+              ゲージを見る
+            </Link>
+            <Link href="/about" className={textLinkClass}>
+              工場について
+            </Link>
+            <Link href="/journal" className={textLinkClass}>
+              記事一覧へ戻る
+            </Link>
+          </div>
         </div>
       </div>
-    </Container>
+
+      {next ? (
+        <section aria-label="Next entry" className="on-mill">
+          <div
+            className={`${pageGutterClass} grid gap-8 py-[var(--space-5)] md:grid-cols-12 md:items-center md:gap-0 md:py-[var(--space-6)]`}
+          >
+            <div className="md:col-span-6">
+              <p className="type-label">Next entry</p>
+              <p className="type-label mt-6 tabular-nums">
+                <time dateTime={next.publishedAt}>
+                  {formatJournalDate(next.publishedAt)}
+                </time>
+              </p>
+              <h2 className="type-display mt-3 !text-[clamp(24px,calc(16px+1.4vw),36px)]">
+                {next.title}
+              </h2>
+              <p className="type-body mt-4 max-w-[34em] text-[var(--color-ink-soft)]">
+                {next.excerpt}
+              </p>
+              <Link
+                href={`/journal/${next.slug}`}
+                className={`${buttonOnDarkClass} mt-8`}
+              >
+                次の記事を読む
+              </Link>
+            </div>
+            <Link
+              href={`/journal/${next.slug}`}
+              aria-hidden
+              tabIndex={-1}
+              className="relative block aspect-[3/2] overflow-hidden bg-[var(--color-mill-soft)] md:col-span-5 md:col-start-8"
+            >
+              <Image
+                src={next.heroImageUrl}
+                alt=""
+                fill
+                sizes="(max-width: 768px) 100vw, 40vw"
+                className="object-cover"
+              />
+            </Link>
+          </div>
+        </section>
+      ) : null}
+    </article>
   );
 }

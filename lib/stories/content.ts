@@ -21,7 +21,7 @@ export const STORY_ENTRIES: StoryEntry[] = [
       "Jersey knit in-house.",
       "Weight, hand, and how quietly it holds light.",
     ],
-    imageUrl: "/stories/fabric.jpg",
+    imageUrl: "/mill/fabric.jpg",
     imageAlt: "Close-up of white knit cotton fabric",
   },
   {
@@ -31,7 +31,7 @@ export const STORY_ENTRIES: StoryEntry[] = [
       "Every stitch holds the line.",
       "Simple to see. Quiet to wear.",
     ],
-    imageUrl: "/stories/structure.jpg",
+    imageUrl: "/mill/ring.jpg",
     imageAlt: "White yarn and knit structure",
   },
   {
@@ -41,7 +41,7 @@ export const STORY_ENTRIES: StoryEntry[] = [
       "Space between thread and skin.",
       "Air held in the knit from the start.",
     ],
-    imageUrl: "/stories/air.jpg",
+    imageUrl: "/mill/yarn.jpg",
     imageAlt: "Soft white fabric in gentle light",
   },
   {
@@ -51,7 +51,7 @@ export const STORY_ENTRIES: StoryEntry[] = [
       "Knitted in Wakayama.",
       "On our own machines, at our own pace.",
     ],
-    imageUrl: "/stories/process.jpg",
+    imageUrl: "/mill/machine.jpg",
     imageAlt: "White yarn and knitting in soft light",
   },
 ];

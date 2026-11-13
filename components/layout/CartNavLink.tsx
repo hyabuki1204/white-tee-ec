@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useCartDrawer } from "@/components/cart/CartDrawerContext";
 import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
 import { useCartStore } from "@/lib/cart/store";
+import { useHydrated } from "@/lib/hooks/use-hydrated";
 import { cn } from "@/lib/utils";
 
 type CartNavLinkProps = {
@@ -12,14 +12,10 @@ type CartNavLinkProps = {
 };
 
 export function CartNavLink({ onNavigate, className }: CartNavLinkProps) {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useHydrated();
   const count = useCartStore((state) => state.getItemCount());
   const { openDrawer } = useCartDrawer();
   const copy = GRAPHPAPER_STORE_COPY.nav;
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const displayCount = mounted ? count : 0;
 
