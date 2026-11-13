@@ -1,12 +1,10 @@
+import { getGaugeSpec } from "@/lib/fabric/gauge";
 import {
   buildProductsFilterHref,
   FIT_TYPE_LABELS,
-  FIT_TYPES,
-  SLEEVE_TYPE_LABELS,
-  SLEEVE_TYPES,
+  STOREFRONT_FIT_TYPES,
 } from "@/lib/products/silhouette";
 import type { Fabric } from "@/lib/fabric/content";
-import type { FitType, SleeveType } from "@/types/product-fit";
 import type { Product } from "@/types";
 
 export type StoreNavLink = {
@@ -33,19 +31,10 @@ export type StoreNavMenu = {
   };
 };
 
-function uniqueFitTypesForSleeve(
-  products: Product[],
-  sleeve: SleeveType,
-): FitType[] {
-  const fits = new Set<FitType>();
-
-  for (const product of products) {
-    if (product.sleeveType === sleeve) {
-      fits.add(product.fitType);
-    }
-  }
-
-  return FIT_TYPES.filter((fit) => fits.has(fit));
+/** "28G" for gauge fabrics, otherwise the fabric name. */
+export function getGaugeLabel(fabric: Pick<Fabric, "slug" | "name">): string {
+  const spec = getGaugeSpec(fabric.slug);
+  return spec ? `${spec.gauge}G` : fabric.name;
 }
 
 export function buildStoreNavMenu(
@@ -57,18 +46,26 @@ export function buildStoreNavMenu(
     href: `/fabric/${fabric.slug}`,
   }));
 
-  const productGroups: StoreNavGroup[] = SLEEVE_TYPES.map((sleeve) => {
-    const fits = uniqueFitTypesForSleeve(products, sleeve);
+  const gaugeLinks = fabrics
+    .filter((fabric) =>
+      products.some((product) => product.fabricSlug === fabric.slug),
+    )
+    .map((fabric) => ({
+      label: getGaugeLabel(fabric),
+      href: buildProductsFilterHref({ fabric: fabric.slug }),
+    }));
 
-    return {
-      label: SLEEVE_TYPE_LABELS[sleeve],
-      href: buildProductsFilterHref({ sleeve }),
-      links: fits.map((fit) => ({
-        label: FIT_TYPE_LABELS[fit],
-        href: buildProductsFilterHref({ sleeve, fit }),
-      })),
-    };
-  }).filter((group) => group.links.length > 0);
+  const silhouetteLinks = STOREFRONT_FIT_TYPES.filter((fit) =>
+    products.some((product) => product.fitType === fit),
+  ).map((fit) => ({
+    label: FIT_TYPE_LABELS[fit],
+    href: buildProductsFilterHref({ fit }),
+  }));
+
+  const productGroups: StoreNavGroup[] = [
+    { label: "Gauge", links: gaugeLinks },
+    { label: "Silhouette", links: silhouetteLinks },
+  ].filter((group) => group.links.length > 0);
 
   return {
     fabric: {

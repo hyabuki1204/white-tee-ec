@@ -17,7 +17,7 @@ export const STOCKIST_PAGE = {
     "Our factory in Wakayama — where WHITE TEE jersey is knit, finished, and prepared for the atelier.",
     "Kanemasa has worked with circular knitting for decades. The machines are ours; the pace is set by the cloth.",
   ],
-  helperJa: "和歌山・金政の自社工場。WHITE TEEの生地はここから。",
+  helperJa: "和歌山・カネマサ莫大小の工場。WHITE TEEの生地はここから。",
 } as const;
 
 export const STOCKIST_STORY = {
@@ -49,7 +49,7 @@ export const STOCKIST_IMAGES: StockistImage[] = [
 
 export const STOCKIST_CONTACT = {
   title: "Visit & contact",
-  name: "Kanemasa Co., Ltd.",
+  name: "Kanemasa Knitting Co., Ltd.",
   addressLines: [
     "2-14-3 Higashi-Wada",
     "Wakayama City, Wakayama 640-8342",

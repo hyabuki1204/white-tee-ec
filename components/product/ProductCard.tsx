@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { SoftImage } from "@/components/motion/SoftImage";
+import { formatWeight, getGaugeSpec } from "@/lib/fabric/gauge";
 import { getGraphpaperDisplayName } from "@/lib/products/display-name";
 import { getProductWearImageUrl } from "@/lib/products/wear-image";
 import { formatPrice } from "@/lib/utils/format-price";
@@ -27,6 +28,7 @@ export function ProductCard({
 }: ProductCardProps) {
   const wearImageUrl = getProductWearImageUrl(product);
   const displayName = getGraphpaperDisplayName(product, fabricName);
+  const spec = getGaugeSpec(product.fabricSlug);
   const outOfStock =
     soldOut ||
     product.variants.every((variant) => variant.stockQuantity < 1);
@@ -72,10 +74,19 @@ export function ProductCard({
           ) : null}
         </div>
 
-        <p className="type-body mt-3 leading-snug text-[var(--color-ink)]">
-          {displayName}
-        </p>
-        <p className="type-caption mt-1">{formatPrice(product.price)}</p>
+        <div className="mt-4 flex items-baseline justify-between gap-4">
+          <p className="font-en text-[17px] leading-snug tracking-[0.02em] text-[var(--color-ink)]">
+            {displayName}
+          </p>
+          <p className="font-en shrink-0 text-[14px] tabular-nums tracking-[0.04em] text-[var(--color-ink)]">
+            {formatPrice(product.price)}
+          </p>
+        </div>
+        {spec ? (
+          <p className="type-caption mt-1">
+            {spec.yarn}・{formatWeight(spec)}
+          </p>
+        ) : null}
       </Link>
     </article>
   );

@@ -19,9 +19,6 @@ function AgingBody({ note }: { note: WearingNote }) {
       <p className="type-label text-[var(--color-ink)]">
         {note.fabric}
       </p>
-      <p className="text-[12px] font-normal tracking-[0.04em] text-[var(--color-ink-soft)]">
-        {note.months}か月着用
-      </p>
       <div className="space-y-1">
         {note.lines.map((line) => (
           <p

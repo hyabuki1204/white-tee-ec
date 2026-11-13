@@ -5,32 +5,28 @@ function crossSellScore(product: Product, cartProducts: Product[]): number {
     return 0;
   }
 
-  const sameFabricCart = cartProducts.filter(
-    (cartProduct) => cartProduct.fabricSlug === product.fabricSlug,
-  );
-
-  if (sameFabricCart.length === 0) {
-    return 0;
-  }
-
-  const oppositeSleeve = sameFabricCart.some(
-    (cartProduct) => cartProduct.sleeveType !== product.sleeveType,
-  );
-
-  if (oppositeSleeve) {
-    return 2;
-  }
-
-  const sameSleeveDifferentFit = sameFabricCart.some(
+  // Same gauge, the other silhouette.
+  const sameGaugeOtherFit = cartProducts.some(
     (cartProduct) =>
-      cartProduct.sleeveType === product.sleeveType &&
+      cartProduct.fabricSlug === product.fabricSlug &&
       cartProduct.fitType !== product.fitType,
   );
 
-  return sameSleeveDifferentFit ? 1 : 0;
+  if (sameGaugeOtherFit) {
+    return 2;
+  }
+
+  // Same silhouette, another gauge.
+  const sameFitOtherGauge = cartProducts.some(
+    (cartProduct) =>
+      cartProduct.fitType === product.fitType &&
+      cartProduct.fabricSlug !== product.fabricSlug,
+  );
+
+  return sameFitOtherGauge ? 1 : 0;
 }
 
-/** Complementary pieces: same fabric with opposite sleeve, or same sleeve different fit. */
+/** Complementary pieces: same gauge in the other silhouette, then same silhouette in another gauge. */
 export function getFabricCrossSellProducts(
   cartProductIds: string[],
   allProducts: Product[],

@@ -1,5 +1,7 @@
 /**
- * Apply premium pricing to Supabase products (idempotent).
+ * Apply catalog pricing to Supabase products (idempotent).
+ * Only updates rows that already exist — the six products themselves are
+ * created by supabase/manual/gauge-lineup.sql (needs DATABASE_URL).
  * Runs on Vercel postbuild when Supabase service role is configured.
  * Keep prices in sync with lib/products/pricing.ts
  */
@@ -9,20 +11,17 @@ import { createClient } from "@supabase/supabase-js";
 dotenv.config({ path: ".env.local" });
 dotenv.config();
 
-/** @type {Record<string, number>} */
+/**
+ * Price ladder by gauge. Regular and Box share a price per fabric.
+ * @type {Record<string, number>}
+ */
 const PRODUCT_PRICE_BY_SLUG = {
-  "compact-cotton-tee": 12_000,
-  "lightweight-pocket-tee": 13_000,
-  "compact-cotton-tee-long-sleeve": 13_500,
-  "relaxed-fit-tee": 14_000,
-  "lightweight-pocket-tee-long-sleeve": 14_500,
-  "short-sleeve-essential": 14_500,
-  "heavyweight-crew-neck": 15_000,
-  "box-fit-tee": 15_000,
-  "relaxed-fit-tee-long-sleeve": 15_500,
-  "long-sleeve-essential": 16_500,
-  "heavyweight-crew-neck-long-sleeve": 17_000,
-  "box-fit-tee-long-sleeve": 18_000,
+  "28g-regular-tee": 16_000,
+  "28g-box-tee": 16_000,
+  "36g-regular-tee": 15_000,
+  "36g-box-tee": 15_000,
+  "46g-regular-tee": 18_000,
+  "46g-box-tee": 18_000,
 };
 
 async function main() {

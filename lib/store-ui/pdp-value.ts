@@ -9,11 +9,11 @@ export const PDP_VALUE_IMAGES = {
 } as const;
 
 const THICKNESS_COPY: Record<FabricCharacterLevel, string> = {
-  1: "細番手で軽やか",
-  2: "ループ間に空気のある薄手",
-  3: "厚みと落ち感のバランス",
-  4: "形を保つしっかりした生地",
-  5: "密度の高いヘビーウェイト",
+  1: "ごく薄手",
+  2: "薄手で、目が詰まっている",
+  3: "厚すぎず、薄すぎない",
+  4: "形を保つ、やや肉厚の生地",
+  5: "双糸で編んだ、肉厚でハリのある生地",
 };
 
 const SHEERNESS_COPY: Record<FabricCharacterLevel, string> = {
@@ -24,36 +24,23 @@ const SHEERNESS_COPY: Record<FabricCharacterLevel, string> = {
   5: "日中でも透け感あり",
 };
 
+const DEFAULT_FABRIC_SLUG = "36g-jersey";
+
 const FABRIC_VALUE_LINES: Record<string, readonly string[]> = {
-  "heavyweight-jersey": [
-    "形を保つコンパクトなコットンジャージー。",
-    "和歌山で高密度に編み、ボディ感を出しています。",
-    "白の輪郭がはっきり——裾や襟でにじみにくい。",
+  "28g-jersey": [
+    "40/2コーマ糸の双糸を、28ゲージで詰めて編んだ度詰天竺。",
+    "目付240g/m²。厚みとハリがあり、1枚で着ても透けにくい。",
+    "洗っても、首元と肩線が崩れにくい生地です。",
   ],
-  "lightweight-jersey": [
-    "細い糸、開いた編みで暑さと動きに対応。",
-    "和歌山の円編で表面を均一に。",
-    "肌に軽く、一日中形を保ちやすい。",
+  "36g-jersey": [
+    "毛羽の少ない60/1コンパクト糸を、36ゲージで編んだ度詰天竺。",
+    "目付160g/m²。表面は滑らかで均一。",
+    "厚すぎず薄すぎず、一年を通して着られます。",
   ],
-  "relaxed-jersey": [
-    "ゆとりを編み込んだ中厚手コットン。",
-    "和歌山円編、ドレープ向けに調整。",
-    "体に余計なボリュームを出さないゆとり。",
-  ],
-  "compact-jersey": [
-    "すっきりしたラインのためのタイトゲージ。",
-    "和歌山で編み、襟と裾を保つ。",
-    "毛羽立ちの少ない滑らかな手触り。",
-  ],
-  "essential-jersey": [
-    "毎日使える、バランスの取れた定番の厚み。",
-    "和歌山編立てでループ張力を均一に。",
-    "ラインナップの基準となる白T。",
-  ],
-  "box-jersey": [
-    "肩と裾に構造を持つワイドゲージ。",
-    "和歌山の密度ある編みでボックスシルエットを支える。",
-    "やわらかさではなく、意図した形を保つ。",
+  "46g-jersey": [
+    "80/1コーマコンパクト糸を、46ゲージで編んだ度詰天竺。",
+    "目付130g/m²。1インチに針46本、薄手でも目が詰まっています。",
+    "布帛のような落ち感と、控えめな光沢。ジャケットの下に収まります。",
   ],
 };
 
@@ -85,7 +72,7 @@ export function buildPdpValueContent(
   product: Product,
   fabric: Fabric | null | undefined,
 ): PdpValueContent {
-  const fabricSlug = fabric?.slug ?? product.fabricSlug ?? "essential-jersey";
+  const fabricSlug = fabric?.slug ?? product.fabricSlug ?? DEFAULT_FABRIC_SLUG;
   const character = fabric?.character ?? {
     thickness: 3,
     softness: 3,
@@ -98,7 +85,7 @@ export function buildPdpValueContent(
     headline: "この一枚について",
     lines:
       FABRIC_VALUE_LINES[fabricSlug] ??
-      FABRIC_VALUE_LINES["essential-jersey"]!,
+      FABRIC_VALUE_LINES[DEFAULT_FABRIC_SLUG]!,
     construction: CONSTRUCTION_LINES,
     priceNote: PRICE_POSITIONING.care,
     specs: [
@@ -109,7 +96,7 @@ export function buildPdpValueContent(
     images: [
       {
         src: PDP_VALUE_IMAGES.fabric,
-        alt: `${fabric?.name ?? "ジャージー"}の生地感`,
+        alt: `${fabric?.name ?? "天竺"}の生地感`,
       },
       {
         src: PDP_VALUE_IMAGES.finish,

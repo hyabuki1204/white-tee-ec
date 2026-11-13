@@ -16,7 +16,7 @@ export function formatCatalogPriceSpan(products: Product[]): string {
   return `${formatPrice(min)} – ${formatPrice(max)}`;
 }
 
-/** Catalog-wide price span, e.g. "¥6,500 – ¥9,800（全12モデル）". */
+/** Catalog-wide price span, e.g. "¥15,000 – ¥18,000（全6モデル）". */
 export function formatCatalogPriceRange(
   products: Product[],
   modelCount?: number,

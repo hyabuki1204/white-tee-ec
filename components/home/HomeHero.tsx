@@ -1,125 +1,88 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState, useSyncExternalStore } from "react";
-import { HOME_COPY } from "@/lib/store-ui/home-redesign";
-import {
-  HOME_HERO_CROSSFADE_MS,
-  HOME_HERO_IMAGES,
-  HOME_HERO_INTERVAL_MS,
-} from "@/lib/store-ui/home-hero";
-import { cn } from "@/lib/utils";
+import { GAUGE_LADDER } from "@/lib/fabric/gauge";
 
-function subscribeReducedMotion(callback: () => void) {
-  const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-  media.addEventListener("change", callback);
-  return () => media.removeEventListener("change", callback);
-}
-
-function getReducedMotionSnapshot() {
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
-
-function getReducedMotionServerSnapshot() {
-  return false;
-}
-
-/** Split after "、" so each phrase stays whole (copy text is unchanged). */
-function splitPhrases(text: string) {
-  return text.split(/(?<=、)/);
-}
+const HERO = {
+  poster: "/home/hero-46g.jpg",
+  video: "/home/hero-46g.mp4",
+  gauge: 46,
+  headline: "白は、ゲージで選ぶ。",
+  subline:
+    "1964年創業、和歌山。ハイゲージの丸編機で、白いTシャツだけを作っています。",
+  cta: "ゲージから選ぶ",
+} as const;
 
 type HomeHeroProps = {
   priceRange: string;
 };
 
 export function HomeHero({ priceRange }: HomeHeroProps) {
-  /** `reached` = highest slide shown so far; later slides mount only when needed. */
-  const [slide, setSlide] = useState({ active: 0, reached: 0 });
-  const activeIndex = slide.active;
-  const prefersReducedMotion = useSyncExternalStore(
-    subscribeReducedMotion,
-    getReducedMotionSnapshot,
-    getReducedMotionServerSnapshot,
-  );
-
-  const imageCount = HOME_HERO_IMAGES.length;
-  const copy = HOME_COPY.hero;
-
-  useEffect(() => {
-    if (prefersReducedMotion || imageCount <= 1) return;
-
-    const timer = window.setInterval(() => {
-      setSlide(({ active, reached }) => {
-        const next = (active + 1) % imageCount;
-        return { active: next, reached: Math.max(reached, next) };
-      });
-    }, HOME_HERO_INTERVAL_MS);
-
-    return () => window.clearInterval(timer);
-  }, [imageCount, prefersReducedMotion]);
-
-  // Mount the slides already shown plus the next one (preloaded off-screen),
-  // so only the first image competes for LCP.
-  const mountedCount = prefersReducedMotion
-    ? 1
-    : Math.min(imageCount, slide.reached + 2);
-
   return (
     <section
       aria-label="Introduction"
-      className="flex w-full flex-col bg-[var(--color-surface)] md:min-h-[min(84svh,820px)] md:flex-row"
+      className="bg-[var(--color-surface)] px-3 md:px-8 lg:px-12"
     >
-      {/* Text panel — desktop left / mobile below photo */}
-      <div className="order-2 flex w-full flex-col justify-center px-[var(--space-4)] py-[var(--space-5)] md:order-1 md:w-[38%] md:px-[var(--space-5)] md:py-[var(--space-6)] xl:px-[var(--space-6)]">
-        <p className="type-label">{copy.label}</p>
+      <div className="on-mill relative mx-auto flex min-h-[min(78svh,820px)] w-full max-w-[1680px] items-end overflow-hidden">
+        <Image
+          src={HERO.poster}
+          alt=""
+          fill
+          preload
+          sizes="100vw"
+          className="object-cover object-[72%_center] md:object-center"
+        />
+        {/* Decorative loop; the poster above is the LCP image and the reduced-motion fallback. */}
+        <video
+          className="absolute inset-0 h-full w-full object-cover object-[72%_center] motion-reduce:hidden md:object-center"
+          src={HERO.video}
+          poster={HERO.poster}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          aria-hidden
+          tabIndex={-1}
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-[linear-gradient(90deg,rgba(13,16,20,0.82)_0%,rgba(13,16,20,0.42)_46%,rgba(13,16,20,0)_72%)] max-md:bg-[linear-gradient(0deg,rgba(13,16,20,0.9)_0%,rgba(13,16,20,0.5)_45%,rgba(13,16,20,0.05)_75%)]"
+        />
 
-        <h1 className="type-display mt-[var(--space-3)] max-w-[12em]">
-          {splitPhrases(copy.headline).map((phrase) => (
-            <span key={phrase} className="inline-block">
-              {phrase}
-            </span>
-          ))}
-        </h1>
-
-        <p className="type-body mt-[var(--space-2)] max-w-[22em] text-[var(--color-ink-soft)]">
-          {copy.subline}
-        </p>
-
-        <p className="type-caption mt-[var(--space-3)] font-en tabular-nums tracking-[0.04em]">
-          {priceRange}
-        </p>
-
-        <Link
-          href="#products"
-          className="type-caption mt-[var(--space-4)] inline-flex w-fit items-center justify-center border border-[var(--color-ink)] px-10 py-4 tracking-[var(--tracking-wide)] text-[var(--color-ink)] transition-colors duration-[var(--duration-quiet)] ease-[var(--ease-quiet)] hover:bg-[var(--color-ink)] hover:text-[var(--color-bg)]"
-        >
-          {copy.shopCta}
-        </Link>
+        <div className="relative z-10 w-full px-6 pb-10 pt-40 md:px-14 md:pb-16 lg:px-20 lg:pb-20">
+          <p className="type-numeral" aria-hidden>
+            {HERO.gauge}
+            <small>G</small>
+          </p>
+          <h1 className="type-display mt-6 !text-white md:mt-8">
+            {HERO.headline}
+          </h1>
+          <p className="type-body mt-4 max-w-[26em] text-white/80">
+            {HERO.subline}
+          </p>
+          <Link
+            href="#gauge"
+            className="mt-8 inline-flex min-h-12 items-center justify-center border border-white px-10 text-[13px] tracking-[0.16em] text-white transition-colors duration-[var(--duration-quiet)] ease-[var(--ease-quiet)] hover:bg-white hover:text-[#15181c]"
+          >
+            {HERO.cta}
+          </Link>
+        </div>
       </div>
 
-      {/* Image panel — desktop right / mobile top */}
-      <div className="relative order-1 aspect-[4/5] w-full overflow-hidden bg-[var(--color-image-placeholder)] md:order-2 md:aspect-auto md:min-h-[min(84svh,820px)] md:w-[62%]">
-        {HOME_HERO_IMAGES.slice(0, mountedCount).map((src, index) => (
-          <Image
-            key={src}
-            src={src}
-            alt=""
-            fill
-            preload={index === 0}
-            sizes="(max-width: 768px) 100vw, 62vw"
-            className={cn(
-              "object-cover object-[center_18%]",
-              index === activeIndex ? "opacity-100" : "opacity-0",
-            )}
-            style={{
-              transitionProperty: "opacity",
-              transitionDuration: `${HOME_HERO_CROSSFADE_MS}ms`,
-              transitionTimingFunction: "var(--ease-quiet)",
-            }}
-          />
-        ))}
+      <div className="mx-auto flex w-full max-w-[1680px] flex-wrap items-center justify-between gap-x-8 gap-y-2 py-5">
+        <p className="type-label">Knitted in Wakayama, Japan — Since 1964</p>
+        <p className="type-label flex items-center gap-4 tabular-nums">
+          {GAUGE_LADDER.map((item) => (
+            <Link
+              key={item.fabricSlug}
+              href={`/fabric/${item.fabricSlug}`}
+              className="text-[var(--color-ink)] transition-opacity duration-[var(--duration-quiet)] hover:opacity-60"
+            >
+              {item.gauge}G
+            </Link>
+          ))}
+          <span className="text-[var(--color-ink-faint)]">{priceRange}</span>
+        </p>
       </div>
     </section>
   );

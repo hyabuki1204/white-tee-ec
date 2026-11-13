@@ -3,85 +3,79 @@ import { ProductListingLayout } from "@/components/product/ProductListingLayout"
 import { getFabricBySlug, getFabrics } from "@/lib/fabric/queries";
 import { getProducts } from "@/lib/products/queries";
 import {
+  buildProductsFilterHref,
   FIT_TYPE_LABELS,
-  isFitType,
   isInStockProduct,
-  isSleeveType,
-  SLEEVE_TYPE_LABELS,
+  parseStorefrontFit,
 } from "@/lib/products/silhouette";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 
 export const dynamic = "force-dynamic";
 
+/**
+ * Filters: `fabric` (gauge), `fit` (silhouette), `stock`.
+ * Unknown values — and the retired `sleeve` param — are ignored.
+ */
 type ProductsPageProps = {
   searchParams: Promise<{
-    fabric?: string;
-    sleeve?: string;
-    fit?: string;
-    stock?: string;
+    fabric?: string | string[];
+    fit?: string | string[];
+    stock?: string | string[];
   }>;
 };
+
+const PLP_DESCRIPTION =
+  "White tees in three gauges — 28G, 36G, 46G — and two silhouettes, Regular and Box.";
+
+function first(value: string | string[] | undefined): string | undefined {
+  return Array.isArray(value) ? value[0] : value;
+}
 
 export async function generateMetadata({
   searchParams,
 }: ProductsPageProps): Promise<Metadata> {
-  const { fabric: fabricSlug, sleeve, fit } = await searchParams;
+  const params = await searchParams;
+  const fabricSlug = first(params.fabric);
+  const fit = parseStorefrontFit(first(params.fit));
+  const fabric = fabricSlug ? await getFabricBySlug(fabricSlug) : null;
 
-  if (fabricSlug) {
-    const fabric = await getFabricBySlug(fabricSlug);
-
-    if (fabric) {
-      return buildPageMetadata({
-        title: `${fabric.name} · Products`,
-        description: fabric.tagline,
-        path: `/products?fabric=${fabric.slug}`,
-      });
-    }
-  }
-
-  if (isSleeveType(sleeve)) {
-    const sleeveLabel = SLEEVE_TYPE_LABELS[sleeve];
-    const fitLabel = isFitType(fit) ? FIT_TYPE_LABELS[fit] : null;
-
+  if (!fabric && !fit) {
     return buildPageMetadata({
-      title: fitLabel ? `${sleeveLabel} · ${fitLabel}` : sleeveLabel,
-      description: "White tees — crew, pocket, relaxed, and long sleeve.",
-      path: fit
-        ? `/products?sleeve=${sleeve}&fit=${fit}`
-        : `/products?sleeve=${sleeve}`,
+      title: "Products",
+      description: PLP_DESCRIPTION,
+      path: "/products",
+      image: "/store/plp-banner.jpg",
     });
   }
 
+  const fitLabel = fit ? FIT_TYPE_LABELS[fit] : null;
+
   return buildPageMetadata({
-    title: "Products",
-    description: "White tees — crew, pocket, relaxed, and long sleeve.",
-    path: "/products",
-    image: "/store/plp-banner.jpg",
+    title: [fabric?.name, fitLabel, "Products"].filter(Boolean).join(" · "),
+    description: fabric?.tagline || PLP_DESCRIPTION,
+    path: buildProductsFilterHref({ fabric: fabric?.slug, fit }),
   });
 }
 
 export default async function ProductsPage({ searchParams }: ProductsPageProps) {
-  const { fabric: fabricSlug, sleeve: sleeveParam, fit: fitParam, stock } =
-    await searchParams;
+  const params = await searchParams;
+  const fabricSlug = first(params.fabric);
 
   const [allProducts, fabrics] = await Promise.all([
     getProducts(),
     getFabrics(),
   ]);
 
-  const activeSleeve = isSleeveType(sleeveParam) ? sleeveParam : null;
-  const activeFit = isFitType(fitParam) ? fitParam : null;
-  const inStockOnly = stock === "in";
-  const fabric = fabricSlug ? await getFabricBySlug(fabricSlug) : null;
+  const activeFit = parseStorefrontFit(first(params.fit));
+  const inStockOnly = first(params.stock) === "in";
+  const fabric = fabricSlug
+    ? (fabrics.find((entry) => entry.slug === fabricSlug) ?? null)
+    : null;
 
   let products = allProducts;
 
   if (fabric) {
     products = products.filter((product) => product.fabricSlug === fabric.slug);
-  }
-
-  if (activeSleeve) {
-    products = products.filter((product) => product.sleeveType === activeSleeve);
   }
 
   if (activeFit) {
@@ -102,7 +96,6 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
       allProducts={allProducts}
       fabrics={fabrics}
       activeFabricSlug={fabric?.slug ?? null}
-      activeSleeve={activeSleeve}
       activeFit={activeFit}
       inStockOnly={inStockOnly}
       fabricNameBySlug={fabricNameBySlug}

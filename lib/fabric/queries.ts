@@ -1,9 +1,9 @@
 import "server-only";
 
 import {
-  getFabricBySlugFromDb,
+  getStorefrontFabricBySlug,
   listFabricOptions,
-  listFabrics,
+  listStorefrontFabrics,
 } from "@/lib/db/fabrics/repository";
 import type { Fabric } from "@/lib/fabric/content";
 import { getProducts } from "@/lib/products/queries";
@@ -11,8 +11,9 @@ import type { Product } from "@/types";
 
 export { listFabricOptions };
 
+/** Storefront fabrics — only those with at least one published product. */
 export async function getFabrics(): Promise<Fabric[]> {
-  return listFabrics();
+  return listStorefrontFabrics();
 }
 
 export async function getFabricSlugs(): Promise<string[]> {
@@ -20,8 +21,9 @@ export async function getFabricSlugs(): Promise<string[]> {
   return fabrics.map((fabric) => fabric.slug);
 }
 
+/** Storefront lookup — null for unknown or retired fabrics. */
 export async function getFabricBySlug(slug: string): Promise<Fabric | null> {
-  return getFabricBySlugFromDb(slug);
+  return getStorefrontFabricBySlug(slug);
 }
 
 export async function getFabricForProduct(

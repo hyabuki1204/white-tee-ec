@@ -1,5 +1,7 @@
 import "server-only";
 
+import { cache } from "react";
+
 import { FABRICS } from "@/lib/fabric/content";
 import { attachFabricJaHelpers } from "@/lib/fabric/i18n";
 import { mapFabricRow, mapFabricRows } from "@/lib/db/fabrics/mapper";
@@ -83,12 +85,70 @@ async function getFabricBySlugFromSupabase(slug: string): Promise<Fabric | null>
   }
 }
 
+/**
+ * Slugs of fabrics that have at least one published product, or null when
+ * that cannot be determined (the caller then keeps every fabric).
+ */
+async function getPublishedFabricSlugs(): Promise<Set<string> | null> {
+  try {
+    const supabase = createSupabaseStaticClient();
+
+    const { data, error } = await supabase
+      .from("products")
+      .select("fabric_slug")
+      .eq("is_published", true);
+
+    if (error) {
+      return null;
+    }
+
+    return new Set(
+      (data ?? [])
+        .map((row) => row.fabric_slug)
+        .filter((slug): slug is string => typeof slug === "string"),
+    );
+  } catch {
+    return null;
+  }
+}
+
+/** Every fabric row, including retired ones — admin and internal tools. */
 export async function listFabrics(): Promise<Fabric[]> {
   if (getDataSource() !== "supabase" || !isSupabaseConfigured()) {
     return getDefaultFabrics();
   }
 
   return getFabricsFromSupabase();
+}
+
+/**
+ * Storefront list: only fabrics with at least one published product.
+ * Retired fabrics stay in the table (unpublished products and past orders
+ * still reference them) but are not listed or linked.
+ */
+export const listStorefrontFabrics = cache(async (): Promise<Fabric[]> => {
+  if (getDataSource() !== "supabase" || !isSupabaseConfigured()) {
+    return getDefaultFabrics();
+  }
+
+  const [fabrics, publishedSlugs] = await Promise.all([
+    getFabricsFromSupabase(),
+    getPublishedFabricSlugs(),
+  ]);
+
+  if (!publishedSlugs) {
+    return fabrics;
+  }
+
+  return fabrics.filter((fabric) => publishedSlugs.has(fabric.slug));
+});
+
+/** Storefront lookup: null for unknown or retired fabrics. */
+export async function getStorefrontFabricBySlug(
+  slug: string,
+): Promise<Fabric | null> {
+  const fabrics = await listStorefrontFabrics();
+  return fabrics.find((fabric) => fabric.slug === slug) ?? null;
 }
 
 export async function getFabricBySlugFromDb(

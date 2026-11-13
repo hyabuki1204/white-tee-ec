@@ -1,18 +1,39 @@
--- WHITE TEE EC — Seed data for products
+-- WHITE TEE EC — Seed data
 -- Prerequisites: run supabase/schema.sql first
 -- Run in Supabase SQL Editor (safe to re-run via ON CONFLICT)
+--
+-- Lineup: 3 gauges (28G / 36G / 46G) × 2 silhouettes (Regular / Box)
+-- = 6 products, sizes S / M / L (18 SKUs).
+-- Values mirror lib/products/product-catalog.ts and lib/fabric/content.ts.
+-- Existing databases get the same data from
+-- supabase/manual/gauge-lineup.sql (npm run db:migrate).
 
 -- ---------------------------------------------------------------------------
 -- 1. fabrics
 -- ---------------------------------------------------------------------------
-insert into public.fabrics (slug, name, tagline, description_lines, image_url, image_alt, sort_order)
+insert into public.fabrics (
+  slug, name, tagline, description_lines, image_url, image_alt, sort_order,
+  character_thickness, character_softness, character_structure, character_sheerness, character_surface
+)
 values
-  ('heavyweight-jersey', 'Heavyweight Jersey', 'Dense cotton with structure.', '["Knit at a higher gauge for weight and body.", "The surface holds its shape —", "white reads clearly, without softness blur."]'::jsonb, '/fabric/heavyweight-jersey.jpg', 'Heavyweight white cotton jersey texture', 1),
-  ('lightweight-jersey', 'Lightweight Jersey', 'Soft hand, open breath.', '["A lighter jersey for warmer days and closer contact.", "Fine yarn, relaxed tension —", "fabric that follows the skin without clinging."]'::jsonb, '/fabric/lightweight-jersey.jpg', 'Lightweight white cotton jersey texture', 2),
-  ('relaxed-jersey', 'Relaxed Jersey', 'Room to move, quiet drape.', '["Medium weight with a softer fall.", "Built for ease —", "shoulders drop, lines soften, white stays calm."]'::jsonb, '/fabric/relaxed-jersey.jpg', 'Relaxed white cotton jersey texture', 3),
-  ('compact-jersey', 'Compact Jersey', 'Tight weave for layering.', '["Compact yarn and a closer knit.", "Slim under a jacket, minimal under a shirt —", "structure without volume."]'::jsonb, '/fabric/compact-jersey.jpg', 'Compact white cotton jersey texture', 4),
-  ('essential-jersey', 'Essential Jersey', 'The everyday weight.', '["Our baseline jersey — balanced, familiar, year-round.", "Neither heavy nor sheer —", "the cloth most days ask for."]'::jsonb, '/fabric/essential-jersey.jpg', 'Essential white cotton jersey texture', 5),
-  ('box-jersey', 'Box Jersey', 'Substance without bulk.', '["A slightly denser hand with a flat, even surface.", "Straight lines need a cloth that keeps them —", "presence in white, without noise."]'::jsonb, '/fabric/box-jersey.jpg', 'Box white cotton jersey texture', 6)
+  (
+    '28g-jersey', '28G Jersey', 'Thick. Holds its line.',
+    '["Two-ply combed yarn, knit tight at 28 gauge.","240 g/m². Low sheer. Collar and shoulder keep their shape.","A white to wear on its own."]'::jsonb,
+    '/fabric/28g-jersey.jpg', '28-gauge white cotton jersey, close-up', 1,
+    5, 2, 5, 1, 3
+  ),
+  (
+    '36g-jersey', '36G Jersey', 'The standard white.',
+    '["Compact yarn at 36 gauge. Smooth, even surface.","160 g/m². Neither heavy nor thin.","The one to start with."]'::jsonb,
+    '/fabric/36g-jersey.jpg', '36-gauge white cotton jersey, close-up', 2,
+    3, 3, 3, 2, 4
+  ),
+  (
+    '46g-jersey', '46G Jersey', 'Thin. Dense. Smooth.',
+    '["46 needles to the inch — rare for a cut-and-sewn tee.","130 g/m². Falls like a woven, with a quiet lustre.","Sits clean under a jacket."]'::jsonb,
+    '/fabric/46g-jersey.jpg', '46-gauge white cotton jersey, close-up', 3,
+    2, 4, 2, 3, 5
+  )
 on conflict (slug) do update set
   name = excluded.name,
   tagline = excluded.tagline,
@@ -20,109 +41,105 @@ on conflict (slug) do update set
   image_url = excluded.image_url,
   image_alt = excluded.image_alt,
   sort_order = excluded.sort_order,
+  character_thickness = excluded.character_thickness,
+  character_softness = excluded.character_softness,
+  character_structure = excluded.character_structure,
+  character_sheerness = excluded.character_sheerness,
+  character_surface = excluded.character_surface,
   updated_at = now();
 
 -- ---------------------------------------------------------------------------
--- 2. products (12 items — ids match lib/products/product-catalog.ts)
+-- 2. products (6 items — ids match lib/products/product-catalog.ts)
 -- ---------------------------------------------------------------------------
 insert into public.products (
-  id,
-  slug,
-  name,
-  description,
-  detail_description,
-  fit_note,
-  material,
-  care,
-  size_guide,
-  is_published,
-  price,
-  fabric_slug
+  id, slug, name, description, detail_description, fit_note,
+  material, care, size_guide, is_published, price, fabric_slug,
+  sleeve_type, fit_type, fit_profile, created_at
 )
 values
   (
-    '10000000-0000-4000-8000-000000000001',
-    'heavyweight-crew-neck',
-    'Heavyweight Crew Neck',
-    '厚手コットン100%。骨格のある白。',
-    '厚手のコットン100%ジャージー。しっかりとした密度で、白の輪郭がはっきりと立つ一枚です。',
+    '20000000-0000-4000-8000-000000000001',
+    '28g-regular-tee',
+    '28G Regular Tee',
+    '双糸で編んだ肉厚の度詰天竺。一枚で着る、ハリのある白。',
+    '40/2コーマ糸を28ゲージで詰めて編んだ度詰天竺。目付240g/m²。厚みとハリがあり、透けにくい生地です。身幅54cm・着丈70cm（Mサイズ）の標準的なシルエットです。',
     'Regular fit',
     'COTTON 100%',
     'MACHINE WASH COLD WITH LIKE COLORS. DO NOT BLEACH. TUMBLE DRY LOW. COOL IRON IF NEEDED.',
-    '[{"size":"S","length":68,"shoulder":44,"chest":52,"sleeve":20},{"size":"M","length":70,"shoulder":46,"chest":54,"sleeve":21},{"size":"L","length":72,"shoulder":48,"chest":56,"sleeve":22},{"size":"XL","length":74,"shoulder":50,"chest":58,"sleeve":23}]'::jsonb,
-    true,
-    15000,
-    'heavyweight-jersey'
+    '[{"size":"S","length":68,"shoulder":44,"chest":52,"sleeve":20},{"size":"M","length":70,"shoulder":46,"chest":54,"sleeve":21},{"size":"L","length":72,"shoulder":48,"chest":56,"sleeve":22}]'::jsonb,
+    true, 16000, '28g-jersey', 'short', 'regular',
+    '{"fitType":"regular","fitLabel":"Regular fit","models":[{"heightCm":178,"weightKg":68,"size":"L"}],"sizeReference":[{"size":"S","heightMin":155,"heightMax":168,"heightLabel":"155–168cm"},{"size":"M","heightMin":165,"heightMax":175,"heightLabel":"165–175cm"},{"size":"L","heightMin":175,"heightMax":200,"heightLabel":"175cm+"}],"fitTypeSizeOffset":0,"preferenceAdjustments":{"justFit":0,"relaxed":1,"oversized":2}}'::jsonb,
+    now() + interval '0 seconds'
   ),
   (
-    '10000000-0000-4000-8000-000000000002',
-    'lightweight-pocket-tee',
-    'Lightweight Pocket Tee',
-    '軽やかな着心地。左胸ポケット付き。',
-    '軽量なコットン100%。肌に沿うような柔らかさと、通気性のよい風合い。左胸のポケット付き。',
-    'Regular fit',
-    'COTTON 100%',
-    'MACHINE WASH COLD WITH LIKE COLORS. DO NOT BLEACH. TUMBLE DRY LOW. COOL IRON IF NEEDED.',
-    '[{"size":"S","length":68,"shoulder":44,"chest":52,"sleeve":20},{"size":"M","length":70,"shoulder":46,"chest":54,"sleeve":21},{"size":"L","length":72,"shoulder":48,"chest":56,"sleeve":22},{"size":"XL","length":74,"shoulder":50,"chest":58,"sleeve":23}]'::jsonb,
-    true,
-    13000,
-    'lightweight-jersey'
-  ),
-  (
-    '10000000-0000-4000-8000-000000000003',
-    'relaxed-fit-tee',
-    'Relaxed Fit Tee',
-    'ゆとりのあるシルエット。ドロップショルダー。',
-    'ゆとりのあるシルエットとドロップショルダー。肩のラインを落とし、体のラインを強調しない着心地。',
-    'Relaxed fit',
-    'COTTON 100%',
-    'MACHINE WASH COLD WITH LIKE COLORS. DO NOT BLEACH. TUMBLE DRY LOW. COOL IRON IF NEEDED.',
-    '[{"size":"S","length":70,"shoulder":48,"chest":56,"sleeve":22},{"size":"M","length":72,"shoulder":50,"chest":58,"sleeve":23},{"size":"L","length":74,"shoulder":52,"chest":60,"sleeve":24},{"size":"XL","length":76,"shoulder":54,"chest":62,"sleeve":25}]'::jsonb,
-    true,
-    14000,
-    'relaxed-jersey'
-  ),
-  (
-    '10000000-0000-4000-8000-000000000004',
-    'compact-cotton-tee',
-    'Compact Cotton Tee',
-    'コンパクトな身幅。レイヤード向き。',
-    'コンパクトな身幅と短めの着丈。インナーとして重ねやすく、ジャケットの下にも余計なボリュームを出しません。',
-    'Slim fit',
-    'COTTON 100%',
-    'MACHINE WASH COLD WITH LIKE COLORS. DO NOT BLEACH. TUMBLE DRY LOW. COOL IRON IF NEEDED.',
-    '[{"size":"S","length":66,"shoulder":42,"chest":48,"sleeve":19},{"size":"M","length":68,"shoulder":44,"chest":50,"sleeve":20},{"size":"L","length":70,"shoulder":46,"chest":52,"sleeve":21},{"size":"XL","length":72,"shoulder":48,"chest":54,"sleeve":22}]'::jsonb,
-    true,
-    12000,
-    'compact-jersey'
-  ),
-  (
-    '10000000-0000-4000-8000-000000000005',
-    'long-sleeve-essential',
-    'Long Sleeve Essential',
-    '長袖の定番。袖口はシンプルな仕上げ。',
-    '長袖の定番Tシャツ。袖口はシンプルな仕上げで、季節を問わず白の質感を楽しめる一着です。',
-    'Regular fit',
-    'COTTON 100%',
-    'MACHINE WASH COLD WITH LIKE COLORS. DO NOT BLEACH. TUMBLE DRY LOW. COOL IRON IF NEEDED.',
-    '[{"size":"S","length":70,"shoulder":44,"chest":52,"sleeve":58},{"size":"M","length":72,"shoulder":46,"chest":54,"sleeve":59},{"size":"L","length":74,"shoulder":48,"chest":56,"sleeve":60},{"size":"XL","length":76,"shoulder":50,"chest":58,"sleeve":61}]'::jsonb,
-    true,
-    16500,
-    'essential-jersey'
-  ),
-  (
-    '10000000-0000-4000-8000-000000000006',
-    'box-fit-tee',
-    'Box Fit Tee',
-    'ボックスシルエット。存在感のある白。',
-    'ボックスシルエット。直線的なラインが、白の存在感を静かに引き立てます。',
+    '20000000-0000-4000-8000-000000000002',
+    '28g-box-tee',
+    '28G Box Tee',
+    '肉厚の28Gを、広い身幅と短い着丈で。形が立つ白。',
+    '40/2コーマ糸を28ゲージで詰めて編んだ度詰天竺。目付240g/m²。生地のハリで、形が立ちます。身幅60cm・着丈67cm（Mサイズ）。Regularより身幅が6cm広く、着丈が3cm短い箱形です。',
     'Box fit',
     'COTTON 100%',
     'MACHINE WASH COLD WITH LIKE COLORS. DO NOT BLEACH. TUMBLE DRY LOW. COOL IRON IF NEEDED.',
-    '[{"size":"S","length":70,"shoulder":48,"chest":56,"sleeve":22},{"size":"M","length":72,"shoulder":50,"chest":58,"sleeve":23},{"size":"L","length":74,"shoulder":52,"chest":60,"sleeve":24},{"size":"XL","length":76,"shoulder":54,"chest":62,"sleeve":25}]'::jsonb,
-    true,
-    15000,
-    'box-jersey'
+    '[{"size":"S","length":65,"shoulder":52,"chest":58,"sleeve":23},{"size":"M","length":67,"shoulder":54,"chest":60,"sleeve":24},{"size":"L","length":69,"shoulder":56,"chest":62,"sleeve":25}]'::jsonb,
+    true, 16000, '28g-jersey', 'short', 'boxy',
+    '{"fitType":"boxy","fitLabel":"Box fit","models":[{"heightCm":178,"weightKg":68,"size":"L"}],"sizeReference":[{"size":"S","heightMin":155,"heightMax":168,"heightLabel":"155–168cm"},{"size":"M","heightMin":165,"heightMax":175,"heightLabel":"165–175cm"},{"size":"L","heightMin":175,"heightMax":200,"heightLabel":"175cm+"}],"fitTypeSizeOffset":0,"preferenceAdjustments":{"justFit":0,"relaxed":1,"oversized":2}}'::jsonb,
+    now() + interval '1 seconds'
+  ),
+  (
+    '20000000-0000-4000-8000-000000000003',
+    '36g-regular-tee',
+    '36G Regular Tee',
+    '滑らかで偏りのない36G。毎日着るための基準の白。',
+    '60/1コンパクト糸を36ゲージで編んだ度詰天竺。目付160g/m²。毛羽が少なく、表面は滑らかで均一です。身幅54cm・着丈70cm（Mサイズ）の標準的なシルエットです。',
+    'Regular fit',
+    'COTTON 100%',
+    'MACHINE WASH COLD WITH LIKE COLORS. DO NOT BLEACH. TUMBLE DRY LOW. COOL IRON IF NEEDED.',
+    '[{"size":"S","length":68,"shoulder":44,"chest":52,"sleeve":20},{"size":"M","length":70,"shoulder":46,"chest":54,"sleeve":21},{"size":"L","length":72,"shoulder":48,"chest":56,"sleeve":22}]'::jsonb,
+    true, 15000, '36g-jersey', 'short', 'regular',
+    '{"fitType":"regular","fitLabel":"Regular fit","models":[{"heightCm":178,"weightKg":68,"size":"L"}],"sizeReference":[{"size":"S","heightMin":155,"heightMax":168,"heightLabel":"155–168cm"},{"size":"M","heightMin":165,"heightMax":175,"heightLabel":"165–175cm"},{"size":"L","heightMin":175,"heightMax":200,"heightLabel":"175cm+"}],"fitTypeSizeOffset":0,"preferenceAdjustments":{"justFit":0,"relaxed":1,"oversized":2}}'::jsonb,
+    now() + interval '2 seconds'
+  ),
+  (
+    '20000000-0000-4000-8000-000000000004',
+    '36g-box-tee',
+    '36G Box Tee',
+    '36Gの落ち着いた表面を、ゆとりのある箱形で。',
+    '60/1コンパクト糸を36ゲージで編んだ度詰天竺。目付160g/m²。落ち着いた表面を、ゆとりのある形で。身幅60cm・着丈67cm（Mサイズ）。Regularより身幅が6cm広く、着丈が3cm短い箱形です。',
+    'Box fit',
+    'COTTON 100%',
+    'MACHINE WASH COLD WITH LIKE COLORS. DO NOT BLEACH. TUMBLE DRY LOW. COOL IRON IF NEEDED.',
+    '[{"size":"S","length":65,"shoulder":52,"chest":58,"sleeve":23},{"size":"M","length":67,"shoulder":54,"chest":60,"sleeve":24},{"size":"L","length":69,"shoulder":56,"chest":62,"sleeve":25}]'::jsonb,
+    true, 15000, '36g-jersey', 'short', 'boxy',
+    '{"fitType":"boxy","fitLabel":"Box fit","models":[{"heightCm":178,"weightKg":68,"size":"L"}],"sizeReference":[{"size":"S","heightMin":155,"heightMax":168,"heightLabel":"155–168cm"},{"size":"M","heightMin":165,"heightMax":175,"heightLabel":"165–175cm"},{"size":"L","heightMin":175,"heightMax":200,"heightLabel":"175cm+"}],"fitTypeSizeOffset":0,"preferenceAdjustments":{"justFit":0,"relaxed":1,"oversized":2}}'::jsonb,
+    now() + interval '3 seconds'
+  ),
+  (
+    '20000000-0000-4000-8000-000000000005',
+    '46g-regular-tee',
+    '46G Regular Tee',
+    '1インチに針46本。薄く、密で、ジャケットの下に収まる白。',
+    '80/1コーマコンパクト糸を46ゲージで編んだ度詰天竺。目付130g/m²。1インチに針46本。薄手でも目が詰まり、布帛のような落ち感と控えめな光沢が出ます。身幅54cm・着丈70cm（Mサイズ）の標準的なシルエットです。',
+    'Regular fit',
+    'COTTON 100%',
+    'MACHINE WASH COLD WITH LIKE COLORS. DO NOT BLEACH. TUMBLE DRY LOW. COOL IRON IF NEEDED.',
+    '[{"size":"S","length":68,"shoulder":44,"chest":52,"sleeve":20},{"size":"M","length":70,"shoulder":46,"chest":54,"sleeve":21},{"size":"L","length":72,"shoulder":48,"chest":56,"sleeve":22}]'::jsonb,
+    true, 18000, '46g-jersey', 'short', 'regular',
+    '{"fitType":"regular","fitLabel":"Regular fit","models":[{"heightCm":178,"weightKg":68,"size":"L"}],"sizeReference":[{"size":"S","heightMin":155,"heightMax":168,"heightLabel":"155–168cm"},{"size":"M","heightMin":165,"heightMax":175,"heightLabel":"165–175cm"},{"size":"L","heightMin":175,"heightMax":200,"heightLabel":"175cm+"}],"fitTypeSizeOffset":0,"preferenceAdjustments":{"justFit":0,"relaxed":1,"oversized":2}}'::jsonb,
+    now() + interval '4 seconds'
+  ),
+  (
+    '20000000-0000-4000-8000-000000000006',
+    '46g-box-tee',
+    '46G Box Tee',
+    '最も細かい46Gを、広い身幅で。布帛のように落ちる白。',
+    '80/1コーマコンパクト糸を46ゲージで編んだ度詰天竺。目付130g/m²。1インチに針46本。薄く密な生地が、広い身幅からまっすぐ落ちます。身幅60cm・着丈67cm（Mサイズ）。Regularより身幅が6cm広く、着丈が3cm短い箱形です。',
+    'Box fit',
+    'COTTON 100%',
+    'MACHINE WASH COLD WITH LIKE COLORS. DO NOT BLEACH. TUMBLE DRY LOW. COOL IRON IF NEEDED.',
+    '[{"size":"S","length":65,"shoulder":52,"chest":58,"sleeve":23},{"size":"M","length":67,"shoulder":54,"chest":60,"sleeve":24},{"size":"L","length":69,"shoulder":56,"chest":62,"sleeve":25}]'::jsonb,
+    true, 18000, '46g-jersey', 'short', 'boxy',
+    '{"fitType":"boxy","fitLabel":"Box fit","models":[{"heightCm":178,"weightKg":68,"size":"L"}],"sizeReference":[{"size":"S","heightMin":155,"heightMax":168,"heightLabel":"155–168cm"},{"size":"M","heightMin":165,"heightMax":175,"heightLabel":"165–175cm"},{"size":"L","heightMin":175,"heightMax":200,"heightLabel":"175cm+"}],"fitTypeSizeOffset":0,"preferenceAdjustments":{"justFit":0,"relaxed":1,"oversized":2}}'::jsonb,
+    now() + interval '5 seconds'
   )
 on conflict (slug) do update set
   name = excluded.name,
@@ -135,190 +152,143 @@ on conflict (slug) do update set
   is_published = excluded.is_published,
   price = excluded.price,
   fabric_slug = excluded.fabric_slug,
+  sleeve_type = excluded.sleeve_type,
+  fit_type = excluded.fit_type,
+  fit_profile = excluded.fit_profile,
   updated_at = now();
 
 -- ---------------------------------------------------------------------------
--- 2. product_images (3 images per product — front / fabric / back)
+-- 3. product_images (01 front · 02 back · 03 on-model / card hover · 04 collar)
 -- ---------------------------------------------------------------------------
-insert into public.product_images (id, product_id, url, sort_order, is_primary)
-values
-  (
-    '20000000-0000-4000-8000-000000000001',
-    '10000000-0000-4000-8000-000000000001',
-    '/products/heavyweight-crew-neck-01.jpg',
-    0,
-    true
-  ),
-  (
-    '20000000-0000-4000-8000-000000000011',
-    '10000000-0000-4000-8000-000000000001',
-    '/products/heavyweight-crew-neck-02.jpg',
-    1,
-    false
-  ),
-  (
-    '20000000-0000-4000-8000-000000000021',
-    '10000000-0000-4000-8000-000000000001',
-    '/products/heavyweight-crew-neck-03.jpg',
-    2,
-    false
-  ),
-  (
-    '20000000-0000-4000-8000-000000000002',
-    '10000000-0000-4000-8000-000000000002',
-    '/products/lightweight-pocket-tee-01.jpg',
-    0,
-    true
-  ),
-  (
-    '20000000-0000-4000-8000-000000000012',
-    '10000000-0000-4000-8000-000000000002',
-    '/products/lightweight-pocket-tee-02.jpg',
-    1,
-    false
-  ),
-  (
-    '20000000-0000-4000-8000-000000000022',
-    '10000000-0000-4000-8000-000000000002',
-    '/products/lightweight-pocket-tee-03.jpg',
-    2,
-    false
-  ),
-  (
-    '20000000-0000-4000-8000-000000000003',
-    '10000000-0000-4000-8000-000000000003',
-    '/products/relaxed-fit-tee-01.jpg',
-    0,
-    true
-  ),
-  (
-    '20000000-0000-4000-8000-000000000013',
-    '10000000-0000-4000-8000-000000000003',
-    '/products/relaxed-fit-tee-02.jpg',
-    1,
-    false
-  ),
-  (
-    '20000000-0000-4000-8000-000000000023',
-    '10000000-0000-4000-8000-000000000003',
-    '/products/relaxed-fit-tee-03.jpg',
-    2,
-    false
-  ),
-  (
-    '20000000-0000-4000-8000-000000000004',
-    '10000000-0000-4000-8000-000000000004',
-    '/products/compact-cotton-tee-01.jpg',
-    0,
-    true
-  ),
-  (
-    '20000000-0000-4000-8000-000000000014',
-    '10000000-0000-4000-8000-000000000004',
-    '/products/compact-cotton-tee-02.jpg',
-    1,
-    false
-  ),
-  (
-    '20000000-0000-4000-8000-000000000024',
-    '10000000-0000-4000-8000-000000000004',
-    '/products/compact-cotton-tee-03.jpg',
-    2,
-    false
-  ),
-  (
-    '20000000-0000-4000-8000-000000000005',
-    '10000000-0000-4000-8000-000000000005',
-    '/products/long-sleeve-essential-01.jpg',
-    0,
-    true
-  ),
-  (
-    '20000000-0000-4000-8000-000000000015',
-    '10000000-0000-4000-8000-000000000005',
-    '/products/long-sleeve-essential-02.jpg',
-    1,
-    false
-  ),
-  (
-    '20000000-0000-4000-8000-000000000025',
-    '10000000-0000-4000-8000-000000000005',
-    '/products/long-sleeve-essential-03.jpg',
-    2,
-    false
-  ),
-  (
-    '20000000-0000-4000-8000-000000000006',
-    '10000000-0000-4000-8000-000000000006',
-    '/products/box-fit-tee-01.jpg',
-    0,
-    true
-  ),
-  (
-    '20000000-0000-4000-8000-000000000016',
-    '10000000-0000-4000-8000-000000000006',
-    '/products/box-fit-tee-02.jpg',
-    1,
-    false
-  ),
-  (
-    '20000000-0000-4000-8000-000000000026',
-    '10000000-0000-4000-8000-000000000006',
-    '/products/box-fit-tee-03.jpg',
-    2,
-    false
+-- Clear flags on any other image rows first: the partial unique indexes allow
+-- one primary and one card-hover image per product.
+update public.product_images
+set is_primary = false, is_card_hover = false
+where product_id in (
+  select id from public.products where slug in (
+    '28g-regular-tee',
+    '28g-box-tee',
+    '36g-regular-tee',
+    '36g-box-tee',
+    '46g-regular-tee',
+    '46g-box-tee'
   )
+)
+  and id not in (
+    '21000000-0000-4000-8000-000000000011',
+    '21000000-0000-4000-8000-000000000012',
+    '21000000-0000-4000-8000-000000000013',
+    '21000000-0000-4000-8000-000000000014',
+    '21000000-0000-4000-8000-000000000021',
+    '21000000-0000-4000-8000-000000000022',
+    '21000000-0000-4000-8000-000000000023',
+    '21000000-0000-4000-8000-000000000024',
+    '21000000-0000-4000-8000-000000000031',
+    '21000000-0000-4000-8000-000000000032',
+    '21000000-0000-4000-8000-000000000033',
+    '21000000-0000-4000-8000-000000000034',
+    '21000000-0000-4000-8000-000000000041',
+    '21000000-0000-4000-8000-000000000042',
+    '21000000-0000-4000-8000-000000000043',
+    '21000000-0000-4000-8000-000000000044',
+    '21000000-0000-4000-8000-000000000051',
+    '21000000-0000-4000-8000-000000000052',
+    '21000000-0000-4000-8000-000000000053',
+    '21000000-0000-4000-8000-000000000054',
+    '21000000-0000-4000-8000-000000000061',
+    '21000000-0000-4000-8000-000000000062',
+    '21000000-0000-4000-8000-000000000063',
+    '21000000-0000-4000-8000-000000000064'
+  )
+  and (is_primary or is_card_hover);
+
+insert into public.product_images (id, product_id, url, sort_order, is_primary, is_card_hover)
+values
+  ('21000000-0000-4000-8000-000000000011', (select id from public.products where slug = '28g-regular-tee'), '/products/28g-regular-tee-01.jpg', 0, true, false),
+  ('21000000-0000-4000-8000-000000000012', (select id from public.products where slug = '28g-regular-tee'), '/products/28g-regular-tee-02.jpg', 1, false, false),
+  ('21000000-0000-4000-8000-000000000013', (select id from public.products where slug = '28g-regular-tee'), '/products/28g-regular-tee-03.jpg', 2, false, true),
+  ('21000000-0000-4000-8000-000000000014', (select id from public.products where slug = '28g-regular-tee'), '/products/28g-regular-tee-04.jpg', 3, false, false),
+
+  ('21000000-0000-4000-8000-000000000021', (select id from public.products where slug = '28g-box-tee'), '/products/28g-box-tee-01.jpg', 0, true, false),
+  ('21000000-0000-4000-8000-000000000022', (select id from public.products where slug = '28g-box-tee'), '/products/28g-box-tee-02.jpg', 1, false, false),
+  ('21000000-0000-4000-8000-000000000023', (select id from public.products where slug = '28g-box-tee'), '/products/28g-box-tee-03.jpg', 2, false, true),
+  ('21000000-0000-4000-8000-000000000024', (select id from public.products where slug = '28g-box-tee'), '/products/28g-box-tee-04.jpg', 3, false, false),
+
+  ('21000000-0000-4000-8000-000000000031', (select id from public.products where slug = '36g-regular-tee'), '/products/36g-regular-tee-01.jpg', 0, true, false),
+  ('21000000-0000-4000-8000-000000000032', (select id from public.products where slug = '36g-regular-tee'), '/products/36g-regular-tee-02.jpg', 1, false, false),
+  ('21000000-0000-4000-8000-000000000033', (select id from public.products where slug = '36g-regular-tee'), '/products/36g-regular-tee-03.jpg', 2, false, true),
+  ('21000000-0000-4000-8000-000000000034', (select id from public.products where slug = '36g-regular-tee'), '/products/36g-regular-tee-04.jpg', 3, false, false),
+
+  ('21000000-0000-4000-8000-000000000041', (select id from public.products where slug = '36g-box-tee'), '/products/36g-box-tee-01.jpg', 0, true, false),
+  ('21000000-0000-4000-8000-000000000042', (select id from public.products where slug = '36g-box-tee'), '/products/36g-box-tee-02.jpg', 1, false, false),
+  ('21000000-0000-4000-8000-000000000043', (select id from public.products where slug = '36g-box-tee'), '/products/36g-box-tee-03.jpg', 2, false, true),
+  ('21000000-0000-4000-8000-000000000044', (select id from public.products where slug = '36g-box-tee'), '/products/36g-box-tee-04.jpg', 3, false, false),
+
+  ('21000000-0000-4000-8000-000000000051', (select id from public.products where slug = '46g-regular-tee'), '/products/46g-regular-tee-01.jpg', 0, true, false),
+  ('21000000-0000-4000-8000-000000000052', (select id from public.products where slug = '46g-regular-tee'), '/products/46g-regular-tee-02.jpg', 1, false, false),
+  ('21000000-0000-4000-8000-000000000053', (select id from public.products where slug = '46g-regular-tee'), '/products/46g-regular-tee-03.jpg', 2, false, true),
+  ('21000000-0000-4000-8000-000000000054', (select id from public.products where slug = '46g-regular-tee'), '/products/46g-regular-tee-04.jpg', 3, false, false),
+
+  ('21000000-0000-4000-8000-000000000061', (select id from public.products where slug = '46g-box-tee'), '/products/46g-box-tee-01.jpg', 0, true, false),
+  ('21000000-0000-4000-8000-000000000062', (select id from public.products where slug = '46g-box-tee'), '/products/46g-box-tee-02.jpg', 1, false, false),
+  ('21000000-0000-4000-8000-000000000063', (select id from public.products where slug = '46g-box-tee'), '/products/46g-box-tee-03.jpg', 2, false, true),
+  ('21000000-0000-4000-8000-000000000064', (select id from public.products where slug = '46g-box-tee'), '/products/46g-box-tee-04.jpg', 3, false, false)
 on conflict (id) do update set
+  product_id = excluded.product_id,
   url = excluded.url,
   sort_order = excluded.sort_order,
-  is_primary = excluded.is_primary;
+  is_primary = excluded.is_primary,
+  is_card_hover = excluded.is_card_hover;
 
 -- ---------------------------------------------------------------------------
--- 3. product_variants (S / M / L / XL for each product)
+-- 4. product_variants (S / M / L, stock 10 each)
 -- ---------------------------------------------------------------------------
 insert into public.product_variants (id, product_id, size, sku, stock_quantity)
 values
-  -- WT-001 Heavyweight Crew Neck
-  ('30000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000001', 'S',  'WT-001-S',  10),
-  ('30000000-0000-4000-8000-000000000002', '10000000-0000-4000-8000-000000000001', 'M',  'WT-001-M',  20),
-  ('30000000-0000-4000-8000-000000000003', '10000000-0000-4000-8000-000000000001', 'L',  'WT-001-L',  15),
-  ('30000000-0000-4000-8000-000000000004', '10000000-0000-4000-8000-000000000001', 'XL', 'WT-001-XL',  8),
+  ('31000000-0000-4000-8000-000000000011', (select id from public.products where slug = '28g-regular-tee'), 'S', 'WT-28R-S', 10),
+  ('31000000-0000-4000-8000-000000000012', (select id from public.products where slug = '28g-regular-tee'), 'M', 'WT-28R-M', 10),
+  ('31000000-0000-4000-8000-000000000013', (select id from public.products where slug = '28g-regular-tee'), 'L', 'WT-28R-L', 10),
 
-  -- WT-002 Lightweight Pocket Tee
-  ('30000000-0000-4000-8000-000000000005', '10000000-0000-4000-8000-000000000002', 'S',  'WT-002-S',  12),
-  ('30000000-0000-4000-8000-000000000006', '10000000-0000-4000-8000-000000000002', 'M',  'WT-002-M',  25),
-  ('30000000-0000-4000-8000-000000000007', '10000000-0000-4000-8000-000000000002', 'L',  'WT-002-L',  18),
-  ('30000000-0000-4000-8000-000000000008', '10000000-0000-4000-8000-000000000002', 'XL', 'WT-002-XL',  6),
+  ('31000000-0000-4000-8000-000000000021', (select id from public.products where slug = '28g-box-tee'), 'S', 'WT-28B-S', 10),
+  ('31000000-0000-4000-8000-000000000022', (select id from public.products where slug = '28g-box-tee'), 'M', 'WT-28B-M', 10),
+  ('31000000-0000-4000-8000-000000000023', (select id from public.products where slug = '28g-box-tee'), 'L', 'WT-28B-L', 10),
 
-  -- WT-003 Relaxed Fit Tee
-  ('30000000-0000-4000-8000-000000000009',  '10000000-0000-4000-8000-000000000003', 'S',  'WT-003-S',  14),
-  ('30000000-0000-4000-8000-000000000010', '10000000-0000-4000-8000-000000000003', 'M',  'WT-003-M',  22),
-  ('30000000-0000-4000-8000-000000000011', '10000000-0000-4000-8000-000000000003', 'L',  'WT-003-L',  16),
-  ('30000000-0000-4000-8000-000000000012', '10000000-0000-4000-8000-000000000003', 'XL', 'WT-003-XL',  5),
+  ('31000000-0000-4000-8000-000000000031', (select id from public.products where slug = '36g-regular-tee'), 'S', 'WT-36R-S', 10),
+  ('31000000-0000-4000-8000-000000000032', (select id from public.products where slug = '36g-regular-tee'), 'M', 'WT-36R-M', 10),
+  ('31000000-0000-4000-8000-000000000033', (select id from public.products where slug = '36g-regular-tee'), 'L', 'WT-36R-L', 10),
 
-  -- WT-004 Compact Cotton Tee
-  ('30000000-0000-4000-8000-000000000013', '10000000-0000-4000-8000-000000000004', 'S',  'WT-004-S',  30),
-  ('30000000-0000-4000-8000-000000000014', '10000000-0000-4000-8000-000000000004', 'M',  'WT-004-M',  40),
-  ('30000000-0000-4000-8000-000000000015', '10000000-0000-4000-8000-000000000004', 'L',  'WT-004-L',  20),
-  ('30000000-0000-4000-8000-000000000016', '10000000-0000-4000-8000-000000000004', 'XL', 'WT-004-XL', 10),
+  ('31000000-0000-4000-8000-000000000041', (select id from public.products where slug = '36g-box-tee'), 'S', 'WT-36B-S', 10),
+  ('31000000-0000-4000-8000-000000000042', (select id from public.products where slug = '36g-box-tee'), 'M', 'WT-36B-M', 10),
+  ('31000000-0000-4000-8000-000000000043', (select id from public.products where slug = '36g-box-tee'), 'L', 'WT-36B-L', 10),
 
-  -- WT-005 Long Sleeve Essential
-  ('30000000-0000-4000-8000-000000000017', '10000000-0000-4000-8000-000000000005', 'S',  'WT-005-S',  8),
-  ('30000000-0000-4000-8000-000000000018', '10000000-0000-4000-8000-000000000005', 'M',  'WT-005-M',  15),
-  ('30000000-0000-4000-8000-000000000019', '10000000-0000-4000-8000-000000000005', 'L',  'WT-005-L',  12),
-  ('30000000-0000-4000-8000-000000000020', '10000000-0000-4000-8000-000000000005', 'XL', 'WT-005-XL',  4),
+  ('31000000-0000-4000-8000-000000000051', (select id from public.products where slug = '46g-regular-tee'), 'S', 'WT-46R-S', 10),
+  ('31000000-0000-4000-8000-000000000052', (select id from public.products where slug = '46g-regular-tee'), 'M', 'WT-46R-M', 10),
+  ('31000000-0000-4000-8000-000000000053', (select id from public.products where slug = '46g-regular-tee'), 'L', 'WT-46R-L', 10),
 
-  -- WT-006 Box Fit Tee
-  ('30000000-0000-4000-8000-000000000021', '10000000-0000-4000-8000-000000000006', 'S',  'WT-006-S',  11),
-  ('30000000-0000-4000-8000-000000000022', '10000000-0000-4000-8000-000000000006', 'M',  'WT-006-M',  19),
-  ('30000000-0000-4000-8000-000000000023', '10000000-0000-4000-8000-000000000006', 'L',  'WT-006-L',  13),
-  ('30000000-0000-4000-8000-000000000024', '10000000-0000-4000-8000-000000000006', 'XL', 'WT-006-XL',  7)
+  ('31000000-0000-4000-8000-000000000061', (select id from public.products where slug = '46g-box-tee'), 'S', 'WT-46B-S', 10),
+  ('31000000-0000-4000-8000-000000000062', (select id from public.products where slug = '46g-box-tee'), 'M', 'WT-46B-M', 10),
+  ('31000000-0000-4000-8000-000000000063', (select id from public.products where slug = '46g-box-tee'), 'L', 'WT-46B-L', 10)
 on conflict (product_id, size) do update set
   sku = excluded.sku,
   stock_quantity = excluded.stock_quantity;
 
--- WT-007 … WT-012: run supabase/migrations/add-twelve-sku-expansion.sql
--- (or npm run db:migrate) to add 6 new products on existing databases.
+-- ---------------------------------------------------------------------------
+-- 5. Legacy placeholders (new databases only)
+-- ---------------------------------------------------------------------------
+-- Historical migrations (add-product-fit-profile.sql, update-product-images-multi.sql)
+-- attach image rows to the six product ids of the first lineup. These unpublished
+-- placeholders keep `npm run db:migrate` working on a database seeded from this
+-- file. They never appear on the storefront. Existing databases already hold
+-- these ids, so nothing changes there.
+insert into public.products (id, slug, name, is_published, price)
+values
+  ('10000000-0000-4000-8000-000000000001', 'legacy-wt-001', 'Legacy WT-001', false, 0),
+  ('10000000-0000-4000-8000-000000000002', 'legacy-wt-002', 'Legacy WT-002', false, 0),
+  ('10000000-0000-4000-8000-000000000003', 'legacy-wt-003', 'Legacy WT-003', false, 0),
+  ('10000000-0000-4000-8000-000000000004', 'legacy-wt-004', 'Legacy WT-004', false, 0),
+  ('10000000-0000-4000-8000-000000000005', 'legacy-wt-005', 'Legacy WT-005', false, 0),
+  ('10000000-0000-4000-8000-000000000006', 'legacy-wt-006', 'Legacy WT-006', false, 0)
+on conflict do nothing;
 
 -- ---------------------------------------------------------------------------
 -- Verify (optional — run separately)

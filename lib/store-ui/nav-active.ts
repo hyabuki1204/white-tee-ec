@@ -13,7 +13,7 @@ export function isNavActive(
     const normalizedSearch = search.startsWith("?") ? search.slice(1) : search;
 
     if (!query) {
-      return normalizedSearch === "" || normalizedSearch === "sleeve=short";
+      return normalizedSearch === "";
     }
 
     return normalizedSearch === query;

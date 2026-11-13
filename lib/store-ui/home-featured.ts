@@ -4,14 +4,14 @@ import type { FabricCharacter, FabricCharacterLevel } from "@/lib/fabric/charact
 import type { Fabric } from "@/lib/fabric/content";
 import type { Product } from "@/types";
 
-export const HOME_FEATURED_PRODUCT_SLUG = "heavyweight-crew-neck";
+export const HOME_FEATURED_PRODUCT_SLUG = "46g-regular-tee";
 
 const THICKNESS_LABEL: Record<FabricCharacterLevel, string> = {
-  1: "軽やか、開いた編み",
-  2: "薄手、細番手",
-  3: "中厚手",
-  4: "しっかりしたボディ感",
-  5: "ヘビーウェイト、密度高",
+  1: "ごく薄手",
+  2: "薄手、目は密",
+  3: "中肉",
+  4: "やや肉厚",
+  5: "肉厚、ハリがある",
 };
 
 const SHEERNESS_LABEL: Record<FabricCharacterLevel, string> = {
@@ -48,20 +48,23 @@ function findImageByPattern(images: Product["images"], pattern: RegExp): string 
   return sorted.find((image) => pattern.test(image.url))?.url ?? null;
 }
 
+/** Front (01), on-model (03), collar detail (04). */
 export function getHomeDetailViews(product: Product): HomeDetailView[] {
-  const wearImage = getProductWearImageUrl(product);
-  const side = wearImage ?? findImageByPattern(product.images, /-04\./i) ?? product.imageUrl;
-  const full =
-    findImageByPattern(product.images, /-05\./i) ??
+  const worn =
+    getProductWearImageUrl(product) ??
+    findImageByPattern(product.images, /-03\./i) ??
+    product.imageUrl;
+  const collar =
+    findImageByPattern(product.images, /-04\./i) ??
     [...product.images]
       .sort((a, b) => b.sortOrder - a.sortOrder)
-      .find((image) => image.url !== product.imageUrl && image.url !== side)?.url ??
-    side;
+      .find((image) => image.url !== product.imageUrl && image.url !== worn)?.url ??
+    worn;
 
   return [
     { src: product.imageUrl, alt: `${product.name} 正面` },
-    { src: side, alt: `${product.name} サイド` },
-    { src: full, alt: `${product.name} 全身` },
+    { src: worn, alt: `${product.name} 着用` },
+    { src: collar, alt: `${product.name} 襟元` },
   ];
 }
 
@@ -86,7 +89,7 @@ export function buildHomeDetailContent(
       height: model ? `${model.heightCm}cm` : "175cm",
       size: model ? `${model.size}` : "L",
     },
-    material: product.material || fabric?.tagline || "コットン100%ジャージー。",
+    material: product.material || fabric?.tagline || "コットン100%",
     specs: [
       {
         label: "透け感",

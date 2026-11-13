@@ -21,63 +21,64 @@ export const EDITORIAL_VOICES: EditorialVoice[] = [
   {
     source: "作り手のメモ",
     line: "白Tは、着た瞬間より洗った後に差が出ます。首元、裾、肩線。その残り方を見てください。",
-    detail: "Kanemasa, Wakayama",
+    detail: "カネマサ莫大小・和歌山",
   },
   {
-    source: "スタイリングノート",
-    line: "1枚で着るなら Heavyweight、真夏は Lightweight、重ね着なら Compact が選びやすいです。",
+    source: "選び方",
+    line: "1枚で着るなら 28G、毎日の基準は 36G、ジャケットの下には 46G が選びやすいです。",
     detail: "サイズは普段のTシャツから",
   },
   {
-    source: "着用の声",
-    line: "多くの方が、構造用の Heavyweight と、暑い季節用の Lightweight の2枚を持っています。",
-    detail: "リピート購入データより",
+    source: "ゲージについて",
+    line: "ゲージは、1インチあたりの針の本数です。数字が大きいほど編み目は細かく、生地は薄く密になります。",
+    detail: "28G / 36G / 46G",
   },
 ];
 
+/** One note per gauge. `fabric` must start with the gauge label (see getWearingNoteForFabric). */
 export const WEARING_NOTES: WearingNote[] = [
   {
-    fabric: "Heavyweight Jersey",
+    fabric: "28G Jersey",
     months: 8,
     lines: [
-      "首元のラインが保たれ、繰り返しの洗濯後もクルミにくい。",
-      "表面はやわらかくなるが、形は残る。疲れた印象にはならない。",
+      "双糸の度詰。洗濯を重ねても、首元と肩線が崩れにくい。",
+      "表面は少しやわらかくなるが、厚みとハリは残る。",
     ],
   },
   {
-    fabric: "Lightweight Jersey",
+    fabric: "36G Jersey",
     months: 6,
     lines: [
-      "最初から軽く、通気性がよい。洗うほどにドレープが開く。",
-      "日中の透け感は予測可能。1回洗った後に驚くことはない。",
+      "コンパクト糸は毛羽が少ない。洗っても表面が荒れにくい。",
+      "厚みは変わらず、手触りだけが少しなじむ。",
     ],
   },
   {
-    fabric: "Compact Jersey",
-    months: 5,
+    fabric: "46G Jersey",
+    months: 6,
     lines: [
-      "裾と袖のラインがすっきり保たれる。袖口の伸びが少ない。",
-      "初日から滑らかな手触り。3回洗っても表面の毛羽立ちが出にくい。",
+      "薄手でも目が詰まっているため、裾と袖口が伸びにくい。",
+      "落ち感と控えめな光沢は、洗った後も残る。",
     ],
   },
 ];
 
 export const FACTS = [
-  { label: "工場", value: "和歌山・Kanemasa" },
-  { label: "生地", value: "6種類のジャージー" },
-  { label: "綿", value: "超長繊維コットン" },
-  { label: "仕上げ", value: "手仕上げの襟" },
+  { label: "工場", value: "和歌山・カネマサ莫大小（1964年創業）" },
+  { label: "生地", value: "3つのゲージ — 28G / 36G / 46G" },
+  { label: "形", value: "2つのシルエット — Regular / Box" },
+  { label: "サイズ", value: "S / M / L" },
 ] as const;
 
 export const PRICE_POSITIONING = {
   headline: "価格に含まれるもの",
   intro:
-    "WHITE TEE の価格は、ブランクへのラベル貼りではなく、和歌山での自社編立て、生地ごとのゲージ調整、仕上げ工程に向けられています。",
+    "WHITE TEE の価格は、ブランクへのラベル貼りではなく、和歌山での編み立て、ゲージごとの糸選び、仕上げ工程に向けられています。",
   lines: [
-    "最初のループより前に選ぶ、超長繊維コットン。",
-    "和歌山工場での円編——重量ごとにゲージを調整。",
+    "ゲージごとに選ぶ糸。40/2コーマ糸、60/1コンパクト糸、80/1コーマコンパクト糸。",
+    "和歌山での丸編み。28G・36G・46G、それぞれ度目を詰めた度詰天竺。",
     "フラットロック縫製、型付けした襟、出荷前の検品。",
-    "1枚のTシャツを12回改名したのではなく、6つのシルエット。",
+    "同じ機械でも、同じ生地は生まれない。3つのゲージ × 2つのシルエット。",
   ],
   care: "1シーズンで形を失うのではなく、着るほどにやわらかくなることを目指しています。",
 } as const;
