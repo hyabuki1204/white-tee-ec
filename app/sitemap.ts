@@ -4,6 +4,13 @@ import { getJournalSlugs } from "@/lib/content/journal";
 import { getAllProductSlugs } from "@/lib/products/queries";
 import { getSiteUrl } from "@/lib/seo/site";
 
+/**
+ * The catalog lives in the database and changes without a deploy (admin
+ * edits, and migrations that run after the build). Re-read it periodically
+ * instead of freezing whatever the database held at build time.
+ */
+export const revalidate = 300;
+
 const STATIC_PATHS = [
   "",
   "/fabric",
