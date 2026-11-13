@@ -1,24 +1,31 @@
 import type { ReactNode } from "react";
-import { Container } from "@/components/layout/Container";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { pageGutterClass } from "@/lib/store-ui/ui-classes";
 
 type LegalPageLayoutProps = {
-  title: string;
+  /** English label above the title, e.g. "Privacy Policy". */
+  label: ReactNode;
+  /** Japanese page title. */
+  title: ReactNode;
+  lead?: ReactNode;
   children: ReactNode;
 };
 
-export function LegalPageLayout({ title, children }: LegalPageLayoutProps) {
+/** Policy and information pages: standard header, left-aligned content. */
+export function LegalPageLayout({
+  label,
+  title,
+  lead,
+  children,
+}: LegalPageLayoutProps) {
   return (
-    <Container as="section" className="py-20 sm:py-24 md:py-32 lg:py-36">
-      <div className="mx-auto max-w-2xl">
-        <header className="text-center">
-          <h1 className="text-[14px] font-normal tracking-[0.28em] text-neutral-800 md:text-[14px]">
-            {title}
-          </h1>
-        </header>
-        <div className="mt-16 space-y-10 text-[14px] font-normal leading-[2] tracking-[0.03em] text-neutral-600 md:mt-20">
-          {children}
-        </div>
+    <>
+      <PageHeader label={label} title={title} lead={lead} />
+      <div
+        className={`${pageGutterClass} py-[var(--space-5)] md:py-[var(--space-6)]`}
+      >
+        {children}
       </div>
-    </Container>
+    </>
   );
 }
