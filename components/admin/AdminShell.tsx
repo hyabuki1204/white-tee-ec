@@ -16,6 +16,7 @@ const ADMIN_LINKS = [
   { href: "/admin", label: ADMIN_COPY.nav.dashboard, exact: true },
   { href: "/admin/orders", label: ADMIN_COPY.nav.orders, exact: false },
   { href: "/admin/products", label: ADMIN_COPY.nav.products, exact: false },
+  { href: "/admin/restock", label: ADMIN_COPY.nav.restock, exact: false },
   { href: "/admin/fabrics", label: ADMIN_COPY.nav.fabrics, exact: false },
   { href: "/admin/images", label: ADMIN_COPY.nav.images, exact: false },
   { href: "/admin/content", label: ADMIN_COPY.nav.content, exact: false },

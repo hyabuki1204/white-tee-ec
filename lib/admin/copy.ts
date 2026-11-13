@@ -5,6 +5,7 @@ export const ADMIN_COPY = {
     dashboard: "ダッシュボード",
     orders: "注文",
     products: "商品",
+    restock: "再入荷通知",
     fabrics: "生地",
     images: "画像生成",
     content: "ホームページ設定",
@@ -75,6 +76,10 @@ export const ADMIN_COPY = {
       label: "商品",
       description: "商品の追加・編集・在庫管理",
     },
+    restock: {
+      label: "再入荷通知",
+      description: "再入荷のお知らせ希望（商品・サイズ別の件数）",
+    },
     fabrics: {
       label: "生地",
       description: "生地の文言・画像編集",
@@ -95,6 +100,32 @@ export const ADMIN_COPY = {
       label: "SEO設定",
       description: "サイト名・説明文・OGP画像",
     },
+  },
+  restock: {
+    title: "再入荷通知の希望",
+    subtitle: (total: number) => `未送信 ${total}件`,
+    explainer:
+      "商品編集で在庫を1以上にして保存すると、そのサイズを待っているお客様へ自動で1回だけメールを送ります。送信できた希望はこの一覧から消えます。",
+    emailNotConfigured:
+      "メール送信が未設定です（RESEND_API_KEY と EMAIL_FROM）。設定されるまで希望は未送信のまま残り、送信済みにはなりません。",
+    truncated: (limit: number) =>
+      `未送信が${limit}件を超えています。件数は先頭${limit}件の集計です。`,
+    empty: "未送信の希望はありません。",
+    columns: {
+      product: "商品",
+      size: "サイズ",
+      count: "希望件数",
+      stock: "現在の在庫",
+      oldest: "最初の希望日",
+      state: "状態",
+    },
+    stockRemoved: "サイズなし",
+    state: {
+      waiting: "入荷待ち",
+      ready: "送信待ち（在庫あり）",
+      unpublished: "非公開",
+    },
+    editProduct: "在庫を編集",
   },
   orders: {
     title: "注文一覧",

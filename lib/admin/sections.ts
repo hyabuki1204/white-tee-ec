@@ -13,6 +13,11 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     description: ADMIN_COPY.sections.products.description,
   },
   {
+    label: ADMIN_COPY.sections.restock.label,
+    href: "/admin/restock",
+    description: ADMIN_COPY.sections.restock.description,
+  },
+  {
     label: ADMIN_COPY.sections.fabrics.label,
     href: "/admin/fabrics",
     description: ADMIN_COPY.sections.fabrics.description,

@@ -634,6 +634,28 @@ export type NewsletterSubscriberInsert = {
   unsubscribed_at?: string | null;
 };
 
+export type RestockLocale = "ja" | "en";
+
+export type RestockRequestRow = {
+  id: string;
+  email: string;
+  product_id: string;
+  size: string;
+  locale: RestockLocale;
+  created_at: string;
+  notified_at: string | null;
+};
+
+export type RestockRequestInsert = {
+  id?: string;
+  email: string;
+  product_id: string;
+  size: string;
+  locale?: RestockLocale;
+  created_at?: string;
+  notified_at?: string | null;
+};
+
 export type Database = {
   public: {
     Tables: {
@@ -775,6 +797,12 @@ export type Database = {
         Update: Partial<NewsletterSubscriberInsert>;
         Relationships: [];
       };
+      restock_requests: {
+        Row: RestockRequestRow;
+        Insert: RestockRequestInsert;
+        Update: Partial<RestockRequestInsert>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -794,6 +822,12 @@ export type Database = {
           p_lease_seconds?: number;
         };
         Returns: ImageGenerationJobRow[];
+      };
+      consume_concierge_budget: {
+        Args: {
+          p_limit: number;
+        };
+        Returns: boolean;
       };
     };
     Enums: {

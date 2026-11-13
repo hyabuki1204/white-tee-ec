@@ -12,7 +12,8 @@
     "images:tick": "node scripts/images/tick.mjs",
     "images:drain": "node scripts/images/drain.mjs",
     "images:status": "node scripts/images/status.mjs",
-    "postbuild": "node scripts/run-sql-migrations.mjs && node scripts/apply-premium-pricing.mjs"
+    "postbuild": "node scripts/run-sql-migrations.mjs && node scripts/apply-premium-pricing.mjs",
+    "test": "node --import ./tests/alias-hooks.mjs --test \"tests/**/*.test.ts\""
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.116.0",

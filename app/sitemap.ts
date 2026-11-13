@@ -16,6 +16,7 @@ const STATIC_PATHS = [
   "/fabric",
   "/products",
   "/about",
+  "/concierge",
   "/journal",
   "/contact",
   "/store-guide",

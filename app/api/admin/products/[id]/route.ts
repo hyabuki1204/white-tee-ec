@@ -1,8 +1,9 @@
 import { revalidatePath } from "next/cache";
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
 import { AdminAuthError, requireAdminSession } from "@/lib/admin/auth";
 import { parseAdminProductInput } from "@/lib/admin/product-input";
 import { deleteProduct, updateProduct } from "@/lib/products/mutations";
+import { dispatchRestockNotifications } from "@/lib/restock/notify";
 
 type RouteContext = {
   params: Promise<{ id: string }>;
@@ -26,6 +27,12 @@ export async function PATCH(request: Request, context: RouteContext) {
     revalidatePath(`/products/${product.slug}`);
     revalidatePath("/admin/products");
     revalidatePath(`/admin/products/${id}/edit`);
+    revalidatePath("/admin/restock");
+
+    // Stock may have come back. After the response, so sending never delays
+    // or fails the save; it only mails sizes that now have stock and still
+    // have someone waiting. See lib/restock/notify.ts.
+    after(() => dispatchRestockNotifications({ productId: id }));
 
     return NextResponse.json({ product });
   } catch (error) {

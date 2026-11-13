@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { SoftImage } from "@/components/motion/SoftImage";
+import { SaveCardButton } from "@/components/saved/SaveButton";
 import { formatWeight, getGaugeSpec } from "@/lib/fabric/gauge";
 import { getGraphpaperDisplayName } from "@/lib/products/display-name";
 import { getProductWearImageUrl } from "@/lib/products/wear-image";
@@ -34,7 +35,7 @@ export function ProductCard({
     product.variants.every((variant) => variant.stockQuantity < 1);
 
   return (
-    <article className={cn("group", className)} data-reveal>
+    <article className={cn("group relative", className)} data-reveal>
       <Link href={`/products/${product.slug}`} className="block">
         <div className="relative aspect-[3/4] overflow-hidden bg-[var(--color-image-placeholder)]">
           <SoftImage
@@ -88,6 +89,7 @@ export function ProductCard({
           </p>
         ) : null}
       </Link>
+      <SaveCardButton productId={product.id} productName={displayName} />
     </article>
   );
 }

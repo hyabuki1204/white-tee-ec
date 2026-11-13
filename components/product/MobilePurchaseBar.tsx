@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useProductPurchase } from "@/components/product/ProductPurchaseContext";
+import { RestockForm } from "@/components/restock/RestockForm";
 import { SITE_UI_COPY } from "@/lib/copy/site-ui";
 import { formatPrice } from "@/lib/utils/format-price";
 import { cn } from "@/lib/utils";
@@ -22,6 +23,7 @@ export function MobilePurchaseBar({ displayName }: MobilePurchaseBarProps) {
     selectedSize,
     buttonLabel,
     canAdd,
+    isOutOfStock,
     handleAddToCart,
     purchaseCtaRef,
   } = useProductPurchase();
@@ -81,37 +83,47 @@ export function MobilePurchaseBar({ displayName }: MobilePurchaseBarProps) {
           : "pointer-events-none translate-y-full opacity-0",
       )}
     >
-      <div className="mx-auto flex max-w-lg items-center gap-4">
-        <div className="min-w-0 flex-1">
-          <p className="type-body truncate text-[var(--color-ink)]">
-            {displayName}
-          </p>
-          <p className="type-caption font-en tabular-nums tracking-[0.04em]">
-            {formatPrice(product.price)}
-            {selectedSize ? (
-              <span className="text-[var(--color-ink-soft)]">
-                <span aria-hidden className="mx-2 text-[var(--color-ink-faint)]">
-                  /
+      {selectedSize && isOutOfStock ? (
+        <RestockForm
+          key={`${product.id}-${selectedSize}`}
+          productId={product.id}
+          size={selectedSize}
+          compact
+          className="mx-auto max-w-lg"
+        />
+      ) : (
+        <div className="mx-auto flex max-w-lg items-center gap-4">
+          <div className="min-w-0 flex-1">
+            <p className="type-body truncate text-[var(--color-ink)]">
+              {displayName}
+            </p>
+            <p className="type-caption font-en tabular-nums tracking-[0.04em]">
+              {formatPrice(product.price)}
+              {selectedSize ? (
+                <span className="text-[var(--color-ink-soft)]">
+                  <span aria-hidden className="mx-2 text-[var(--color-ink-faint)]">
+                    /
+                  </span>
+                  {selectedSize}
                 </span>
-                {selectedSize}
-              </span>
-            ) : null}
-          </p>
+              ) : null}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onClick}
+            disabled={!noSizeSelected && !canAdd}
+            className={cn(
+              "flex h-11 shrink-0 items-center justify-center px-5 text-[12px] font-normal tracking-[0.1em] text-[var(--color-bg)] transition-opacity duration-[var(--duration-quiet)] ease-[var(--ease-quiet)]",
+              !noSizeSelected && !canAdd
+                ? "cursor-not-allowed bg-[var(--color-ink-faint)]"
+                : "bg-[var(--color-ink)] hover:opacity-80",
+            )}
+          >
+            {noSizeSelected ? copy.selectSizeButton : buttonLabel}
+          </button>
         </div>
-        <button
-          type="button"
-          onClick={onClick}
-          disabled={!noSizeSelected && !canAdd}
-          className={cn(
-            "flex h-11 shrink-0 items-center justify-center px-5 text-[12px] font-normal tracking-[0.1em] text-[var(--color-bg)] transition-opacity duration-[var(--duration-quiet)] ease-[var(--ease-quiet)]",
-            !noSizeSelected && !canAdd
-              ? "cursor-not-allowed bg-[var(--color-ink-faint)]"
-              : "bg-[var(--color-ink)] hover:opacity-80",
-          )}
-        >
-          {noSizeSelected ? copy.selectSizeButton : buttonLabel}
-        </button>
-      </div>
+      )}
     </div>
   );
 }
