@@ -31,7 +31,10 @@ export function Header({ products, fabricNameBySlug }: HeaderProps) {
   const search = searchParams.toString();
   const isAdmin = pathname.startsWith("/admin");
   const headerRef = useRef<HTMLElement>(null);
-  const [menuOpen, setMenuOpen] = useState(false);
+  // The menu is open only for the path it was opened on, so any navigation
+  // closes it without an effect.
+  const [menuOpenPath, setMenuOpenPath] = useState<string | null>(null);
+  const menuOpen = menuOpenPath === pathname;
   const [headerHidden, setHeaderHidden] = useState(false);
   const lastScrollY = useRef(0);
 
@@ -54,10 +57,6 @@ export function Header({ products, fabricNameBySlug }: HeaderProps) {
 
     return () => resizeObserver.disconnect();
   }, [pathname, isAdmin, menuOpen]);
-
-  useEffect(() => {
-    setMenuOpen(false);
-  }, [pathname]);
 
   useEffect(() => {
     if (menuOpen) {
@@ -173,7 +172,7 @@ export function Header({ products, fabricNameBySlug }: HeaderProps) {
                 aria-expanded={menuOpen}
                 aria-controls="mobile-navigation"
                 aria-label={menuOpen ? "Close menu" : "Open menu"}
-                onClick={() => setMenuOpen((open) => !open)}
+                onClick={() => setMenuOpenPath(menuOpen ? null : pathname)}
                 className="flex h-11 w-11 items-center justify-center text-[var(--color-ink)]"
               >
                 <span className="relative block h-3 w-4">
@@ -205,7 +204,7 @@ export function Header({ products, fabricNameBySlug }: HeaderProps) {
       <div id="mobile-navigation">
         <MobileNav
           isOpen={menuOpen}
-          onClose={() => setMenuOpen(false)}
+          onClose={() => setMenuOpenPath(null)}
           products={products}
           fabricNameBySlug={fabricNameBySlug}
         />

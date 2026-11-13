@@ -94,11 +94,11 @@ export function ProductPurchaseProvider({
     setLastViewedProductSlug(product.slug);
   }, [product.slug]);
 
-  useEffect(() => {
-    if (quantity > maxQuantity && maxQuantity > 0) {
-      setQuantity(maxQuantity);
-    }
-  }, [maxQuantity, quantity]);
+  // Clamp the chosen quantity when stock headroom shrinks (adjusting state
+  // during render instead of in an effect).
+  if (quantity > maxQuantity && maxQuantity > 0) {
+    setQuantity(maxQuantity);
+  }
 
   useEffect(() => {
     return () => {

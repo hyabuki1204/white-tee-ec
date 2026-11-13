@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 
 type PageHeaderProps = {
   /** Short English label in the navy accent, e.g. "Journal". */
-  label: string;
+  label: React.ReactNode;
   /** Japanese page title, set in the display style. */
   title: React.ReactNode;
   /** One or two sentences under the title. */
