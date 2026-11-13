@@ -9,11 +9,22 @@ import { ProductPurchaseProvider } from "@/components/product/ProductPurchaseCon
 import { ProductSizeGuideTable } from "@/components/product/ProductSizeGuideTable";
 import { getGaugeSpec } from "@/lib/fabric/gauge";
 import { getFabricSpecRows } from "@/lib/fabric/specs";
-import { RETURNS_POLICY } from "@/lib/store-ui/returns-policy";
+import type { Locale } from "@/lib/i18n/config";
+import { defineCopy } from "@/lib/i18n/define-copy";
+import {
+  getReturnsPolicy,
+  SHIPS_WITHIN_JAPAN_ONLY,
+} from "@/lib/store-ui/returns-policy";
 import type { Fabric } from "@/lib/fabric/content";
 import type { Product, ProductSize } from "@/types";
 
+const getCopy = defineCopy(
+  { care: "お手入れについて", shipping: "配送・返品" },
+  { care: "Care", shipping: "Shipping & returns" },
+);
+
 type ProductPageLayoutProps = {
+  locale: Locale;
   product: Product;
   fabric?: Fabric | null;
   fabricName?: string | null;
@@ -22,13 +33,16 @@ type ProductPageLayoutProps = {
 };
 
 export function ProductPageLayout({
+  locale,
   product,
   fabric,
   displayName,
   initialSize = null,
 }: ProductPageLayoutProps) {
-  const specRows = getFabricSpecRows(product, fabric);
-  const gaugeSpec = getGaugeSpec(product.fabricSlug);
+  const copy = getCopy(locale);
+  const returnsPolicy = getReturnsPolicy(locale);
+  const specRows = getFabricSpecRows(product, fabric, locale);
+  const gaugeSpec = getGaugeSpec(product.fabricSlug, locale);
   const description =
     product.description?.trim() ||
     product.detailDescription?.trim() ||
@@ -37,16 +51,17 @@ export function ProductPageLayout({
   const accordionItems = [
     {
       id: "care",
-      title: "お手入れについて",
+      title: copy.care,
       content: <p className="whitespace-pre-line">{product.care}</p>,
     },
     {
       id: "shipping",
-      title: "配送・返品",
+      title: copy.shipping,
       content: (
         <div className="space-y-3">
-          <p>{RETURNS_POLICY.shipping}</p>
-          <p>{RETURNS_POLICY.returns}</p>
+          {locale === "en" ? <p>{SHIPS_WITHIN_JAPAN_ONLY}</p> : null}
+          <p>{returnsPolicy.shipping}</p>
+          <p>{returnsPolicy.returns}</p>
         </div>
       ),
     },
@@ -55,13 +70,14 @@ export function ProductPageLayout({
   const infoPanel = (
     <div className="mx-auto w-full max-w-md lg:max-w-none">
       <ProductPurchaseHeader
+        locale={locale}
         displayName={displayName}
         price={product.price}
         description={description}
         gauge={gaugeSpec?.gauge}
         character={gaugeSpec?.character}
       />
-      <ProductLadderNav product={product} />
+      <ProductLadderNav locale={locale} product={product} />
       <ProductFabricSpecs rows={specRows} />
       <ProductPurchaseControls />
       <ProductPdpAccordion items={accordionItems} />

@@ -1,9 +1,19 @@
 import { CONCIERGE_LIMITS } from "@/lib/concierge/limits";
-import type { ConciergeErrorCode, ConciergeTurn } from "@/lib/concierge/types";
+import type {
+  ConciergeErrorCode,
+  ConciergeLanguage,
+  ConciergeTurn,
+} from "@/lib/concierge/types";
 import { isValidProductSlug } from "@/lib/products/defaults";
 
 export type ParsedConciergeInput =
-  | { ok: true; messages: ConciergeTurn[]; contextSlug: string | null }
+  | {
+      ok: true;
+      messages: ConciergeTurn[];
+      contextSlug: string | null;
+      /** Storefront language; anything unknown is treated as Japanese. */
+      locale: ConciergeLanguage;
+    }
   | { ok: false; error: ConciergeErrorCode };
 
 function normalize(text: string): string {
@@ -27,7 +37,7 @@ export function parseConciergeInput(body: unknown): ParsedConciergeInput {
     return { ok: false, error: "invalid_request" };
   }
 
-  const { messages, contextSlug } = body as Record<string, unknown>;
+  const { messages, contextSlug, locale } = body as Record<string, unknown>;
 
   if (
     !Array.isArray(messages) ||
@@ -90,5 +100,10 @@ export function parseConciergeInput(body: unknown): ParsedConciergeInput {
       ? contextSlug
       : null;
 
-  return { ok: true, messages: kept, contextSlug: slug };
+  return {
+    ok: true,
+    messages: kept,
+    contextSlug: slug,
+    locale: locale === "en" ? "en" : "ja",
+  };
 }

@@ -15,6 +15,8 @@ export type ConciergeRequestBody = {
   messages: ConciergeTurn[];
   /** Slug of the product page the customer came from, if any. */
   contextSlug?: string | null;
+  /** Storefront language; sets the default language of the reply. */
+  locale?: ConciergeLanguage;
 };
 
 export type ConciergeStockState = "in_stock" | "low" | "out" | "unknown";

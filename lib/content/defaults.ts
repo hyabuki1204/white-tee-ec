@@ -30,7 +30,7 @@ import {
   JOURNAL_INTRO_LINES,
   JOURNAL_PAGE_TITLE,
 } from "@/lib/content/journal-static";
-import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
+import { getStoreCopy } from "@/lib/store-ui/graphpaper-copy";
 import { HOME_HERO_IMAGES } from "@/lib/store-ui/home-hero";
 import { DEFAULT_SEO_CONTENT } from "@/lib/seo/defaults";
 import type {
@@ -50,9 +50,9 @@ export const DEFAULT_HOME_CONTENT: HomePageContent = {
   fabricIntroLines: [...FABRIC_INTRO_LINES],
   featuredProductSlugs: [],
   heroCarouselImages: [...HOME_HERO_IMAGES],
-  announcementMessage: GRAPHPAPER_STORE_COPY.announcement.message,
-  announcementLinkHref: GRAPHPAPER_STORE_COPY.announcement.linkHref,
-  announcementLinkLabel: GRAPHPAPER_STORE_COPY.announcement.linkLabel,
+  announcementMessage: getStoreCopy("ja").announcement.message,
+  announcementLinkHref: getStoreCopy("ja").announcement.linkHref,
+  announcementLinkLabel: getStoreCopy("ja").announcement.linkLabel,
 };
 
 export const DEFAULT_ABOUT_CONTENT: AboutPageContent = {

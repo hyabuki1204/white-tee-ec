@@ -1,17 +1,16 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/components/i18n/Link";
 import { useSyncExternalStore } from "react";
 import { useCartDrawer } from "@/components/cart/CartDrawerContext";
 import { getLastViewedProductSlug } from "@/lib/navigation/last-product";
-import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
+import { useLocale } from "@/components/i18n/LocaleProvider";
+import { getStoreCopy } from "@/lib/store-ui/graphpaper-copy";
 import {
   buttonPrimaryClass,
   buttonSecondaryClass,
   textLinkClass,
 } from "@/lib/store-ui/ui-classes";
-
-const { checkout: copy } = GRAPHPAPER_STORE_COPY;
 
 // sessionStorage does not change while this page is open; read it once on
 // the client and render nothing for it on the server.
@@ -19,6 +18,8 @@ const subscribe = () => () => {};
 const getServerSnapshot = () => null;
 
 export function CheckoutCancelRecovery() {
+  const storeCopy = getStoreCopy(useLocale());
+  const copy = storeCopy.checkout;
   const { openDrawer } = useCartDrawer();
   const lastProductSlug = useSyncExternalStore(
     subscribe,
@@ -55,7 +56,7 @@ export function CheckoutCancelRecovery() {
           {copy.exploreFabric}
         </Link>
         <Link href="/store-guide" className={textLinkClass}>
-          {GRAPHPAPER_STORE_COPY.footer.storeGuide}
+          {storeCopy.footer.storeGuide}
         </Link>
       </div>
     </div>

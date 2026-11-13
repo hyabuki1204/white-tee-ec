@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/components/i18n/Link";
 import { useEffect, useRef, useState } from "react";
 import type { StoreNavGroup, StoreNavMenu } from "@/lib/navigation/store-nav";
 import { cn } from "@/lib/utils";

@@ -1,25 +1,45 @@
 import Image from "next/image";
-import Link from "next/link";
-import { GAUGE_LADDER } from "@/lib/fabric/gauge";
+import { Link } from "@/components/i18n/Link";
+import { getGaugeLadder } from "@/lib/fabric/gauge";
+import type { Locale } from "@/lib/i18n/config";
+import { defineCopy } from "@/lib/i18n/define-copy";
 
 const HERO = {
   poster: "/home/hero-46g.jpg",
   video: "/home/hero-46g.mp4",
   gauge: 46,
-  headline: "白は、ゲージで選ぶ。",
-  subline:
-    "1964年創業、和歌山。ハイゲージの丸編機で、白いTシャツだけを作っています。",
-  cta: "ゲージから選ぶ",
 } as const;
 
+const getHeroCopy = defineCopy(
+  {
+    sectionLabel: "Introduction",
+    headline: "白は、ゲージで選ぶ。",
+    subline:
+      "1964年創業、和歌山。ハイゲージの丸編機で、白いTシャツだけを作っています。",
+    cta: "ゲージから選ぶ",
+    strapline: "Knitted in Wakayama, Japan — Since 1964",
+  },
+  {
+    sectionLabel: "Introduction",
+    headline: "Choose your white by gauge.",
+    subline:
+      "Wakayama, Japan, since 1964. On high-gauge circular knitting machines, we make white T-shirts and nothing else.",
+    cta: "Choose by gauge",
+    strapline: "Knitted in Wakayama, Japan — Since 1964",
+  },
+);
+
 type HomeHeroProps = {
+  locale: Locale;
   priceRange: string;
 };
 
-export function HomeHero({ priceRange }: HomeHeroProps) {
+export function HomeHero({ locale, priceRange }: HomeHeroProps) {
+  const copy = getHeroCopy(locale);
+
   return (
     <section
-      aria-label="Introduction"
+      aria-label={copy.sectionLabel}
       className="bg-[var(--color-surface)] px-3 md:px-8 lg:px-12"
     >
       <div className="on-mill relative mx-auto flex min-h-[min(78svh,820px)] w-full max-w-[1680px] items-end overflow-hidden">
@@ -55,24 +75,24 @@ export function HomeHero({ priceRange }: HomeHeroProps) {
             <small>G</small>
           </p>
           <h1 className="type-display mt-6 !text-white md:mt-8">
-            {HERO.headline}
+            {copy.headline}
           </h1>
           <p className="type-body mt-4 max-w-[26em] text-white/80">
-            {HERO.subline}
+            {copy.subline}
           </p>
           <Link
             href="#gauge"
             className="mt-8 inline-flex min-h-12 items-center justify-center border border-white px-10 text-[13px] tracking-[0.16em] text-white transition-colors duration-[var(--duration-quiet)] ease-[var(--ease-quiet)] hover:bg-white hover:text-[#15181c]"
           >
-            {HERO.cta}
+            {copy.cta}
           </Link>
         </div>
       </div>
 
       <div className="mx-auto flex w-full max-w-[1680px] flex-wrap items-center justify-between gap-x-8 gap-y-2 py-5">
-        <p className="type-label">Knitted in Wakayama, Japan — Since 1964</p>
+        <p className="type-label">{copy.strapline}</p>
         <p className="type-label flex items-center gap-4 tabular-nums">
-          {GAUGE_LADDER.map((item) => (
+          {getGaugeLadder(locale).map((item) => (
             <Link
               key={item.fabricSlug}
               href={`/fabric/${item.fabricSlug}`}

@@ -1,12 +1,13 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/components/i18n/Link";
 import { useEffect } from "react";
 import { CartFabricCrossSell } from "@/components/cart/CartFabricCrossSell";
 import { CheckoutOrderSummaryDisplay } from "@/components/checkout/CheckoutOrderSummary";
 import { PageHeader } from "@/components/layout/PageHeader";
 import type { CheckoutOrderSummary } from "@/lib/checkout/session-summary";
-import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
+import { useLocale } from "@/components/i18n/LocaleProvider";
+import { getStoreCopy } from "@/lib/store-ui/graphpaper-copy";
 import {
   buttonPrimaryClass,
   buttonSecondaryClass,
@@ -23,8 +24,6 @@ type CheckoutSuccessContentProps = {
   fabricNameBySlug?: Record<string, string>;
 };
 
-const { checkout: copy } = GRAPHPAPER_STORE_COPY;
-
 export function CheckoutSuccessContent({
   verified,
   sessionId,
@@ -32,6 +31,9 @@ export function CheckoutSuccessContent({
   crossSellProducts = [],
   fabricNameBySlug = {},
 }: CheckoutSuccessContentProps) {
+  const locale = useLocale();
+  const storeCopy = getStoreCopy(locale);
+  const copy = storeCopy.checkout;
   const clearCart = useCartStore((state) => state.clearCart);
 
   useEffect(() => {
@@ -44,7 +46,7 @@ export function CheckoutSuccessContent({
     return (
       <>
         <PageHeader
-          label="Checkout"
+          label={copy.label}
           title={copy.paymentPending}
           lead={copy.paymentUnconfirmed}
         />
@@ -56,7 +58,7 @@ export function CheckoutSuccessContent({
               {copy.backToBag}
             </Link>
             <Link href="/contact" className={buttonSecondaryClass}>
-              {GRAPHPAPER_STORE_COPY.footer.contact}
+              {storeCopy.footer.contact}
             </Link>
           </div>
         </section>
@@ -67,7 +69,7 @@ export function CheckoutSuccessContent({
   return (
     <>
       <PageHeader
-        label="Order confirmed"
+        label={copy.confirmedLabel}
         title={copy.thankYou}
         lead={copy.orderConfirmed}
       />
@@ -101,7 +103,7 @@ export function CheckoutSuccessContent({
               {copy.viewProducts}
             </Link>
             <Link href="/store-guide" className={buttonSecondaryClass}>
-              {GRAPHPAPER_STORE_COPY.footer.storeGuide}
+              {storeCopy.footer.storeGuide}
             </Link>
           </div>
         </div>
@@ -111,12 +113,17 @@ export function CheckoutSuccessContent({
             aria-label={copy.orderSummaryLabel}
             className="border border-[var(--color-hairline)] bg-[var(--color-surface)] p-6 sm:p-8 md:col-span-5 md:col-start-8"
           >
-            <p className="type-label !text-[var(--color-navy)]">Summary</p>
+            <p className="type-label !text-[var(--color-navy)]">
+              {storeCopy.cart.summaryLabel}
+            </p>
             <h2 className="mt-2 text-[16px] font-bold tracking-[0.08em] text-[var(--color-ink)]">
               {copy.orderSummaryLabel}
             </h2>
             <div className="mt-6">
-              <CheckoutOrderSummaryDisplay summary={orderSummary} />
+              <CheckoutOrderSummaryDisplay
+                locale={locale}
+                summary={orderSummary}
+              />
             </div>
           </aside>
         ) : null}

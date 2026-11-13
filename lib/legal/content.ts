@@ -1,5 +1,5 @@
 /** Legal and policy copy for storefront pages. */
-import { RETURNS_POLICY } from "@/lib/store-ui/returns-policy";
+import { getReturnsPolicy } from "@/lib/store-ui/returns-policy";
 
 export const LEGAL_BUSINESS = {
   name: "WHITE TEE",
@@ -29,6 +29,6 @@ export const SHIPPING_SECTIONS = [
   },
   {
     title: "返品・交換",
-    body: RETURNS_POLICY.legalJa,
+    body: getReturnsPolicy("ja").legalJa,
   },
 ] as const;

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/components/i18n/Link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CartCheckoutButton } from "@/components/cart/CartCheckoutButton";
 import { useCartDrawer } from "@/components/cart/CartDrawerContext";
@@ -14,7 +14,8 @@ import { useCartReconcile } from "@/lib/cart/use-cart-reconcile";
 import type { CartStockLookup } from "@/lib/cart/stock-validation";
 import { getFabricCrossSellProducts } from "@/lib/products/cross-sell";
 import { getGraphpaperDisplayName } from "@/lib/products/display-name";
-import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
+import { useLocale } from "@/components/i18n/LocaleProvider";
+import { getStoreCopy } from "@/lib/store-ui/graphpaper-copy";
 import {
   buttonPrimaryClass,
   buttonSecondaryClass,
@@ -25,9 +26,9 @@ import { useCartStore } from "@/lib/cart/store";
 import type { ProductSize } from "@/types";
 import { cn } from "@/lib/utils";
 
-const copy = GRAPHPAPER_STORE_COPY.cart;
-
 export function CartDrawer() {
+  const storeCopy = getStoreCopy(useLocale());
+  const copy = storeCopy.cart;
   const { isOpen, closeDrawer, products, fabricNameBySlug } = useCartDrawer();
   const items = useCartStore((state) => state.items);
   const [orderNotes, setOrderNotes] = useState("");
@@ -172,7 +173,7 @@ export function CartDrawer() {
       >
         <div className="flex shrink-0 items-end justify-between border-b border-[var(--color-hairline)] bg-[var(--color-surface)] px-6 pb-5 pt-6">
           <div>
-            <p className="type-label !text-[var(--color-navy)]">Cart</p>
+            <p className="type-label !text-[var(--color-navy)]">{copy.label}</p>
             <h2
               id="cart-drawer-title"
               className="mt-1 flex items-baseline gap-3 text-[20px] font-bold tracking-[0.1em] text-[var(--color-ink)]"
@@ -191,7 +192,7 @@ export function CartDrawer() {
             onClick={closeDrawer}
             className="type-label -mr-2 inline-flex min-h-11 items-center px-2 text-[var(--color-ink)] transition-opacity duration-[var(--duration-quiet)] hover:opacity-60"
           >
-            Close
+            {storeCopy.search.close}
           </button>
         </div>
 

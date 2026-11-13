@@ -2,13 +2,42 @@ import Image from "next/image";
 import type { CSSProperties } from "react";
 import { formatWeight, getGaugeSpec } from "@/lib/fabric/gauge";
 import type { Fabric } from "@/lib/fabric/content";
+import type { Locale } from "@/lib/i18n/config";
+import { defineCopy } from "@/lib/i18n/define-copy";
+
+const getCopy = defineCopy(
+  {
+    label: "Gauge",
+    needlesBefore: "針",
+    needlesAfter: "本",
+    yarn: "糸",
+    structure: "組織",
+    weight: "目付",
+    composition: "混率",
+    compositionValue: "綿 100%",
+    termClass: "w-16",
+  },
+  {
+    label: "Gauge",
+    needlesBefore: "",
+    needlesAfter: "needles",
+    yarn: "Yarn",
+    structure: "Knit",
+    weight: "Weight",
+    composition: "Composition",
+    compositionValue: "100% cotton",
+    termClass: "w-24",
+  },
+);
 
 type FabricHeroProps = {
+  locale: Locale;
   fabric: Fabric;
 };
 
-export function FabricHero({ fabric }: FabricHeroProps) {
-  const spec = getGaugeSpec(fabric.slug);
+export function FabricHero({ locale, fabric }: FabricHeroProps) {
+  const copy = getCopy(locale);
+  const spec = getGaugeSpec(fabric.slug, locale);
 
   return (
     <section
@@ -28,7 +57,8 @@ export function FabricHero({ fabric }: FabricHeroProps) {
 
       <div className="flex flex-col justify-center px-6 py-12 md:px-12 lg:px-16 xl:px-24">
         <p className="type-label !text-[var(--color-navy)]">
-          Gauge{spec ? ` — ${spec.character}` : ""}
+          {copy.label}
+          {spec ? ` — ${spec.character}` : ""}
         </p>
 
         {spec ? (
@@ -37,7 +67,7 @@ export function FabricHero({ fabric }: FabricHeroProps) {
               {spec.gauge}
               <small>G</small>
             </span>
-            <span className="type-h2 mt-6 block">{spec.headlineJa}</span>
+            <span className="type-h2 mt-6 block">{spec.headline}</span>
           </h1>
         ) : (
           <h1 className="type-display mt-4">{fabric.name}</h1>
@@ -46,7 +76,7 @@ export function FabricHero({ fabric }: FabricHeroProps) {
         {spec ? (
           <>
             <div className="mt-5 max-w-[30em] space-y-1">
-              {spec.linesJa.map((line) => (
+              {spec.lines.map((line) => (
                 <p key={line} className="type-body text-[var(--color-ink-soft)]">
                   {line}
                 </p>
@@ -62,27 +92,29 @@ export function FabricHero({ fabric }: FabricHeroProps) {
               <p className="type-caption mt-2 flex justify-between">
                 <span className="font-en">1 inch</span>
                 <span>
-                  針
+                  {copy.needlesBefore}
                   <span className="font-en mx-1 text-[var(--color-ink)] tabular-nums">
                     {spec.gauge}
                   </span>
-                  本
+                  {copy.needlesAfter}
                 </span>
               </p>
             </div>
 
             <dl className="mt-8 max-w-md border-t border-[var(--color-hairline)]">
               {[
-                ["糸", spec.yarn],
-                ["組織", spec.structure],
-                ["目付", formatWeight(spec)],
-                ["混率", "綿 100%"],
+                [copy.yarn, spec.yarn],
+                [copy.structure, spec.structure],
+                [copy.weight, formatWeight(spec)],
+                [copy.composition, copy.compositionValue],
               ].map(([label, value]) => (
                 <div
                   key={label}
                   className="flex gap-6 border-b border-[var(--color-hairline)] py-3"
                 >
-                  <dt className="type-body w-16 shrink-0 text-[var(--color-ink-soft)]">
+                  <dt
+                    className={`type-body ${copy.termClass} shrink-0 text-[var(--color-ink-soft)]`}
+                  >
                     {label}
                   </dt>
                   <dd className="type-body text-[var(--color-ink)]">{value}</dd>

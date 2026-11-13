@@ -1,4 +1,4 @@
-import { getGaugeSpec } from "@/lib/fabric/gauge";
+import { getGaugeNumber } from "@/lib/fabric/gauge";
 import {
   buildProductsFilterHref,
   FIT_TYPE_LABELS,
@@ -33,8 +33,8 @@ export type StoreNavMenu = {
 
 /** "28G" for gauge fabrics, otherwise the fabric name. */
 export function getGaugeLabel(fabric: Pick<Fabric, "slug" | "name">): string {
-  const spec = getGaugeSpec(fabric.slug);
-  return spec ? `${spec.gauge}G` : fabric.name;
+  const gauge = getGaugeNumber(fabric.slug);
+  return gauge ? `${gauge}G` : fabric.name;
 }
 
 export function buildStoreNavMenu(

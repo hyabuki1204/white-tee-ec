@@ -5,6 +5,8 @@ import {
   markRestockRequestNotified,
 } from "@/lib/db/restock/repository";
 import { isEmailConfigured, sendEmail } from "@/lib/email/send-email";
+import type { Locale } from "@/lib/i18n/config";
+import { localizedUrl } from "@/lib/seo/metadata";
 import { getSiteUrl } from "@/lib/seo/site";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import type { ProductSize } from "@/types";
@@ -40,8 +42,36 @@ export function buildRestockEmail(input: {
   productName: string;
   productSlug: string;
   size: ProductSize;
+  /** Language the request was made in (restock_requests.locale). */
+  locale: Locale;
 }): { subject: string; text: string } {
-  const url = `${getSiteUrl()}/products/${input.productSlug}?size=${input.size}`;
+  // The link returns the customer to the storefront in their language.
+  const url = `${localizedUrl(`/products/${input.productSlug}`, input.locale)}?size=${input.size}`;
+  const home = localizedUrl("/", input.locale);
+
+  if (input.locale === "en") {
+    return {
+      subject: `WHITE TEE: ${input.productName} (${input.size}) is back in stock`,
+      text: [
+        "This is WHITE TEE.",
+        "",
+        "The piece you asked us to tell you about is back in stock.",
+        "",
+        input.productName,
+        `Size: ${input.size}`,
+        url,
+        "",
+        "Stock is limited, so it may be gone again by the time you look.",
+        "",
+        "Prices are charged in Japanese yen. We currently ship within Japan only.",
+        "",
+        "We are sending this email once, as the back-in-stock notice you registered for. We will not email you about this again.",
+        "",
+        "WHITE TEE",
+        home,
+      ].join("\n"),
+    };
+  }
 
   return {
     subject: `【WHITE TEE】${input.productName}（${input.size}）が再入荷しました`,
@@ -105,6 +135,7 @@ export async function dispatchRestockNotifications(options?: {
         productName: product.displayName,
         productSlug: product.slug,
         size: request.size,
+        locale: request.locale,
       });
 
       const outcome = await sendEmail({

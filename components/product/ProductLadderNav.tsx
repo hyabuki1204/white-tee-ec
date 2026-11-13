@@ -1,10 +1,18 @@
-import Link from "next/link";
-import { GAUGE_LADDER, getGaugeSpec } from "@/lib/fabric/gauge";
+import { Link } from "@/components/i18n/Link";
+import { getGaugeLadder, getGaugeNumber } from "@/lib/fabric/gauge";
+import type { Locale } from "@/lib/i18n/config";
+import { defineCopy } from "@/lib/i18n/define-copy";
 import { PRODUCT_CATALOG } from "@/lib/products/product-catalog";
 import { cn } from "@/lib/utils";
 import type { Product } from "@/types";
 
+const getCopy = defineCopy(
+  { gauge: "ゲージ", silhouette: "シルエット", label: "ゲージとシルエット" },
+  { gauge: "Gauge", silhouette: "Silhouette", label: "Gauge and silhouette" },
+);
+
 type ProductLadderNavProps = {
+  locale: Locale;
   product: Product;
 };
 
@@ -21,16 +29,17 @@ function cellState(active: boolean) {
  * A piece is one cell in a gauge × silhouette grid. These two rows let the
  * customer move along either axis without going back to the listing.
  */
-export function ProductLadderNav({ product }: ProductLadderNavProps) {
-  const spec = getGaugeSpec(product.fabricSlug);
-  if (!spec) return null;
+export function ProductLadderNav({ locale, product }: ProductLadderNavProps) {
+  const copy = getCopy(locale);
+
+  if (!getGaugeNumber(product.fabricSlug)) return null;
 
   const find = (fabricSlug: string | null, fitType: Product["fitType"]) =>
     PRODUCT_CATALOG.find(
       (entry) => entry.fabricSlug === fabricSlug && entry.fitType === fitType,
     );
 
-  const gauges = GAUGE_LADDER.map((item) => ({
+  const gauges = getGaugeLadder(locale).map((item) => ({
     label: `${item.gauge}G`,
     entry: find(item.fabricSlug, product.fitType),
     active: item.fabricSlug === product.fabricSlug,
@@ -50,14 +59,14 @@ export function ProductLadderNav({ product }: ProductLadderNavProps) {
     .filter((item) => item.entry);
 
   const rows = [
-    { title: "ゲージ", items: gauges },
-    { title: "シルエット", items: silhouettes },
+    { title: copy.gauge, items: gauges },
+    { title: copy.silhouette, items: silhouettes },
   ].filter((row) => row.items.length > 1);
 
   if (rows.length === 0) return null;
 
   return (
-    <nav aria-label="ゲージとシルエット" className="mt-8 space-y-5">
+    <nav aria-label={copy.label} className="mt-8 space-y-5">
       {rows.map((row) => (
         <div key={row.title}>
           <p className="type-caption">{row.title}</p>

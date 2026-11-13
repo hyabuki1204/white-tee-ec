@@ -1,14 +1,19 @@
-import Link from "next/link";
+import { Link } from "@/components/i18n/Link";
 import { JournalCard } from "@/components/journal/JournalCard";
 import { HomeSectionHeading } from "@/components/home/HomeSectionHeading";
-import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
+import type { Locale } from "@/lib/i18n/config";
+import { getStoreCopy } from "@/lib/store-ui/graphpaper-copy";
 import type { JournalArticle } from "@/lib/content/journal-static";
 
 type HomeJournalSectionProps = {
+  locale: Locale;
   articles: JournalArticle[];
 };
 
-export function HomeJournalSection({ articles }: HomeJournalSectionProps) {
+export function HomeJournalSection({
+  locale,
+  articles,
+}: HomeJournalSectionProps) {
   if (articles.length === 0) {
     return null;
   }
@@ -22,20 +27,20 @@ export function HomeJournalSection({ articles }: HomeJournalSectionProps) {
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <HomeSectionHeading
             label="Journal"
-            title="工場からの記録。"
+            title={locale === "en" ? "Notes from the mill." : "工場からの記録。"}
           />
           <Link
             href="/journal"
             className="type-label text-[var(--color-ink)] transition-opacity duration-[var(--duration-quiet)] ease-[var(--ease-quiet)] hover:opacity-60"
           >
-            {GRAPHPAPER_STORE_COPY.home.viewAllJournal}
+            {getStoreCopy(locale).home.viewAllJournal}
           </Link>
         </div>
 
         <ul className="mt-[var(--space-4)] grid grid-cols-1 gap-x-8 gap-y-12 md:mt-[var(--space-5)] md:grid-cols-2">
           {articles.map((article) => (
             <li key={article.slug}>
-              <JournalCard article={article} variant="compact" />
+              <JournalCard locale={locale} article={article} variant="compact" />
             </li>
           ))}
         </ul>

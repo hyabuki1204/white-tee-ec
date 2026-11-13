@@ -1,18 +1,22 @@
 import { formatPrice } from "@/lib/utils/format-price";
 import type { CheckoutOrderSummary } from "@/lib/checkout/session-summary";
-import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
+import type { Locale } from "@/lib/i18n/config";
+import { getStoreCopy } from "@/lib/store-ui/graphpaper-copy";
 
 type CheckoutOrderSummaryProps = {
+  locale: Locale;
   summary: CheckoutOrderSummary;
 };
 
-const { cart: copy } = GRAPHPAPER_STORE_COPY;
 const priceClass =
   "shrink-0 font-en text-[15px] tracking-[0.02em] tabular-nums text-[var(--color-ink)]";
 
 export function CheckoutOrderSummaryDisplay({
+  locale,
   summary,
 }: CheckoutOrderSummaryProps) {
+  const { cart: copy } = getStoreCopy(locale);
+
   return (
     <div>
       <ul className="divide-y divide-[var(--color-hairline)] border-y border-[var(--color-hairline)]">

@@ -11,6 +11,7 @@ import {
 import { recommendByRules } from "@/lib/concierge/rules";
 import { detectLanguage } from "@/lib/concierge/signals";
 import type {
+  ConciergeLanguage,
   ConciergeSuccessResponse,
   ConciergeTurn,
 } from "@/lib/concierge/types";
@@ -40,9 +41,12 @@ export async function answerConcierge(
     messages: ConciergeTurn[];
     contextSlug: string | null;
     products: Product[];
+    /** Storefront language: the default language of the reply. */
+    locale?: ConciergeLanguage;
   },
   dependencies: AnswerDependencies = defaultDependencies,
 ): Promise<ConciergeSuccessResponse> {
+  const locale = input.locale ?? "ja";
   const catalog = buildCatalog(input.products);
   const contextSlug =
     input.contextSlug && catalog.bySlug.has(input.contextSlug)
@@ -58,6 +62,7 @@ export async function answerConcierge(
       catalog,
       messages: input.messages,
       contextSlug,
+      locale,
     });
 
     if (outcome.ok) {
@@ -66,7 +71,7 @@ export async function answerConcierge(
         ...finalizeResult(
           outcome.result,
           catalog,
-          detectLanguage(outcome.result.reply),
+          detectLanguage(outcome.result.reply, locale),
         ),
         source: "model",
       };
@@ -77,6 +82,7 @@ export async function answerConcierge(
     messages: input.messages,
     catalog,
     contextSlug,
+    defaultLanguage: locale,
   });
 
   return {

@@ -7,7 +7,8 @@ import {
   getOrderTotal,
   getShippingCost,
 } from "@/lib/cart/shipping";
-import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
+import { useLocale } from "@/components/i18n/LocaleProvider";
+import { getStoreCopy } from "@/lib/store-ui/graphpaper-copy";
 import { formatPrice } from "@/lib/utils/format-price";
 import { useCartStore } from "@/lib/cart/store";
 
@@ -24,7 +25,8 @@ export function useCheckout({
   const getTotal = useCartStore((state) => state.getTotal);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { cart: copy } = GRAPHPAPER_STORE_COPY;
+  const locale = useLocale();
+  const { cart: copy } = getStoreCopy(locale);
 
   const subtotal = getTotal();
   const shipping = getShippingCost(subtotal);
@@ -46,6 +48,7 @@ export function useCheckout({
         body: JSON.stringify({
           items,
           orderNotes: orderNotes.trim() || undefined,
+          locale,
         }),
       });
 

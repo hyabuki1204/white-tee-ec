@@ -4,7 +4,10 @@ import {
   type CatalogEntry,
   type ConciergeCatalog,
 } from "@/lib/concierge/catalog";
-import { RETURNS_POLICY } from "@/lib/store-ui/returns-policy";
+import type { ConciergeLanguage } from "@/lib/concierge/types";
+import { getReturnsPolicy } from "@/lib/store-ui/returns-policy";
+
+const RETURNS_POLICY = getReturnsPolicy("ja");
 
 /**
  * System prompt and output schema for the model path.
@@ -51,7 +54,7 @@ function gaugeSection(catalog: ConciergeCatalog): string {
         `- yarn: ${spec!.yarn}`,
         `- structure: ${spec!.structure}`,
         `- fabric weight: ${spec!.weightGsm} g/m²`,
-        `- store copy: ${spec!.headlineJa} ${spec!.linesJa.join(" ")}`,
+        `- store copy: ${spec!.headline} ${spec!.lines.join(" ")}`,
       ].join("\n"),
     )
     .join("\n\n");
@@ -214,15 +217,22 @@ function stockLine(entry: CatalogEntry): string {
 export function buildDynamicSystemPrompt(
   catalog: ConciergeCatalog,
   contextSlug: string | null,
+  locale: ConciergeLanguage = "ja",
 ): string {
   const context = contextSlug ? catalog.bySlug.get(contextSlug) : undefined;
+  // Japanese adds nothing here, so its prompt is unchanged. The line sits in
+  // the dynamic block: the cached static prompt stays identical for both.
+  const localeLine =
+    locale === "en"
+      ? `\n\nThe customer is using the English storefront. Answer in English by default, including when the message is only numbers or a size. If their latest message is written in Japanese, answer in Japanese. The store currently ships within Japan only and charges in Japanese yen; say so if they ask about delivery abroad or other currencies, and do not suggest otherwise.`
+      : "";
   const contextLine = context
     ? `\n\nThe customer opened this conversation from the product page of ${context.product.slug} (${context.product.name}). If they ask about "this one" or give only sizing information, they mean that piece. You may still recommend another piece when what they describe fits it better.`
     : "";
 
   return `## Stock right now (units per size; 0 = sold out)
 
-${catalog.entries.map(stockLine).join("\n")}${contextLine}`;
+${catalog.entries.map(stockLine).join("\n")}${contextLine}${localeLine}`;
 }
 
 /**

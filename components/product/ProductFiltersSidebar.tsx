@@ -1,17 +1,19 @@
-import Link from "next/link";
+import { Link } from "@/components/i18n/Link";
 import { getGaugeLabel } from "@/lib/navigation/store-nav";
 import {
   buildProductsFilterHref,
   FIT_TYPE_LABELS,
   STOREFRONT_FIT_TYPES,
 } from "@/lib/products/silhouette";
-import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
+import type { Locale } from "@/lib/i18n/config";
+import { getStoreCopy } from "@/lib/store-ui/graphpaper-copy";
 import type { Fabric } from "@/lib/fabric/content";
 import type { FitType } from "@/types/product-fit";
 import type { Product } from "@/types";
 import { cn } from "@/lib/utils";
 
 type ProductFiltersSidebarProps = {
+  locale: Locale;
   fabrics: Fabric[];
   products: Product[];
   activeFabricSlug?: string | null;
@@ -37,13 +39,14 @@ function sectionTitle(label: string) {
 }
 
 export function ProductFiltersSidebar({
+  locale,
   fabrics,
   products,
   activeFabricSlug,
   activeFit,
   inStockOnly = false,
 }: ProductFiltersSidebarProps) {
-  const copy = GRAPHPAPER_STORE_COPY.filters;
+  const copy = getStoreCopy(locale).filters;
 
   // Only offer gauges that have at least one listed product.
   const listedFabricSlugs = new Set(
@@ -55,6 +58,7 @@ export function ProductFiltersSidebar({
 
   const sections = (
     <FilterSections
+      locale={locale}
       fabrics={gaugeFabrics}
       activeFabricSlug={activeFabricSlug}
       activeFit={activeFit}
@@ -72,7 +76,7 @@ export function ProductFiltersSidebar({
       </details>
 
       <aside
-        aria-label="Product filters"
+        aria-label={copy.title}
         className="hidden w-44 shrink-0 lg:block xl:w-48"
       >
         <p className="mb-8 text-[11px] font-normal tracking-[0.14em] text-neutral-600">
@@ -85,12 +89,13 @@ export function ProductFiltersSidebar({
 }
 
 function FilterSections({
+  locale,
   fabrics,
   activeFabricSlug,
   activeFit,
   inStockOnly = false,
 }: FilterSectionsProps) {
-  const copy = GRAPHPAPER_STORE_COPY.filters;
+  const copy = getStoreCopy(locale).filters;
   const stockParam = inStockOnly ? ("in" as const) : null;
 
   return (

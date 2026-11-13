@@ -1,18 +1,21 @@
-import Link from "next/link";
+import { Link } from "@/components/i18n/Link";
 import { HomeSectionHeading } from "@/components/home/HomeSectionHeading";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { sortProductsByCatalogOrder } from "@/lib/products/catalog-sort";
-import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
+import type { Locale } from "@/lib/i18n/config";
+import { getStoreCopy } from "@/lib/store-ui/graphpaper-copy";
 import type { Product } from "@/types";
 
 const HOME_GRID_LIMIT = 6;
 
 type HomeProductGridProps = {
+  locale: Locale;
   products: Product[];
   fabricNameBySlug: Record<string, string>;
 };
 
 export function HomeProductGrid({
+  locale,
   products,
   fabricNameBySlug,
 }: HomeProductGridProps) {
@@ -31,13 +34,17 @@ export function HomeProductGrid({
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <HomeSectionHeading
             label="Collection"
-            title="3つのゲージ、2つのシルエット。"
+            title={
+              locale === "en"
+                ? "Three gauges, two silhouettes."
+                : "3つのゲージ、2つのシルエット。"
+            }
           />
           <Link
             href="/products"
             className="type-label text-[var(--color-ink)] transition-opacity duration-[var(--duration-quiet)] ease-[var(--ease-quiet)] hover:opacity-60"
           >
-            {GRAPHPAPER_STORE_COPY.home.viewAllProducts}
+            {getStoreCopy(locale).home.viewAllProducts}
           </Link>
         </div>
 

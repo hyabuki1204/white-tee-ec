@@ -3,7 +3,8 @@
 import { useMemo, useState } from "react";
 import { JaHelperText } from "@/components/ui/JaHelperText";
 import { useProductPurchase } from "@/components/product/ProductPurchaseContext";
-import { SITE_UI_COPY } from "@/lib/copy/site-ui";
+import { useLocale } from "@/components/i18n/LocaleProvider";
+import { getSiteUiCopy } from "@/lib/copy/site-ui";
 import { recommendSize } from "@/lib/products/size-recommendation";
 import type { FitPreference, ProductFitProfile } from "@/types/product-fit";
 import type { ProductSize } from "@/types";
@@ -15,14 +16,14 @@ type SizeRecommendationToolProps = {
   collapsibleOnlyMobile?: boolean;
 };
 
-const PREFERENCES = SITE_UI_COPY.sizeRecommendation.preferences;
-
 function SizeRecommendationContent({
   fitProfile,
   availableSizes,
 }: Omit<SizeRecommendationToolProps, "collapsible">) {
-  const copy = SITE_UI_COPY.sizeRecommendation;
-  const { product: productCopy } = SITE_UI_COPY;
+  const locale = useLocale();
+  const { sizeRecommendation: copy, product: productCopy } =
+    getSiteUiCopy(locale);
+  const PREFERENCES = copy.preferences;
   const { setSelectedSize, setRecommendedSize, openSizeTab } = useProductPurchase();
   const [heightCm, setHeightCm] = useState("");
   const [weightKg, setWeightKg] = useState("");
@@ -50,8 +51,17 @@ function SizeRecommendationContent({
       { heightCm: height, weightKg: weight, preference },
       fitProfile,
       availableSizes,
+      locale,
     );
-  }, [submitted, heightCm, weightKg, preference, fitProfile, availableSizes]);
+  }, [
+    submitted,
+    heightCm,
+    weightKg,
+    preference,
+    fitProfile,
+    availableSizes,
+    locale,
+  ]);
 
   const showInvalid =
     submitted &&
@@ -80,6 +90,7 @@ function SizeRecommendationContent({
       { heightCm: height, weightKg: weight, preference },
       fitProfile,
       availableSizes,
+      locale,
     );
 
     if (recommendation) {
@@ -207,7 +218,7 @@ export function SizeRecommendationTool({
   collapsible = false,
   collapsibleOnlyMobile = false,
 }: SizeRecommendationToolProps) {
-  const copy = SITE_UI_COPY.sizeRecommendation;
+  const copy = getSiteUiCopy(useLocale()).sizeRecommendation;
 
   const inner = (
     <SizeRecommendationContent

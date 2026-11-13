@@ -1,13 +1,16 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/components/i18n/Link";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { GAUGE_LADDER, getGaugeSpec } from "@/lib/fabric/gauge";
+import { ApproxPrice } from "@/components/currency/ApproxPrice";
+import { useLocale } from "@/components/i18n/LocaleProvider";
+import { getGaugeLadder, getGaugeSpec } from "@/lib/fabric/gauge";
+import { joinSpec } from "@/lib/i18n/format";
 import { useHydrated } from "@/lib/hooks/use-hydrated";
 import { getGraphpaperDisplayName } from "@/lib/products/display-name";
-import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
+import { getStoreCopy } from "@/lib/store-ui/graphpaper-copy";
 import { formatPrice } from "@/lib/utils/format-price";
 import type { Product } from "@/types";
 import { cn } from "@/lib/utils";
@@ -37,7 +40,8 @@ export function SearchNavControl({
   const inputRef = useRef<HTMLInputElement>(null);
   const titleId = useId();
   const hydrated = useHydrated();
-  const copy = GRAPHPAPER_STORE_COPY.nav;
+  const locale = useLocale();
+  const { nav: copy, search: searchCopy } = getStoreCopy(locale);
 
   const close = () => {
     setOpen(false);
@@ -51,27 +55,32 @@ export function SearchNavControl({
           ? fabricNameBySlug[product.fabricSlug]
           : null;
         const displayName = getGraphpaperDisplayName(product, fabricName);
-        const spec = getGaugeSpec(product.fabricSlug);
-        const silhouetteJa =
-          product.fitType === "boxy" ? "ボックス" : "レギュラー";
+        const spec = getGaugeSpec(product.fabricSlug, locale);
+        // Searchable in either language, whatever the page language.
+        const specJa = getGaugeSpec(product.fabricSlug, "ja");
+        const specEn = getGaugeSpec(product.fabricSlug, "en");
+        const silhouette =
+          product.fitType === "boxy" ? "ボックス box" : "レギュラー regular";
 
         return {
           product,
           displayName,
-          meta: spec ? `${spec.yarn}・${spec.structure}` : fabricName,
+          meta: spec ? joinSpec(locale, spec.yarn, spec.structure) : fabricName,
           haystack: [
             product.name,
             displayName,
             fabricName,
-            silhouetteJa,
-            spec ? `${spec.gauge}ゲージ ${spec.yarn} ${spec.character}` : null,
+            silhouette,
+            spec
+              ? `${spec.gauge}ゲージ ${spec.gauge} gauge ${specJa?.yarn} ${specEn?.yarn} ${spec.character}`
+              : null,
           ]
             .filter(Boolean)
             .join(" ")
             .toLowerCase(),
         };
       }),
-    [fabricNameBySlug, products],
+    [fabricNameBySlug, locale, products],
   );
 
   const trimmed = query.trim().toLowerCase();
@@ -149,14 +158,14 @@ export function SearchNavControl({
                       onClick={close}
                       className="type-label -mr-2 inline-flex min-h-11 items-center px-2 text-[var(--color-ink)] transition-opacity hover:opacity-60"
                     >
-                      Close
+                      {searchCopy.close}
                     </button>
                   </div>
 
                   <div className="grid min-h-0 flex-1 md:grid-cols-12">
                     <div className="flex min-h-0 flex-col md:col-span-8">
                       <label className="mt-4 block shrink-0 border-b border-[var(--color-ink)] pb-3 transition-colors duration-[var(--duration-quiet)] focus-within:border-[var(--color-navy)] md:mt-10">
-                        <span className="sr-only">商品を検索</span>
+                        <span className="sr-only">{searchCopy.inputLabel}</span>
                         <input
                           ref={inputRef}
                           type="text"
@@ -165,14 +174,14 @@ export function SearchNavControl({
                           autoComplete="off"
                           value={query}
                           onChange={(event) => setQuery(event.target.value)}
-                          placeholder="46G、Box、コンパクト糸…"
+                          placeholder={searchCopy.placeholder}
                           className="w-full bg-transparent text-[24px] font-bold tracking-[0.06em] text-[var(--color-ink)] outline-none focus-visible:outline-none placeholder:font-normal placeholder:text-[var(--color-ink-faint)] md:text-[32px]"
                         />
                       </label>
 
                       <div className="mt-5 flex shrink-0 flex-wrap items-center gap-2">
-                        <span className="type-caption mr-2">ゲージ</span>
-                        {GAUGE_LADDER.map((spec) => (
+                        <span className="type-caption mr-2">{searchCopy.gaugeLabel}</span>
+                        {getGaugeLadder(locale).map((spec) => (
                           <Link
                             key={spec.fabricSlug}
                             href={`/fabric/${spec.fabricSlug}`}
@@ -220,8 +229,12 @@ export function SearchNavControl({
                                   </span>
                                 ) : null}
                               </span>
-                              <span className="shrink-0 font-en text-[15px] tracking-[0.02em] tabular-nums text-[var(--color-ink)]">
+                              <span className="shrink-0 text-right font-en text-[15px] tracking-[0.02em] tabular-nums text-[var(--color-ink)]">
                                 {formatPrice(product.price)}
+                                <ApproxPrice
+                                  amount={product.price}
+                                  className="block text-[12px]"
+                                />
                               </span>
                             </Link>
                           </li>
@@ -229,8 +242,7 @@ export function SearchNavControl({
 
                         {trimmed && results.length === 0 ? (
                           <li className="type-body py-8 text-[var(--color-ink-soft)]">
-                            「{query.trim()}
-                            」に一致する商品はありません。ゲージ（28G・36G・46G）かシルエット（Regular・Box）でお探しください。
+                            {searchCopy.noResults(query.trim())}
                           </li>
                         ) : null}
                       </ul>

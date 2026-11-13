@@ -1,6 +1,8 @@
 "use client";
 
+import { ApproxPrice } from "@/components/currency/ApproxPrice";
 import { CartCheckoutButton } from "@/components/cart/CartCheckoutButton";
+import { useLocale } from "@/components/i18n/LocaleProvider";
 import { useCheckout } from "@/lib/cart/use-checkout";
 
 type CartStickyCheckoutProps = {
@@ -13,6 +15,7 @@ export function CartStickyCheckout({
   hasUnavailableItems = false,
   orderNotes = "",
 }: CartStickyCheckoutProps) {
+  const locale = useLocale();
   const checkout = useCheckout({ hasUnavailableItems, orderNotes });
 
   if (checkout.items.length === 0) {
@@ -29,10 +32,16 @@ export function CartStickyCheckout({
       <div className="flex items-center justify-between gap-5">
         <div className="min-w-0">
           <p className="type-caption">
-            {checkout.copy.total}（{checkout.copy.taxIncluded}）
+            {locale === "en"
+              ? `${checkout.copy.total} (${checkout.copy.taxIncluded})`
+              : `${checkout.copy.total}（${checkout.copy.taxIncluded}）`}
           </p>
           <p className="font-en text-[22px] leading-tight tracking-[0.01em] tabular-nums text-[var(--color-ink)]">
             {checkout.formatPrice(checkout.total)}
+            <ApproxPrice
+              amount={checkout.total}
+              className="ml-2 text-[12px] tracking-[0.02em]"
+            />
           </p>
         </div>
 

@@ -1,14 +1,18 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { Link } from "@/components/i18n/Link";
+import { useSearchParams } from "next/navigation";
+import { CurrencySwitch } from "@/components/currency/CurrencySwitch";
+import { useLocale } from "@/components/i18n/LocaleProvider";
+import { LocaleSwitch } from "@/components/i18n/LocaleSwitch";
+import { useStorePathname } from "@/components/i18n/use-store-pathname";
 import { CartNavLink } from "@/components/layout/CartNavLink";
 import { SearchNavControl } from "@/components/layout/SearchNavControl";
 import { SavedNavLink } from "@/components/saved/SavedNavLink";
-import { GAUGE_LADDER } from "@/lib/fabric/gauge";
-import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
+import { getGaugeLadder } from "@/lib/fabric/gauge";
+import { getStoreCopy } from "@/lib/store-ui/graphpaper-copy";
 import { isNavActive } from "@/lib/store-ui/nav-active";
-import { STORE_PRIMARY_NAV } from "@/lib/store-ui/nav-links";
+import { getStorePrimaryNav } from "@/lib/store-ui/nav-links";
 import type { Product } from "@/types";
 import { cn } from "@/lib/utils";
 
@@ -19,21 +23,6 @@ type MobileNavProps = {
   fabricNameBySlug: Record<string, string>;
 };
 
-/** Japanese reading under each English nav item. */
-const NAV_SUBLABELS: Record<string, string> = {
-  "/products": "コレクション",
-  "/fabric": "ゲージ",
-  "/journal": "読みもの",
-  "/about": "工場",
-};
-
-const SECONDARY_LINKS = [
-  { label: GRAPHPAPER_STORE_COPY.footer.storeGuide, href: "/store-guide" },
-  { label: GRAPHPAPER_STORE_COPY.footer.shipping, href: "/shipping" },
-  { label: GRAPHPAPER_STORE_COPY.footer.contact, href: "/contact" },
-  { label: "取扱店", href: "/stockist" },
-] as const;
-
 const utilityClass =
   "!min-h-12 flex-1 justify-center border border-[var(--color-navy)] px-4 !text-[13px] tracking-[0.12em] !text-[var(--color-navy)]";
 
@@ -43,9 +32,18 @@ export function MobileNav({
   products,
   fabricNameBySlug,
 }: MobileNavProps) {
-  const pathname = usePathname();
+  const locale = useLocale();
+  const copy = getStoreCopy(locale);
+  const primaryNav = getStorePrimaryNav(locale);
+  const pathname = useStorePathname();
   const searchParams = useSearchParams();
   const search = searchParams.toString();
+  const secondaryLinks = [
+    { label: copy.footer.storeGuide, href: "/store-guide" },
+    { label: copy.footer.shipping, href: "/shipping" },
+    { label: copy.footer.contact, href: "/contact" },
+    { label: copy.nav.stockist, href: "/stockist" },
+  ];
 
   return (
     <div
@@ -60,13 +58,18 @@ export function MobileNav({
     >
       {isOpen ? (
         <nav
-          aria-label="Mobile navigation"
+          aria-label={copy.nav.menu}
           className="flex h-full flex-col overflow-y-auto overscroll-y-contain px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-[calc(72px+var(--space-3))]"
         >
-          <p className="type-label !text-[var(--color-navy)]">Menu</p>
+          <div className="flex items-center justify-between gap-6">
+            <p className="type-label !text-[var(--color-navy)]">
+              {copy.nav.menu}
+            </p>
+            <LocaleSwitch onNavigate={onClose} />
+          </div>
 
           <ul className="mt-3 border-t border-[var(--color-ink)]">
-            {STORE_PRIMARY_NAV.map((item) => {
+            {primaryNav.map((item) => {
               const active = isNavActive(pathname, item.href, search);
 
               return (
@@ -91,7 +94,7 @@ export function MobileNav({
                       {item.label}
                     </span>
                     <span className="type-caption shrink-0">
-                      {NAV_SUBLABELS[item.href] ?? ""}
+                      {item.sublabel ?? ""}
                     </span>
                   </Link>
                 </li>
@@ -100,9 +103,9 @@ export function MobileNav({
           </ul>
 
           <div className="mt-8">
-            <p className="type-caption">ゲージから選ぶ</p>
+            <p className="type-caption">{copy.nav.chooseByGauge}</p>
             <ul className="mt-3 grid grid-cols-3 gap-2">
-              {GAUGE_LADDER.map((spec) => (
+              {getGaugeLadder(locale).map((spec) => (
                 <li key={spec.fabricSlug}>
                   <Link
                     href={`/fabric/${spec.fabricSlug}`}
@@ -134,8 +137,10 @@ export function MobileNav({
             <CartNavLink onNavigate={onClose} className={utilityClass} />
           </div>
 
+          <CurrencySwitch className="mt-6" />
+
           <ul className="mt-auto grid grid-cols-2 gap-x-4 pt-8">
-            {SECONDARY_LINKS.map((item) => (
+            {secondaryLinks.map((item) => (
               <li key={item.href}>
                 <Link
                   href={item.href}

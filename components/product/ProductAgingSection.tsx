@@ -1,17 +1,20 @@
 import { HomeSectionHeading } from "@/components/home/HomeSectionHeading";
+import type { Locale } from "@/lib/i18n/config";
+import { defineCopy } from "@/lib/i18n/define-copy";
 import {
   getWearingNoteForFabric,
   type WearingNote,
 } from "@/lib/store-ui/credibility";
 
 type ProductAgingSectionProps = {
+  locale: Locale;
   fabricName?: string | null;
 };
 
-const AGING_COPY = {
-  label: "AGING",
-  title: "経年変化",
-} as const;
+const getAgingCopy = defineCopy(
+  { label: "AGING", title: "経年変化" },
+  { label: "AGEING", title: "How it wears in" },
+);
 
 function AgingBody({ note }: { note: WearingNote }) {
   return (
@@ -34,8 +37,12 @@ function AgingBody({ note }: { note: WearingNote }) {
 }
 
 /** Full-width aging note matched to the product fabric. */
-export function ProductAgingSection({ fabricName }: ProductAgingSectionProps) {
-  const note = getWearingNoteForFabric(fabricName);
+export function ProductAgingSection({
+  locale,
+  fabricName,
+}: ProductAgingSectionProps) {
+  const AGING_COPY = getAgingCopy(locale);
+  const note = getWearingNoteForFabric(fabricName, locale);
 
   if (!note) return null;
 

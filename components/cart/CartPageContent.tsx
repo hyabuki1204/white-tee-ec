@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/components/i18n/Link";
 import { useMemo, useState } from "react";
 import { CartFabricCrossSell } from "@/components/cart/CartFabricCrossSell";
 import { CartItem } from "@/components/cart/CartItem";
@@ -9,9 +9,10 @@ import { CartStickyCheckout } from "@/components/cart/CartStickyCheckout";
 import { CartSummary } from "@/components/cart/CartSummary";
 import { useCartReconcile } from "@/lib/cart/use-cart-reconcile";
 import type { CartStockLookup } from "@/lib/cart/stock-validation";
-import { GAUGE_LADDER } from "@/lib/fabric/gauge";
+import { useLocale } from "@/components/i18n/LocaleProvider";
+import { getGaugeLadder } from "@/lib/fabric/gauge";
 import { useHydrated } from "@/lib/hooks/use-hydrated";
-import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
+import { getStoreCopy } from "@/lib/store-ui/graphpaper-copy";
 import {
   buttonPrimaryClass,
   buttonSecondaryClass,
@@ -46,7 +47,8 @@ type CartPageContentProps = {
 };
 
 function CartEmpty() {
-  const { cart: copy } = GRAPHPAPER_STORE_COPY;
+  const locale = useLocale();
+  const { cart: copy } = getStoreCopy(locale);
 
   return (
     <div className="grid gap-12 md:grid-cols-12 md:gap-0">
@@ -66,7 +68,7 @@ function CartEmpty() {
       </div>
 
       <ul className="grid grid-cols-3 gap-4 md:col-span-5 md:col-start-8">
-        {GAUGE_LADDER.map((spec) => (
+        {getGaugeLadder(locale).map((spec) => (
           <li key={spec.fabricSlug}>
             <Link
               href={`/fabric/${spec.fabricSlug}`}
@@ -76,7 +78,7 @@ function CartEmpty() {
                 {spec.gauge}
                 <span className="ml-0.5 text-[0.4em] tracking-normal">G</span>
               </span>
-              <span className="type-caption mt-3 block">{spec.headlineJa}</span>
+              <span className="type-caption mt-3 block">{spec.headline}</span>
             </Link>
           </li>
         ))}
@@ -86,6 +88,8 @@ function CartEmpty() {
 }
 
 function CartSkeleton() {
+  const loading = getStoreCopy(useLocale()).states.loading;
+
   return (
     <div aria-busy="true" className="grid gap-10 lg:grid-cols-12 lg:gap-0">
       <div className="space-y-6 lg:col-span-7">
@@ -100,7 +104,7 @@ function CartSkeleton() {
         ))}
       </div>
       <div className="skeleton-block h-64 lg:col-span-4 lg:col-start-9" />
-      <span className="sr-only">{GRAPHPAPER_STORE_COPY.states.loading}</span>
+      <span className="sr-only">{loading}</span>
     </div>
   );
 }
@@ -113,7 +117,7 @@ export function CartPageContent({
   const hydrated = useHydrated();
   const items = useCartStore((state) => state.items);
   const [orderNotes, setOrderNotes] = useState("");
-  const { cart: copy } = GRAPHPAPER_STORE_COPY;
+  const { cart: copy } = getStoreCopy(useLocale());
 
   const stockLookup = useMemo<CartStockLookup>(() => {
     const lookup: CartStockLookup = {};
@@ -167,7 +171,7 @@ export function CartPageContent({
         <div className="lg:col-span-7">
           <div className="flex items-baseline justify-between border-b border-[var(--color-ink)] pb-3">
             <p className="type-label tabular-nums">
-              {pieceCount} {pieceCount === 1 ? "piece" : "pieces"}
+              {copy.pieces(pieceCount)}
             </p>
             <Link href="/products" className={`${textLinkClass} !text-[12px]`}>
               {copy.continueShopping}
@@ -215,7 +219,9 @@ export function CartPageContent({
           aria-label={copy.summaryTitle}
           className="border border-[var(--color-hairline)] bg-[var(--color-surface)] p-6 sm:p-8 lg:sticky lg:top-[calc(var(--header-height)+var(--space-3))] lg:col-span-4 lg:col-start-9"
         >
-          <p className="type-label !text-[var(--color-navy)]">Summary</p>
+          <p className="type-label !text-[var(--color-navy)]">
+            {copy.summaryLabel}
+          </p>
           <h2 className="mt-2 text-[16px] font-bold tracking-[0.08em] text-[var(--color-ink)]">
             {copy.summaryTitle}
           </h2>

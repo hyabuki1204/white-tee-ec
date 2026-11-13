@@ -37,7 +37,9 @@ export function buildCatalog(products: Product[]): ConciergeCatalog {
     .filter((product) => product.isPublished && product.variants.length > 0)
     .map<CatalogEntry>((product) => ({
       product,
-      spec: getGaugeSpec(product.fabricSlug),
+      // Japanese spec copy: the model prompt is built from it and must stay
+      // byte-stable whatever language the customer is browsing in.
+      spec: getGaugeSpec(product.fabricSlug, "ja"),
       silhouette: product.fitType === "boxy" ? "Box" : "Regular",
       sizes: SIZE_ORDER.filter((size) =>
         product.variants.some((variant) => variant.size === size),

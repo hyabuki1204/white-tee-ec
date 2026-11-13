@@ -1,19 +1,22 @@
 import { Container } from "@/components/layout/Container";
 import { ProductCard } from "@/components/product/ProductCard";
+import type { Locale } from "@/lib/i18n/config";
 import type { Product } from "@/types";
 
 const DISPLAY_LIMIT = 3;
 
 type ProductMoreFromFabricProps = {
+  locale: Locale;
   products: Product[];
   fabricNameBySlug?: Record<string, string>;
   title?: string;
 };
 
 export function ProductMoreFromFabric({
+  locale,
   products,
   fabricNameBySlug,
-  title = "その他のモデル",
+  title = locale === "en" ? "Other pieces" : "その他のモデル",
 }: ProductMoreFromFabricProps) {
   if (products.length === 0) {
     return null;

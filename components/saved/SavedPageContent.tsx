@@ -1,12 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/components/i18n/Link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { RestockForm } from "@/components/restock/RestockForm";
 import { getInCartQuantity } from "@/lib/cart/stock-validation";
 import { useCartStore } from "@/lib/cart/store";
-import { SAVED_COPY } from "@/lib/saved/copy";
+import { ApproxPrice } from "@/components/currency/ApproxPrice";
+import { useLocale } from "@/components/i18n/LocaleProvider";
+import { getSavedCopy } from "@/lib/saved/copy";
 import {
   useSavedStore,
   type SavedCatalogEntry,
@@ -33,13 +35,13 @@ type SavedPageContentProps = {
   products: SavedProductView[];
 };
 
-const { page: copy } = SAVED_COPY;
 const ADDED_LABEL_MS = 1500;
 
 const sizeCellClass =
   "flex min-h-11 w-full items-center justify-center border px-3 font-en text-[14px] tracking-[0.04em] transition-colors duration-[var(--duration-quiet)] ease-[var(--ease-quiet)]";
 
 export function SavedPageContent({ products }: SavedPageContentProps) {
+  const { page: copy } = getSavedCopy(useLocale());
   const hydrated = useHydrated();
   const items = useSavedStore((state) => state.items);
   const droppedCount = useSavedStore((state) => state.droppedCount);
@@ -115,6 +117,7 @@ type SavedRowProps = {
 };
 
 function SavedRow({ item, product }: SavedRowProps) {
+  const { page: copy } = getSavedCopy(useLocale());
   const setSize = useSavedStore((state) => state.setSize);
   const remove = useSavedStore((state) => state.remove);
   const addItem = useCartStore((state) => state.addItem);
@@ -207,6 +210,7 @@ function SavedRow({ item, product }: SavedRowProps) {
           <span className="font-en text-[15px] tabular-nums tracking-[0.04em]">
             {formatPrice(product.price)}
           </span>
+          <ApproxPrice amount={product.price} className="text-[13px]" />
           <span className="type-fine">{copy.taxIncluded}</span>
         </p>
       </div>

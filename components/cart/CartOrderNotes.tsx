@@ -1,7 +1,8 @@
 "use client";
 
 import { useId } from "react";
-import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
+import { useLocale } from "@/components/i18n/LocaleProvider";
+import { getStoreCopy } from "@/lib/store-ui/graphpaper-copy";
 
 type CartOrderNotesProps = {
   value: string;
@@ -9,10 +10,10 @@ type CartOrderNotesProps = {
   className?: string;
 };
 
-const copy = GRAPHPAPER_STORE_COPY.cart;
 const MAX_LENGTH = 500;
 
 export function CartOrderNotes({ value, onChange, className }: CartOrderNotesProps) {
+  const copy = getStoreCopy(useLocale()).cart;
   const id = useId();
 
   return (

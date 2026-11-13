@@ -1,17 +1,20 @@
-import Link from "next/link";
+import { Link } from "@/components/i18n/Link";
 import { ProductGrid } from "@/components/product/ProductGrid";
-import { SITE_UI_COPY } from "@/lib/copy/site-ui";
+import { getSiteUiCopy } from "@/lib/copy/site-ui";
+import type { Locale } from "@/lib/i18n/config";
 import type { Product } from "@/types";
 
 const DISPLAY_LIMIT = 6;
 
 type FabricRelatedProductsProps = {
+  locale: Locale;
   products: Product[];
   fabricSlug: string;
   fabricNameBySlug?: Record<string, string>;
 };
 
 export function FabricRelatedProducts({
+  locale,
   products,
   fabricSlug,
   fabricNameBySlug,
@@ -21,7 +24,7 @@ export function FabricRelatedProducts({
   }
 
   const displayed = products.slice(0, DISPLAY_LIMIT);
-  const { fabric: copy } = SITE_UI_COPY;
+  const { fabric: copy } = getSiteUiCopy(locale);
 
   return (
     <section className="w-full" aria-label={copy.inThisFabric}>

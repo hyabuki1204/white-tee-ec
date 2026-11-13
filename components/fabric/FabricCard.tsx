@@ -1,23 +1,27 @@
 import Image from "next/image";
-import Link from "next/link";
-import { SITE_UI_COPY } from "@/lib/copy/site-ui";
+import { Link } from "@/components/i18n/Link";
+import { getSiteUiCopy } from "@/lib/copy/site-ui";
+import type { Locale } from "@/lib/i18n/config";
+import { joinSpec } from "@/lib/i18n/format";
 import { FABRIC_IMAGE_ASPECT } from "@/lib/fabric/presentation";
 import { formatWeight, getGaugeSpec } from "@/lib/fabric/gauge";
 import { cn } from "@/lib/utils";
 import type { Fabric } from "@/lib/fabric/content";
 
 type FabricCardProps = {
+  locale: Locale;
   fabric: Fabric;
   variant?: "default" | "entry";
   productCount?: number;
 };
 
 export function FabricCard({
+  locale,
   fabric,
   productCount,
 }: FabricCardProps) {
-  const { fabric: copy } = SITE_UI_COPY;
-  const spec = getGaugeSpec(fabric.slug);
+  const { fabric: copy } = getSiteUiCopy(locale);
+  const spec = getGaugeSpec(fabric.slug, locale);
 
   return (
     <article className="group">
@@ -60,11 +64,11 @@ export function FabricCard({
             )}
           </h2>
           <p className="type-body text-[var(--color-ink)]">
-            {spec ? spec.headlineJa : fabric.tagline}
+            {spec ? spec.headline : fabric.tagline}
           </p>
           {spec ? (
             <p className="type-caption">
-              {spec.yarn}・{formatWeight(spec)}
+              {joinSpec(locale, spec.yarn, formatWeight(spec))}
             </p>
           ) : null}
           {productCount !== undefined ? (

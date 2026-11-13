@@ -1,11 +1,16 @@
-import Link from "next/link";
-import { CHECKOUT_TRUST_COPY } from "@/lib/store-ui/checkout-trust";
+"use client";
+
+import { Link } from "@/components/i18n/Link";
+import { useLocale } from "@/components/i18n/LocaleProvider";
+import { getCheckoutTrustCopy } from "@/lib/store-ui/checkout-trust";
 import { textLinkClass } from "@/lib/store-ui/ui-classes";
 
 const SUMMARY_ITEM_IDS: readonly string[] = ["shipping", "returns", "payment"];
 
 /** Shipping, returns and payment terms, stated once beside the total. */
 export function CartCheckoutTrust() {
+  const locale = useLocale();
+  const CHECKOUT_TRUST_COPY = getCheckoutTrustCopy(locale);
   const items = CHECKOUT_TRUST_COPY.items.filter((item) =>
     SUMMARY_ITEM_IDS.includes(item.id),
   );
@@ -18,7 +23,14 @@ export function CartCheckoutTrust() {
 
       <dl className="mt-4 space-y-3">
         {items.map((item) => (
-          <div key={item.id} className="grid grid-cols-[3.5em_1fr] gap-x-3">
+          <div
+            key={item.id}
+            className={
+              locale === "en"
+                ? "grid grid-cols-[5em_1fr] gap-x-3"
+                : "grid grid-cols-[3.5em_1fr] gap-x-3"
+            }
+          >
             <dt className="type-caption !text-[var(--color-ink)]">
               {item.label}
             </dt>
