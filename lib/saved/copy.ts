@@ -18,7 +18,7 @@ export const SAVED_COPY = {
     lowStock: (n: number) => `残り${n}点`,
     outOfStock: "在庫切れ",
     allInBag: "在庫分はすでにバッグに入っています",
-    addToBag: "バッグに入れる",
+    addToBag: "カートに入れる",
     added: "追加しました",
     remove: "外す",
     removeAria: (name: string) => `${name} を保存から外す`,

@@ -12,6 +12,7 @@ const columnTitleClass = "type-label mb-4 text-[var(--color-ink)]";
 const SHOP_LINKS = [
   { href: "/products", label: "Collection" },
   { href: "/fabric", label: "Gauge" },
+  { href: "/concierge", label: "Concierge" },
   { href: "/about", label: "Mill" },
   { href: "/journal", label: "Journal" },
 ] as const;
