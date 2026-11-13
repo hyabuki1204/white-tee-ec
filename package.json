@@ -13,7 +13,8 @@
     "images:drain": "node scripts/images/drain.mjs",
     "images:status": "node scripts/images/status.mjs",
     "postbuild": "node scripts/run-sql-migrations.mjs && node scripts/apply-premium-pricing.mjs",
-    "test": "node --import ./tests/alias-hooks.mjs --test \"tests/**/*.test.ts\""
+    "test": "node --import ./tests/alias-hooks.mjs --test \"tests/**/*.test.ts\"",
+    "check:en": "node --import ./tests/alias-hooks.mjs scripts/check-english-routes.mts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.116.0",
