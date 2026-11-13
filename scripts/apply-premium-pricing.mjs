@@ -1,7 +1,7 @@
 /**
  * Apply catalog pricing to Supabase products (idempotent).
  * Only updates rows that already exist — the six products themselves are
- * created by supabase/manual/gauge-lineup.sql (needs DATABASE_URL).
+ * created by supabase/migrations/gauge-lineup.sql (needs DATABASE_URL).
  * Runs on Vercel postbuild when Supabase service role is configured.
  * Keep prices in sync with lib/products/pricing.ts
  */

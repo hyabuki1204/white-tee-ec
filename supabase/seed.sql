@@ -6,7 +6,7 @@
 -- = 6 products, sizes S / M / L (18 SKUs).
 -- Values mirror lib/products/product-catalog.ts and lib/fabric/content.ts.
 -- Existing databases get the same data from
--- supabase/manual/gauge-lineup.sql (npm run db:migrate).
+-- supabase/migrations/gauge-lineup.sql (npm run db:migrate).
 
 -- ---------------------------------------------------------------------------
 -- 1. fabrics

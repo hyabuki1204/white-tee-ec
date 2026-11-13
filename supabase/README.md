@@ -41,9 +41,9 @@ npm run db:migrate
 
 Applies every `supabase/migrations/*.sql` in filename order, once each (tracked in `public.schema_migrations`).
 
-`supabase/manual/gauge-lineup.sql` installs the current lineup — 3 gauges (28G / 36G / 46G) × 2 silhouettes (Regular / Box), sizes S / M / L — and unpublishes the previous products. Old products and fabrics are kept (orders and unpublished products reference them); the storefront only lists fabrics that have a published product.
+`gauge-lineup.sql` installs the current lineup — 3 gauges (28G / 36G / 46G) × 2 silhouettes (Regular / Box), sizes S / M / L — and unpublishes the previous products. Old products and fabrics are kept (orders and unpublished products reference them); the storefront only lists fabrics that have a published product.
 
-It is kept in `supabase/manual/` rather than `supabase/migrations/` on purpose: the migration runner applies everything in `migrations/` on every build that has `DATABASE_URL`, including preview builds, and this file changes which products the live storefront lists. Move it into `supabase/migrations/` in the same change that ships the redesigned storefront to production.
+Migrations are applied by production builds only. Preview builds skip them (see `scripts/run-sql-migrations.mjs`), so a branch that changes the catalog cannot switch the live storefront before it is merged.
 
 **Vercel (production):** On each deploy, `postbuild` automatically:
 
