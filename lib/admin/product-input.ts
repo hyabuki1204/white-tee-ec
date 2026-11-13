@@ -291,7 +291,7 @@ export function toAdminProductFormDefaults(): AdminProductDetail {
     care: DEFAULT_CARE,
     sizeGuide: createDefaultSizeGuide(),
     isPublished: true,
-    fabricSlug: "heavyweight-jersey",
+    fabricSlug: "36g-jersey",
     sleeveType: "short",
     variants: PRODUCT_SIZES.map((size) => ({
       size,

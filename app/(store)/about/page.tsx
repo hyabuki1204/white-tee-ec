@@ -4,10 +4,10 @@ import { getSiteContent } from "@/lib/content/queries";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "About",
-  description: "WHITE TEE — white T-shirts, quietly refined.",
+  title: "Mill",
+  description: "和歌山で1964年から編み続けてきた工場が作る、白いTシャツ。糸、ゲージ、人の手。",
   path: "/about",
-  image: "/store/about/about-hero.jpg",
+  image: "/mill/needle.jpg",
 });
 
 export default async function AboutPage() {

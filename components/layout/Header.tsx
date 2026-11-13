@@ -135,7 +135,7 @@ export function Header({ products, fabricNameBySlug }: HeaderProps) {
 
             <Link
               href="/"
-              className="justify-self-center text-[12px] tracking-[0.32em] text-[var(--color-ink)] transition-opacity duration-[var(--duration-quiet)] ease-[var(--ease-quiet)] hover:opacity-60 lg:text-[14px]"
+              className="justify-self-center font-en text-[15px] font-medium tracking-[0.3em] text-[var(--color-ink)] transition-opacity duration-[var(--duration-quiet)] ease-[var(--ease-quiet)] hover:opacity-60 lg:text-[17px]"
             >
               {GRAPHPAPER_STORE_COPY.brandLine}
             </Link>
@@ -161,7 +161,7 @@ export function Header({ products, fabricNameBySlug }: HeaderProps) {
           <div className="flex h-full w-full items-center justify-between gap-6 md:hidden">
             <Link
               href="/"
-              className="text-[12px] tracking-[0.32em] text-[var(--color-ink)] transition-opacity hover:opacity-60"
+              className="font-en text-[15px] font-medium tracking-[0.3em] text-[var(--color-ink)] transition-opacity hover:opacity-60"
             >
               {GRAPHPAPER_STORE_COPY.brandLine}
             </Link>

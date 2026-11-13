@@ -16,28 +16,14 @@ export const FABRIC_PRESENTATION_BY_SLUG: Record<
   string,
   Partial<FabricPresentation>
 > = {
-  "heavyweight-jersey": {
-    heroImagePosition: "object-[center_40%]",
+  "28g-jersey": {
     taglineTracking: "tracking-[0.05em]",
   },
-  "lightweight-jersey": {
-    heroImagePosition: "object-[center_26%]",
-    taglineTracking: "tracking-[0.07em]",
-  },
-  "relaxed-jersey": {
-    heroImagePosition: "object-[center_35%]",
-    taglineTracking: "tracking-[0.04em]",
-  },
-  "compact-jersey": {
-    heroImagePosition: "object-[center_45%]",
-    taglineTracking: "tracking-[0.06em]",
-  },
-  "essential-jersey": {
+  "36g-jersey": {
     taglineTracking: "tracking-[0.03em]",
   },
-  "box-jersey": {
-    heroImagePosition: "object-[center_48%]",
-    taglineTracking: "tracking-[0.05em]",
+  "46g-jersey": {
+    taglineTracking: "tracking-[0.07em]",
   },
 };
 

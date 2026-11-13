@@ -8,8 +8,6 @@ const STATIC_PATHS = [
   "",
   "/fabric",
   "/products",
-  "/products?sleeve=short",
-  "/products?sleeve=long",
   "/about",
   "/journal",
   "/contact",

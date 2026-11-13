@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 import { FooterNewsletter } from "@/components/layout/FooterNewsletter";
@@ -9,8 +10,9 @@ const linkClass =
 const columnTitleClass = "type-label mb-4 text-[var(--color-ink)]";
 
 const SHOP_LINKS = [
-  { href: "/products", label: "Products" },
-  { href: "/fabric", label: "Fabric" },
+  { href: "/products", label: "Collection" },
+  { href: "/fabric", label: "Gauge" },
+  { href: "/about", label: "Mill" },
   { href: "/journal", label: "Journal" },
 ] as const;
 
@@ -35,7 +37,7 @@ export function Footer() {
       <Container as="div" className="py-[var(--space-5)] md:py-[var(--space-6)]">
         {/* Newsletter */}
         <div>
-          <p className="type-label text-[var(--color-ink)]">NEWSLETTER</p>
+          <p className="type-label text-[var(--color-ink)]">Newsletter</p>
           <FooterNewsletter />
         </div>
 
@@ -45,7 +47,7 @@ export function Footer() {
           className="mt-12 flex flex-col gap-10 md:mt-16 md:grid md:grid-cols-3 md:gap-8"
         >
           <div>
-            <p className={columnTitleClass}>SHOP</p>
+            <p className={columnTitleClass}>Shop</p>
             <ul className="space-y-3">
               {SHOP_LINKS.map((link) => (
                 <li key={link.href}>
@@ -61,7 +63,7 @@ export function Footer() {
             <p className="mb-4 text-[12px] font-normal leading-[1.7] tracking-[0.02em] text-[var(--color-ink-soft)]">
               {GRAPHPAPER_STORE_COPY.shipping.freeNote}
             </p>
-            <p className={columnTitleClass}>INFORMATION</p>
+            <p className={columnTitleClass}>Information</p>
             <ul className="space-y-3">
               {INFORMATION_LINKS.map((link) => (
                 <li key={link.href}>
@@ -74,7 +76,7 @@ export function Footer() {
           </div>
 
           <div>
-            <p className={columnTitleClass}>LEGAL</p>
+            <p className={columnTitleClass}>Legal</p>
             <ul className="space-y-3">
               {LEGAL_LINKS.map((link) => (
                 <li key={link.href}>
@@ -89,9 +91,25 @@ export function Footer() {
 
         {/* Bottom bar */}
         <div className="mt-12 flex flex-col gap-4 border-t border-[var(--color-hairline)] pt-8 md:mt-16 md:flex-row md:items-center md:justify-between">
-          <p className="text-[12px] font-normal tracking-[0.02em] text-[var(--color-ink-soft)]">
-            © 2026 WHITE TEE — Kanemasa, Wakayama
-          </p>
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+            <p className="font-en text-[13px] tracking-[0.04em] text-[var(--color-ink-soft)]">
+              © 2026 WHITE TEE
+            </p>
+            <Link
+              href="/about"
+              className="flex items-center gap-3 text-[12px] tracking-[0.02em] text-[var(--color-ink-soft)] transition-opacity duration-[var(--duration-quiet)] hover:opacity-60"
+            >
+              <span className="font-en tracking-[0.04em]">Knitted by</span>
+              <Image
+                src="/brand/kanemasa-black.svg"
+                alt="kanemasa"
+                width={134}
+                height={50}
+                className="h-7 w-auto opacity-70"
+              />
+              <span>和歌山</span>
+            </Link>
+          </div>
           <Link
             href={INSTAGRAM_HREF}
             target="_blank"

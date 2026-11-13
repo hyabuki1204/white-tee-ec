@@ -1,26 +1,11 @@
-import { KanemasaLine } from "@/components/brand/KanemasaLine";
-import {
-  FABRIC_INTRO_LINES,
-  FABRIC_PAGE_TITLE,
-} from "@/lib/fabric/content";
-
 export function FabricIntro() {
   return (
-    <header className="flex w-full flex-col items-center text-center">
-      <p className="text-[12px] font-normal tracking-[0.24em] text-neutral-600 md:text-[12px] md:tracking-[0.3em]">
-        {FABRIC_PAGE_TITLE}
+    <header className="max-w-2xl">
+      <p className="type-label !text-[var(--color-navy)]">Gauge</p>
+      <h1 className="type-display mt-3">1インチに、針が何本あるか。</h1>
+      <p className="type-body mt-5 text-[var(--color-ink-soft)]">
+        ゲージは編機の針の密度です。数字が大きいほど編目は細かく、生地は薄く、密になります。28、36、46。同じ綿100%の白を、3つの密度で編み分けています。
       </p>
-
-      <p className="mt-8 max-w-md text-[14px] font-normal leading-[1.95] tracking-[0.02em] text-neutral-600 sm:mt-10 md:mt-12 md:text-[14px] md:leading-[2.1] md:tracking-[0.03em]">
-        {FABRIC_INTRO_LINES.map((line, index) => (
-          <span key={line}>
-            {line}
-            {index < FABRIC_INTRO_LINES.length - 1 ? <br /> : null}
-          </span>
-        ))}
-      </p>
-
-      <KanemasaLine variant="factory" className="mt-10 sm:mt-12 md:mt-14" />
     </header>
   );
 }

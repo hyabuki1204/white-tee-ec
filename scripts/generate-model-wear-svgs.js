@@ -1,13 +1,15 @@
 const fs = require("fs");
 const path = require("path");
 
+// Placeholder on-model SVGs. The live gallery uses JPGs:
+// 01 front · 02 back · 03 on-model · 04 collar detail.
 const SLUGS = [
-  "heavyweight-crew-neck",
-  "lightweight-pocket-tee",
-  "relaxed-fit-tee",
-  "compact-cotton-tee",
-  "long-sleeve-essential",
-  "box-fit-tee",
+  "28g-regular-tee",
+  "28g-box-tee",
+  "36g-regular-tee",
+  "36g-box-tee",
+  "46g-regular-tee",
+  "46g-box-tee",
 ];
 
 const BG = "#f2f1ed";
@@ -28,23 +30,10 @@ function frontSvg(slug) {
 </svg>`;
 }
 
-function sideSvg(slug) {
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1000" viewBox="0 0 800 1000" role="img" aria-label="${slug} model side">
-  <rect width="100%" height="100%" fill="${BG}"/>
-  <ellipse cx="420" cy="930" rx="120" ry="14" fill="${SHADOW}" opacity="0.7"/>
-  <path d="M410 640 L405 900" stroke="${LIMB}" stroke-width="30" stroke-linecap="round"/>
-  <path d="M395 390 Q455 400 460 660 Q455 670 395 660 Z" fill="${TEE}"/>
-  <path d="M430 430 Q520 500 505 590" stroke="${LIMB}" stroke-width="24" stroke-linecap="round" fill="none"/>
-  <ellipse cx="430" cy="340" rx="36" ry="44" fill="${SKIN}"/>
-  <text x="50%" y="960" text-anchor="middle" fill="#c8c4bc" font-family="system-ui,sans-serif" font-size="11" letter-spacing="0.18em">MODEL · SIDE</text>
-</svg>`;
-}
-
 const outDir = path.join(__dirname, "..", "public", "products");
 
 for (const slug of SLUGS) {
-  fs.writeFileSync(path.join(outDir, `${slug}-04.svg`), frontSvg(slug));
-  fs.writeFileSync(path.join(outDir, `${slug}-05.svg`), sideSvg(slug));
+  fs.writeFileSync(path.join(outDir, `${slug}-03.svg`), frontSvg(slug));
 }
 
-console.log(`Generated ${SLUGS.length * 2} model wear SVGs.`);
+console.log(`Generated ${SLUGS.length} model wear SVGs.`);

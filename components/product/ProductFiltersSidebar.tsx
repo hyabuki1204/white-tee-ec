@@ -1,8 +1,13 @@
 import Link from "next/link";
-import { buildProductsFilterHref } from "@/lib/products/silhouette";
+import { getGaugeLabel } from "@/lib/navigation/store-nav";
+import {
+  buildProductsFilterHref,
+  FIT_TYPE_LABELS,
+  STOREFRONT_FIT_TYPES,
+} from "@/lib/products/silhouette";
 import { GRAPHPAPER_STORE_COPY } from "@/lib/store-ui/graphpaper-copy";
 import type { Fabric } from "@/lib/fabric/content";
-import type { SleeveType } from "@/types/product-fit";
+import type { FitType } from "@/types/product-fit";
 import type { Product } from "@/types";
 import { cn } from "@/lib/utils";
 
@@ -10,9 +15,11 @@ type ProductFiltersSidebarProps = {
   fabrics: Fabric[];
   products: Product[];
   activeFabricSlug?: string | null;
-  activeSleeve?: SleeveType | null;
+  activeFit?: FitType | null;
   inStockOnly?: boolean;
 };
+
+type FilterSectionsProps = Omit<ProductFiltersSidebarProps, "products">;
 
 function filterLinkClass(isActive: boolean) {
   return cn(
@@ -31,11 +38,29 @@ function sectionTitle(label: string) {
 
 export function ProductFiltersSidebar({
   fabrics,
+  products,
   activeFabricSlug,
-  activeSleeve,
+  activeFit,
   inStockOnly = false,
 }: ProductFiltersSidebarProps) {
   const copy = GRAPHPAPER_STORE_COPY.filters;
+
+  // Only offer gauges that have at least one listed product.
+  const listedFabricSlugs = new Set(
+    products.map((product) => product.fabricSlug),
+  );
+  const gaugeFabrics = fabrics.filter((fabric) =>
+    listedFabricSlugs.has(fabric.slug),
+  );
+
+  const sections = (
+    <FilterSections
+      fabrics={gaugeFabrics}
+      activeFabricSlug={activeFabricSlug}
+      activeFit={activeFit}
+      inStockOnly={inStockOnly}
+    />
+  );
 
   return (
     <>
@@ -43,14 +68,7 @@ export function ProductFiltersSidebar({
         <summary className="cursor-pointer list-none text-[12px] font-normal tracking-[0.12em] text-neutral-700 [&::-webkit-details-marker]:hidden">
           {copy.title}
         </summary>
-        <div className="mt-6 space-y-8">
-          <FilterSections
-            fabrics={fabrics}
-            activeFabricSlug={activeFabricSlug}
-            activeSleeve={activeSleeve}
-            inStockOnly={inStockOnly}
-          />
-        </div>
+        <div className="mt-6 space-y-8">{sections}</div>
       </details>
 
       <aside
@@ -60,12 +78,7 @@ export function ProductFiltersSidebar({
         <p className="mb-8 text-[11px] font-normal tracking-[0.14em] text-neutral-600">
           {copy.title}
         </p>
-        <FilterSections
-          fabrics={fabrics}
-          activeFabricSlug={activeFabricSlug}
-          activeSleeve={activeSleeve}
-          inStockOnly={inStockOnly}
-        />
+        {sections}
       </aside>
     </>
   );
@@ -74,58 +87,24 @@ export function ProductFiltersSidebar({
 function FilterSections({
   fabrics,
   activeFabricSlug,
-  activeSleeve,
+  activeFit,
   inStockOnly = false,
-}: {
-  fabrics: Fabric[];
-  activeFabricSlug?: string | null;
-  activeSleeve?: SleeveType | null;
-  inStockOnly?: boolean;
-}) {
+}: FilterSectionsProps) {
   const copy = GRAPHPAPER_STORE_COPY.filters;
-  const stockOnly = inStockOnly;
-  const stockParam = stockOnly ? ("in" as const) : null;
+  const stockParam = inStockOnly ? ("in" as const) : null;
 
   return (
     <div className="space-y-8">
-      <section>
-        {sectionTitle(copy.availability)}
-        <ul className="space-y-1">
-          <li>
-            <Link
-              href={buildProductsFilterHref({
-                fabric: activeFabricSlug,
-                sleeve: activeSleeve,
-              })}
-              className={filterLinkClass(!stockOnly)}
-            >
-              {copy.all}
-            </Link>
-          </li>
-          <li>
-            <Link
-              href={buildProductsFilterHref({
-                fabric: activeFabricSlug,
-                sleeve: activeSleeve,
-                stock: "in",
-              })}
-              className={filterLinkClass(stockOnly)}
-            >
-              {copy.inStock}
-            </Link>
-          </li>
-        </ul>
-      </section>
-
       <section>
         {sectionTitle(copy.fabric)}
         <ul className="space-y-1">
           <li>
             <Link
               href={buildProductsFilterHref({
-                sleeve: activeSleeve,
+                fit: activeFit,
                 stock: stockParam,
               })}
+              aria-current={!activeFabricSlug ? "true" : undefined}
               className={filterLinkClass(!activeFabricSlug)}
             >
               {copy.all}
@@ -136,15 +115,82 @@ function FilterSections({
               <Link
                 href={buildProductsFilterHref({
                   fabric: fabric.slug,
-                  sleeve: activeSleeve,
+                  fit: activeFit,
                   stock: stockParam,
                 })}
+                aria-current={
+                  activeFabricSlug === fabric.slug ? "true" : undefined
+                }
                 className={filterLinkClass(activeFabricSlug === fabric.slug)}
               >
-                {fabric.name}
+                {getGaugeLabel(fabric)}
               </Link>
             </li>
           ))}
+        </ul>
+      </section>
+
+      <section>
+        {sectionTitle(copy.fit)}
+        <ul className="space-y-1">
+          <li>
+            <Link
+              href={buildProductsFilterHref({
+                fabric: activeFabricSlug,
+                stock: stockParam,
+              })}
+              aria-current={!activeFit ? "true" : undefined}
+              className={filterLinkClass(!activeFit)}
+            >
+              {copy.all}
+            </Link>
+          </li>
+          {STOREFRONT_FIT_TYPES.map((fit) => (
+            <li key={fit}>
+              <Link
+                href={buildProductsFilterHref({
+                  fabric: activeFabricSlug,
+                  fit,
+                  stock: stockParam,
+                })}
+                aria-current={activeFit === fit ? "true" : undefined}
+                className={filterLinkClass(activeFit === fit)}
+              >
+                {FIT_TYPE_LABELS[fit]}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section>
+        {sectionTitle(copy.availability)}
+        <ul className="space-y-1">
+          <li>
+            <Link
+              href={buildProductsFilterHref({
+                fabric: activeFabricSlug,
+                fit: activeFit,
+              })}
+              aria-current={!inStockOnly ? "true" : undefined}
+              className={filterLinkClass(!inStockOnly)}
+            >
+              {copy.all}
+            </Link>
+          </li>
+          <li>
+            <Link
+              href={buildProductsFilterHref({
+                fabric: activeFabricSlug,
+                fit: activeFit,
+                stock: "in",
+              })}
+              aria-current={inStockOnly ? "true" : undefined}
+              className={filterLinkClass(inStockOnly)}
+            >
+              {copy.inStock}
+            </Link>
+          </li>
         </ul>
       </section>
     </div>

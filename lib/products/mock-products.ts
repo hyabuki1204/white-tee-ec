@@ -11,23 +11,24 @@ import { getDefaultSleeveType } from "@/lib/products/silhouette";
 import type { Product, ProductVariant } from "@/types";
 
 function buildVariants(skuCode: string): ProductVariant[] {
-  return PRODUCT_SIZES.map((size, index) => ({
+  return PRODUCT_SIZES.map((size) => ({
     id: `${skuCode}-${size}`,
     size,
     sku: `${skuCode}-${size}`,
-    stockQuantity: 10 - index,
+    stockQuantity: 10,
   }));
 }
 
+/** 01 front · 02 back · 03 on-model (card hover) · 04 collar detail. */
 function buildImages(productId: string, slug: string): Product["images"] {
-  const entries = [1, 2, 3, 4, 5];
+  const entries = [1, 2, 3, 4];
 
   return entries.map((index) => ({
     id: `${productId}-image-${index - 1}`,
     url: `/products/${slug}-0${index}.jpg`,
     sortOrder: index - 1,
     isPrimary: index === 1,
-    isCardHover: index === 4,
+    isCardHover: index === 3,
   }));
 }
 

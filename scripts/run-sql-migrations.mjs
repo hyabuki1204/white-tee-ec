@@ -13,6 +13,13 @@ dotenv.config();
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 async function main() {
+  // Preview deployments share the production database. A branch that changes
+  // the catalog must not switch the live storefront before it is merged.
+  if (process.env.VERCEL_ENV === "preview") {
+    console.log("run-sql-migrations: skip (preview build)");
+    return;
+  }
+
   if (!process.env.DATABASE_URL) {
     console.log("run-sql-migrations: skip (DATABASE_URL not set)");
     return;

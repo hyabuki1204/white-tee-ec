@@ -35,7 +35,7 @@ export default async function FabricPage() {
   const { breadcrumbs: bc } = SITE_UI_COPY;
 
   return (
-    <Container as="section" className="py-16 sm:py-20 md:py-28 lg:py-36">
+    <Container as="section" className="py-14 md:py-20">
       <div className="mx-auto max-w-6xl">
         <Breadcrumbs
           items={[
@@ -44,8 +44,8 @@ export default async function FabricPage() {
           ]}
         />
         <FabricIntro />
-        <FabricCompareOverview fabrics={fabrics} variant="full" className="mt-20 md:mt-28 lg:mt-32" />
-        <div className="mt-20 md:mt-28 lg:mt-32">
+        <FabricCompareOverview fabrics={fabrics} variant="full" className="mt-16 md:mt-24" />
+        <div className="mt-16 md:mt-24">
           <FabricGrid
             fabrics={fabrics}
             productCountBySlug={productCountBySlug}

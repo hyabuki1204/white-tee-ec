@@ -1,11 +1,13 @@
 import { ProductFabricSpecs } from "@/components/product/ProductFabricSpecs";
 import { MobilePurchaseBar } from "@/components/product/MobilePurchaseBar";
 import { ProductGallery } from "@/components/product/ProductGallery";
+import { ProductLadderNav } from "@/components/product/ProductLadderNav";
 import { ProductPdpAccordion } from "@/components/product/ProductPdpAccordion";
 import { ProductPurchaseControls } from "@/components/product/ProductPurchaseControls";
 import { ProductPurchaseHeader } from "@/components/product/ProductPurchaseHeader";
 import { ProductPurchaseProvider } from "@/components/product/ProductPurchaseContext";
 import { ProductSizeGuideTable } from "@/components/product/ProductSizeGuideTable";
+import { getGaugeSpec } from "@/lib/fabric/gauge";
 import { getFabricSpecRows } from "@/lib/fabric/specs";
 import { RETURNS_POLICY } from "@/lib/store-ui/returns-policy";
 import type { Fabric } from "@/lib/fabric/content";
@@ -24,6 +26,7 @@ export function ProductPageLayout({
   displayName,
 }: ProductPageLayoutProps) {
   const specRows = getFabricSpecRows(product, fabric);
+  const gaugeSpec = getGaugeSpec(product.fabricSlug);
   const description =
     product.description?.trim() ||
     product.detailDescription?.trim() ||
@@ -53,7 +56,10 @@ export function ProductPageLayout({
         displayName={displayName}
         price={product.price}
         description={description}
+        gauge={gaugeSpec?.gauge}
+        character={gaugeSpec?.character}
       />
+      <ProductLadderNav product={product} />
       <ProductFabricSpecs rows={specRows} />
       <ProductPurchaseControls />
       <ProductPdpAccordion items={accordionItems} />

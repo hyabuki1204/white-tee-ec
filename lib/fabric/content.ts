@@ -2,7 +2,6 @@ import {
   FABRIC_CHARACTER_BY_SLUG,
   type FabricCharacter,
 } from "@/lib/fabric/character";
-import { attachFabricJaHelpers } from "@/lib/fabric/i18n";
 
 export type Fabric = {
   slug: string;
@@ -25,7 +24,7 @@ export const FABRIC_PAGE_TITLE = "Fabric";
 
 export const FABRIC_INTRO_LINES = [
   "The cloth comes first.",
-  "Weight, hand, light — six jerseys, each tuned for how white should sit.",
+  "Three gauges — 28, 36, 46 needles to the inch. Each one a different white.",
 ] as const;
 
 import { PRODUCT_CATALOG } from "@/lib/products/product-catalog";
@@ -38,81 +37,45 @@ export const PRODUCT_FABRIC_SLUG_BY_PRODUCT_SLUG: Record<string, string> =
 
 export const FABRICS: Fabric[] = [
   {
-    slug: "heavyweight-jersey",
-    name: "Heavyweight Jersey",
-    tagline: "Dense cotton. Held shape.",
+    slug: "28g-jersey",
+    name: "28G Jersey",
+    tagline: "Thick. Holds its line.",
     descriptionLines: [
-      "Higher gauge, more body.",
-      "White reads clear, without blur.",
+      "Two-ply combed yarn, knit tight at 28 gauge.",
+      "240 g/m². Low sheer. Collar and shoulder keep their shape.",
+      "A white to wear on its own.",
     ],
-    imageUrl: "/fabric/heavyweight-jersey.jpg",
-    imageAlt: "Heavyweight white cotton jersey texture",
+    imageUrl: "/fabric/28g-jersey.jpg",
+    imageAlt: "28-gauge white cotton jersey, close-up",
     sortOrder: 1,
-    character: FABRIC_CHARACTER_BY_SLUG["heavyweight-jersey"]!,
+    character: FABRIC_CHARACTER_BY_SLUG["28g-jersey"]!,
   },
   {
-    slug: "lightweight-jersey",
-    name: "Lightweight Jersey",
-    tagline: "Soft hand. Open air.",
+    slug: "36g-jersey",
+    name: "36G Jersey",
+    tagline: "The standard white.",
     descriptionLines: [
-      "Fine yarn, open knit.",
-      "Light on skin. Quiet in heat.",
+      "Compact yarn at 36 gauge. Smooth, even surface.",
+      "160 g/m². Neither heavy nor thin.",
+      "The one to start with.",
     ],
-    imageUrl: "/fabric/lightweight-jersey.jpg",
-    imageAlt: "Lightweight white cotton jersey texture",
+    imageUrl: "/fabric/36g-jersey.jpg",
+    imageAlt: "36-gauge white cotton jersey, close-up",
     sortOrder: 2,
-    character: FABRIC_CHARACTER_BY_SLUG["lightweight-jersey"]!,
+    character: FABRIC_CHARACTER_BY_SLUG["36g-jersey"]!,
   },
   {
-    slug: "relaxed-jersey",
-    name: "Relaxed Jersey",
-    tagline: "Room to move. Quiet drape.",
+    slug: "46g-jersey",
+    name: "46G Jersey",
+    tagline: "Thin. Dense. Smooth.",
     descriptionLines: [
-      "Medium weight, softer fall.",
-      "Lines ease. White stays calm.",
+      "46 needles to the inch — rare for a cut-and-sewn tee.",
+      "130 g/m². Falls like a woven, with a quiet lustre.",
+      "Sits clean under a jacket.",
     ],
-    imageUrl: "/fabric/relaxed-jersey.jpg",
-    imageAlt: "Relaxed white cotton jersey texture",
+    imageUrl: "/fabric/46g-jersey.jpg",
+    imageAlt: "46-gauge white cotton jersey, close-up",
     sortOrder: 3,
-    character: FABRIC_CHARACTER_BY_SLUG["relaxed-jersey"]!,
-  },
-  {
-    slug: "compact-jersey",
-    name: "Compact Jersey",
-    tagline: "Close knit. Thin profile.",
-    descriptionLines: [
-      "Compact yarn, tighter knit.",
-      "Structure without volume.",
-    ],
-    imageUrl: "/fabric/compact-jersey.jpg",
-    imageAlt: "Compact white cotton jersey texture",
-    sortOrder: 4,
-    character: FABRIC_CHARACTER_BY_SLUG["compact-jersey"]!,
-  },
-  {
-    slug: "essential-jersey",
-    name: "Essential Jersey",
-    tagline: "The everyday weight.",
-    descriptionLines: [
-      "Balanced, familiar, year-round.",
-      "Neither heavy nor sheer.",
-    ],
-    imageUrl: "/fabric/essential-jersey.jpg",
-    imageAlt: "Essential white cotton jersey texture",
-    sortOrder: 5,
-    character: FABRIC_CHARACTER_BY_SLUG["essential-jersey"]!,
-  },
-  {
-    slug: "box-jersey",
-    name: "Box Jersey",
-    tagline: "Substance. Flat surface.",
-    descriptionLines: [
-      "Dense hand, even surface.",
-      "Presence in white, without noise.",
-    ],
-    imageUrl: "/fabric/box-jersey.jpg",
-    imageAlt: "Box white cotton jersey texture",
-    sortOrder: 6,
-    character: FABRIC_CHARACTER_BY_SLUG["box-jersey"]!,
+    character: FABRIC_CHARACTER_BY_SLUG["46g-jersey"]!,
   },
 ];

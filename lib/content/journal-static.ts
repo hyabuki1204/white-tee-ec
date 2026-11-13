@@ -55,9 +55,9 @@ export const JOURNAL_ARTICLES: JournalArticle[] = [
     featured: true,
     body: [
       "Jersey is simple to name and difficult to read. Two surfaces, one structure — loops linked in a spiral that gives stretch without noise.",
-      "We judge cloth with the hand first. Does it recover after a pinch? Does the surface stay even when held to light? Heavyweight jersey should feel dense but not dead; lightweight should be open without going sheer.",
-      "White exposes everything. A uneven knit reads as shadow; a tight spin reads flat. We keep twelve jerseys in the line — each fabric in short and long sleeve, a different conversation between yarn, gauge, and air.",
-      "When you choose a fabric on WHITE TEE, you are choosing how that conversation meets your body.",
+      "We judge cloth with the hand first. Does it recover after a pinch? Does the surface stay even when held to light? A 28-gauge jersey should feel dense but not dead; a 46-gauge should be fine without going limp.",
+      "White exposes everything. An uneven knit reads as shadow; a tight spin reads flat. We keep three jerseys in the line — 28, 36 and 46 gauge — each a different conversation between yarn, gauge, and air.",
+      "When you choose a gauge on WHITE TEE, you are choosing how that conversation meets your body.",
     ],
   },
   {

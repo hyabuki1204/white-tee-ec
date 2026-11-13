@@ -1,8 +1,9 @@
 import type { Product } from "@/types";
 
-const MODEL_IMAGE_PATTERN = /-0[45]\.(jpg|jpeg|webp|png|svg)$/i;
+/** On-model shot is the third image of every product: `<slug>-03.jpg`. */
+const MODEL_IMAGE_PATTERN = /-03\.(jpg|jpeg|webp|png|avif)$/i;
 
-/** Card hover image for product listing (admin-selected or legacy fallback). */
+/** Card hover image for product listing (admin-selected, else the on-model shot). */
 export function getProductWearImageUrl(product: Product): string | null {
   const hoverFromFlag = product.images.find((image) => image.isCardHover);
 
@@ -13,12 +14,14 @@ export function getProductWearImageUrl(product: Product): string | null {
   const sorted = [...product.images].sort((a, b) => a.sortOrder - b.sortOrder);
 
   const fromGallery =
-    sorted.find(
-      (image) =>
-        image.sortOrder >= 3 || MODEL_IMAGE_PATTERN.test(image.url),
-    )?.url ?? null;
+    sorted.find((image) => MODEL_IMAGE_PATTERN.test(image.url))?.url ??
+    sorted.find((image) => image.sortOrder === 2)?.url ??
+    null;
 
-  const candidate = fromGallery ?? `/products/${product.slug}-04.jpg`;
+  // No gallery rows at all (bare catalog entry): fall back to the naming convention.
+  const candidate =
+    fromGallery ??
+    (sorted.length === 0 ? `/products/${product.slug}-03.jpg` : null);
 
   if (!candidate || candidate === product.imageUrl) {
     return null;

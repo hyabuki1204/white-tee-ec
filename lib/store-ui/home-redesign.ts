@@ -12,14 +12,14 @@ export const HOME_IMAGES = {
 export const HOME_COPY = {
   hero: {
     label: "WAKAYAMA, JAPAN",
-    headline: "和歌山で編んだ、6種類の白Tシャツ。",
-    subline: "袖丈とシルエットで選べる12モデル。",
+    headline: "和歌山で編んだ、3つのゲージの白Tシャツ。",
+    subline: "28G・36G・46G × Regular / Box。全6型、S・M・L。",
     shopCta: "商品を見る",
   },
   proof: [
     {
       label: "透けにくさ",
-      line: "生地ごとに厚みと編み密度を調整。1枚着でも安心できる白。",
+      line: "28Gは目付240g/m²、1枚で着られる厚み。46Gは薄手でも、1インチに針46本の密度で支えます。",
     },
     {
       label: "形の残り方",
@@ -27,7 +27,7 @@ export const HOME_COPY = {
     },
     {
       label: "選びやすさ",
-      line: "6種類のジャージー × 6つのシルエット。体型と着方から選べます。",
+      line: "3つのゲージ × 2つのシルエット。生地を決めて、形を選ぶだけです。",
     },
   ],
   detail: {
@@ -36,7 +36,7 @@ export const HOME_COPY = {
   storySection: {
     label: "つくりについて",
     intro:
-      "生地の選定から仕上げまで、和歌山の工場で一貫して行っています。購入前に知っておきたい要点だけ、ここにまとめました。",
+      "生地は和歌山・カネマサ莫大小で編んでいます。同じ機械でも、同じ生地は生まれない。購入前に知っておきたい要点だけ、ここにまとめました。",
     fabricCta: "生地を比較する",
     aboutCta: "ブランドについて",
   },
@@ -46,17 +46,17 @@ export const HOME_COPY = {
       title: "Material",
       imageAlt: "白Tシャツの生地を拡大した写真",
       lines: [
-        "超長綿から選んだ糸を、6段階のジャージー重量で編み上げ。",
-        "1枚着用から重ね着まで、用途に合わせて選べます。",
+        "40/2、60/1、80/1。糸の太さを変え、28・36・46の3つのゲージで編み分けています。",
+        "目付は240、160、130g/m²。1枚で着る白から、ジャケットの下の白まで。",
       ],
       image: HOME_IMAGES.story.material,
     },
     {
       key: "finish",
       title: "Finish",
-      imageAlt: "和歌山の円筒編み工場の写真",
+      imageAlt: "和歌山の丸編み工場の写真",
       lines: [
-        "和歌山・Kanemasa の円筒編み機で編み、手仕上げで襟と裾を整えます。",
+        "1964年創業、和歌山のカネマサ莫大小。36Gから46Gのハイゲージ丸編みを得意とする工場です。",
         "白は、着たあとの首元と肩線で品質がわかります。",
       ],
       image: HOME_IMAGES.story.finish,

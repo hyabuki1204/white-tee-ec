@@ -62,8 +62,8 @@ export const SITE_UI_COPY = {
     modelCaption: "モデル",
     measurementsLabel: "採寸（cm）",
     scrollHint: "スクロール →",
-    plpIntro: "まず生地から。",
-    plpIntroSub: "生地、そしてフィット。",
+    plpIntro: "まずゲージから。",
+    plpIntroSub: "ゲージ、そしてシルエット。",
     filteredIntro: (fabricName: string) => `${fabricName}。`,
     reassurance: {
       shipping: RETURNS_POLICY.shipping,
@@ -104,8 +104,8 @@ export const SITE_UI_COPY = {
   },
   fabric: {
     title: "生地",
-    introLine: "まず生地から。",
-    introSubline: "厚み、手触り、光の通り方。",
+    introLine: "まずゲージから。",
+    introSubline: "28G、36G、46G。厚みと密度が変わります。",
     allFabrics: "すべての生地",
     inThisFabric: "同じ生地",
     thisFabric: "この生地",

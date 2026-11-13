@@ -28,48 +28,30 @@ export const DEFAULT_FABRIC_CHARACTER: FabricCharacter = {
   surface: 3,
 };
 
-/** Seed values per fabric — mock fallback and migration backfill. */
+/**
+ * Seed values per gauge — mock fallback and migration backfill.
+ * 28G: thick, structured, low sheer. 36G: balanced. 46G: thin, dense, smooth.
+ */
 export const FABRIC_CHARACTER_BY_SLUG: Record<string, FabricCharacter> = {
-  "heavyweight-jersey": {
+  "28g-jersey": {
     thickness: 5,
     softness: 2,
     structure: 5,
     sheerness: 1,
+    surface: 3,
+  },
+  "36g-jersey": {
+    thickness: 3,
+    softness: 3,
+    structure: 3,
+    sheerness: 2,
     surface: 4,
   },
-  "lightweight-jersey": {
+  "46g-jersey": {
     thickness: 2,
-    softness: 5,
-    structure: 2,
-    sheerness: 4,
-    surface: 3,
-  },
-  "relaxed-jersey": {
-    thickness: 3,
     softness: 4,
-    structure: 3,
+    structure: 2,
     sheerness: 3,
-    surface: 3,
-  },
-  "compact-jersey": {
-    thickness: 3,
-    softness: 3,
-    structure: 4,
-    sheerness: 2,
-    surface: 4,
-  },
-  "essential-jersey": {
-    thickness: 3,
-    softness: 3,
-    structure: 3,
-    sheerness: 2,
-    surface: 3,
-  },
-  "box-jersey": {
-    thickness: 4,
-    softness: 2,
-    structure: 5,
-    sheerness: 1,
     surface: 5,
   },
 };

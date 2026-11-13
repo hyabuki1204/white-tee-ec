@@ -1,6 +1,6 @@
 import "server-only";
 
-import { getFabricBySlug } from "@/lib/fabric/queries";
+import { getFabricBySlugFromDb } from "@/lib/db/fabrics/repository";
 import type { BrandContextInput } from "@/lib/images/director/context";
 import { getProductForAdmin } from "@/lib/products/mutations";
 import type { AdminImageBriefDetail } from "@/types/admin-image";
@@ -22,7 +22,7 @@ export async function buildBriefContext(
   brief: AdminImageBriefDetail,
 ): Promise<BrandContextInput> {
   const [fabric, product] = await Promise.all([
-    brief.fabricSlug ? getFabricBySlug(brief.fabricSlug) : null,
+    brief.fabricSlug ? getFabricBySlugFromDb(brief.fabricSlug) : null,
     brief.productId ? getProductForAdmin(brief.productId) : null,
   ]);
 

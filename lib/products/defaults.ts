@@ -9,10 +9,9 @@ export const STANDARD_SIZE_GUIDE: SizeGuideMeasurement[] = [
   { size: "S", length: 68, shoulder: 44, chest: 52, sleeve: 20 },
   { size: "M", length: 70, shoulder: 46, chest: 54, sleeve: 21 },
   { size: "L", length: 72, shoulder: 48, chest: 56, sleeve: 22 },
-  { size: "XL", length: 74, shoulder: 50, chest: 58, sleeve: 23 },
 ];
 
-export const PRODUCT_SIZES: ProductSize[] = ["S", "M", "L", "XL"];
+export const PRODUCT_SIZES: ProductSize[] = ["S", "M", "L"];
 
 export function createDefaultSizeGuide(): SizeGuideMeasurement[] {
   return STANDARD_SIZE_GUIDE.map((row) => ({ ...row }));

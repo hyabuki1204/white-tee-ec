@@ -12,6 +12,10 @@ export const ABOUT_BODY_PARAGRAPHS = [
     "Structure, cotton, air — in that order.",
   ],
   [
+    "Three gauges: 28, 36, 46 needles to the inch.",
+    "The same machine never makes the same cloth twice.",
+  ],
+  [
     "What you wear should disappear.",
     "What remains should feel true.",
   ],
@@ -29,6 +33,10 @@ export const ABOUT_BODY_PARAGRAPHS_JA = [
   [
     "私たちは自分たちで布を編みます。",
     "構造、綿、空気——その順番で。",
+  ],
+  [
+    "28、36、46。1インチあたりの針の本数です。",
+    "同じ機械でも、同じ生地は生まれない。",
   ],
   [
     "着ていることを忘れる服。",
