@@ -16,6 +16,13 @@ import {
 import { buildBreadcrumbSchema } from "@/lib/seo/json-ld";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 
+/**
+ * The catalog lives in the database and changes without a deploy (admin
+ * edits, and migrations that run after the build). Re-read it periodically
+ * instead of freezing whatever the database held at build time.
+ */
+export const revalidate = 300;
+
 type FabricPageProps = {
   params: Promise<{ slug: string }>;
 };
