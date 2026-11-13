@@ -6,7 +6,7 @@ export type JournalArticle = {
   excerpt: string;
   heroImageUrl: string;
   heroImageAlt: string;
-  /** Optional Japanese helper line under excerpt */
+  /** Optional short topic line shown beside the date */
   helperJa?: string;
   /** Body paragraphs — editorial prose */
   body: readonly string[];
@@ -15,92 +15,90 @@ export type JournalArticle = {
 
 export const JOURNAL_PAGE_TITLE = "Journal";
 
-export const JOURNAL_INTRO_LINES = [
-  "Notes from the atelier.",
-  "Cloth, machines, and the quiet work of white.",
-] as const;
+export const JOURNAL_PAGE_HEADLINE_JA = "工場からの記録。";
 
-export const JOURNAL_INTRO_LINES_JA = [
-  "アトリエからの記録。",
-  "布、機械、白の静かな仕事。",
+export const JOURNAL_INTRO_LINES = [
+  "ゲージ、糸、編み場、洗い方。",
+  "白いTシャツができるまでと、着てからのことを、工場の言葉で書いています。",
 ] as const;
 
 export const JOURNAL_ARTICLES: JournalArticle[] = [
   {
     slug: "circular-knitting-wakayama",
-    title: "Circular Knitting in Wakayama",
+    title: "丸編みの産地、和歌山の編み場から。",
     publishedAt: "2025-11-12",
     excerpt:
-      "Our jersey is knit on circular machines in Wakayama — loop by loop, at a pace the cloth can hold.",
-    helperJa: "和歌山の丸編み機で、一枚の布を静かに編み上げる。",
-    heroImageUrl: "/journal/journal-knitting-machine.jpg",
-    heroImageAlt: "Circular knitting machine producing white cotton jersey",
+      "和歌山は、日本の丸編みニットの主産地です。その和歌山市で1964年に創業した工場の、編み場の話。",
+    helperJa: "編み場",
+    heroImageUrl: "/mill/needle.jpg",
+    heroImageAlt: "丸編機のシリンダーに並ぶ針と、集まっていく糸",
     featured: true,
     body: [
-      "WHITE TEE begins at the machine. Not in a sketchbook, not in a trend brief — at the needle, where yarn becomes cloth.",
-      "We knit our own jersey in Wakayama on circular machines tuned for cotton. The gauge is chosen for white: enough body to hold shape, enough air to sit quietly on skin.",
-      "Speed is not the point. A machine run too fast blurs the surface; too slow and the hand turns stiff. We listen to the cloth as it comes off the roll — weight, fall, how light moves across the loops.",
-      "Every tee in the collection starts here. Same machines, same discipline. White, held in the knit from the first stitch.",
+      "WHITE TEEの生地は、和歌山市の工場で編んでいます。和歌山は日本の丸編みニットの主な産地で、工場の創業は1964年です。",
+      "丸編機は、円周に並んだ針で、生地を筒状に編んでいく機械です。糸は上に並んだコーンから給糸口を通って針に届き、編み上がった生地は機械の下へ下りていきます。",
+      "この工場が得意としているのは、36ゲージから46ゲージのハイゲージです。針が細かくなるほど、糸の張りや針の状態のわずかな違いが、そのまま編地に出ます。",
+      "機械は自動で動きます。それでも、いい生地になるかどうかは人で決まります。糸の張り、針のクセ、耳で聞く機械の音。同じ機械でも、同じ生地は生まれません。",
+      "28、36、46。WHITE TEEの3つのゲージは、すべてこの編み場で編んでいます。",
     ],
   },
   {
     slug: "reading-jersey-by-hand",
-    title: "Reading Jersey by Hand",
+    title: "ゲージを読む。28、36、46。",
     publishedAt: "2025-10-28",
     excerpt:
-      "Weight, loop, and fall — how we choose a jersey before it becomes a tee.",
-    helperJa: "手触りと目で、ジャージの表情を読み分ける。",
-    heroImageUrl: "/journal/journal-jersey-texture.jpg",
-    heroImageAlt: "Close-up of white cotton jersey knit texture",
+      "ゲージは、1インチあたりの針の本数です。数字が変わると、同じ綿100%の白が別の生地になります。",
+    helperJa: "ゲージ",
+    heroImageUrl: "/mill/ring.jpg",
+    heroImageAlt: "針が円周に並ぶ丸編機と、編み上がっていく生地",
     featured: true,
     body: [
-      "Jersey is simple to name and difficult to read. Two surfaces, one structure — loops linked in a spiral that gives stretch without noise.",
-      "We judge cloth with the hand first. Does it recover after a pinch? Does the surface stay even when held to light? A 28-gauge jersey should feel dense but not dead; a 46-gauge should be fine without going limp.",
-      "White exposes everything. An uneven knit reads as shadow; a tight spin reads flat. We keep three jerseys in the line — 28, 36 and 46 gauge — each a different conversation between yarn, gauge, and air.",
-      "When you choose a gauge on WHITE TEE, you are choosing how that conversation meets your body.",
+      "ゲージ（G）は、編機の針の密度を表す数字です。1インチ、約2.54cmの間に針が何本並んでいるか。28ゲージなら28本、46ゲージなら46本です。",
+      "針が増えると編目は細かくなり、使う糸は細くなります。生地は薄く、密に、表面はなめらかになります。針が少なければ、太い糸で、厚みとハリのある生地になります。",
+      "WHITE TEEは3つのゲージで編み分けています。28ゲージには40/2のコーマ双糸、36ゲージには60/1のコンパクト糸、46ゲージには80/1のコーマコンパクト糸。糸の番手は、数字が大きいほど細くなります。",
+      "28ゲージは、厚みとハリのある一枚で着るための白。36ゲージは、表面が滑らかで一年を通して着られる基準の白。46ゲージは、薄く目の詰まった、ジャケットの下に収まる白です。",
+      "素材はどれも綿100%、組織はどれも天竺です。違うのはゲージと糸だけ。その差を、手で触って確かめてみてください。",
     ],
   },
   {
     slug: "the-atelier-morning",
-    title: "The Atelier Morning",
+    title: "白を、洗う。",
     publishedAt: "2025-09-15",
     excerpt:
-      "Before cutting or sewing — light on the table, rolls of white, and the day arranged around cloth.",
-    helperJa: "裁断の前。布と光で始まる一日。",
-    heroImageUrl: "/journal/journal-atelier.jpg",
-    heroImageAlt: "Quiet textile atelier with white fabric and soft window light",
+      "白いTシャツは、洗いながら着る服です。3つのゲージに共通する、洗い方の基本をまとめました。",
+    helperJa: "洗い方",
+    heroImageUrl: "/mill/fabric.jpg",
+    heroImageAlt: "編機から下りてくる編み上がった生地",
     featured: true,
     body: [
-      "The atelier opens to light before it opens to noise. Rolls of jersey are checked, marked, and laid out while the room is still calm.",
-      "We work in small batches. Not as a marketing phrase — as a way to keep attention on each piece. A crooked fold in storage becomes a crooked seam at the shoulder. White forgives little.",
-      "Tables stay clear. Tools stay few. The rhythm is cut, finish, inspect — then move on. Nothing rushed that the cloth would remember later.",
-      "This is the atmosphere we want the tee to carry: ordered, quiet, ready to disappear into a wardrobe.",
+      "白いTシャツは、着た瞬間より洗った後に差が出ます。首元、裾、肩線。洗い方で、その残り方が変わります。",
+      "洗濯機で、水で洗えます。色物とは分けてください。白は色移りがいちばん目立ちます。漂白剤は使いません。",
+      "裏返して洗濯ネットに入れると、表面の摩擦が減ります。脱水のあとは、首元と肩線を手で整えてから干してください。",
+      "乾燥機を使う場合は低温で。アイロンが必要なときも低温です。",
+      "ゲージによる違いもあります。28ゲージは双糸の度詰で、洗濯を重ねても首元と肩線が崩れにくい生地です。36ゲージはコンパクト糸の毛羽が少なく、洗っても表面が荒れにくい。46ゲージの落ち感と控えめな光沢は、洗った後も残ります。",
     ],
   },
   {
     slug: "from-cotton-to-yarn",
-    title: "From Cotton to Yarn",
+    title: "白は、糸で決まる。",
     publishedAt: "2025-08-02",
     excerpt:
-      "Long-staple cotton, spun fine — the raw material behind every white loop.",
-    helperJa: "長繊維綿を、白い糸へ。",
-    heroImageUrl: "/journal/journal-raw-cotton.jpg",
-    heroImageAlt: "Raw cotton bales and white yarn cones in a textile studio",
+      "編む前に、白の表情はほぼ決まっています。番手、撚り、紡績方法。糸の話です。",
+    helperJa: "糸",
+    heroImageUrl: "/mill/yarn.jpg",
+    heroImageAlt: "生成りの糸を巻いたコーンの拡大",
     featured: false,
     body: [
-      "White tee quality is decided long before the first stitch. The cotton must be clean, long-staple, and spun with enough twist to knit evenly without fuzz.",
-      "We source yarn for clarity in white — not for bulk or shine. A good cone feels dry and even; it runs through the machine without catching or slubbing.",
-      "Yarn rooms are kept simple: cones, labels, humidity checked. Material is boring on purpose. Boring means consistent.",
-      "When the yarn is right, the jersey almost knits itself. When it is wrong, no amount of finishing will save the surface. We start strict so the tee can stay simple.",
+      "白は、糸の毛羽と撚りがそのまま表面に出ます。色や柄で隠せないぶん、編む前の糸選びで白の表情が決まります。",
+      "この工場で使う糸は、6割以上が別注で紡いだ糸です。WHITE TEEでも、ゲージごとに番手と紡績方法を変えています。",
+      "28ゲージは40/2のコーマ双糸。コーマは、短い繊維を櫛で取り除く工程のこと。双糸は、2本の糸を撚り合わせた糸です。太さとハリが出ます。",
+      "36ゲージは60/1のコンパクト糸。紡績の段階で繊維を集束させ、毛羽を抑えた糸です。編地の表面が均一になります。",
+      "46ゲージは80/1のコーマコンパクト糸。3つのなかでいちばん細い糸です。1インチに46本の針で編むには、細く、毛羽の少ない糸が要ります。",
     ],
   },
 ];
 
+/** "2025.11.12" — set in the Latin face with tabular numerals. */
 export function formatJournalDate(isoDate: string): string {
-  const date = new Date(`${isoDate}T00:00:00`);
-  return new Intl.DateTimeFormat("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  }).format(date);
+  const [year, month, day] = isoDate.slice(0, 10).split("-");
+  return year && month && day ? `${year}.${month}.${day}` : isoDate;
 }
