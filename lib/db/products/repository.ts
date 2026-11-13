@@ -72,28 +72,34 @@ const PRODUCT_LIST_SELECT_LEGACY = `
 async function getProductsFromSupabase(): Promise<Product[]> {
   const supabase = createSupabaseStaticClient();
 
-  let result = await supabase
+  // Variants are part of the listing on purpose: cards and the cart decide
+  // "sold out" from per-size stock, and an empty variant list reads as
+  // sold out for every product.
+  const { data, error } = await supabase
     .from("products")
-    .select(PRODUCT_LIST_SELECT)
+    .select(
+      `
+      *,
+      product_images(*),
+      product_variants(*)
+    `,
+    )
     .eq("is_published", true)
     .order("created_at", { ascending: true });
 
-  if (result.error && isMissingCardHoverColumn(result.error.message)) {
-    result = await supabase
-      .from("products")
-      .select(PRODUCT_LIST_SELECT_LEGACY)
-      .eq("is_published", true)
-      .order("created_at", { ascending: true });
+  if (error) {
+    throw new Error(`Failed to fetch products: ${error.message}`);
   }
 
-  if (result.error) {
-    throw new Error(`Failed to fetch products: ${result.error.message}`);
-  }
+  return (data ?? []).map((entry) => {
+    const row = entry as unknown as ProductDetailQueryRow;
 
-  const rows = (result.data ?? []).map((row) =>
-    mapQueryRowToProductWithImage(row as unknown as ProductQueryRow),
-  );
-  return mapProductRowsToProducts(rows);
+    return mapFullProductRow(
+      row,
+      row.product_variants ?? [],
+      row.product_images ?? [],
+    );
+  });
 }
 
 async function getProductBySlugFromSupabase(
